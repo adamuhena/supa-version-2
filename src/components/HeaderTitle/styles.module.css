@@ -1,0 +1,30 @@
+.main {
+  @apply py-[20px] md:py-[32px];
+}
+
+.h1_100px {
+  @apply leading-[1] font-[500];
+  font-size: clamp(60px, calc(100 / 1420 * 100vw), 500px);
+}
+
+.h1_56px {
+  @apply leading-[1] font-[500];
+  font-size: clamp(40px, calc(60 / 1420 * 100vw), 100px);
+}
+
+.h1_small {
+  @apply leading-[1] font-[500] mt-[10px];
+  font-size: clamp(28px, calc(28 / 1420 * 100vw), 100px);
+}
+
+.description {
+  @apply font-[300] w-full leading-[calc(28/20)];
+
+  font-size: clamp(18px, calc(18 / 1420 * 100vw), 50px);
+}
+
+.titleCaptionText {
+  @apply font-semibold text-[#DDAE31]  mb-3 leading-[calc(24/18)];
+
+  font-size: clamp(14px, calc(18 / 1420 * 100vw), 30px);
+}

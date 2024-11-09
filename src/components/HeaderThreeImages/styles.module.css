@@ -1,0 +1,21 @@
+.main {
+  @apply flex flex-col sm:flex-row gap-[10px] lg:gap-[16px] xl:gap-[24px]
+    h-auto sm:h-[clamp(10px,calc(418/1420*100vw),700px)]
+    w-full;
+}
+
+.main_left {
+  @apply w-full md:w-auto md:basis-[calc(667/1420*100vw)] h-[400px] sm:h-full bg-gray-100 rounded-[8px] overflow-hidden;
+}
+
+.main_middle {
+  @apply w-full md:w-auto md:flex-1 h-[400px] sm:h-full bg-gray-100 rounded-[8px] overflow-hidden;
+}
+
+.main_right {
+  @apply w-full md:w-auto md:flex-1 h-[400px] sm:h-full bg-gray-100 rounded-[8px] overflow-hidden;
+}
+
+.main img {
+  @apply w-full h-full object-cover;
+}
