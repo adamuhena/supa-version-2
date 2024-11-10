@@ -14,15 +14,15 @@ export const footerLinks = [
   [
     {
       header: true,
-      title: "CONTACT",
+      title: "LEGAL",
     },
     {
-      title: "Industrial Training Fund – Along Miango Road, P.M.B 2199 Jos, Plateau State, Nigeria. 930272",
+      title: "Terms & Condition",
       path: "/",
     },
 
     {
-      title: "supasec@itf.gov.ng",
+      title: "Privacy Policy",
       path: "/",
     },
   ],

@@ -6,7 +6,7 @@ function Footer() {
       <div className="widow-inner flex flex-col lg:flex-row items-start gap-[44px] lg:gap-[32px] flex-wrap">
         <div className="flex flex-col items-left mx-auto lg:mx-0 max-w-[354px] gap-[32px]">
           <div className="p-[10px] bg-white w-fit rounded-[10px]">
-            <img className="w-[140px]" src="/icons/logo-2.jpg" />
+            <img className="w-[100px]" src="/supaLogo.png" />
           </div>
           {/* <div className={"flex gap-[16px] items-center"}>
             {socialLinks.map((socail, idx) => (
@@ -21,12 +21,16 @@ function Footer() {
               {
                 title: "supasec@itf.gov.ng",
                 path: "malito:info@fct-sip.com.ng",
-                leftIcon: "/icons/message-white.svg",
               },
+
               {
-                title: "+2348138202997",
+                title:
+                  "Industrial Training Fund – Along Miango Road, P.M.B 2199 Jos, Plateau State, Nigeria. 930272",
+              },
+
+              {
+                title: "+2348138202997, +2348138202997, +2348138202997",
                 path: "tel:08160000000",
-                leftIcon: "/icons/phone-white.svg",
               },
             ].map((item, index) => {
               return (
@@ -36,7 +40,7 @@ function Footer() {
                   className={
                     item?.header
                       ? "text-[#1b6f37] font-[500] text-[16px] leading-[24px] cursor-default"
-                      : "text-[#ffffff] font-[400] text-[14px] leading-[22px flex items-center gap-3 hover:text-[#CDB972] cursor-pointer"
+                      : "text-[#ffffff] font-[400] text-[14px] leading-[22px flex items-center gap-3 hover:text-[#CDB972] cursor-pointer text-left"
                   }>
                   {item?.leftIcon ? (
                     <>
@@ -81,7 +85,7 @@ function Footer() {
                         </>
                       ) : null}
 
-                      <span >{item?.title}</span>
+                      <span>{item?.title}</span>
                     </a>
                   );
                 })}
