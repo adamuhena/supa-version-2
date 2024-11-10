@@ -16,11 +16,12 @@ function HomePage() {
           padding: "0 2rem",
           paddingTop: 50,
         }}>
+
         <HeaderTitle
           withSplitType
           title_font_size="56px"
           title_top="Skill-Up Artisans (SUPA)"
-          description=" Welcome to the FCT Social Investment Programmes Portal, your one-stop hub for information and resources on our flagship programmes. Learn and engage with us as we work together to empower citizens and build a better future for all. "
+          description="Empowering artisans with tech-driven training, official licensing, access to essential toolkits, and promoting industry standards to elevate skills, enhance craftsmanship, and drive professional excellence across sectors. "
           title_color="#1b6f37"
           description_color="#000000"
           description_max_width="900px"

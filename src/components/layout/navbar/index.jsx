@@ -29,6 +29,30 @@ const links = [
   },
 ];
 
+const Logos = () => {
+  return (
+    <div className="flex gap-10 items-center ">
+      <a href="/">
+        <motion.img
+          src="/supaLogo.png"
+          className="w-[60px] lg:w-[80px]  object-contain lg:mt-[10px]"
+        />
+      </a>
+      <a href="/">
+        <motion.img
+          src="/public/itfLogo.jfif"
+          className="w-[40px]   object-contain lg:mt-[10px]"
+        />
+      </a>
+      <a href="/">
+        <motion.img
+          src="/public/fgLogo.png"
+          className="w-[60px] lg:w-[60px]  object-contain lg:mt-[10px]"
+        />
+      </a>
+    </div>
+  );
+};
 function NavBar() {
   const [showMenu, setShowMenu] = React.useState(false);
 
@@ -58,7 +82,8 @@ function NavBar() {
         !isTop ? "fixed z-[999] shadow-lg " : "relative"
       } widow-main  ${
         !showMenu ? "bg-white" : "bg-[#000000]/90"
-      } pb-[15px] w-full px-[2rem]`}>
+      } pb-[15px] w-full px-[2rem]`}
+    >
       <AnimatePresence>
         {showMenu ? (
           <motion.div
@@ -66,34 +91,15 @@ function NavBar() {
             animate={{ scale: 1, rotate: "0deg", opacity: 1 }}
             exit={{ scale: 0, rotate: "280deg", opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="py-[20px] w-full  bg-[#000000]/90 fixed  left-0 h-[calc(100vh)] top-[55px] sm:h-[calc(100vh-55px)]  z-[12] font-[600]">
+            className="py-[20px] w-full  bg-[#000000]/90 fixed  left-0 h-[calc(100vh)] top-[55px] sm:h-[calc(100vh-55px)]  z-[12] font-[600]"
+          >
             <Dropdown handleClose={() => setShowMenu(false)} links={links} />
           </motion.div>
         ) : null}
       </AnimatePresence>
       <div className="widow-inner">
         <div className={`flex items-start justify-between w-full`}>
-          {showMenu ? (
-            <div></div>
-          ) : (
-            <>
-              {!isTop || showMenu ? (
-                <a href="/">
-                  <motion.img
-                    src="/supa-logo.png"
-                    className="w-[50px]  object-contain mt-[0px] my-[4px]"
-                  />
-                </a>
-              ) : (
-                <a href="/">
-                  <motion.img
-                    src="/supa-logo.png"
-                    className="w-[60px] lg:w-[130px]  object-contain lg:mt-[10px]"
-                  />
-                </a>
-              )}
-            </>
-          )}
+          {showMenu ? "" : <Logos />}
           <div className="hidden items-center gap-[20px] pt-[10px] lg:flex">
             {links.map((x) => {
               const active = false;
@@ -107,7 +113,8 @@ function NavBar() {
                         href="/#"
                         className={`hover:underline text-[#1e412a] cursor-pointer text-[17px] ${
                           active ? "underline font-[600]" : "font-[400]"
-                        } flex items-center gap-1`}>
+                        } flex items-center gap-1`}
+                      >
                         <span>{x.title}</span>
                         <ChevronDownIcon />
                       </a>
@@ -132,7 +139,8 @@ function NavBar() {
                   href={x.href}
                   className={`hover:underline text-[#1e412a] cursor-pointer text-[20px]  ${
                     active ? "underline font-[600]" : "font-[400]"
-                  }`}>
+                  }`}
+                >
                   {x.title}
                 </a>
               );
@@ -147,7 +155,8 @@ function NavBar() {
             <motion.button
               onClick={openMenu}
               whileHover="animate"
-              className={`text-[#1e412a]  items-center gap-3 cursor-pointer relative z-[11] flex }`}>
+              className={`text-[#1e412a]  items-center gap-3 cursor-pointer relative z-[11] flex }`}
+            >
               {showMenu ? (
                 <motion.img
                   src={

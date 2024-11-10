@@ -19,12 +19,12 @@ function Footer() {
           <div className={"flex flex-col gap-[16px] items-start"}>
             {[
               {
-                title: "info@fct-sip.com.ng",
+                title: "supasec@itf.gov.ng",
                 path: "malito:info@fct-sip.com.ng",
                 leftIcon: "/icons/message-white.svg",
               },
               {
-                title: "+08160000000",
+                title: "+2348138202997",
                 path: "tel:08160000000",
                 leftIcon: "/icons/phone-white.svg",
               },
@@ -81,7 +81,7 @@ function Footer() {
                         </>
                       ) : null}
 
-                      <span>{item?.title}</span>
+                      <span >{item?.title}</span>
                     </a>
                   );
                 })}
@@ -93,7 +93,7 @@ function Footer() {
       <div className="widow-inner flex flex-col flex-wrap items-center border-t border-t-[#5C5C5C] mt-[40px] pt-[40px] gap-[32px]">
         <div className="flex flex-col items-center gap-[20px]">
           <p className="text-[14px] leading-[22px] text-white">
-            © {new Date().getFullYear()} - FCT SIP
+            © {new Date().getFullYear()} - SUPA
           </p>
         </div>
         <div className="flex  flex-wrap  flex-1 justify-end gap-[32px]">

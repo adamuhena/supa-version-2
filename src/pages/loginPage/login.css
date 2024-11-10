@@ -1,0 +1,46 @@
+.mainDiv {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+.firstChild {
+  flex: 1;
+}
+.secondChild {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginCard {
+  width: 400px;
+  height: 450px;
+  padding-top: 30px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-radius: 5px;
+
+}
+
+.loginPicture {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+
+}
+.loginSupaLogo {
+  object-fit: contain;
+  width: 50px;
+  margin: auto;
+}
+.inputDiv{
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    padding: 50px;
+    gap: 20px;
+}
+p{
+    text-align: left;
+    margin-bottom: 5px;
+}

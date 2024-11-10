@@ -7,26 +7,23 @@ export const footerLinks = [
     },
     { title: "Home", path: "/" },
     { title: "About Us", path: "/" },
-    { title: "Management Team", path: "/" },
-    { title: "Gallery", path: "/" },
-    { title: "Testimonies", path: "/" },
-    { title: "News", path: "/" },
+    { title: "MarketPlace", path: "/" },
     { title: "Contact ", path: "/" },
   ],
 
   [
     {
       header: true,
-      title: "OUR PROGRAMMES",
+      title: "CONTACT",
     },
     {
-      title: "FCT Home Grown School Feeding (FCT-HGSF) Programme",
-      path: "/programmes/fct-home-grown-school-feeding-programme",
+      title: "Industrial Training Fund – Along Miango Road, P.M.B 2199 Jos, Plateau State, Nigeria. 930272",
+      path: "/",
     },
 
     {
-      title: "Government Enterprise and Empowerment Programme (GEEP)",
-      path: "/programmes/fct-home-grown-school-feeding-programme",
+      title: "supasec@itf.gov.ng",
+      path: "/",
     },
   ],
 ];
