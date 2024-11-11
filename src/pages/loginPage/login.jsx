@@ -25,8 +25,7 @@ export default function InputDemo() {
           <button className="h-[42px]  px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
             Login
           </button>
-
-          <p className="sign_up">Do not have account yet? <Link to="/register"><span>Create account</span></Link></p>
+          <p className="sign_up">Do not have account yet? <Link to="/register"><span className="loginSpan">Create account</span></Link></p>
         </div>
       </div>
     </div>

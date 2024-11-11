@@ -57,7 +57,7 @@ p{
     margin-left: 40px ;
  
 }
-span{
+.loginSpan{
     color: rgb(0 82 77);
    text-decoration: underline;
    font-size: medium;
