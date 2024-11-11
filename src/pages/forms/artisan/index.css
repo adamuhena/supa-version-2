@@ -1,0 +1,19 @@
+.form_stepper_control {
+  display: flex;
+  gap: 100px;
+  justify-content: center;
+}
+.form_stepper_control button {
+  background-color: brown;
+  color: beige;
+}
+/*Bio Data Form styling  */
+.ParentDiv{
+  text-align: left;
+  margin: 0 auto;
+  border: 1px solid black;
+  padding: 20px;
+  width: 800px;
+  border-radius: 7px;
+
+}
