@@ -30,7 +30,7 @@
 }
 .loginSupaLogo {
   object-fit: contain;
-  width: 50px;
+  width: 70px;
   margin: auto;
 }
 .inputDiv{
@@ -43,4 +43,22 @@
 p{
     text-align: left;
     margin-bottom: 5px;
+}
+.forgetPassword{
+
+    text-align: right;
+    margin-top: -10px;
+    font-size: small;
+
+}
+.sign_up{
+    margin-top: 10px;
+    font-size: medium;
+    margin-left: 40px ;
+ 
+}
+span{
+    color: rgb(0 82 77);
+   text-decoration: underline;
+   font-size: medium;
 }

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Dropdown from "./dropdown";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
+import Login from "../../../pages/loginPage/login";
 
 import {
   DropdownMenu,
@@ -11,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Link } from "react-router-dom";
 
 const links = [
   {
@@ -146,9 +148,11 @@ function NavBar() {
               );
             })}
 
-            <button className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
-              Login
-            </button>
+            <Link to="/login">
+              <button className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
+                Login
+              </button>
+            </Link>
           </div>
 
           <div className="flex items-center gap-[20px] pt-[10px] lg:hidden">

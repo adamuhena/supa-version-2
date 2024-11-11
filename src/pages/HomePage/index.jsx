@@ -5,6 +5,7 @@ import HeaderTitle from "../../components/HeaderTitle/HeaderTitle";
 
 import NavBar from "../../components/layout/navbar";
 import Footer from "../../components/layout/footer";
+import { Link } from "react-router-dom";
 
 function HomePage() {
   return (
@@ -15,8 +16,8 @@ function HomePage() {
         style={{
           padding: "0 2rem",
           paddingTop: 50,
-        }}>
-
+        }}
+      >
         <HeaderTitle
           withSplitType
           title_font_size="56px"
@@ -29,9 +30,11 @@ function HomePage() {
         />
 
         <div className="flex gap-[20px] w-full justify-center items-center">
-          <button className="h-[48px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
-            Register
-          </button>
+          <Link to="/register">
+            <button className="h-[48px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
+              Register
+            </button>
+          </Link>
           <button className="h-[48px] px-[40px] text-[14px] rounded-[40px] bg-[#fff] border-[1px] text-yellow-600 border-yellow-600">
             View Marketplace
           </button>
@@ -92,7 +95,8 @@ function HomePage() {
 
         <Marquee
           className={"mb-[20px] relative overflow-x-hidden"}
-          direction="right">
+          direction="right"
+        >
           {[
             "/images/workers/1.jpg",
             "/images/workers/2.jpg",
