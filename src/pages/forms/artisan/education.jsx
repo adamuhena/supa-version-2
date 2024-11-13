@@ -1,7 +1,7 @@
 import React from "react";
 
-function EducationalBackground() {
+function Education() {
   return <div>Educational Background</div>;
 }
 
-export default EducationalBackground;
+export default Education;

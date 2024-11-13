@@ -37,25 +37,25 @@ const Logos = () => {
       <a href="/">
         <motion.img
           src="/supaLogo.png"
-          className="w-[60px] lg:w-[80px]  object-contain lg:mt-[10px]"
+          className="w-[60px] lg:w-[70px]  object-contain lg:mt-[10px]"
         />
       </a>
       <a href="/">
         <motion.img
-          src="/public/itfLogo.jfif"
-          className="w-[40px]   object-contain lg:mt-[10px]"
+          src="/itfLogo.jfif"
+          className="w-[50px]   object-contain lg:mt-[10px]"
         />
       </a>
       <a href="/">
         <motion.img
-          src="/public/fgLogo.png"
-          className="w-[60px] lg:w-[60px]  object-contain lg:mt-[10px]"
+          src="/fgLogo.png"
+          className="w-[40px] lg:w-[50px]  object-contain lg:mt-[10px]"
         />
       </a>
     </div>
   );
 };
-function NavBar() {
+function NavBar({ sticky = true }) {
   const [showMenu, setShowMenu] = React.useState(false);
 
   const openMenu = () => {
@@ -68,7 +68,7 @@ function NavBar() {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
 
-      setIsTop(scrollTop < 100);
+      if (sticky) setIsTop(scrollTop < 100);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -139,7 +139,7 @@ function NavBar() {
               return (
                 <a
                   href={x.href}
-                  className={`hover:underline text-[#1e412a] cursor-pointer text-[20px]  ${
+                  className={`hover:underline text-[#1e412a] cursor-pointer text-[16px]  ${
                     active ? "underline font-[600]" : "font-[400]"
                   }`}
                 >

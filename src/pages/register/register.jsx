@@ -8,7 +8,7 @@ import ThreeBoxes from "../../components/ThreeBoxes/ThreeBoxes";
 function register() {
   return (
     <div>
-      <NavBar />
+      <NavBar sticky={false} />
       <ThreeBoxes />
       <Footer />
     </div>

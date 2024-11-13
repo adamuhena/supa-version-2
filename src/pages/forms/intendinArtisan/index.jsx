@@ -6,6 +6,7 @@ function IntendingArtisan() {
   return (
     <div>
       <NavBar />
+      
       <Footer />
     </div>
   );

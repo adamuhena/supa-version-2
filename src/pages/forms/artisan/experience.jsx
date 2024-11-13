@@ -3,7 +3,7 @@ import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import "./index.css";
 
-export default function BioDataForm() {
+export default function BioData() {
   return (
     <div className="  ParentDiv">
       <div>

@@ -6,11 +6,11 @@ export default function InputDemo() {
   return (
     <div className="mainDiv">
       <div className="firstChild">
-        <img src="../../../public/loginPicture.jpeg" className="loginPicture" />
+        <img src="/loginPicture.jpeg" className="loginPicture" />
       </div>
       <div className="secondChild">
         <div className="loginCard">
-          <img src="../../../public/supaLogo.png" className="loginSupaLogo" />
+          <img src="/supaLogo.png" className="loginSupaLogo" />
           <div className="inputDiv">
             <div>
               <p >Email</p>

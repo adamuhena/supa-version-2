@@ -8,12 +8,39 @@
   color: beige;
 }
 /*Bio Data Form styling  */
-.ParentDiv{
+.ParentDiv {
+  display: flex;
   text-align: left;
   margin: 0 auto;
   border: 1px solid black;
   padding: 20px;
-  width: 800px;
+  width: 900px;
   border-radius: 7px;
+  gap: 40px;
+}
+.ParentDiv .firstDiv {
+  flex: 1;
+}
 
+.ParentDiv .secondDiv {
+  flex: 1;
+}
+.inputGroup {
+  padding: 10px;
+}
+label {
+  font-weight: 500;
+  font-family: "Poppins";
+}
+ label {
+  padding-right: 15px;
+}
+label span{
+  padding-left: 10px;
+}
+label a{
+  padding-right: 15px;
+  text-decoration: underline;
+padding-left: 5px;
+color: #551A8B;
 }
