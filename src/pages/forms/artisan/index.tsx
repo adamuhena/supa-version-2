@@ -23,7 +23,7 @@ function ArtisanForm() {
     <div>
       <NavBar sticky={false} />
 
-      <h1>Artisan registration form</h1>
+      <h1 className="header">Artisan registration form</h1>
       <Stepper activeStep={step}>
         <Step index={0} label="Bio Data" />
         <Step index={1} label="Professional Information" />

@@ -152,7 +152,7 @@ export default function BioData() {
             <span>
               By submitting this form, I agree to abide by SUPA platform’s
             </span>
-            <a href="terms-and-conditions.html" target="_blank">
+            <a href="https://supa.itf.gov.ng/terms-and-conditions" target="_blank">
               Terms and Conditions
             </a>
           </label>
