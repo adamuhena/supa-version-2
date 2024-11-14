@@ -4,27 +4,18 @@ import { CrossCircledIcon } from "@radix-ui/react-icons";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 
 import { BlurFade } from "../ui/blur-fade";
-export default function RegisterSuccess({
-  children,
-}: {
-  children?: React.ReactNode;
-}) {
-  const [show, setshow] = React.useState(false);
 
-  const open = () => setshow(true);
-  const close = () => setshow(false);
+export default function RegisterSuccess({
+  show,
+  setshow,
+}: {
+  show?: boolean;
+  setshow?: any;
+}) {
+  const close = () => setshow?.(false);
+
   return (
     <AlertDialog open={show}>
-      {children ? (
-        <>
-          {React.Children.map(children, (child?: any) => {
-            return React.cloneElement(child, {
-              onClick: () => open(),
-            });
-          })}
-        </>
-      ) : null}
-
       <AlertDialogContent className="max-w-[657px]">
         <div className="mx-auto flex w-full max-w-[450px] flex-col items-center justify-center gap-[8px] py-[30px]">
           <button onClick={() => (window.location = "/")}>
@@ -57,7 +48,9 @@ export default function RegisterSuccess({
             delay={0.1}
             inView
             className="flex w-full flex-col gap-[4px]">
-            <button className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
+            <button
+              onClick={() => (window.location = "/")}
+              className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
               Proceed to dashboard
             </button>
           </BlurFade>

@@ -12,11 +12,33 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { states } from "../../../data/nigeria";
+
+function replaceSymbolsWithSpace(str = "") {
+  let replacedStr = str.replace(/[-/]/g, " ");
+  return replacedStr.toLowerCase();
+}
+
 export default function ProfessionalInformaiton({
   controlButtons,
   form,
   onchangeInput,
 }) {
+  const selectedStateLGAS =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.state}`)
+    )?.lgas || [];
+
+  const selectedStateLGASFormatted =
+    selectedStateLGAS && selectedStateLGAS?.length
+      ? selectedStateLGAS.map((x) => ({
+          label: x,
+          value: x,
+        }))
+      : [];
+
   return (
     <div
       style={{
@@ -24,7 +46,7 @@ export default function ProfessionalInformaiton({
         marginBottom: "100px",
         background: "white",
       }}
-      className="relative w-full max-w-[900px] mx-auto py-[30px]   flex flex-col px-5 gap-[30px] bg-white rounded-[16px] ">
+      className="relative w-full max-w-[1000px] mx-auto py-[30px]   flex flex-col px-5 gap-[30px] bg-white rounded-[16px] ">
       <h1 className="text-left font-[700]  text-[24px]">
         Professional Information
       </h1>
@@ -32,142 +54,182 @@ export default function ProfessionalInformaiton({
       <div className="ParentDiv">
         <div className="firstDiv">
           <div className="inputGroup">
-            <Label htmlFor="first_name">First Name *</Label>
+            <Label htmlFor="firstName">First Name *</Label>
             <Input
-              type="text"
-              id="first_name"
-              placeholder="first_name"
-              //
-              value={form?.first_name}
-              onChange={(e) => onchangeInput("first_name", e.target?.value)}
+              placeholder=""
+              value={form?.firstName}
+              onChange={(e) => onchangeInput("firstName", e.target?.value)}
             />
           </div>
 
           <div className="inputGroup">
-            <Label htmlFor="email">Middle Name</Label>
+            <Label>Middle Name</Label>
             <Input
-              type="text"
-              id="email"
               placeholder="Middle name"
               required
-              value={form?.middle_name}
-              onChange={(e) => onchangeInput("middle_name", e.target?.value)}
+              value={form?.middleName}
+              onChange={(e) => onchangeInput("middleName", e.target?.value)}
             />
           </div>
           <div className="inputGroup">
-            <Label htmlFor="email">Last Name</Label>
+            <Label>Last Name</Label>
             <Input
-              type="email"
-              id="email"
-              placeholder="Email"
+              placeholder="Last Name"
+              value={form?.lastName}
+              onChange={(e) => onchangeInput("lastName", e.target?.value)}
+            />
+          </div>
+
+          <div className="inputGroup">
+            <Label>Email</Label>
+            <Input
+              placeholder=""
               value={form?.email}
               onChange={(e) => onchangeInput("email", e.target?.value)}
             />
           </div>
           <div className="inputGroup">
-            <Label htmlFor="email">Phone Number</Label>
-            <Input type="email" id="email" placeholder="Email" />
+            <Label>Phone Number</Label>
+            <Input
+              placeholder=""
+              value={form?.phone}
+              onChange={(e) => onchangeInput("phone", e.target?.value)}
+            />
           </div>
           <div className="inputGroup">
-            <Label htmlFor="email">Gender</Label>
-            <Select>
+            <Label>Gender</Label>
+            <Select
+              value={form?.gender}
+              onValueChange={(value) => onchangeInput("gender", value)}>
               <SelectTrigger className="">
                 <SelectValue placeholder="Select a Gender" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="est">Male</SelectItem>
-                  <SelectItem value="cst">Female</SelectItem>
+                  <SelectItem value="Male">Male</SelectItem>
+                  <SelectItem value="Female">Female</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
           <div className="inputGroup">
-            <Label htmlFor="email">Marital Status</Label>
-            <Select>
+            <Label>Marital Status</Label>
+            <Select
+              value={form?.maritalStatus}
+              onValueChange={(value) => onchangeInput("maritalStatus", value)}>
               <SelectTrigger className="">
                 <SelectValue placeholder="Select Marital Status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="est">Single</SelectItem>
-                  <SelectItem value="cst">Married</SelectItem>
-                  <SelectItem value="cst">Married</SelectItem>
-                  <SelectItem value="cst">Married</SelectItem>
-                  <SelectItem value="cst">Married</SelectItem>
+                  <SelectItem value="Single">Single</SelectItem>
+                  <SelectItem value="Married">Married</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
           <div className="inputGroup">
-            <Label htmlFor="email">Sector</Label>
-            <Select>
+            <Label>Sector</Label>
+            <Select
+              value={form?.sector}
+              onValueChange={(value) => onchangeInput("sector", value)}>
               <SelectTrigger className="">
                 <SelectValue placeholder="Select a Sector" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="est">Building and Construction</SelectItem>
-                  <SelectItem value="cst">Welding</SelectItem>
-                  <SelectItem value="cst">ICT</SelectItem>
-                  <SelectItem value="cst">Power</SelectItem>
-                  <SelectItem value="cst">Animal Husbandry</SelectItem>
+                  <SelectItem value="Building and Construction">
+                    Building and Construction
+                  </SelectItem>
+                  <SelectItem value="Welding">Welding</SelectItem>
+                  <SelectItem value="ICT">ICT</SelectItem>
+                  <SelectItem value="Power">Power</SelectItem>
+                  <SelectItem value="Animal Husbandry">
+                    Animal Husbandry
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
-        </div>
 
-        <div className="secondDiv">
           <div className="inputGroup">
-            <Label htmlFor="email">Trade Area</Label>
-            <Select>
+            <Label>Trade Area</Label>
+            <Select
+              value={form?.tradeArea}
+              onValueChange={(value) => onchangeInput("tradeArea", value)}>
               <SelectTrigger className="">
                 <SelectValue placeholder="Select Trade Area" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="est">Single</SelectItem>
-                  <SelectItem value="cst">Married</SelectItem>
-                  <SelectItem value="cst">Divorced</SelectItem>
-                  <SelectItem value="cst">Seperated</SelectItem>
-                  <SelectItem value="cst">Widowed</SelectItem>
+                  <SelectItem value="Trade Area 1">Trade Area 1</SelectItem>
+                  <SelectItem value="Trade Area 2">Trade Area 2</SelectItem>
+                  <SelectItem value="Trade Area 3">Trade Area 3</SelectItem>
+                  <SelectItem value="Trade Area 4">Trade Area 4</SelectItem>
+                  <SelectItem value="Trade Area 5">Trade Area 5</SelectItem>
+                  <SelectItem value="Trade Area 6">Trade Area 6</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
           <div className="inputGroup">
-            <Label htmlFor="email">Street Address</Label>
-            <Input type="email" id="email" placeholder="Email" />
-          </div>
-          <div className="inputGroup">
-            <Label htmlFor="email">City</Label>
-            <Select>
+            <Label>State</Label>
+            <Select
+              value={form?.state}
+              onValueChange={(value) => onchangeInput("state", value)}>
               <SelectTrigger className="">
-                <SelectValue placeholder="Select a Gender" />
+                <SelectValue placeholder="" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="est">Plateau</SelectItem>
-                  <SelectItem value="cst">Maiduguri</SelectItem>
+                  {states.map((item) => {
+                    return (
+                      <SelectItem value={item?.value}>{item?.label}</SelectItem>
+                    );
+                  })}
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
+
           <div className="inputGroup">
-            <Label htmlFor="email">LGA</Label>
-            <Select>
+            <Label>LGA</Label>
+            <Select
+              value={form?.lga}
+              onValueChange={(value) => onchangeInput("lga", value)}>
               <SelectTrigger className="">
-                <SelectValue placeholder="Select a Gender" />
+                <SelectValue placeholder="Select LGA" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="est">Biu</SelectItem>
-                  <SelectItem value="cst">Kwaya-kusar</SelectItem>
+                  {selectedStateLGASFormatted.map((item) => {
+                    return (
+                      <SelectItem value={item?.value}>{item?.label}</SelectItem>
+                    );
+                  })}
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
+
+          <div className="inputGroup">
+            <Label>City</Label>
+            <Input
+              placeholder=""
+              value={form?.city}
+              onChange={(e) => onchangeInput("city", e.target.value)}
+            />
+          </div>
+
+          <div className="inputGroup">
+            <Label>Street Address</Label>
+            <Input
+              placeholder=""
+              value={form?.street}
+              onChange={(e) => onchangeInput("street", e.target.value)}
+            />
+          </div>
+
           <div className="inputGroup">
             <div className="radioGroup">
               <div>
@@ -183,17 +245,6 @@ export default function ProfessionalInformaiton({
             </div>
             <br />
 
-            <label>
-              <input type="checkbox" name="terms" required />
-              <span>
-                By submitting this form, I agree to abide by SUPA platform’s
-              </span>
-              <a
-                href="https://supa.itf.gov.ng/terms-and-conditions"
-                target="_blank">
-                Terms and Conditions
-              </a>
-            </label>
             <br />
           </div>
         </div>

@@ -13,7 +13,8 @@ import "./index.css";
 import { DotPattern } from "../../../components/ui/dot-pattern";
 import { cn } from "../../../lib/utils";
 import RegisterSuccess from "../../../components/SuccessRegister";
-
+import axios from "axios";
+import { toast } from "sonner";
 function ArtisanForm() {
   const [step, setStep] = useState(0);
 
@@ -29,8 +30,19 @@ function ArtisanForm() {
   }, [step]);
 
   const [form, setForm] = useState({
-    first_name: "",
-    middle_name: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    phone: "",
+    gender: "",
+    maritalStatus: "",
+    sector: "",
+    tradeArea: "",
+    state: "",
+    lga: "",
+    street: "",
+    city: "",
+    hasDisability: false,
     email: "",
 
     education: {
@@ -76,10 +88,29 @@ function ArtisanForm() {
     }));
   };
 
+  const [show, setshow] = React.useState(false);
+  const [loading, setloading] = React.useState(false);
+
+  const submit = async () => {
+    setloading(true);
+    try {
+      await axios.post("http://localhost:3000/api/users", form);
+      setshow(true);
+    } catch (error) {
+      console.log("error", error);
+      toast.error(error?.response?.data?.message || "An error occured!", {
+        position: "top-right",
+      });
+    } finally {
+      setloading(false);
+    }
+  };
+
   const controlButtons = (
     <div className="flex w-full  justify-end">
       {step === 0 ? null : (
         <button
+          disabled={loading}
           onClick={goBack}
           className="h-[42px] px-[40px] text-[14px] rounded-[40px] btextg-[#00524d] ">
           Back
@@ -87,11 +118,12 @@ function ArtisanForm() {
       )}
       {step === 4 ? (
         form?.agree ? (
-          <RegisterSuccess>
-            <button className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
-              Submit
-            </button>
-          </RegisterSuccess>
+          <button
+            disabled={loading}
+            onClick={submit}
+            className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
+            {loading ? "Submitting..." : "Submit"}
+          </button>
         ) : null
       ) : (
         <button
@@ -105,6 +137,8 @@ function ArtisanForm() {
 
   return (
     <div>
+      <RegisterSuccess show={show} setshow={setshow} />
+
       <NavBar sticky={false} />
 
       <div className="">
