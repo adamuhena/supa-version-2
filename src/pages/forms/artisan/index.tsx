@@ -109,14 +109,13 @@ function ArtisanForm() {
 
       <div className="">
         <div>
-          <div className="sticky top-0 pt-[20px]   z-10 bg-white">
-            <h1 className="header text-[24px] font-[600]">
-              Artisan registration form
-            </h1>
-
+          <h1 className="header text-[24px] font-[600]">
+            Artisan registration form
+          </h1>
+          <div className="sticky top-0  z-10 bg-white border-b-[1px]">
             <Stepper
               activeStep={step}
-              className="border-b-[1px] border-b-gray-300 ">
+              className=" border-b-gray-300 scale-[0.8]">
               <Step index={0} label="Professional Information" />
               <Step index={1} label="Education" />
               <Step index={2} label="Prior Skill Certificates " />
