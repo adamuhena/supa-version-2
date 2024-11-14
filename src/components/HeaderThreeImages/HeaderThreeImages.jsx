@@ -1,12 +1,13 @@
 "use client";
 import React from "react";
 import styles from "./styles.module.css";
+import { BlurFade } from "../ui/blur-fade";
 
 function HeaderThreeImages({ image_1, image_2, image_3, hide = false }) {
   return (
     <div>
       <div className={styles.main}>
-        <div className={styles.main_left}>
+        <BlurFade delay={0.3} inView className={styles.main_left}>
           <img
             whileHover={{ scale: 0.9, rotate: 2 }}
             width={1000}
@@ -19,9 +20,9 @@ function HeaderThreeImages({ image_1, image_2, image_3, hide = false }) {
               opacity: hide ? 0 : 1,
             }}
           />
-        </div>
+        </BlurFade>
 
-        <div className={styles.main_middle}>
+        <BlurFade delay={0.3} inView className={styles.main_middle}>
           <img
             whileHover={{ scale: 0.9, rotate: 2 }}
             width={1000}
@@ -34,9 +35,9 @@ function HeaderThreeImages({ image_1, image_2, image_3, hide = false }) {
               opacity: hide ? 0 : 1,
             }}
           />
-        </div>
+        </BlurFade>
 
-        <div className={styles.main_right}>
+        <BlurFade delay={0.3} inView className={styles.main_right}>
           <img
             whileHover={{ scale: 0.9, rotate: 2 }}
             width={1000}
@@ -49,7 +50,7 @@ function HeaderThreeImages({ image_1, image_2, image_3, hide = false }) {
               opacity: hide ? 0 : 1,
             }}
           />
-        </div>
+        </BlurFade>
       </div>
     </div>
   );

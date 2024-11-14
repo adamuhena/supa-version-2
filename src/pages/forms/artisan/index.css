@@ -3,18 +3,17 @@
   gap: 100px;
   justify-content: center;
 }
-.form_stepper_control button {
+/* .form_stepper_control button {
   background-color: brown;
   color: beige;
-}
+} */
 /*Bio Data Form styling  */
 .ParentDiv {
   display: flex;
   text-align: left;
   margin: 0 auto;
-  border: 1px solid black;
-  padding: 20px;
-  width: 900px;
+  padding: 0 20px;
+  width: 100%;
   border-radius: 7px;
   gap: 40px;
 }
@@ -29,18 +28,18 @@
   padding: 10px;
 }
 label {
-  font-weight: 500;
-  font-family: "Poppins";
+  font-weight: 400 !important;
+  font-family: "Onest";
 }
- label {
+label {
   padding-right: 15px;
 }
-label span{
+label span {
   padding-left: 10px;
 }
-label a{
+label a {
   padding-right: 15px;
   text-decoration: underline;
-padding-left: 5px;
-color: #551A8B;
+  padding-left: 5px;
+  color: #551a8b;
 }

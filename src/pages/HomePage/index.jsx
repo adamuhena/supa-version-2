@@ -6,6 +6,8 @@ import HeaderTitle from "../../components/HeaderTitle/HeaderTitle";
 import NavBar from "../../components/layout/navbar";
 import Footer from "../../components/layout/footer";
 import { Link } from "react-router-dom";
+import { BlurFade } from "../../components/ui/blur-fade";
+import FAQs from "./FAQs";
 
 function HomePage() {
   return (
@@ -16,8 +18,7 @@ function HomePage() {
         style={{
           padding: "0 2rem",
           paddingTop: 50,
-        }}
-      >
+        }}>
         <HeaderTitle
           withSplitType
           title_font_size="56px"
@@ -30,14 +31,18 @@ function HomePage() {
         />
 
         <div className="flex gap-[20px] w-full justify-center items-center">
-          <Link to="/register">
-            <button className="h-[48px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
-              Register
+          <BlurFade delay={0.25} inView>
+            <Link to="/register">
+              <button className="h-[48px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
+                Register
+              </button>
+            </Link>
+          </BlurFade>
+          <BlurFade delay={0.25} inView>
+            <button className="h-[48px] px-[40px] text-[14px] rounded-[40px] bg-[#fff] border-[1px] text-yellow-600 border-yellow-600">
+              View Marketplace
             </button>
-          </Link>
-          <button className="h-[48px] px-[40px] text-[14px] rounded-[40px] bg-[#fff] border-[1px] text-yellow-600 border-yellow-600">
-            View Marketplace
-          </button>
+          </BlurFade>
         </div>
 
         <br />
@@ -48,23 +53,7 @@ function HomePage() {
           image_2={"/images/workers/2.jpg"}
           image_3={"/images/workers/4.jpg"}
         />
-        <br />
-        <br />
-        <br />
-        <br />
-
-        <div className="w-full py-[200px]">
-          <h1>TITLE TITLE</h1>
-          <div className=" row items-center justify-center flex gap-[20px] mt-[30px]">
-            <div className="w-[150px] h-[150px] rounded-full bg-gray-400" />
-            <div className="w-[150px] h-[150px] rounded-full bg-gray-400" />
-            <div className="w-[150px] h-[150px] rounded-full bg-gray-400" />
-          </div>
-        </div>
-        <br />
-        <br />
-        <br />
-        <br />
+        <FAQs />
         <HeaderTitle
           title_color="#16501c"
           title_top="RECENT PROGRAMMES"
@@ -95,8 +84,7 @@ function HomePage() {
 
         <Marquee
           className={"mb-[20px] relative overflow-x-hidden"}
-          direction="right"
-        >
+          direction="right">
           {[
             "/images/workers/1.jpg",
             "/images/workers/2.jpg",
