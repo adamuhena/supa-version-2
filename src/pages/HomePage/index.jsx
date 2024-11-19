@@ -8,18 +8,23 @@ import Footer from "../../components/layout/footer";
 import { Link } from "react-router-dom";
 import { BlurFade } from "../../components/ui/blur-fade";
 import FAQs from "./FAQs";
+import PageLayout from "../../components/layout/pageLayout";
+import Banner from "./Banner";
 
 function HomePage() {
   return (
     <>
-      <NavBar />
+      {/* <NavBar /> */}
+      <PageLayout>
 
-      <div
+      {/* <div
         style={{
           padding: "0 2rem",
           paddingTop: 50,
-        }}>
-        <HeaderTitle
+        }}> */}
+      <div>
+          <Banner/>
+        {/* <HeaderTitle
           withSplitType
           title_font_size="56px"
           title_top="Skill-Up Artisans (SUPA)"
@@ -43,19 +48,13 @@ function HomePage() {
               View Marketplace
             </button>
           </BlurFade>
-        </div>
+        </div> */}
 
         <br />
         <br />
         <br />
-        <HeaderThreeImages
-          image_1={"/images/workers/5.jpg"}
-          image_2={"/images/workers/2.jpg"}
-          image_3={"/images/workers/4.jpg"}
-        />
-        <FAQs />
         <HeaderTitle
-          title_color="#16501c"
+          title_color="#064A3B"
           title_top="RECENT PROGRAMMES"
           title_font_size="56px"
           description="Recent programmes reflecting our commitment to high-quality craftsmanship and exceptional results."
@@ -103,7 +102,14 @@ function HomePage() {
           })}
         </Marquee>
       </div>
-      <Footer />
+      {/* <HeaderThreeImages
+          image_1={"/images/workers/5.jpg"}
+          image_2={"/images/workers/2.jpg"}
+          image_3={"/images/workers/4.jpg"}
+        /> */}
+        <FAQs />
+      {/* <Footer /> */}
+      </PageLayout>
     </>
   );
 }

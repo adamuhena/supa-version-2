@@ -62,6 +62,7 @@ export default function Experience({ controlButtons, form, onchangeInput }) {
       }}
       className="relative w-full max-w-[700px] mx-auto py-[30px]   flex flex-col px-5 gap-[30px] bg-white rounded-[16px]">
       <h1 className="text-left font-[700]  text-[24px]">Experience</h1>
+      
 
       <div className="flex flex-col gap-y-[40px] ">
         {form?.experience.map((item) => {
@@ -148,12 +149,7 @@ export default function Experience({ controlButtons, form, onchangeInput }) {
               </div>
 
               <div className="flex items-start relative">
-                <Label
-                  htmlFor="email"
-                  className="w-[300px] text-left leading-[1.3]">
-                  Supporting Document *
-                </Label>
-                <UploadInput />
+               
                 {form?.experience?.length > 1 ? (
                   <button
                     onClick={() => remove(item?.id)}

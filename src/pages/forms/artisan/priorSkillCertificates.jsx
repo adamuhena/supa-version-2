@@ -68,7 +68,55 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
         {form?.priorSkillsCerts.map((item) => {
           return (
             <div key={item?.id} className="flex flex-col gap-y-[20px]">
+              <div className="flex flex-row justify-center">
+      <div className="inputGroup">
+            <Label>Sector</Label>
+            <Select
+              value={form?.sector}
+              onValueChange={(value) => onchangeInput("sector", value)}>
+              <SelectTrigger className="">
+                <SelectValue placeholder="Select a Sector" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="Building and Construction">
+                    Building and Construction
+                  </SelectItem>
+                  <SelectItem value="Welding">Welding</SelectItem>
+                  <SelectItem value="ICT">ICT</SelectItem>
+                  <SelectItem value="Power">Power</SelectItem>
+                  <SelectItem value="Animal Husbandry">
+                    Animal Husbandry
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="inputGroup">
+            <Label>Trade Area</Label>
+            <Select
+              value={form?.tradeArea}
+              onValueChange={(value) => onchangeInput("tradeArea", value)}>
+              <SelectTrigger className="">
+                <SelectValue placeholder="Select Trade Area" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="Trade Area 1">Trade Area 1</SelectItem>
+                  <SelectItem value="Trade Area 2">Trade Area 2</SelectItem>
+                  <SelectItem value="Trade Area 3">Trade Area 3</SelectItem>
+                  <SelectItem value="Trade Area 4">Trade Area 4</SelectItem>
+                  <SelectItem value="Trade Area 5">Trade Area 5</SelectItem>
+                  <SelectItem value="Trade Area 6">Trade Area 6</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+      </div>
               <div className="flex items-center ">
+                
                 <Label
                   htmlFor="email"
                   className="w-[300px] text-left leading-[1.3]">

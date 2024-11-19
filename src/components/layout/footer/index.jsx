@@ -2,9 +2,9 @@ import { footerLinks, socialLinks } from "./data";
 
 function Footer() {
   return (
-    <div className="widow-main bg-[#161616] pt-[100px] pb-[40px] px-[20px]">
-      <div className="widow-inner flex flex-col lg:flex-row items-start gap-[44px] lg:gap-[32px] flex-wrap">
-        <div className="flex flex-col items-left mx-auto lg:mx-0 max-w-[354px] gap-[32px]">
+    <div className="bg-slate-900 pt-[50px] pb-[40px] px-[20px]">
+  <div className="max-w-full lg:max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 justify-between">
+   <div className="flex flex-col items-left mx-auto lg:mx-0 max-w-[354px] gap-[32px]">
           <div className="p-[10px] bg-white w-fit rounded-[10px]">
             <img className="w-[100px]" src="/supaLogo.png" />
           </div>
@@ -72,7 +72,7 @@ function Footer() {
                       href={item?.path ? item?.path : "#"}
                       className={
                         item?.header
-                          ? "text-[#1b6f37] font-[500] text-[16px] leading-[24px] cursor-default"
+                          ? "text-[#047857] font-[500] text-[16px] leading-[24px] cursor-default"
                           : "text-[#ffffff] font-[400] text-[14px] leading-[22px flex items-center gap-3 hover:text-[#CDB972] cursor-pointer"
                       }>
                       {item?.leftIcon ? (
