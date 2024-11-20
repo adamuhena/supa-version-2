@@ -36,6 +36,7 @@ label {
 }
 label {
   padding-right: 15px;
+  color: #252323;
 }
 label span {
   padding-left: 10px;
@@ -44,5 +45,5 @@ label a {
   padding-right: 15px;
   text-decoration: underline;
   padding-left: 5px;
-  color: #551a8b;
+  color: #302f2f;
 }
