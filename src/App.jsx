@@ -8,6 +8,7 @@ import "./App.css";
 import About from "./pages/HomePage/About";
 import LoginForm from "./pages/loginPage/Login";
 import SignupForm from "./pages/loginPage/signUp";
+import TrainingCenterForm from "./pages/forms/registrationCenter/index";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             path="/register/registrationcenter"
             element={<RegistrationCenter />}
           />
+          <Route path="/register/trainingcenter" element={<TrainingCenterForm/>}/>
         </Routes>
       </Router>
     </>
