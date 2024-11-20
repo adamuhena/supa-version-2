@@ -1,12 +1,8 @@
 import React from "react";
 import Marquee from "react-fast-marquee";
-import HeaderThreeImages from "../../components/HeaderThreeImages/HeaderThreeImages";
+
 import HeaderTitle from "../../components/HeaderTitle/HeaderTitle";
 
-import NavBar from "../../components/layout/navbar";
-import Footer from "../../components/layout/footer";
-import { Link } from "react-router-dom";
-import { BlurFade } from "../../components/ui/blur-fade";
 import FAQs from "./FAQs";
 import PageLayout from "../../components/layout/pageLayout";
 import Banner from "./Banner";

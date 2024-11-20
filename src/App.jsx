@@ -7,6 +7,7 @@ import RegistrationCenter from "./pages/forms/registrationCenter";
 import "./App.css";
 import About from "./pages/HomePage/About";
 import LoginForm from "./pages/loginPage/Login";
+import SignupForm from "./pages/loginPage/signUp";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/login" element={<LoginForm/>}/>
           <Route path="/register" element={<Register />} />
           <Route path="/register/artisan" element={<ArtisanForm />} />
+          <Route path="/signUp" element={<SignupForm/>}/>
           <Route path="/register/intendingArtisan" element={<IntendingArtisanForm/>} />
           <Route
             path="/register/registrationcenter"

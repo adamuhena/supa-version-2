@@ -11,7 +11,7 @@ import Declaration from "./declaration";
 import "./index.css";
 import { DotPattern } from "../../../components/ui/dot-pattern";
 import { cn } from "../../../lib/utils";
-import RegisterSuccess from "../../../components/SuccessRegister";
+import RegisterSuccess from "../../../components/SuccessRegister/index";
 import axios from "axios";
 import { toast } from "sonner";
 import PageLayout from "../../../components/layout/pageLayout";

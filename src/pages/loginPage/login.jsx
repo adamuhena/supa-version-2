@@ -8,7 +8,6 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import PageLayout from "@/components/layout/PageLayout";
 
 
 export default function LoginForm() {
@@ -27,7 +26,7 @@ export default function LoginForm() {
     event.preventDefault();
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/login`, {
+      const response = await axios.post(`${API_BASE_URL}/login`, {
         identifier: email,
         password,
         loginAs
@@ -110,7 +109,7 @@ export default function LoginForm() {
   };
 
   return (
-    <PageLayout>
+    <>
 <section className="relative bg-slate-900 pt-40 pb-10 min-h-screen">
       
       {/* <div className="inline-block rounded-lg bg-muted pl-80 pr-5 py-5 text-5xl font-bold text-green-600">About SUPA</div> */}
@@ -121,14 +120,24 @@ export default function LoginForm() {
           <div className="flex flex-col md:flex-row">
             <div className="md:w-1/2">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+                <CardTitle className="text-2xl font-bold text-gray-600">Welcome Back</CardTitle>
                 <CardDescription>Please sign in to your account</CardDescription>
               </CardHeader>
               <CardContent>
                 <Tabs value={loginAs} onValueChange={handleRoleChange} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="user">Regular User</TabsTrigger>
-                    <TabsTrigger value="training_center">Training Center</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-2 bg-gray-50">
+                    <TabsTrigger 
+                      value="user" 
+                      className="data-[state=active]:bg-emerald-800 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
+                      >
+                        Regular User
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="training_center"
+                      className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
+                      >
+                        Training Center
+                    </TabsTrigger>
                   </TabsList>
                   <TabsContent value="user">
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -154,7 +163,7 @@ export default function LoginForm() {
                           </Button>
                         </div>
                       </div>
-                      <Button type="submit" className="w-full">Sign In</Button>
+                      <Button type="submit" className="w-full bg-emerald-800">Sign In</Button>
                     </form>
                   </TabsContent>
                   <TabsContent value="training_center">
@@ -181,7 +190,7 @@ export default function LoginForm() {
                           </Button>
                         </div>
                       </div>
-                      <Button type="submit" className="w-full">Sign In as Training Center</Button>
+                      <Button type="submit" className="w-full bg-blue-600">Sign In as Training Center</Button>
                     </form>
                   </TabsContent>
                 </Tabs>
@@ -222,6 +231,6 @@ export default function LoginForm() {
           </div>
         </Card>
       </div>
-    </PageLayout>
+      </>
   );
 }

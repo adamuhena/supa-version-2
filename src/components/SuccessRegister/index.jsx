@@ -5,13 +5,7 @@ import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 
 import { BlurFade } from "../ui/blur-fade";
 
-export default function RegisterSuccess({
-  show,
-  setshow,
-}: {
-  show?: boolean;
-  setshow?: any;
-}) {
+export default function RegisterSuccess({ show, setshow }) {
   const close = () => setshow?.(false);
 
   return (
@@ -31,7 +25,7 @@ export default function RegisterSuccess({
 
           <div>
             <BlurFade delay={0.05} inView>
-              <AlertDialogTitle className="text-[30px]  font-[600] font-onest settle-text-50 text-center text-settle-green">
+              <AlertDialogTitle className="text-[30px] font-[600] font-onest settle-text-50 text-center text-settle-green">
                 Registration Successful!
               </AlertDialogTitle>
             </BlurFade>
@@ -44,13 +38,11 @@ export default function RegisterSuccess({
             </p>
           </BlurFade>
 
-          <BlurFade
-            delay={0.1}
-            inView
-            className="flex w-full flex-col gap-[4px]">
+          <BlurFade delay={0.1} inView className="flex w-full flex-col gap-[4px]">
             <button
               onClick={() => (window.location = "/")}
-              className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
+              className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]"
+            >
               Proceed to dashboard
             </button>
           </BlurFade>

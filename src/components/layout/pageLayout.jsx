@@ -22,6 +22,7 @@ export default function PageLayout({ title, children, toggleDialog }) {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
+    
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
