@@ -46,11 +46,11 @@ const BankDetails = ({ form, setForm , controlButtons}) => {
           Account Number *
         </Label>
         <Input
-          type="number"
+          type="string"
           id="accountNumber"
           placeholder="Enter 10-digit account number"
           value={form?.bankAccount?.accountNumber}
-          onChange={(e) => onChangeBankInput("accountNumber", e.target?.value)}
+          onChange={(e) => updateField("accountNumber", e.target?.value)}
         />
       </div>
 
