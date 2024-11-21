@@ -169,7 +169,7 @@ export default function SignupForm() {
                 <TabsContent value="artisan_user">
                   <form onSubmit={handleSubmit} className="space-y-4">
                   <LabelInput name="nin" label="National ID" type="tel" pattern="\d{11}" value={formData.nin} onChange={handleChange}
-                      placeholder="Enter your 11-digit NIN"
+                      placeholder="12345678953"
                       required = {true} />
                     <LabelInput name="email" label="Email" type="email" value={formData.email} onChange={handleChange} 
                       placeholder="abc@email.com"/>
@@ -177,7 +177,7 @@ export default function SignupForm() {
                       placeholder="2347012345643"
                       required = {true} />
                     <PasswordFields formData={formData} onChange={handleChange} />
-                    <Button type="submit" className="w-full bg-emerald-600" disabled={loading}>
+                    <Button type="submit" className="w-full bg-emerald-800" disabled={loading}>
                       {loading ? 'Submitting...' : 'Sign Up'}
                     </Button>
                   </form>
@@ -187,7 +187,7 @@ export default function SignupForm() {
                 <TabsContent value="intending_artisan">
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <LabelInput name="nin" label="National ID" type="tel" pattern="\d{11}" value={formData.nin} onChange={handleChange}
-                      placeholder="Enter your 11-digit NIN"
+                      placeholder="12345678953"
                       required = {true} />
                     <LabelInput name="email" label="Email" type="email" value={formData.email} onChange={handleChange} 
                       placeholder="abc@email.com"/>
@@ -212,7 +212,7 @@ export default function SignupForm() {
                        </div>
                        <div className='flex-1'>
                          <LabelInput name="Reg Number" label="Reg Number" type="number" value={formData.regNum} onChange={handleChange} 
-                         placeholder="Enter your RC/BN Number"
+                         placeholder="RC-123456"
                          required = {true} 
                           />
                        </div>
@@ -232,9 +232,10 @@ export default function SignupForm() {
                   </form>
                 </TabsContent>
               </Tabs>
-              <div className="mt-4 text-center">
-                <Link to="/login" className="text-sm text-blue-600 hover:underline">
-                  Already have an account? Login
+              <div className="mt-4 text-center text-sm">
+              Already have an account?- 
+                <Link to="/login" className=" text-emerald-900 hover:underline">
+                   Login
                 </Link>
               </div>
             </CardContent>
@@ -267,6 +268,7 @@ const PasswordFields = ({ formData, onChange }) => (
       type="password"
       value={formData.password}
       onChange={onChange}
+      placeholder='************'
       required
       className="w-full"
     />
@@ -279,6 +281,7 @@ const PasswordFields = ({ formData, onChange }) => (
       type="password"
       value={formData.confirmPassword}
       onChange={onChange}
+      placeholder='************'
       required
       className="w-full"
     />

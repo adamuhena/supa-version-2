@@ -1,4 +1,95 @@
 
+// import React, { useState } from 'react';
+// import { useNavigate, Link } from 'react-router-dom';
+// import axios from 'axios';
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+// import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
+// import { Input } from "../../components/ui/input";
+// import { Label } from "../../components/ui/label";
+// import { Button } from "../../components/ui/button";
+// import { EyeIcon, EyeOffIcon } from 'lucide-react';
+// import PageLayout from '@/components/layout/pageLayout';
+
+// export default function LoginForm() {
+//   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+//   const [loginAs, setRole] = useState('user');
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [email, setEmail] = useState('');
+//   const [password, setPassword] = useState('');
+//   const navigate = useNavigate();
+
+//   const handleRoleChange = (newRole) => {
+//     setRole(newRole);
+//   };
+
+//   const handleSubmit = async (event) => {
+//     event.preventDefault();
+
+//     try {
+//       const response = await axios.post(`${API_BASE_URL}/login`, {
+//         identifier: email,
+//         password,
+//         loginAs,
+//       });
+
+//       const data = response.data;
+
+//       if (data.success) {
+//         const userData = data.data[loginAs === 'user' ? 'user' : 'training_center'];
+//         const userRole = userData?.role || 'training_center'; // Default to 'training_center' if userRole is undefined
+//         const isFirstTimeUser = userData?.agree !== true; // Check status for both users and training centers
+
+//         // Save user ID and other relevant data to localStorage
+//         localStorage.setItem('userId', userData._id); // Assuming userData contains the `id`
+//         localStorage.setItem('userRole', userRole);
+//         localStorage.setItem('isFirstTimeUser', JSON.stringify(isFirstTimeUser));
+
+//         console.log('User ID saved:', userData._id);
+
+//         // Redirect users based on role and first-time status
+//         if (loginAs === 'user') {
+//           if (isFirstTimeUser) {
+//             if (userRole === 'artisan_user') {
+//               navigate('/register/artisan');
+//             } else if (userRole === 'intending_artisan') {
+//               navigate('/register/intendingArtisan');
+//             } else {
+//               navigate('/kyc'); // Default KYC route
+//             }
+//           } else {
+//             switch (userRole) {
+//               case 'admin':
+//               case 'superadmin':
+//                 navigate('/admin-dashboard');
+//                 break;
+//               case 'artisan_user':
+//                 navigate('/artisan-dashboard');
+//                 break;
+//               case 'intending_artisan':
+//                 navigate('/intending-artisan-dashboard');
+//                 break;
+//               default:
+//                 navigate('/marketplace');
+//             }
+//           }
+//         } else if (loginAs === 'training_center') {
+//           if (isFirstTimeUser && 'training_center'.includes(userRole)) {
+//             navigate('/biodata');
+//           } else {
+//             navigate('/about');
+//           }
+//         }
+//       } else {
+//         alert('Login failed: ' + data.message);
+//       }
+//     } catch (error) {
+//       console.error('Error logging in:', error);
+//       alert('An error occurred. Please try again.');
+//     }
+//   };
+
+
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -8,9 +99,11 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import PageLayout from '@/components/layout/pageLayout';
 
 
 export default function LoginForm() {
+
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [loginAs, setRole] = useState('user');
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +115,7 @@ export default function LoginForm() {
     setRole(newRole);
   };
 
+          
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -47,6 +141,13 @@ export default function LoginForm() {
         // const trainingData = data.data.training_center.role;
         
         // const FirstTimeUser = data.data.trainingData?.status !== true;
+        
+        // Save user ID and other relevant data to localStorage
+        localStorage.setItem('userId', userData._id); // Assuming userData contains the `id`
+        localStorage.setItem('userRole', userRole);
+        localStorage.setItem('isFirstTimeUser', JSON.stringify(isFirstTimeUser));
+        
+        console.log('User ID saved:', userData._id);
         console.log('the user role is: ', userRole);
 
         // if (loginAs === 'user') {
@@ -108,8 +209,9 @@ export default function LoginForm() {
     }
   };
 
-  return (
+return (
     <>
+    <PageLayout>  
 <section className="relative bg-slate-900 pt-40 pb-10 min-h-screen">
       
       {/* <div className="inline-block rounded-lg bg-muted pl-80 pr-5 py-5 text-5xl font-bold text-green-600">About SUPA</div> */}
@@ -231,6 +333,7 @@ export default function LoginForm() {
           </div>
         </Card>
       </div>
+      </PageLayout>
       </>
   );
 }

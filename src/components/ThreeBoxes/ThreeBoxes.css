@@ -59,23 +59,23 @@
   background: #0b3802;
 }
 .content-1:hover a {
-  color: #c8aa15;
+  color: #0b3802;
   font-weight: 700;
 }
 .content-2:hover {
-  border-color: #0b3802;
-  background: #0b3802;
+  border-color: #DC2626;
+  background: #DC2626;
 }
 .content-2:hover a {
-  color: #c8aa15;
+  color: #DC2626;
   font-weight: 700;
 }
 .content-3:hover {
-  border-color: #0b3802;
-  background: #0b3802;
+  border-color: #2563EB;
+  background: #2563EB;
 }
 .content-3:hover a {
-  color: #c8aa15;
+  color: #2563EB;
   font-weight: 700;
 }
 .content h2 {

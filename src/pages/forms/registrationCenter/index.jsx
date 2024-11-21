@@ -9,6 +9,10 @@ import Declaration from "./Declaration";
 import RegisterSuccess from "../../../components/SuccessRegister";
 import { toast } from "sonner";
 import axios from "axios";
+import "./index.css";
+import { DotPattern } from "../../../components/ui/dot-pattern";
+import { cn } from "../../../lib/utils";
+
 
 const TrainingCenterForm = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -23,6 +27,7 @@ const TrainingCenterForm = () => {
     phoneNumber: "",
     nin: "",
     password: "",
+    agree: false,
     directors: [
       {
         id: `${new Date().getTime()}${Math.random()}`,
@@ -97,6 +102,39 @@ const TrainingCenterForm = () => {
     }
   };
 
+
+  const controlButtons = (
+    <div className="flex w-full justify-end">
+      {step > 0 && (
+        <button
+          disabled={loading}
+          onClick={goBack}
+          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-gray-300 text-[#00524d]"
+        >
+          Back
+        </button>
+      )}
+      {step === 5 ? (
+        form.agree && (
+          <button
+            disabled={loading}
+            onClick={submitForm}
+            className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </button>
+        )
+      ) : (
+        <button
+          onClick={goNext}
+          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
+        >
+          Next
+        </button>
+      )}
+    </div>
+  );
+
   return (
     <div>
       <RegisterSuccess show={show} setShow={setShow} />
@@ -152,7 +190,7 @@ const TrainingCenterForm = () => {
 
 
 
-      <div className="flex justify-between mt-4">
+      {/* <div className="flex justify-between mt-4">
         {step > 0 && (
           <button onClick={goBack} disabled={loading} className="btn-secondary">
             Back
@@ -167,7 +205,7 @@ const TrainingCenterForm = () => {
             {loading ? "Submitting..." : "Submit"}
           </button>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

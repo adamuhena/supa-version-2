@@ -33,8 +33,8 @@ function ThreeBoxes() {
                   <p>I am looking to learn new skill.</p>
                   <Link to="/signup" state={{ tab: 'intending_artisan' }}>Register</Link>
                 </div>
-                <div className="content content-3 h-[350px]">
-                  <div className="fab fa-youtube"></div>
+                <div className="content content-3 h-[350px] ">
+                  <div className="fab fa-youtube "></div>
                   <h2>Training Center</h2>
                   <p>I am a vocational skill training provider.</p>
                   <Link to="/signup" state={{ tab: 'training_center' }}>Register</Link>
