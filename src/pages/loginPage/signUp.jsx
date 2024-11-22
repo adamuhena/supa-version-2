@@ -56,13 +56,14 @@ export default function SignupForm() {
     const payload =
       signupAs === 'training_center'
         ? {
-            company_name: formData.companyName,
-            reg_Num: formData.regNum,
+          companyName: formData.companyName,
+          regNum: formData.regNum,
             email: formData.email,
             phoneNumber: formData.phoneNumber,
             password: formData.password,
             confirm_password: formData.confirmPassword,
             agree: false,
+            role: signupAs,
           }
         : {
             role: signupAs,
@@ -211,7 +212,7 @@ export default function SignupForm() {
                           required = {true} />
                        </div>
                        <div className='flex-1'>
-                         <LabelInput name="Reg Number" label="Reg Number" type="number" value={formData.regNum} onChange={handleChange} 
+                         <LabelInput name="regNum" label="Reg Number" type="text" value={formData.regNum} onChange={handleChange} 
                          placeholder="RC-123456"
                          required = {true} 
                           />

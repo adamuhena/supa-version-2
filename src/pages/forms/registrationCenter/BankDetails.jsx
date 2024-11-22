@@ -12,45 +12,44 @@ import {
 } from "@/components/ui/select";
 import "./index.css";
 
-const BankDetails = ({ form, setForm , controlButtons}) => {
-    const updateField = (field, value) => {
-      setForm((prev) => ({
-        ...prev,
-        bankAccount: { ...prev.bankAccount, [field]: value },
-      }));
-    };
-  
-    return (
-      <div 
-        style={{
-          boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
-          marginBottom: "100px",
-          background: "white",
-        }}
-        className="relative w-full max-w-[700px] mx-auto py-[30px] flex flex-col px-5 gap-[30px] bg-white rounded-[16px]">
-        <h1 className="text-left font-[700] text-[24px]">Bank Account Details</h1>
-        <div className="flex items-center ">
-          <Label htmlFor="accountName" className="w-[300px] text-left leading-[1.3]">
-            Account Name *
-          </Label>
-          <Input
-            type="text"
-            id="accountName"
-            placeholder="Account Name"
-            value={form.bankAccount.accountName}
-            onChange={(e) => updateField("accountName", e.target.value)}
-          />
-        </div>
-        <div className="flex items-center ">
+export default function BankDetails({
+  controlButtons,
+  form,
+  onChangeBankInput,
+}) {
+  return (
+    <div
+      style={{
+        boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+        marginBottom: "100px",
+        background: "white",
+      }}
+      className="relative w-full max-w-[700px] mx-auto py-[30px] flex flex-col px-5 gap-[30px] bg-white rounded-[16px]">
+      <h1 className="text-left font-[700] text-[24px]">Bank Account Details</h1>
+
+      <div className="flex items-center ">
+        <Label htmlFor="accountName" className="w-[300px] text-left leading-[1.3]">
+          Account Name *
+        </Label>
+        <Input
+          type="text"
+          id="accountName"
+          placeholder="Enter account name"
+          value={form?.bankAccount?.accountName}
+          onChange={(e) => onChangeBankInput("accountName", e.target?.value)}
+        />
+      </div>
+
+      <div className="flex items-center ">
         <Label htmlFor="accountNumber" className="w-[300px] text-left leading-[1.3]">
           Account Number *
         </Label>
         <Input
-          type="string"
+          type="number"
           id="accountNumber"
           placeholder="Enter 10-digit account number"
           value={form?.bankAccount?.accountNumber}
-          onChange={(e) => updateField("accountNumber", e.target?.value)}
+          onChange={(e) => onChangeBankInput("accountNumber", e.target?.value)}
         />
       </div>
 
@@ -60,7 +59,7 @@ const BankDetails = ({ form, setForm , controlButtons}) => {
         </Label>
         <Select
           value={form?.bankAccount?.bank}
-          onChange={(e) => updateField("bank", e.target.value)}>
+          onValueChange={(value) => onChangeBankInput("bank", value)}>
           <SelectTrigger className="">
             <SelectValue placeholder="Select your bank" />
           </SelectTrigger>
@@ -77,9 +76,6 @@ const BankDetails = ({ form, setForm , controlButtons}) => {
       </div>
 
       {controlButtons}
-      </div>
-    );
-  };
-  
-  export default BankDetails;
-  
+    </div>
+  );
+}

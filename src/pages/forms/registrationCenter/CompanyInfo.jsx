@@ -48,7 +48,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
       >
         <h1 className="text-left font-[700] text-[24px]">Company Information</h1>
 
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           <Label htmlFor="companyName" className="w-[300px] text-left leading-[1.3]">
             Company Name *
           </Label>
@@ -59,7 +59,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
               value={form.companyName}
               onChange={(e) => updateField("companyName", e.target.value)}
           />
-        </div>
+        </div> */}
 
         <div className="flex items-center">
           <Label htmlFor="nin" className="w-[300px] text-left leading-[1.3]">
@@ -72,7 +72,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
               onChange={(e) => updateField("nin", e.target.value)}
           />
         </div>
-
+{/* 
         <div className="flex items-center">
           <Label htmlFor="regNum" className="w-[300px] text-left leading-[1.3]">
             Reg Number *
@@ -84,7 +84,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
               value={form.regNum}
               onChange={(e) => updateField("regNum", e.target.value)}
           />
-        </div>
+        </div> */}
 
         <div className="flex items-center">
           <Label htmlFor="sector" className="w-[300px] text-left leading-[1.3]">

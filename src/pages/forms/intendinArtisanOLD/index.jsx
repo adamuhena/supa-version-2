@@ -1,31 +1,29 @@
-
 // import React, { useEffect, useState } from "react";
 
 // import { Stepper, Step } from "react-form-stepper";
 // import ProfessionalInformation from "./professionalInformation";
 // import Education from "./education";
 // import PriorSkill from "./priorSkillCertificates";
-// import Experience from "./experience";
-// import BankDetails from "./bankDetails";
 // import Declaration from "./declaration";
+// import BankDetails from "./bankDetails";
 // import "./index.css";
 // import { DotPattern } from "../../../components/ui/dot-pattern";
 // import { cn } from "../../../lib/utils";
-// import RegisterSuccess from "../../../components/SuccessRegister/index";
+// import RegisterSuccess from "../../../components/SuccessRegister";
 // import axios from "axios";
 // import { toast } from "sonner";
 // import PageLayout from "../../../components/layout/pageLayout";
 
-// const ArtisanForm = () => {
+// const IntendingArtisanForm = () => {
 //   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 //   const [step, setStep] = useState(0);
 //   const [form, setForm] = useState({
 //     firstName: "",
 //     middleName: "",
 //     lastName: "",
-//     phone: "",
-//     nin: "", // Updated for NIN
-//     password: "",
+//     //phone: "",
+//     //nin: "", // Updated for NIN
+//     //password: "",
 //     gender: "",
 //     maritalStatus: "",
 //     stateOfOrigin: "",
@@ -35,7 +33,7 @@
 //     street: "",
 //     hasDisability: false,
 //     disabilityType: "", // New field for type of disability
-//     email: "",
+//     //email: "",
 //     education: {
 //       school: "",
 //       highestQualification: "",
@@ -67,7 +65,7 @@
 //       accountNumber: "",
 //       bank: "",
 //     },
-//     userType: "artisan_user", // Default user type
+//     role: "intending_artisan", // Default user type
 //     certifiedStatus: false, // New field for certified status
 //     licenseStatus: false, // New field for license status
 //     agree: false, // New field for user account status
@@ -128,7 +126,7 @@
 //           Back
 //         </button>
 //       )}
-//       {step === 5 ? (
+//       {step === 4 ? (
 //         form.agree && (
 //           <button
 //             disabled={loading}
@@ -149,32 +147,110 @@
 //     </div>
 //   );
 
+//   return (
+//     <div>
+//       <RegisterSuccess show={show} setShow={setShow} />
+//       <PageLayout>
+//         <div className="">
+//           <div>
+//             <div className="sticky top-0 pt-16 pb-0 z-10 bg-slate-900 border-b-[1px]">
+//               <h1 className="header  text-xl text-emerald-600 ]">
+//                 Intending Artisan KYC
+//               </h1>
+//               <Stepper
+//                 activeStep={step}
+//                 className="border-b-gray-300 scale-[0.8] "
+//               >
+//                 <Step index={0} label={
+//                   <span className="text-sm font-semibold text-white">  Personal Information </span>} />
+//                 <Step index={1} label={
+//                   <span className="text-sm font-semibold text-white "> Education </span>} />
+//                 <Step index={2} label={
+//                   <span className="text-sm font-semibold text-white "> Intending Skill </span>} />
+//                   <Step index={3} label={
+//                   <span className="text-sm font-semibold text-white "> Bank Details </span>} />
+//                 <Step index={4} label={
+//                   <span className="text-sm font-semibold text-white "> Declaration </span>} />
 
+//               </Stepper>
+//             </div>
+//             <div>
+//               <div className="relative py-[30px]">
+//                 <DotPattern
+//                   width={20}
+//                   height={20}
+//                   cx={1}
+//                   cy={1}
+//                   cr={1}
+//                   className={cn("fill-neutral-400/40 ")}
+//                 />
+//                 {step === 0 && (
+//                   <ProfessionalInformation
+//                     controlButtons={controlButtons}
+//                     form={form}
+//                     onchangeInput={onchangeInput}
+//                   />
+//                 )}
+//                 {step === 1 && (
+//                   <Education
+//                     controlButtons={controlButtons}
+//                     form={form}
+//                     onchangeEducationInput={onchangeEducationInput}
+//                   />
+//                 )}
+//                 {step === 2 && (
+//                   <PriorSkill
+//                     controlButtons={controlButtons}
+//                     form={form}
+//                     onchangeInput={onchangeInput}
+//                   />
+//                 )}
+//                 {step === 3 && (
+//                   <BankDetails
+//                     form={form}
+//                     onchangeInput={onchangeInput}
+//                     controlButtons={controlButtons}
+//                   />
+//                 )}
+//                 {step === 4 && (
+//                   <Declaration
+//                     form={form}
+//                     onchangeInput={onchangeInput}
+//                     controlButtons={controlButtons}
+//                   />
+//                 )}
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </PageLayout>
+//     </div>
+//   );
+// };
+
+// export default IntendingArtisanForm;
 
 
 import React, { useEffect, useState } from "react";
-
 import { Stepper, Step } from "react-form-stepper";
 import ProfessionalInformation from "./professionalInformation";
 import Education from "./education";
 import PriorSkill from "./priorSkillCertificates";
-import Experience from "./experience";
-import BankDetails from "./bankDetails";
 import Declaration from "./declaration";
+import BankDetails from "./bankDetails";
 import "./index.css";
 import { DotPattern } from "../../../components/ui/dot-pattern";
 import { cn } from "../../../lib/utils";
-import RegisterSuccess from "../../../components/SuccessRegister/index";
+import RegisterSuccess from "../../../components/SuccessRegister";
 import axios from "axios";
 import { toast } from "sonner";
 import PageLayout from "../../../components/layout/pageLayout";
-import ProtectedRoute from "@/components/ProtectedRoute";
 
-const ArtisanForm = () => {
+const IntendingArtisanForm = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   // Retrieve userID from local storage
-  const userID = localStorage.getItem("userId"); // Replace 'userID' with your storage key if different
+  const userID = localStorage.getItem("userID"); // Replace 'userID' with your storage key if different
 
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
@@ -255,17 +331,6 @@ const ArtisanForm = () => {
     }));
   };
 
-
-  const onChangeBankInput = (id, value) => {
-    setForm((prevForm) => ({
-      ...prevForm,
-      bankAccount: {
-        ...prevForm.bankAccount,
-        [id]: value,
-      },
-    }));
-  };
-
   const submit = async () => {
     // Ensure userID exists
     if (!userID) {
@@ -291,6 +356,7 @@ const ArtisanForm = () => {
         _id: userID, // Include userID in the payload
       };
 
+      console.log("userID",userID)
       // POST request to submit KYC
       const response = await axios.post(`${API_BASE_URL}/kyc/${userID}`, payload);
 
@@ -313,6 +379,18 @@ const ArtisanForm = () => {
       setLoading(false); // Re-enable button
     }
   };
+
+
+  const onChangeBankInput = (id, value) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      bankAccount: {
+        ...prevForm.bankAccount,
+        [id]: value,
+      },
+    }));
+  };
+
 
   const controlButtons = (
     <div className="flex w-full justify-end">
@@ -348,30 +426,58 @@ const ArtisanForm = () => {
 
   return (
     <div>
-      <ProtectedRoute>
       <RegisterSuccess show={show} setShow={setShow} />
       <PageLayout>
         <div className="">
           <div>
             <div className="sticky top-0 pt-16 pb-0 z-10 bg-slate-900 border-b-[1px]">
-              <h2 className="header  text-xs pr-96 text-gray-100/65 text-slate-100 ]">
-                
-              </h2>
+              <h1 className="header text-xl text-emerald-600">
+                Intending Artisan KYC
+              </h1>
               <Stepper
                 activeStep={step}
-                className="border-b-gray-300 scale-[0.8] "
+                className="border-b-gray-300 scale-[0.8]"
               >
-                <Step index={0} label={
-                  <span className="text-sm font-semibold text-white">  Personal Information </span>} />
-                <Step index={1} label={
-                  <span className="text-sm font-semibold text-white "> Education </span>} />
-                <Step index={2} label={
-                  <span className="text-sm font-semibold text-white "> Prior Skill Certificates </span>} />
-
-                <Step index={3} label={
-                  <span className="text-sm font-semibold text-white "> Bank Details </span>} />
-                <Step index={4} label={
-                  <span className="text-sm font-semibold text-white "> Declaration </span>} />
+                <Step
+                  index={0}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Personal Information
+                    </span>
+                  }
+                />
+                <Step
+                  index={1}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Education
+                    </span>
+                  }
+                />
+                <Step
+                  index={2}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Intending Skill
+                    </span>
+                  }
+                />
+                <Step
+                  index={3}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Bank Details
+                    </span>
+                  }
+                />
+                <Step
+                  index={4}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Declaration
+                    </span>
+                  }
+                />
               </Stepper>
             </div>
             <div>
@@ -382,7 +488,7 @@ const ArtisanForm = () => {
                   cx={1}
                   cy={1}
                   cr={1}
-                  className={cn("fill-neutral-400/40 ")}
+                  className={cn("fill-neutral-400/40")}
                 />
                 {step === 0 && (
                   <ProfessionalInformation
@@ -405,12 +511,11 @@ const ArtisanForm = () => {
                     onchangeInput={onchangeInput}
                   />
                 )}
-
                 {step === 3 && (
                   <BankDetails
-                    form={form}
-                    onChangeBankInput={onChangeBankInput}
+                    onchangeInput={onchangeInput}
                     controlButtons={controlButtons}
+                    onChangeBankInput={onChangeBankInput}
                   />
                 )}
                 {step === 4 && (
@@ -425,10 +530,8 @@ const ArtisanForm = () => {
           </div>
         </div>
       </PageLayout>
-      </ProtectedRoute>           
     </div>
   );
 };
 
-
-export default ArtisanForm;
+export default IntendingArtisanForm;

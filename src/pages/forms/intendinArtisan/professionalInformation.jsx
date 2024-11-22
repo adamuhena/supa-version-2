@@ -24,21 +24,36 @@ export default function ProfessionalInformaiton({
   form,
   onchangeInput,
 }) {
-  const selectedStateLGAS =
+  const selectedStateLGASOrigin =
     states.find(
       (state) =>
         replaceSymbolsWithSpace(`${state?.value}`) ===
-        replaceSymbolsWithSpace(`${form?.state}`)
+        replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
     )?.lgas || [];
 
-  const selectedStateLGASFormatted =
-    selectedStateLGAS && selectedStateLGAS?.length
-      ? selectedStateLGAS.map((x) => ({
+  const selectedStateLGASOriginFormatted =
+    selectedStateLGASOrigin && selectedStateLGASOrigin?.length
+      ? selectedStateLGASOrigin.map((x) => ({
         label: x,
         value: x,
       }))
       : [];
 
+      const selectedStateLGASResidence =
+      states.find(
+        (state) =>
+          replaceSymbolsWithSpace(`${state?.value}`) ===
+          replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+      )?.lgas || [];
+  
+    const selectedStateLGASResidenceFormatted =
+      selectedStateLGASResidence && selectedStateLGASResidence?.length
+        ? selectedStateLGASResidence.map((x) => ({
+          label: x,
+          value: x,
+        }))
+        : [];
+ 
   const [hasDisability, setHasDisability] = useState(""); // Track radio button value
   const [selectedDisability, setSelectedDisability] = useState(""); // Track selected disability
 
@@ -90,15 +105,15 @@ export default function ProfessionalInformaiton({
             />
           </div>
 
-          <div className="inputGroup">
+          {/* <div className="inputGroup">
             <Label>Email</Label>
             <Input
               placeholder=""
               value={form?.email}
               onChange={(e) => onchangeInput("email", e.target?.value)}
             />
-          </div>
-          <div className="inputGroup">
+          </div> */}
+          {/* <div className="inputGroup">
             <Label>Phone Number</Label>
             <Input
               placeholder=""
@@ -113,7 +128,7 @@ export default function ProfessionalInformaiton({
               value={form?.nin}
               onChange={(e) => onchangeInput("nin", e.target?.value)}
             />
-          </div>
+          </div> */}
           <div className="inputGroup">
             <Label>Gender</Label>
             <Select
@@ -161,7 +176,7 @@ export default function ProfessionalInformaiton({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {selectedStateLGASFormatted.map((item) => {
+                  {selectedStateLGASOriginFormatted.map((item) => {
                     return (
                       <SelectItem value={item?.value}>{item?.label}</SelectItem>
                     );
@@ -174,8 +189,8 @@ export default function ProfessionalInformaiton({
           <div className="inputGroup">
             <Label>State Of Residence</Label>
             <Select
-              value={form?.state}
-              onValueChange={(value) => onchangeInput("stateOfOrigin", value)}>
+              value={form?.stateOfResidence}
+              onValueChange={(value) => onchangeInput("stateOfResidence", value)}>
               <SelectTrigger className="">
                 <SelectValue placeholder="" />
               </SelectTrigger>
@@ -194,14 +209,14 @@ export default function ProfessionalInformaiton({
           <div className="inputGroup">
             <Label>LGA Of Residence</Label>
             <Select
-              value={form?.lga}
-              onValueChange={(value) => onchangeInput("lga", value)}>
+              value={form?.lgaOfResidence}
+              onValueChange={(value) => onchangeInput("lgaOfResidence", value)}>
               <SelectTrigger className="">
                 <SelectValue placeholder="Select LGA" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {selectedStateLGASFormatted.map((item) => {
+                  {selectedStateLGASResidenceFormatted.map((item) => {
                     return (
                       <SelectItem value={item?.value}>{item?.label}</SelectItem>
                     );

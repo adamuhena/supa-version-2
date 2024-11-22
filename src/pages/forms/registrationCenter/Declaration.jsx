@@ -6,49 +6,49 @@ import { Label } from "../../../components/ui/label";
 import "./index.css";
 import { TrashIcon } from "@radix-ui/react-icons";
 
-export default function Declaration({ controlButtons, form, setForm }) {
-    const [passwordError, setPasswordError] = useState("");
-    const [profileImage, setProfileImage] = useState(null);
+export default function Declaration({ controlButtons, form, onchangeInput }) {
+  const [passwordError, setPasswordError] = useState("");
+  const [profileImage, setProfileImage] = useState(null);
 
-    // Password confirmation validation
-    const validatePasswords = (password, confirmPassword) => {
-        if (password && confirmPassword && password !== confirmPassword) {
-            setPasswordError("Passwords do not match.");
-        } else {
-            setPasswordError("");
-        }
-    };
+  // Password confirmation validation
+  const validatePasswords = (password, confirmPassword) => {
+    if (password && confirmPassword && password !== confirmPassword) {
+      setPasswordError("Passwords do not match.");
+    } else {
+      setPasswordError("");
+    }
+  };
 
-    // Handle profile image upload
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => setProfileImage(reader.result);
-            reader.readAsDataURL(file);
-            setForm("profileImage", file);
-        }
-    };
+  // Handle profile image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setProfileImage(reader.result);
+      reader.readAsDataURL(file);
+      onchangeInput("profileImage", file);
+    }
+  };
 
-    // Delete profile image
-    const handleDeleteImage = () => {
-        setProfileImage(null);
-        setForm("profileImage", null);
-    };
+  // Delete profile image
+  const handleDeleteImage = () => {
+    setProfileImage(null);
+    onchangeInput("profileImage", null);
+  };
 
-    return (
-        <div
-            style={{
-                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
-                marginBottom: "100px",
-                background: "white",
-            }}
-            className="relative w-full max-w-[700px] mx-auto py-[30px] flex flex-col px-5 gap-[30px] bg-white rounded-[16px]"
-        >
-            <h1 className="text-left font-[700] text-[24px]">Declaration</h1>
+  return (
+    <div
+      style={{
+        boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+        marginBottom: "100px",
+        background: "white",
+      }}
+      className="relative w-full max-w-[700px] mx-auto py-[30px] flex flex-col px-5 gap-[30px] bg-white rounded-[16px]"
+    >
+      <h1 className="text-left font-[700] text-[24px]">Declaration</h1>
 
-            {/* Password and Confirm Password */}
-            {/* <div className="flex flex-col gap-4">
+      {/* Password and Confirm Password */}
+      {/* <div className="flex flex-col gap-4">
         <div className="flex items-start">
           <Label htmlFor="password" className="w-[300px] text-left leading-[1.3]">
             Password *
@@ -59,7 +59,7 @@ export default function Declaration({ controlButtons, form, setForm }) {
             required
             value={form?.password || ""}
             onChange={(e) => {
-              setForm("password", e.target.value);
+              onchangeInput("password", e.target.value);
               validatePasswords(e.target.value, form?.confirmPassword);
             }}
             placeholder="Enter your password"
@@ -79,7 +79,7 @@ export default function Declaration({ controlButtons, form, setForm }) {
             required
             value={form?.confirmPassword || ""}
             onChange={(e) => {
-              setForm("confirmPassword", e.target.value);
+              onchangeInput("confirmPassword", e.target.value);
               validatePasswords(form?.password, e.target.value);
             }}
             placeholder="Re-enter your password"
@@ -91,13 +91,13 @@ export default function Declaration({ controlButtons, form, setForm }) {
         )}
       </div> */}
 
-            {/* Profile Image Upload */}
-            {/* <div className="flex items-start gap-4">
+      {/* Profile Image Upload */}
+      {/* <div className="flex items-start gap-4">
         <Label htmlFor="profileImage" className="w-[300px] text-left leading-[1.3]">
           Profile Image *
         </Label>
         <div className="flex flex-col items-center">
-
+          
           {profileImage ? (
             <div className="relative w-24 h-24">
               <img
@@ -129,30 +129,30 @@ export default function Declaration({ controlButtons, form, setForm }) {
         </div>
       </div> */}
 
-            {/* Accept Terms and Conditions */}
-            <div className="flex">
-                <label>
-                    <input
-                        type="checkbox"
-                        name="terms"
-                        required
-                        className="size-[20px] cursor-pointer"
-                        checked={form?.agree}
-                        onClick={() => setForm("agree", !form.agree)}
-                    />
-                </label>
+      {/* Accept Terms and Conditions */}
+      <div className="flex">
+        <label>
+          <input
+            type="checkbox"
+            name="terms"
+            required
+            className="size-[20px] cursor-pointer"
+            checked={form?.agree}
+            onClick={() => onchangeInput("agree", !form.agree)}
+          />
+        </label>
 
-                <p
-                    className="cursor-pointer"
-                    onClick={() => setForm("agree", !form.agree)}
-                >
-                    Please note that signing up constitutes acceptance of our Terms of
-                    Service and Privacy Policy. You must be at least 18 years old to
-                    register and must provide truthful information.
-                </p>
-            </div>
+        <p
+          className="cursor-pointer"
+          onClick={() => onchangeInput("agree", !form.agree)}
+        >
+          Please note that signing up constitutes acceptance of our Terms of
+          Service and Privacy Policy. You must be at least 18 years old to
+          register and must provide truthful information.
+        </p>
+      </div>
 
-            {controlButtons}
-        </div>
-    );
+      {controlButtons}
+    </div>
+  );
 }

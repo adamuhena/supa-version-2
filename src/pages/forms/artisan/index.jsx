@@ -168,6 +168,7 @@ import RegisterSuccess from "../../../components/SuccessRegister/index";
 import axios from "axios";
 import { toast } from "sonner";
 import PageLayout from "../../../components/layout/pageLayout";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const ArtisanForm = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -254,6 +255,17 @@ const ArtisanForm = () => {
     }));
   };
 
+
+  const onChangeBankInput = (id, value) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      bankAccount: {
+        ...prevForm.bankAccount,
+        [id]: value,
+      },
+    }));
+  };
+
   const submit = async () => {
     // Ensure userID exists
     if (!userID) {
@@ -280,7 +292,7 @@ const ArtisanForm = () => {
       };
 
       // POST request to submit KYC
-      const response = await axios.post(`${API_BASE_URL}/api/kyc/${userID}`, payload);
+      const response = await axios.post(`${API_BASE_URL}/kyc/${userID}`, payload);
 
       // Success: Display success message
       toast.success("KYC submitted successfully!", {
@@ -336,6 +348,8 @@ const ArtisanForm = () => {
 
   return (
     <div>
+      <ProtectedRoute>
+        
       <RegisterSuccess show={show} setShow={setShow} />
       <PageLayout>
         <div className="">
@@ -403,7 +417,7 @@ const ArtisanForm = () => {
                 {step === 4 && (
                   <BankDetails
                     form={form}
-                    onchangeInput={onchangeInput}
+                    onChangeBankInput={onChangeBankInput}
                     controlButtons={controlButtons}
                   />
                 )}
@@ -419,8 +433,10 @@ const ArtisanForm = () => {
           </div>
         </div>
       </PageLayout>
+      </ProtectedRoute>           
     </div>
   );
 };
+
 
 export default ArtisanForm;

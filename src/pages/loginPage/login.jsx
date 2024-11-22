@@ -1,95 +1,4 @@
 
-// import React, { useState } from 'react';
-// import { useNavigate, Link } from 'react-router-dom';
-// import axios from 'axios';
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-// import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
-// import { Input } from "../../components/ui/input";
-// import { Label } from "../../components/ui/label";
-// import { Button } from "../../components/ui/button";
-// import { EyeIcon, EyeOffIcon } from 'lucide-react';
-// import PageLayout from '@/components/layout/pageLayout';
-
-// export default function LoginForm() {
-//   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-//   const [loginAs, setRole] = useState('user');
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const navigate = useNavigate();
-
-//   const handleRoleChange = (newRole) => {
-//     setRole(newRole);
-//   };
-
-//   const handleSubmit = async (event) => {
-//     event.preventDefault();
-
-//     try {
-//       const response = await axios.post(`${API_BASE_URL}/login`, {
-//         identifier: email,
-//         password,
-//         loginAs,
-//       });
-
-//       const data = response.data;
-
-//       if (data.success) {
-//         const userData = data.data[loginAs === 'user' ? 'user' : 'training_center'];
-//         const userRole = userData?.role || 'training_center'; // Default to 'training_center' if userRole is undefined
-//         const isFirstTimeUser = userData?.agree !== true; // Check status for both users and training centers
-
-//         // Save user ID and other relevant data to localStorage
-//         localStorage.setItem('userId', userData._id); // Assuming userData contains the `id`
-//         localStorage.setItem('userRole', userRole);
-//         localStorage.setItem('isFirstTimeUser', JSON.stringify(isFirstTimeUser));
-
-//         console.log('User ID saved:', userData._id);
-
-//         // Redirect users based on role and first-time status
-//         if (loginAs === 'user') {
-//           if (isFirstTimeUser) {
-//             if (userRole === 'artisan_user') {
-//               navigate('/register/artisan');
-//             } else if (userRole === 'intending_artisan') {
-//               navigate('/register/intendingArtisan');
-//             } else {
-//               navigate('/kyc'); // Default KYC route
-//             }
-//           } else {
-//             switch (userRole) {
-//               case 'admin':
-//               case 'superadmin':
-//                 navigate('/admin-dashboard');
-//                 break;
-//               case 'artisan_user':
-//                 navigate('/artisan-dashboard');
-//                 break;
-//               case 'intending_artisan':
-//                 navigate('/intending-artisan-dashboard');
-//                 break;
-//               default:
-//                 navigate('/marketplace');
-//             }
-//           }
-//         } else if (loginAs === 'training_center') {
-//           if (isFirstTimeUser && 'training_center'.includes(userRole)) {
-//             navigate('/biodata');
-//           } else {
-//             navigate('/about');
-//           }
-//         }
-//       } else {
-//         alert('Login failed: ' + data.message);
-//       }
-//     } catch (error) {
-//       console.error('Error logging in:', error);
-//       alert('An error occurred. Please try again.');
-//     }
-//   };
-
-
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -100,6 +9,7 @@ import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import PageLayout from '@/components/layout/pageLayout';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 
 export default function LoginForm() {
@@ -126,28 +36,30 @@ export default function LoginForm() {
         loginAs
       });
 
-      const data = response.data;
+      const {success, data} = response.data;
 
-      if (data.success) {
-        const userData = data.data[loginAs === 'user' ? 'user' : 'training_center'];
+      const accessToken =response.data?.data?.accessToken?.accessToken;
+      const refreshToken =response.data?.data?.accessToken?.refreshToken;
+      console.log("accessToken",accessToken);
+      console.log("refreshToken",refreshToken);
+
+
+      if (success) {
+        const userData = data[loginAs === 'user' ? 'user' : 'training_center'];
       const userRole = userData?.role || 'training_center'; // Default to 'training_center' if userRole is undefined
       const isFirstTimeUser = userData?.agree !== true; // Check status for both users and training centers
+      const {  _id } = userData || {};
 
-        // const userData = data.data[loginAs === 'user' ? 'user' : 'training_center'];
-        // const userRole = userData.role;
-        // const isFirstTimeUser = data.data.user?.status !== true;
-        
-        // const userRole = data.data.user.role;
-        // const trainingData = data.data.training_center.role;
-        
-        // const FirstTimeUser = data.data.trainingData?.status !== true;
-        
-        // Save user ID and other relevant data to localStorage
-        localStorage.setItem('userId', userData._id); // Assuming userData contains the `id`
+
+        localStorage.setItem('userId', _id);
         localStorage.setItem('userRole', userRole);
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('isFirstTimeUser', JSON.stringify(isFirstTimeUser));
         
-        console.log('User ID saved:', userData._id);
+
+        
+        console.log('User ID saved:', userData?._id);
         console.log('the user role is: ', userRole);
 
         // if (loginAs === 'user') {
@@ -171,35 +83,46 @@ export default function LoginForm() {
               navigate('/register/artisan');
             } else if (userRole === 'intending_artisan') {
               navigate('/register/intendingArtisan');
-            } else {
-              navigate('/kyc'); // Default KYC route for other user types
+            } else if (userRole === 'super_admin') {
+              navigate('/admin/dashboard'); // Default KYC route for other user types
             }
-          } else {
-            // Navigation for non-first-time users
-            switch (userRole) {
-              case 'admin':
-              case 'superadmin':
-                navigate('/admin-dashboard');
-                break;
-              case 'artisan_user':
-                navigate('/artisan-dashboard');
-                break;
-              case 'intending_artisan':
-                navigate('/intending-artisan-dashboard');
-                break;
-              default:
-                navigate('/marketplace');
-            }
+          
+          } else if (userRole === 'superadmin'){
+            navigate('/admin/dashboard');
+          }else if (userRole === 'artisan_user'){
+            navigate('/artisan/dashboard');
+          }else if (userRole === 'intending_artisan'){
+            navigate('/intendingArtisan/dashboard');
           }
+            // Navigation for non-first-time users
+
+            // switch (userRole) {
+            //   case 'admin':
+            //     navigate('/admin/dashboard');
+            //   break;
+            //   case 'superadmin':
+            //     navigate('/admin/dashboard');
+            //     break;
+            //   case 'artisan_user':
+            //     navigate('/artisan/dashboard');
+            //     break;
+            //   case 'intending_artisan':
+            //     navigate('/intendingArtisan/dashboard');
+            //     break;
+            //   default:
+            //     navigate('/marketplace');
+            // }
+          
         } else if (loginAs === 'training_center') {
           if (isFirstTimeUser && 'training_center'.includes(userRole)) {
-            navigate('/biodata');
+            navigate('/register/trainingcenter');
           } else {
             navigate(userRole === '/about');
           }
           console.log(userRole);
         }
       } else {
+        navigate('/login')
         alert('Login failed: ' + data.message);
       }
     } catch (error) {
@@ -209,8 +132,82 @@ export default function LoginForm() {
     }
   };
 
+
+
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  
+  //   try {
+  //     const response = await axios.post(`${API_BASE_URL}/login`, {
+  //       identifier: email,
+  //       password,
+  //       loginAs
+  //     });
+  
+  //     const { success, data } = response.data;
+  
+  //     if (success) {
+  //       const userData = data[loginAs === 'user' ? 'user' : 'training_center'];
+  //       const userRole = userData?.role || 'training_center';
+  //       const isFirstTimeUser = userData?.agree !== true; // Check if first-time user
+  //       const { accessToken, refreshToken } = userData?.accessToken || {};
+  //       const { _id } = userData || {};
+  
+  //       // Save relevant data to localStorage
+  //       localStorage.setItem('userId', _id);
+  //       localStorage.setItem('userRole', userRole);
+  //       localStorage.setItem('accessToken', accessToken);
+  //       localStorage.setItem('refreshToken', refreshToken);
+  //       localStorage.setItem('isFirstTimeUser', JSON.stringify(isFirstTimeUser));
+  
+  //       console.log('User ID:', _id);
+  //       console.log('User Role:', userRole);
+  
+  //       // Navigate based on role and first-time status
+  //       if (loginAs === 'user') {
+  //         if (isFirstTimeUser) {
+  //           navigate(
+  //             userRole === 'artisan_user'
+  //               ? '/register/artisan'
+  //               : userRole === 'intending_artisan'
+  //               ? '/register/intendingArtisan'
+  //               : '/kyc'
+  //           );
+  //         } else {
+  //           switch (userRole) {
+  //             case 'admin':
+  //             case 'superadmin':
+  //               navigate('/admin/dashboard');
+  //               break;
+  //             case 'artisan_user':
+  //               navigate('/artisan/dashboard');
+  //               break;
+  //             case 'intending_artisan':
+  //               navigate('/intendingArtisan/dashboard');
+  //               break;
+  //             default:
+  //               navigate('/marketplace');
+  //           }
+  //         }
+  //       } else if (loginAs === 'training_center') {
+  //         if (isFirstTimeUser) {
+  //           navigate('/trainingcenter/dashboard');
+  //         } else {
+  //           navigate('/about'); // Adjust based on training center requirements
+  //         }
+  //       }
+  //     } else {
+  //       alert('Login failed: ' + response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error logging in:', error);
+  //     alert('An error occurred. Please try again.');
+  //   }
+  // };
+  
 return (
     <>
+   
     <PageLayout>  
 <section className="relative bg-slate-900 pt-40 pb-10 min-h-screen">
       
@@ -308,7 +305,7 @@ return (
                 <div className="flex h-full items-center justify-center bg-green-100 p-6">
                   <div className="text-center">
                     <h2 className="mb-2 text-2xl font-bold text-green-800">Regular User</h2>
-                    <p className="text-green-600">Access your personal learning dashboard and track your progress.</p>
+                    <p className="text-green-600">Access your personal dashboard and track your progress.</p>
                     <img
                       src="/hairdresser copy.jpeg?height=200&width=200"
                       alt="User learning illustration"
@@ -320,7 +317,7 @@ return (
                 <div className="flex h-full items-center justify-center bg-blue-100 p-6">
                   <div className="text-center">
                     <h2 className="mb-2 text-2xl font-bold text-blue-800">Training Center</h2>
-                    <p className="text-blue-600">Manage your courses, students, and training programs efficiently.</p>
+                    <p className="text-blue-600">Manage your Artisan and training programs efficiently.</p>
                     <img
                       src="/plumber copy.jpeg?height=200&width=200"
                       alt="Training center illustration"

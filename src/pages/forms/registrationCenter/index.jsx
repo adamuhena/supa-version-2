@@ -12,6 +12,7 @@ import axios from "axios";
 import "./index.css";
 import { DotPattern } from "../../../components/ui/dot-pattern";
 import { cn } from "../../../lib/utils";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const TrainingCenterForm = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -64,6 +65,17 @@ const TrainingCenterForm = () => {
     },
   });
 
+  const onChangeBankInput = (id, value) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      bankAccount: {
+        ...prevForm.bankAccount,
+        [id]: value,
+      },
+    }));
+  };
+
+
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -80,18 +92,37 @@ const TrainingCenterForm = () => {
   const goBack = () => setStep((prev) => prev - 1);
 
   const validateStep = () => {
-    if (step === 0 && !form.companyName) {
-      toast.error("Company name is required.");
-      return false;
-    }
+    // if (step === 0 && !form.companyName) {
+    //   toast.error("Company name is required.");
+    //   return false;
+    // }
     // Add further validations for other steps as needed
     return true;
   };
 
+  const onchangeInput = (id, value) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      [id]: value,
+    }));
+  };
+  const userID = localStorage.getItem("userId"); // Replace 'userID' with your storage key if different
+console.log("userID",userID)
+
   const submitForm = async () => {
+
+     // Ensure userID exists
+     if (!userID) {
+      toast.error("User ID is missing. Please log in again.", {
+        position: "top-right",
+      });
+      return;
+    }
+
+
     setLoading(true);
     try {
-      await axios.post(`${API_BASE_URL}/api/training-center`, form);
+      await axios.post(`${API_BASE_URL}/training-center/${userID}`, form);
       toast.success("Training Center Registered Successfully!");
       setShow(true); // Show success modal or message
     } catch (error) {
@@ -136,6 +167,7 @@ const TrainingCenterForm = () => {
 
   return (
       <div>
+        <ProtectedRoute>
         <RegisterSuccess show={show} setShow={setShow} />
         <div className="container">
           <div>
@@ -167,13 +199,18 @@ const TrainingCenterForm = () => {
                 {step === 0 && <CompanyInfo form={form} setForm={setForm} controlButtons={controlButtons} />}
                 {step === 1 && <Directors form={form} setForm={setForm} controlButtons={controlButtons} />}
                 {step === 2 && <Instructors form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 3 && <BankDetails form={form} setForm={setForm} controlButtons={controlButtons} />}
+                {step === 3 && <BankDetails form={form} setForm={setForm} controlButtons={controlButtons} 
+                    onChangeBankInput={onChangeBankInput}
+                    />}
                 {step === 4 && <VerificationDocuments form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 5 && <Declaration form={form} setForm={setForm}  controlButtons={controlButtons} />}
+                {step === 5 && <Declaration   form={form}
+                    onchangeInput={onchangeInput}
+                    controlButtons={controlButtons} />}
               </div>
             </div>
           </div>
         </div>
+        </ProtectedRoute>
       </div>
   );
 };
