@@ -11,7 +11,7 @@ import useLogout from '@/pages/loginPage/logout'
 import axios from 'axios'
 
 
-const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
+const AdminDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
   const logout = useLogout();
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -55,10 +55,10 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
 
 
   return (
-    <ProtectedRoute href='/artisan/dashboard'>
+    <ProtectedRoute href='/admin/dashboard'>
 
     
-    <DashboardPage  title="Artisan Dashboard">
+    <DashboardPage  title="Admin Dashboard">
     <div className="container mx-auto p-6">
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold"> Dashboard  </h1>
@@ -178,4 +178,4 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
   )
 }
 
-export default ArtisanDashboard
+export default AdminDashboard

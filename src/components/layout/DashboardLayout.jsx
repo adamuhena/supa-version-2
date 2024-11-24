@@ -1,7 +1,6 @@
-"use client";
-
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { cn } from "../../lib/utils";
 import {
   BadgeCheck,
   Bell,
@@ -23,7 +22,9 @@ import {
   Share,
   Sparkles,
   SquareTerminal,
+  Star,
   Trash2,
+  UserCircle,
 } from "lucide-react";
 
 import {
@@ -76,61 +77,10 @@ import {
 import logo3 from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom"; // To handle log out
 import axios from "axios"; // Make sure axios is installed or replace with your preferred HTTP client
-
-const data = {
-  user: {
-    name: "Alex Johnson",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "User Management",
-      url: "/admin/usermanagement",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        { title: "Add New User", url: "/admin/usermanagement" },
-        { title: "View User", url: "#" },
-      ],
-    },
-    
-    {
-      title: "Company Placement",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        { title: "Introduction", url: "#" },
-        { title: "Get Started", url: "#" },
-        { title: "Tutorials", url: "#" },
-        { title: "Changelog", url: "#" },
-      ],
-    },
-    {
-      title: "Report",
-      url: "#",
-      icon: Settings2,
-      items: [
-        { title: "General", url: "#" },
-        { title: "Team", url: "#" },
-        { title: "Billing", url: "#" },
-        { title: "Limits", url: "#" },
-      ],
-    },
-  ],
-  navSecondary: [
-    { title: "Feedback", url: "#", icon: Send },
-  ],
-  projects: [
-    { name: "Artisans", url: "#", icon: Frame },
-    { name: "Intending Artisans", url: "#", icon: PieChart },
-    { name: "Training Center", url: "#", icon: PieChart },
-  ],
-};
+import { DotPattern } from "../ui/dot-pattern";
 
 
-
-export default function DashboardPage({ title, children }) {
+export default function DashboardPage({ href, title, children }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const [userData, setUserData] = useState(null); // Holds the user data
@@ -180,7 +130,7 @@ export default function DashboardPage({ title, children }) {
     return allowedRoles.includes(userData.role);
   };
 
-  
+
 
   return (
     <SidebarProvider>
@@ -189,7 +139,14 @@ export default function DashboardPage({ title, children }) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild>
-                <Link href="#">
+                <Link
+                  to="/login"
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevent default link behavior to allow `navigate` to take control
+                    navigate("/login");
+                  }}
+                  className="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-100 transition"
+                >
                   <div className="flex aspect-square bg-white size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                     <img src={logo3} alt="Logo 1" className="size-8" />
                   </div>
@@ -206,12 +163,11 @@ export default function DashboardPage({ title, children }) {
 
         <SidebarContent>
 
-        {data.navMain.map((item) =>
-                isLinkAccessible(item.allowedRoles || ["admin","super_admin",]) ? ( // Set default roles or use `allowedRoles` property in data
-          <SidebarGroup>
-            
-            <SidebarGroupLabel>User Setup</SidebarGroupLabel>
-            <SidebarMenu>
+          {isLinkAccessible(["admin", "super_admin", "artisan_user"]) ? ( // Set default roles or use `allowedRoles` property in data
+            <SidebarGroup>
+
+              <SidebarGroupLabel>User Setup</SidebarGroupLabel>
+              {/* <SidebarMenu>
                   <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild tooltip={item.title}>
@@ -232,7 +188,7 @@ export default function DashboardPage({ title, children }) {
                             <SidebarMenuSub>
                               {item.items
                                 .filter((subItem) =>
-                                  isLinkAccessible(subItem.allowedRoles || ["admin","super_admin", "artisan_user" ,"intending_artisan"])
+                                  isLinkAccessible(subItem.allowedRoles || ["admin", "super_admin", "artisan_user", "intending_artisan"])
                                 )
                                 .map((subItem) => (
                                   <SidebarMenuSubItem key={subItem.title}>
@@ -249,81 +205,167 @@ export default function DashboardPage({ title, children }) {
                       ) : null}
                     </SidebarMenuItem>
                   </Collapsible>
-                
-            </SidebarMenu>
-         
-          </SidebarGroup>
-           ) : null
+
+                </SidebarMenu> */}
+
+              <SidebarMenu>
+                <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                    <Link to="/admin/dashboard">
+                      <SquareTerminal />
+                      <span>Dashboard</span>
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild>
+                    <Link to="/admin/usermanagement">
+                      <SquareTerminal />
+                      <span>User Management</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link to="/company/placement">
+                      <BookOpen />
+                      <span>Artisan Placement</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link to="/company/placement">
+                      <BookOpen />
+                      <span>Intending Artisan Placement</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link to="/reports">
+                      <Settings2 />
+                      <span>Reports</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+
+            </SidebarGroup>
+          ) : (null
           )}
 
-          <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel>Other Users</SidebarGroupLabel>
-            <SidebarMenu>
-              {data.projects
-                .filter((project) =>
-                  isLinkAccessible(project.allowedRoles || ["admin","super_admin", "artisan_user" ,"intending_artisan"])
-                )
-                .map((item) => (
-                  <SidebarMenuItem key={item.name}>
+          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
+            (
+              <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+                <SidebarGroupLabel>Artisans</SidebarGroupLabel><SidebarMenu>
+                  <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.name}</span>
-                      </Link>
-                      
-                      </SidebarMenuButton>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <SidebarMenuAction showOnHover>
-                        <MoreHorizontal />
-                        <span className="sr-only">More</span>
-                      </SidebarMenuAction>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-48" side="bottom" align="end">
-                      <DropdownMenuItem>
-                        <Folder className="text-muted-foreground" />
-                        <span>View Project</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Share className="text-muted-foreground" />
-                        <span>Share Project</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <Trash2 className="text-muted-foreground" />
-                        <span>Delete Project</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  </SidebarMenuItem>
-                ))}
-            </SidebarMenu>
-          </SidebarGroup>
-
-          <SidebarGroup className="mt-auto">
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {data.navSecondary.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild size="sm">
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
+                      <Link to="/artisan/dashboard">
+                        <Frame />
+                        <span>Dashboard</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/certification/upload">
+                        <Star />
+                        <span>Certification</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroup>
+            ) : (null
+
+          )}
+
+          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
+            (
+              <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+                <SidebarGroupLabel>Intending Artisans</SidebarGroupLabel><SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/artisan/dashboard">
+                        <Frame />
+                        <span>Dashboard</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/certification/upload">
+                        <Star />
+                        <span>Certification</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroup>
+            ) : (null
+
+          )}
+
+          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
+            (
+              <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+                <SidebarGroupLabel>Training Center</SidebarGroupLabel><SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/artisan/dashboard">
+                        <Frame />
+                        <span>Dashboard</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/certification/upload">
+                        <Star />
+                        <span>Students Assigned</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroup>
+            ) : (null
+
+          )}
+
+          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
+            (
+              <SidebarGroup className="mt-auto">
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild size="sm">
+                        <Link to="/feedback">
+                          <Send />
+                          <span>Feedback</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild size="sm">
+                        <Link to="/help-center">
+                          <LifeBuoy />
+                          <span>Help Center</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    {/* Add more static menu items here */}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            ) : (null
+            )}
         </SidebarContent>
 
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent">
+                <DropdownMenuTrigger asChild className="bg-red-600 ">
+                  <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent  bg-green-50 rounded-lg">
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage src={userData.profileImage} alt={userData.firstName} />
                       <AvatarFallback>{userData.firstName}</AvatarFallback>
@@ -335,7 +377,7 @@ export default function DashboardPage({ title, children }) {
                     <ChevronsUpDown className="ml-auto size-4" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg">
+                <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] bg-green-50 min-w-56 rounded-lg">
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                       <Avatar className="h-8 w-8 rounded-lg">
@@ -350,27 +392,23 @@ export default function DashboardPage({ title, children }) {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Sparkles />
-                  Upgrade to Pro
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <BadgeCheck />
-                  Account
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <CreditCard />
-                  Billing
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Bell />
-                  Notifications
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
+                    <DropdownMenuItem variant="outline" onClick={() => navigate("/biodata")}>
+                      <UserCircle />
+                      Account
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem>
+                      <CreditCard />
+                      Billing
+                    </DropdownMenuItem>
+                    <DropdownMenuItem variant="outline" onClick={() => navigate("#")}>
+                      <Bell />
+                      Notifications
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut />
                     Log out
@@ -390,17 +428,26 @@ export default function DashboardPage({ title, children }) {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">{title}</BreadcrumbLink>
+                  <BreadcrumbLink href={href}>Dashboard</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbPage>{title}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          <DotPattern
+            width={20}
+            height={20}
+            cx={1}
+            cy={1}
+            cr={1}
+            className={cn("fill-neutral-200/40 ")}
+          />
+
           {children}
         </div>
       </SidebarInset>

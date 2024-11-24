@@ -11,28 +11,33 @@ import TrainingCenterForm from "./pages/forms/registrationCenter/index";
 import PrivateRoute from "./components/ProtectedRoute"; // Import PrivateRoute component
 import "./App.css";
 import ArtisanDashboard from "./pages/dashboard/artisan/ArtisanDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import UserManagement from "./pages/dashboard/artisan/userManagement";
+import BiodataPage from "./pages/dashboard/BiodataPage";
+import DocumentUpload from "./pages/dashboard/DocumentUpload";
+import Biodata from "./pages/dashboard/BiodataPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import TrainingCenterDashboard from "./pages/TrainingCenterDashboard";
+// import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* test */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/training-center" element={<TrainingCenterDashboard />} />
+
+
         {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
+        {/* <Route path="/biodata2" element={<BiodataPage />} /> */}
+        <Route path="/biodata" element={<Biodata />} />
+        <Route path="/certification/upload" element={<DocumentUpload/>}/>
 
-        {/* <Route path="/login" element={<LoginForm />} /> */}
-        {/* Login */}
-      {/* <Route
-        path="/login"
-        element={
-          <ProtectedRoute>
-            <LoginForm />
-          </ProtectedRoute>
-        }
-      /> */}
+
+       
       {/* Public route for login */}
       <Route
           path="/login"
@@ -45,34 +50,15 @@ function App() {
 
         <Route path="/signUp" element={<SignupForm />} />
         <Route path="/register" element={<Register />} />
-        {/* <Route
-          path="/register/artisan"
-          element={
-            <ArtisanForm/>
-         
-          }
-        />
-        <Route
-          path="/register/intendingArtisan"
-          element={
-              <IntendingArtisanForm/>
-          }
-        />
-        <Route
-          path="/register/registrationcenter"
-        
-              element={<RegistrationCenter/>}
-              
-            />
-          
-        <Route
-          path="/register/trainingcenter"
-         
-              element={<TrainingCenterForm/>}
-             
-          
-        /> */}
+       
         {/* Protected Routes */}
+        {/* <Route
+          path="/admin/dashboard"
+          element={
+            <AdminDashboard/>
+          }
+          allowedRoles={["artisan_user", "admin", "superadmin"]}
+        /> */}
         <Route
           path="/register/artisan"
           element={
