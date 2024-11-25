@@ -12,12 +12,14 @@ import PrivateRoute from "./components/ProtectedRoute"; // Import PrivateRoute c
 import "./App.css";
 import ArtisanDashboard from "./pages/dashboard/artisan/ArtisanDashboard";
 import PublicRoute from "./components/PublicRoute";
-import UserManagement from "./pages/dashboard/artisan/userManagement";
 import BiodataPage from "./pages/dashboard/BiodataPage";
 import DocumentUpload from "./pages/dashboard/DocumentUpload";
 import Biodata from "./pages/dashboard/BiodataPage";
-import AdminDashboard from "./pages/AdminDashboard";
-import TrainingCenterDashboard from "./pages/TrainingCenterDashboard";
+import TrainingCenterDashboard from "./pages/dashboard/trainingCenter/TrainingStatus";
+import TrainigCenterGroup from "./pages/dashboard/Admin/TrainingCenterGroups";
+import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
+import AdminTrainingStatus from "./pages/dashboard/Admin/AdminTrainingStatus";
+import UserManagement from "./pages/dashboard/Admin/userManagement";
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 
 function App() {
@@ -25,7 +27,6 @@ function App() {
     <Router>
       <Routes>
         {/* test */}
-        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/training-center" element={<TrainingCenterDashboard />} />
 
 
@@ -52,13 +53,27 @@ function App() {
         <Route path="/register" element={<Register />} />
        
         {/* Protected Routes */}
-        {/* <Route
+        <Route
           path="/admin/dashboard"
           element={
             <AdminDashboard/>
           }
           allowedRoles={["artisan_user", "admin", "superadmin"]}
-        /> */}
+        />
+        <Route
+          path="/admin/training-groups"
+          element={
+            <TrainigCenterGroup/>
+          }
+          allowedRoles={["artisan_user", "admin", "superadmin"]}
+        />
+        <Route
+          path="/admin/training-status"
+          element={
+            <AdminTrainingStatus/>
+          }
+          allowedRoles={["artisan_user", "admin", "superadmin"]}
+        />
         <Route
           path="/register/artisan"
           element={

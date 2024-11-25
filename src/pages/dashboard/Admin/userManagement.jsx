@@ -83,11 +83,56 @@ const UserManagement = () => {
           </header>
 
           <div className="mt-6">
-            <Card className="border-2 border-red-400 p-4 rounded-lg shadow-md">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Training Groups</h2>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIN</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone Number</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {users.map((user) => (
+                      <tr key={user.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.firstName}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.lastName}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.role}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.nin}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.email}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"> {user.phoneNumber}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          <div className="flex space-x-2">
+                          
+                              <Edit className="h-4 w-4" onClick={() => handleEdit(user.id)} />
+                           
+                            
+                              <Trash2 variant="destructive" onClick={() => handleDelete(user.id)} color='#FF0000' className="h-4 w-4 " /> 
+                          </div>
+                        </td>
+
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+
+
+            {/* <Card className="border-2 border-red-400 p-4 rounded-lg shadow-md">
               <CardHeader>
                 <CardTitle>User List</CardTitle>
               </CardHeader>
               <CardContent>
+
+
                 <table className="w-auto border-collapse border border-gray-200">
                   <thead>
                     <tr className="bg-gray-100">
@@ -124,7 +169,7 @@ const UserManagement = () => {
                   </tbody>
                 </table>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </DashboardPage>

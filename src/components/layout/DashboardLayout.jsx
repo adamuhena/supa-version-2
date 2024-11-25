@@ -233,9 +233,15 @@ export default function DashboardPage({ href, title, children }) {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link to="/company/placement">
+                    <Link to="/admin/training-groups">
                       <BookOpen />
                       <span>Intending Artisan Placement</span>
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild>
+                    <Link to="/admin/training-status">
+                      <BookOpen />
+                      <span>Training Managment</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
