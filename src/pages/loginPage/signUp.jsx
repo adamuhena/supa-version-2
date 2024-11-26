@@ -20,7 +20,7 @@ export default function SignupForm() {
     phoneNumber: '',
     password: '',
     confirmPassword: '',
-    companyName: '', // Only for training_center
+    trainingCentreName: '', // Only for training_center
     regNum: '',
   });
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ export default function SignupForm() {
       phoneNumber: '',
       password: '',
       confirmPassword: '',
-      companyName: '',
+      trainingCentreName: '',
       regNum: '',
     });
   };
@@ -56,7 +56,7 @@ export default function SignupForm() {
     const payload =
       signupAs === 'training_center'
         ? {
-          companyName: formData.companyName,
+          trainingCentreName: formData.trainingCentreName,
           regNum: formData.regNum,
             email: formData.email,
             phoneNumber: formData.phoneNumber,
@@ -207,7 +207,7 @@ export default function SignupForm() {
                   <form onSubmit={handleSubmit} className="space-y-4">
                   <div className='flex flex-row  gap-8 '>
                        <div className='flex-1'>
-                         <LabelInput name="companyName" label="Company Name" value={formData.companyName} onChange={handleChange} 
+                         <LabelInput name="trainingCentreName" label="Company Name" value={formData.trainingCentreName} onChange={handleChange} 
                          placeholder="Company Name here"
                           required = {true} />
                        </div>
