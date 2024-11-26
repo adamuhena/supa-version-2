@@ -193,7 +193,7 @@ const fetchTrainingCenters = async () => {
             {trainingCenters.length > 0 ? (
               trainingCenters.map((center) => (
                 <option key={center._id} value={center._id}>
-                  {center.name}
+                  {center.trainingCentreName}
                 </option>
               ))
             ) : (

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Stepper, Step } from "react-form-stepper";
 import CompanyInfo from "./companyInfo";
+import Directors from "./Directors";
 import Instructors from "./Instructors";
+import BankDetails from "./BankDetails";
 import VerificationDocuments from "./VerificationDocuments";
 import Declaration from "./Declaration";
 import RegisterSuccess from "../../../components/SuccessRegister";
@@ -10,10 +12,7 @@ import axios from "axios";
 import "./index.css";
 import { DotPattern } from "../../../components/ui/dot-pattern";
 import { cn } from "../../../lib/utils";
-import LegalInfo from "./LegalInfo.jsx";
-import TrainingAmenities from "./Amenities";
-import BankDetails from "./bankDetails";
-// import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const TrainingCenterForm = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -138,44 +137,28 @@ const TrainingCenterForm = () => {
   const userID = localStorage.getItem("userId"); // Replace 'userID' with your storage key if different
 console.log("userID",userID)
 
-const submitForm = async () => {
-  // Ensure userID exists
-  if (!userID) {
-    toast.error("User ID is missing. Please log in again.", {
-      position: "top-right",
-    });
-    return;
-  }
+  const submitForm = async () => {
 
-  // Get the token from localStorage
-  const token = localStorage.getItem("accessToken"); // Replace 'accessToken' with the actual key if different
-  if (!token) {
-    toast.error("Authorization token is missing. Please log in again.", {
-      position: "top-right",
-    });
-    return;
-  }
+     // Ensure userID exists
+     if (!userID) {
+      toast.error("User ID is missing. Please log in again.", {
+        position: "top-right",
+      });
+      return;
+    }
 
-  setLoading(true);
-  try {
-    await axios.put(
-      `${API_BASE_URL}/training-center/${userID}`,
-      form,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, // Attach the bearer token
-        },
-      }
-    );
-    toast.success("Training Center Registered Successfully!");
-    setShow(true); // Show success modal or message
-  } catch (error) {
-    toast.error(error?.response?.data?.message || "Submission failed!");
-  } finally {
-    setLoading(false);
-  }
-};
 
+    setLoading(true);
+    try {
+      await axios.post(`${API_BASE_URL}/training-center/${userID}`, form);
+      toast.success("Training Center Registered Successfully!");
+      setShow(true); // Show success modal or message
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Submission failed!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const controlButtons = (
       <div className="flex w-full justify-end">
@@ -210,10 +193,9 @@ const submitForm = async () => {
       </div>
   );
 
-
   return (
       <div>
-        {/*<ProtectedRoute>*/}
+        <ProtectedRoute>
         <RegisterSuccess show={show} setShow={setShow} />
         <div className="container">
           <div>
@@ -223,11 +205,10 @@ const submitForm = async () => {
               </h1>
               <Stepper activeStep={step} className="border-b-gray-300 scale-[0.8]">
                 <Step index={0} label={<span className="text-sm font-semibold text-white">Company Information</span>} />
-                <Step index={1} label={<span className="text-sm font-semibold text-white">Training Center Amenities</span>} />
-                <Step index={2} label={<span className="text-sm font-semibold text-white">Training Centre Assessment</span>} />
-                <Step index={3} label={<span className="text-sm font-semibold text-white">Legal and Trade Information
-</span>} />
-                <Step index={4} label={<span className="text-sm font-semibold text-white">Bank Details</span>} />
+                <Step index={1} label={<span className="text-sm font-semibold text-white">Directors</span>} />
+                <Step index={2} label={<span className="text-sm font-semibold text-white">Instructors</span>} />
+                <Step index={3} label={<span className="text-sm font-semibold text-white">Bank Details</span>} />
+                <Step index={4} label={<span className="text-sm font-semibold text-white">Verification Documents</span>} />
                 <Step index={5} label={<span className="text-sm font-semibold text-white">Declaration</span>} />
               </Stepper>
             </div>
@@ -244,14 +225,12 @@ const submitForm = async () => {
                 />
 
                 {step === 0 && <CompanyInfo form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 1 && <TrainingAmenities form={form} setForm={setForm} controlButtons={controlButtons} />}
+                {step === 1 && <Directors form={form} setForm={setForm} controlButtons={controlButtons} />}
                 {step === 2 && <Instructors form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 3 && <LegalInfo form={form} setForm={setForm} controlButtons={controlButtons}
+                {step === 3 && <BankDetails form={form} setForm={setForm} controlButtons={controlButtons} 
                     onChangeBankInput={onChangeBankInput}
                     />}
-                {step === 4 && <BankDetails form={form} setForm={setForm} controlButtons={controlButtons}
-                                          onChangeBankInput={onChangeBankInput}
-                />}
+                {step === 4 && <VerificationDocuments form={form} setForm={setForm} controlButtons={controlButtons} />}
                 {step === 5 && <Declaration   form={form}
                     onchangeInput={onchangeInput}
                     controlButtons={controlButtons} />}
@@ -259,10 +238,9 @@ const submitForm = async () => {
             </div>
           </div>
         </div>
-        {/*</ProtectedRoute>*/}
+        </ProtectedRoute>
       </div>
   );
 };
 
 export default TrainingCenterForm;
-

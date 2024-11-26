@@ -17,7 +17,6 @@ export default function BankDetails({
   form,
   onChangeBankInput,
 }) {
-  
   return (
     <div
       style={{

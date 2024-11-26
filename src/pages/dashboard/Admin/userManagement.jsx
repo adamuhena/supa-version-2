@@ -111,8 +111,6 @@ const UserManagement = () => {
                           <div className="flex space-x-2">
                           
                               <Edit className="h-4 w-4" onClick={() => handleEdit(user.id)} />
-                           
-                            
                               <Trash2 variant="destructive" onClick={() => handleDelete(user.id)} color='#FF0000' className="h-4 w-4 " /> 
                           </div>
                         </td>

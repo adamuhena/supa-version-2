@@ -20,6 +20,7 @@ import TrainigCenterGroup from "./pages/dashboard/Admin/TrainingCenterGroups";
 import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 import AdminTrainingStatus from "./pages/dashboard/Admin/AdminTrainingStatus";
 import UserManagement from "./pages/dashboard/Admin/userManagement";
+import IntendingArtisanDashboard from "./pages/dashboard/intendingArtisan/IntendingArtisanDashboard";
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 
 function App() {
@@ -37,7 +38,7 @@ function App() {
         <Route path="/biodata" element={<Biodata />} />
         <Route path="/certification/upload" element={<DocumentUpload/>}/>
 
-
+        
        
       {/* Public route for login */}
       <Route
@@ -57,6 +58,13 @@ function App() {
           path="/admin/dashboard"
           element={
             <AdminDashboard/>
+          }
+          allowedRoles={["artisan_user", "admin", "superadmin"]}
+        />
+        <Route
+          path="/intending-artisan/dashboard"
+          element={
+            <IntendingArtisanDashboard/>
           }
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />

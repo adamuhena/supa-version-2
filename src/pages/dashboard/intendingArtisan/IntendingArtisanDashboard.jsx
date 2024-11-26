@@ -9,12 +9,10 @@ import DashboardPage from '@/components/layout/DashboardLayout'
 import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from '@/pages/loginPage/logout'
 import axios from 'axios'
-import UserGroupDetails from '../userGroupDetail'
 
 
-const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
+const IntendingArtisanDashboard = ({ artisan = {  rating: 4.5 } }) => {
   const logout = useLogout();
-
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const [userData, setUserData] = useState(null); // Holds the user data
@@ -56,10 +54,10 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
 
 
   return (
-    <ProtectedRoute href='/artisan/dashboard'>
+    <ProtectedRoute href='/intending-artisan/dashboard'>
 
     
-    <DashboardPage  title="Artisan Dashboard">
+    <DashboardPage  href='/intending-artisan/dashboard' title="Intending Artisan Dashboard">
     <div className="container mx-auto p-6">
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold"> Dashboard  </h1>
@@ -147,7 +145,27 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
             <CardTitle> Assigned Up-Skilling Center</CardTitle>
           </CardHeader>
           <CardContent>
-              <UserGroupDetails/>
+            <ul className="space-y-4">
+              <li className="flex items-center justify-between">
+                <div className="flex items-center gap-10">
+                  <Briefcase className="h-5 w-5 mr-2" />
+                  <div className='px-10'>
+                    <p className="font-medium">{userData.stateOfResidence}</p>
+                  </div>
+                  <div className='px-10'>
+                  <p className="text-sm text-muted-foreground">{userData.lgaOfResidence} </p>
+                  </div>
+                  <div className='px-10'>
+                  <p className="text-sm text-muted-foreground">{userData.priorSkillsCerts[0]?.year} </p>
+                  </div>
+                  <div className='px-10'>
+                    <p className="font-medium">{userData.street}</p>
+                  </div>
+                </div>
+                <Badge variant='success' className='bg-green-400 text-white'>Completed</Badge>
+              </li>
+              
+            </ul>
           </CardContent>
         </Card>
       </div>
@@ -159,4 +177,4 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
   )
 }
 
-export default ArtisanDashboard
+export default IntendingArtisanDashboard
