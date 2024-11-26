@@ -9,7 +9,6 @@ import DashboardPage from '@/components/layout/DashboardLayout'
 import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from '@/pages/loginPage/logout'
 import axios from 'axios'
-import UserGroupDetails from '../userGroupDetail'
 
 
 const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
@@ -147,7 +146,27 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
             <CardTitle> Assigned Up-Skilling Center</CardTitle>
           </CardHeader>
           <CardContent>
-              <UserGroupDetails/>
+            <ul className="space-y-4">
+              <li className="flex items-center justify-between">
+                <div className="flex items-center gap-10">
+                  <Briefcase className="h-5 w-5 mr-2" />
+                  <div className='px-10'>
+                    <p className="font-medium">{userData.stateOfResidence}</p>
+                  </div>
+                  <div className='px-10'>
+                  <p className="text-sm text-muted-foreground">{userData.lgaOfResidence} </p>
+                  </div>
+                  <div className='px-10'>
+                  <p className="text-sm text-muted-foreground">{userData.priorSkillsCerts[0]?.year} </p>
+                  </div>
+                  <div className='px-10'>
+                    <p className="font-medium">{userData.street}</p>
+                  </div>
+                </div>
+                <Badge variant='success' className='bg-green-400 text-white'>Completed</Badge>
+              </li>
+              
+            </ul>
           </CardContent>
         </Card>
       </div>

@@ -47,6 +47,10 @@ export default function Metrics() {
   }}) //.status === "active"
 
 
+  
+console.log(training_centerCount)
+console.log(artisan_userCount)
+console.log(intending_artisanCount)
 
 useEffect(() => {
   const fetchTrainingCenters = async () => {

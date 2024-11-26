@@ -9,17 +9,17 @@ const PublicRoute = ({ children }) => {
   if (isAuthenticated) {
     switch (userRole) {
       case "admin":
-      case "super_admin":
+      case "superadmin":
         return <Navigate to="/admin/dashboard" replace />;
       case "artisan_user":
         return <Navigate to="/artisan/dashboard" replace />;
       case "intending_artisan":
-        return <Navigate to="/intending-artisan/dashboard" replace />;
+        return <Navigate to="/intendingArtisan/dashboard" replace />;
       default:
-        return <Navigate to="/" replace />;
+        return <Navigate to="/register/trainingcenter" replace />;
     }
   }
- 
+
   // Allow unauthenticated users to access the route
   return children;
 };

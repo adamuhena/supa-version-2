@@ -44,12 +44,12 @@ export default function Calendar() {
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Calendar</h2>
       <div className="text-center">
         <div className="flex justify-between items-center mb-4">
-        <SkipBack color="#10b981" onClick={goToPreviousMonth}
+        <SkipBack color="#14c838" onClick={goToPreviousMonth}
             />
           <p className="text-lg font-medium text-emerald-500">
             {new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}
           </p>
-        <SkipForward color="#10b981" onClick={goToNextMonth}
+        <SkipForward color="#14c838" onClick={goToNextMonth}
           />
         </div>
         <div className="grid grid-cols-7 gap-2">

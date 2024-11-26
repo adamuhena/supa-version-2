@@ -291,7 +291,7 @@ export default function DashboardPage({ href, title, children }) {
                 <SidebarGroupLabel>Intending Artisans</SidebarGroupLabel><SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Link to="/intending-artisan/dashboard">
+                      <Link to="/artisan/dashboard">
                         <Frame />
                         <span>Dashboard</span>
                       </Link>
