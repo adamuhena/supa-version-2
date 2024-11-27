@@ -15,7 +15,7 @@ import PublicRoute from "./components/PublicRoute";
 import BiodataPage from "./pages/dashboard/BiodataPage";
 import DocumentUpload from "./pages/dashboard/DocumentUpload";
 import Biodata from "./pages/dashboard/BiodataPage";
-import TrainingCenterDashboard from "./pages/dashboard/trainingCenter/TrainingStatus";
+import TrainingCenterDashboard from "./pages/dashboard/trainingCenter/TrainingCenterDashboard";
 import TrainigCenterGroup from "./pages/dashboard/Admin/TrainingCenterGroups";
 import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 import AdminTrainingStatus from "./pages/dashboard/Admin/AdminTrainingStatus";
@@ -122,7 +122,7 @@ function App() {
         <Route
           path="/trainingcenter/dashboard"
           element={
-            < ArtisanDashboard/>
+            <TrainingCenterDashboard />
           }
           allowedRoles={["training_center", "admin", "superadmin"]}
         />

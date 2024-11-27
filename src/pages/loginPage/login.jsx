@@ -9,7 +9,7 @@ import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import PageLayout from '@/components/layout/pageLayout';
-import ProtectedRoute from '@/components/ProtectedRoute';
+
 
 
 export default function LoginForm() {
@@ -24,113 +24,6 @@ export default function LoginForm() {
   const handleRoleChange = (newRole) => {
     setRole(newRole);
   };
-
-
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-
-  //   try {
-  //     const response = await axios.post(`${API_BASE_URL}/login`, {
-  //       identifier: email,
-  //       password,
-  //       loginAs
-  //     });
-
-  //     const {success, data} = response.data;
-
-  //     const accessToken =response.data?.data?.accessToken?.accessToken;
-  //     const refreshToken =response.data?.data?.accessToken?.refreshToken;
-  //     console.log("accessToken",accessToken);
-  //     console.log("refreshToken",refreshToken);
-
-
-  //     if (success) {
-  //       const userData = data[loginAs === 'user' ? 'user' : 'training_center'];
-  //     const userRole = userData?.role || 'training_center'; // Default to 'training_center' if userRole is undefined
-  //     const isFirstTimeUser = userData?.agree !== true; // Check status for both users and training centers
-  //     const {  _id } = userData || {};
-
-
-  //       localStorage.setItem('userId', _id);
-  //       localStorage.setItem('userRole', userRole);
-  //       localStorage.setItem('accessToken', accessToken);
-  //       localStorage.setItem('refreshToken', refreshToken);
-  //       localStorage.setItem('isFirstTimeUser', JSON.stringify(isFirstTimeUser));
-
-
-
-  //       console.log('User ID saved:', userData?._id);
-  //       console.log('the user role is: ', userRole);
-
-  //       // if (loginAs === 'user') {
-  //       //   if (isFirstTimeUser && ['regular_user', 'intending_artisan', 'artisan_user'].includes(userRole)) {
-  //       //     navigate('/kyc');
-  //       //   } else if (userRole === 'admin' || userRole === 'superadmin') {
-  //       //     navigate('/admin-dashboard');
-  //       //   } else if (userRole === 'artisan_user') {
-  //       //     navigate('/artisan-dashboard');
-  //       //   } else if (userRole === 'intending_artisan') {
-  //       //     navigate('/intending-artisan-dashboard');
-  //       //   } else {
-  //       //     navigate('/marketplace');
-  //       //   }
-  //       // } 
-
-  //       if (loginAs === 'user') {
-  //         if (isFirstTimeUser) {
-  //           // Navigate to specific KYC routes for first-time users
-  //           if (userRole === 'artisan_user') {
-  //             navigate('/register/artisan');
-  //           } else if (userRole === 'intending_artisan') {
-  //             navigate('/register/intendingArtisan');
-  //           } else if (userRole === 'super_admin') {
-  //             navigate('/admin/dashboard'); // Default KYC route for other user types
-  //           }
-
-  //         } else if (userRole === 'superadmin'){
-  //           navigate('/admin/dashboard');
-  //         }else if (userRole === 'artisan_user'){
-  //           navigate('/artisan/dashboard');
-  //         }else if (userRole === 'intending_artisan'){
-  //           navigate('/intendingArtisan/dashboard');
-  //         }
-  //           // Navigation for non-first-time users
-
-  //           // switch (userRole) {
-  //           //   case 'admin':
-  //           //     navigate('/admin/dashboard');
-  //           //   break;
-  //           //   case 'superadmin':
-  //           //     navigate('/admin/dashboard');
-  //           //     break;
-  //           //   case 'artisan_user':
-  //           //     navigate('/artisan/dashboard');
-  //           //     break;
-  //           //   case 'intending_artisan':
-  //           //     navigate('/intendingArtisan/dashboard');
-  //           //     break;
-  //           //   default:
-  //           //     navigate('/marketplace');
-  //           // }
-
-  //       } else if (loginAs === 'training_center') {
-  //         if (isFirstTimeUser && 'training_center'.includes(userRole)) {
-  //           navigate('/register/trainingcenter');
-  //         } else {
-  //           navigate(userRole === '/about');
-  //         }
-  //         console.log(userRole);
-  //       }
-  //     } else {
-  //       navigate('/login')
-  //       alert('Login failed: ' + data.message);
-  //     }
-  //   } catch (error) {
-  //     console.log('Error logging in:', error);
-
-  //     alert('An error occurred. Please try again.');
-  //   }
-  // };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -174,7 +67,7 @@ export default function LoginForm() {
         // Navigate to appropriate pages
         if (loginAs === 'user') {
           if (isFirstTimeUser) {
-            //           // Navigate to specific KYC routes for first-time users
+
             if (userRole === 'artisan_user') {
               navigate('/register/artisan');
             } else if (userRole === 'intending_artisan') {

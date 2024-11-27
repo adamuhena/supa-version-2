@@ -22,12 +22,8 @@ const TrainingCenterForm = () => {
   const [form, setForm] = useState({
     state: "",
     areaOffice: "",
-    trainingCentreName: "",
     address: "",
     contactPerson: "",
-    role: "training_center", // Fixed value based on the schema
-    phoneNumber: "",
-    email: "",
     establishmentDate: null, // Will be set as a Date object
     ownership: "",
     otherOwnership: "",
@@ -158,12 +154,13 @@ const submitForm = async () => {
 
   setLoading(true);
   try {
-    await axios.put(
-      `${API_BASE_URL}/training-center/${userID}`,
+    await axios.patch(
+      `${API_BASE_URL}/training-centers/${userID}`,
       form,
       {
         headers: {
           Authorization: `Bearer ${token}`, // Attach the bearer token
+          'Content-Type': 'application/json',
         },
       }
     );

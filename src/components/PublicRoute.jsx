@@ -15,6 +15,8 @@ const PublicRoute = ({ children }) => {
         return <Navigate to="/artisan/dashboard" replace />;
       case "intending_artisan":
         return <Navigate to="/intending-artisan/dashboard" replace />;
+      case "training_center":
+        return <Navigate to="/trainingcenter/dashboard" replace />;
       default:
         return <Navigate to="/" replace />;
     }

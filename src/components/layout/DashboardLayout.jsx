@@ -92,27 +92,40 @@ export default function DashboardPage({ href, title, children }) {
       try {
         const accessToken = localStorage.getItem("accessToken");
         const userId = localStorage.getItem("userId");
-
+        const userRole = localStorage.getItem("role");
+  
         if (!accessToken || !userId) {
-          return; // If no token or userId, you can handle this with a redirect or error state
+          return; // Handle the missing token or userId appropriately
         }
-
-        const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        if (response.data.success) {
-          setUserData(response.data.data); // Set the user data in state
+  
+        let response; // Declare response outside the blocks
+  
+        if (["admin", "superadmin", "artisan_user"].includes(userRole)) {
+          response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+        } else if (userRole === "training_center") {
+          response = await axios.get(`${API_BASE_URL}/training-center/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+        }
+  
+        // Check success and set user data
+        if (response && response.data.success) {
+          setUserData(response.data.data);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-
+  
     fetchUserData();
   }, []);
+  
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -163,7 +176,7 @@ export default function DashboardPage({ href, title, children }) {
 
         <SidebarContent>
 
-          {isLinkAccessible(["admin", "super_admin", "artisan_user"]) ? ( // Set default roles or use `allowedRoles` property in data
+          {isLinkAccessible(["admin", "super_admin", "artisan_user", "training_center"]) ? ( // Set default roles or use `allowedRoles` property in data
             <SidebarGroup>
 
               <SidebarGroupLabel>User Setup</SidebarGroupLabel>
@@ -259,7 +272,7 @@ export default function DashboardPage({ href, title, children }) {
           ) : (null
           )}
 
-          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
+          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan" , "training_center"]) ?
             (
               <SidebarGroup className="group-data-[collapsible=icon]:hidden">
                 <SidebarGroupLabel>Artisans</SidebarGroupLabel><SidebarMenu>
@@ -285,7 +298,7 @@ export default function DashboardPage({ href, title, children }) {
 
           )}
 
-          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
+          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan", "training_center"]) ?
             (
               <SidebarGroup className="group-data-[collapsible=icon]:hidden">
                 <SidebarGroupLabel>Intending Artisans</SidebarGroupLabel><SidebarMenu>
@@ -311,7 +324,7 @@ export default function DashboardPage({ href, title, children }) {
 
           )}
 
-          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
+          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan", "training_center"]) ?
             (
               <SidebarGroup className="group-data-[collapsible=icon]:hidden">
                 <SidebarGroupLabel>Training Center</SidebarGroupLabel><SidebarMenu>
@@ -337,7 +350,7 @@ export default function DashboardPage({ href, title, children }) {
 
           )}
 
-          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
+          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan", "training_center"]) ?
             (
               <SidebarGroup className="mt-auto">
                 <SidebarGroupContent>
@@ -367,17 +380,17 @@ export default function DashboardPage({ href, title, children }) {
         </SidebarContent>
 
         <SidebarFooter>
-          <SidebarMenu>
+          <SidebarMenu> 
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="bg-red-600 ">
                   <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent  bg-green-50 rounded-lg">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={userData.profileImage} alt={userData.firstName} />
-                      <AvatarFallback>{userData.firstName}</AvatarFallback>
+                      <AvatarImage src={userData.profileImage} alt={userData.firstName || userData.trainingCentreName || "USER"}  />
+                      <AvatarFallback>{userData.firstName || userData.trainingCentreName || "USER"}</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">{userData.firstName}</span>
+                      <span className="truncate font-semibold">{userData.firstName || userData.trainingCentreName || "USER"}</span>
                       <span className="truncate text-xs">{userData.email}</span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4" />
@@ -387,11 +400,11 @@ export default function DashboardPage({ href, title, children }) {
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                       <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage src={userData.profileImage} alt={userData.firstName} />
-                        <AvatarFallback>{userData.firstName}</AvatarFallback>
+                        <AvatarImage src={userData.profileImage} alt={userData.firstName || userData.trainingCentreName || "USER"} />
+                        <AvatarFallback>{userData.firstName || userData.trainingCentreName || "USER"}</AvatarFallback>
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">{userData.firstName}</span>
+                        <span className="truncate font-semibold">{userData.firstName || userData.trainingCentreName || "USER"}</span>
                         <span className="truncate text-xs">{userData.email}</span>
                       </div>
                     </div>

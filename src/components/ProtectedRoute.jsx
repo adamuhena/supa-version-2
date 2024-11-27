@@ -14,6 +14,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
       super_admin: "/admin/dashboard",
       artisan_user: "/artisan/dashboard",
       intending_artisan: "/intending-artisan/dashboard",
+      training_center: "/trainingcenter/dashboard",
     };
 
     return <Navigate to={rolePaths[userRole] || "/"} replace />;
