@@ -11,13 +11,13 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from '@/pages/loginPage/logout'
 import axios from 'axios'
 import Spinner from '@/components/layout/spinner'
+import TrainingGroupsList from './TrainingGroupList'
 
 
 const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
   const logout = useLogout();
-
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
+  const userId = localStorage.getItem("userId");
   const [userData, setUserData] = useState(null); // Holds the user data
   const navigate = useNavigate();
 
@@ -50,6 +50,7 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
 
     fetchUserData();
   }, []);
+
 
 
   if (!userData) {
@@ -127,14 +128,9 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
       </div>
 
       <div className="mt-6">
-        <Card className="border-2 border-red-400 p-4 rounded-lg shadow-md">
-          <CardHeader>
-            <CardTitle> Assigned Up-Skilling Center</CardTitle>
-          </CardHeader>
-          <CardContent>
+       
+          <TrainingGroupsList userId={userId} />
 
-          </CardContent>
-        </Card>
       </div>
     </div>
 
