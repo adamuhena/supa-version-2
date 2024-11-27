@@ -27,11 +27,7 @@ import {
   UserCircle,
 } from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -79,7 +75,6 @@ import { useNavigate } from "react-router-dom"; // To handle log out
 import axios from "axios"; // Make sure axios is installed or replace with your preferred HTTP client
 import { DotPattern } from "../ui/dot-pattern";
 
-
 export default function DashboardPage({ href, title, children }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -122,15 +117,12 @@ export default function DashboardPage({ href, title, children }) {
 
   if (!userData) {
     return <div>Loading...</div>; // Show loading state until data is fetched
-  };
-
+  }
 
   // Role-based filtering function
   const isLinkAccessible = (allowedRoles) => {
     return allowedRoles.includes(userData.role);
   };
-
-
 
   return (
     <SidebarProvider>
@@ -145,14 +137,17 @@ export default function DashboardPage({ href, title, children }) {
                     e.preventDefault(); // Prevent default link behavior to allow `navigate` to take control
                     navigate("/login");
                   }}
-                  className="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-100 transition"
-                >
+                  className="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-100 transition">
                   <div className="flex aspect-square bg-white size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                     <img src={logo3} alt="Logo 1" className="size-8" />
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate text-emerald-800 text-xl font-semibold">ITF SUPA</span>
-                    <span className="truncate text-red-700 text-xs">Skill-Up Artisan</span>
+                    <span className="truncate text-emerald-800 text-xl font-semibold">
+                      ITF SUPA
+                    </span>
+                    <span className="truncate text-red-700 text-xs">
+                      Skill-Up Artisan
+                    </span>
                   </div>
                 </Link>
               </SidebarMenuButton>
@@ -160,12 +155,9 @@ export default function DashboardPage({ href, title, children }) {
           </SidebarMenu>
         </SidebarHeader>
 
-
         <SidebarContent>
-
           {isLinkAccessible(["admin", "super_admin", "artisan_user"]) ? ( // Set default roles or use `allowedRoles` property in data
             <SidebarGroup>
-
               <SidebarGroupLabel>User Setup</SidebarGroupLabel>
               {/* <SidebarMenu>
                   <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
@@ -210,7 +202,7 @@ export default function DashboardPage({ href, title, children }) {
 
               <SidebarMenu>
                 <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild>
                     <Link to="/admin/dashboard">
                       <SquareTerminal />
                       <span>Dashboard</span>
@@ -247,43 +239,44 @@ export default function DashboardPage({ href, title, children }) {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link to="/reports">
+                    <Link to="/admin/dashboard/reports">
                       <Settings2 />
                       <span>Reports</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
-
             </SidebarGroup>
-          ) : (null
-          )}
+          ) : null}
 
-          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
-            (
-              <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-                <SidebarGroupLabel>Artisans</SidebarGroupLabel><SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/artisan/dashboard">
-                        <Frame />
-                        <span>Dashboard</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/certification/upload">
-                        <Star />
-                        <span>Certification</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroup>
-            ) : (null
-
-          )}
+          {isLinkAccessible([
+            "admin",
+            "super_admin",
+            "artisan_user",
+            "intending_artisan",
+          ]) ? (
+            <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+              <SidebarGroupLabel>Artisans</SidebarGroupLabel>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link to="/artisan/dashboard">
+                      <Frame />
+                      <span>Dashboard</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link to="/certification/upload">
+                      <Star />
+                      <span>Certification</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroup>
+          ) : null}
 
           {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
             (
@@ -291,7 +284,7 @@ export default function DashboardPage({ href, title, children }) {
                 <SidebarGroupLabel>Intending Artisans</SidebarGroupLabel><SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Link to="/intending-artisan/dashboard">
+                      <Link to="/artisan/dashboard">
                         <Frame />
                         <span>Dashboard</span>
                       </Link>
@@ -311,59 +304,65 @@ export default function DashboardPage({ href, title, children }) {
 
           )}
 
-          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
-            (
-              <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-                <SidebarGroupLabel>Training Center</SidebarGroupLabel><SidebarMenu>
+          {isLinkAccessible([
+            "admin",
+            "super_admin",
+            "artisan_user",
+            "intending_artisan",
+          ]) ? (
+            <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+              <SidebarGroupLabel>Training Center</SidebarGroupLabel>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link to="/artisan/dashboard">
+                      <Frame />
+                      <span>Dashboard</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link to="/certification/upload">
+                      <Star />
+                      <span>Students Assigned</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroup>
+          ) : null}
+
+          {isLinkAccessible([
+            "admin",
+            "super_admin",
+            "artisan_user",
+            "intending_artisan",
+          ]) ? (
+            <SidebarGroup className="mt-auto">
+              <SidebarGroupContent>
+                <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/artisan/dashboard">
-                        <Frame />
-                        <span>Dashboard</span>
+                    <SidebarMenuButton asChild size="sm">
+                      <Link to="/feedback">
+                        <Send />
+                        <span>Feedback</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/certification/upload">
-                        <Star />
-                        <span>Students Assigned</span>
+                    <SidebarMenuButton asChild size="sm">
+                      <Link to="/help-center">
+                        <LifeBuoy />
+                        <span>Help Center</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  {/* Add more static menu items here */}
                 </SidebarMenu>
-              </SidebarGroup>
-            ) : (null
-
-          )}
-
-          {isLinkAccessible(["admin", "super_admin", "artisan_user", "intending_artisan"]) ?
-            (
-              <SidebarGroup className="mt-auto">
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild size="sm">
-                        <Link to="/feedback">
-                          <Send />
-                          <span>Feedback</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild size="sm">
-                        <Link to="/help-center">
-                          <LifeBuoy />
-                          <span>Help Center</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    {/* Add more static menu items here */}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            ) : (null
-            )}
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ) : null}
         </SidebarContent>
 
         <SidebarFooter>
@@ -371,13 +370,20 @@ export default function DashboardPage({ href, title, children }) {
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="bg-red-600 ">
-                  <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent  bg-green-50 rounded-lg">
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent  bg-green-50 rounded-lg">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={userData.profileImage} alt={userData.firstName} />
+                      <AvatarImage
+                        src={userData.profileImage}
+                        alt={userData.firstName}
+                      />
                       <AvatarFallback>{userData.firstName}</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">{userData.firstName}</span>
+                      <span className="truncate font-semibold">
+                        {userData.firstName}
+                      </span>
                       <span className="truncate text-xs">{userData.email}</span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4" />
@@ -387,18 +393,27 @@ export default function DashboardPage({ href, title, children }) {
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                       <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage src={userData.profileImage} alt={userData.firstName} />
+                        <AvatarImage
+                          src={userData.profileImage}
+                          alt={userData.firstName}
+                        />
                         <AvatarFallback>{userData.firstName}</AvatarFallback>
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">{userData.firstName}</span>
-                        <span className="truncate text-xs">{userData.email}</span>
+                        <span className="truncate font-semibold">
+                          {userData.firstName}
+                        </span>
+                        <span className="truncate text-xs">
+                          {userData.email}
+                        </span>
                       </div>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem variant="outline" onClick={() => navigate("/biodata")}>
+                    <DropdownMenuItem
+                      variant="outline"
+                      onClick={() => navigate("/biodata")}>
                       <UserCircle />
                       Account
                     </DropdownMenuItem>
@@ -409,7 +424,9 @@ export default function DashboardPage({ href, title, children }) {
                       <CreditCard />
                       Billing
                     </DropdownMenuItem>
-                    <DropdownMenuItem variant="outline" onClick={() => navigate("#")}>
+                    <DropdownMenuItem
+                      variant="outline"
+                      onClick={() => navigate("#")}>
                       <Bell />
                       Notifications
                     </DropdownMenuItem>
