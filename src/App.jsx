@@ -21,6 +21,7 @@ import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 import AdminTrainingStatus from "./pages/dashboard/Admin/AdminTrainingStatus";
 import UserManagement from "./pages/dashboard/Admin/userManagement";
 import IntendingArtisanDashboard from "./pages/dashboard/intendingArtisan/IntendingArtisanDashboard";
+import AdminDashboardReports from "./pages/dashboard/Admin/adminDashboardReports";
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 
 function App() {
@@ -136,6 +137,11 @@ function App() {
 
         <Route path="/admin/usermanagement"
           element={<UserManagement/>}
+          allowedRoles={[ "admin", "superadmin"]}
+          />
+
+        <Route path="/admin/dashboard/reports"
+          element={<AdminDashboardReports/>}
           allowedRoles={[ "admin", "superadmin"]}
           />
         
