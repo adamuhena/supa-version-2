@@ -28,6 +28,7 @@ import { states } from "@/data/nigeria";
 import { Button } from "@/components/ui/button";
 import { PrinterCheckIcon } from "lucide-react";
 import { DownloadIcon } from "@radix-ui/react-icons";
+import Spinner from "@/components/layout/spinner";
 
 function replaceSymbolsWithSpace(str = "") {
   let replacedStr = str.replace(/[-/]/g, " ");
@@ -108,6 +109,7 @@ const AdminDashboardReports = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
+  
 
   return (
     <ProtectedRoute>

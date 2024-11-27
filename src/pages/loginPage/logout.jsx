@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import {toast} from "sonner"
 
 const useLogout = () => {
   const navigate = useNavigate();
@@ -8,8 +9,7 @@ const useLogout = () => {
     // localStorage.removeItem("userRole");
 
     localStorage.clear();
-
-
+    toast.success("Logged Out Successfully...");
     navigate("/login");
     console.log("User logged out");
   };

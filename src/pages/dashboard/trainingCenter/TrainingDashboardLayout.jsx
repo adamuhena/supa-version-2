@@ -1,29 +1,15 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "../../../lib/utils";
 import {
-  BadgeCheck,
   Bell,
-  BookOpen,
-  Bot,
-  ChevronRight,
   ChevronsUpDown,
-  Command,
   CreditCard,
-  Folder,
   Frame,
   LifeBuoy,
   LogOut,
-  Map,
-  MoreHorizontal,
-  PieChart,
   Send,
-  Settings2,
-  Share,
-  Sparkles,
-  SquareTerminal,
   Star,
-  Trash2,
   UserCircle,
 } from "lucide-react";
 
@@ -36,11 +22,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,23 +42,19 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import logo3 from "../../assets/logo.png";
+import logo3 from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom"; // To handle log out
 import axios from "axios"; // Make sure axios is installed or replace with your preferred HTTP client
-import { DotPattern } from "../ui/dot-pattern";
+import { DotPattern } from "../../../components/ui/dot-pattern";
 import { toast } from "sonner";
-import Spinner from "./spinner";
+import Spinner from "../../../components/layout/spinner";
 
-export default function DashboardPage({ href, title, children }) {
+export default function TrainingDashboardPage({ href, title, children }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const [userData, setUserData] = useState(null); // Holds the user data
@@ -94,7 +71,7 @@ export default function DashboardPage({ href, title, children }) {
           return; // If no token or userId, you can handle this with a redirect or error state
         }
 
-        const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
+        const response = await axios.get(`${API_BASE_URL}/training-center/${userId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -129,6 +106,7 @@ export default function DashboardPage({ href, title, children }) {
 // Role-based filtering function
 const isLinkAccessible = (allowedRoles) => {
   if (!userData || !userData.role) {
+    toast.error(`User data or role is missing: ${userData}`);
     console.error("User data or role is missing:", userData);
     return false;
   }
@@ -168,143 +146,18 @@ const isLinkAccessible = (allowedRoles) => {
         </SidebarHeader>
 
         <SidebarContent>
-          {userData && isLinkAccessible([ "superadmin", "artisan_user"]) ? ( // Set default roles or use `allowedRoles` property in data
-            <SidebarGroup>
-              <SidebarGroupLabel>User Setup</SidebarGroupLabel>
-              {/* <SidebarMenu>
-                  <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild tooltip={item.title}>
-                        <Link href={item.url}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                      {item.items?.length ? (
-                        <>
-                          <CollapsibleTrigger asChild>
-                            <SidebarMenuAction className="data-[state=open]:rotate-90">
-                              <ChevronRight />
-                              <span className="sr-only">Toggle</span>
-                            </SidebarMenuAction>
-                          </CollapsibleTrigger>
-                          <CollapsibleContent>
-                            <SidebarMenuSub>
-                              {item.items
-                                .filter((subItem) =>
-                                  isLinkAccessible(subItem.allowedRoles || ["admin", "super_admin", "artisan_user", "intending_artisan"])
-                                )
-                                .map((subItem) => (
-                                  <SidebarMenuSubItem key={subItem.title}>
-                                    <SidebarMenuSubButton asChild>
-                                      <Link href={subItem.url}>
-                                        <span>{subItem.title}</span>
-                                      </Link>
-                                    </SidebarMenuSubButton>
-                                  </SidebarMenuSubItem>
-                                ))}
-                            </SidebarMenuSub>
-                          </CollapsibleContent>
-                        </>
-                      ) : null}
-                    </SidebarMenuItem>
-                  </Collapsible>
-
-                </SidebarMenu> */}
-
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link to="/admin/dashboard">
-                      <SquareTerminal />
-                      <span>Dashboard</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  <SidebarMenuButton asChild>
-                    <Link to="/admin/usermanagement">
-                      <SquareTerminal />
-                      <span>User Management</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link to="/company/placement">
-                      <BookOpen />
-                      <span>Artisan Placement</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link to="/admin/training-groups">
-                      <BookOpen />
-                      <span>Intending Artisan Placement</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  <SidebarMenuButton asChild>
-                    <Link to="/admin/training-status">
-                      <BookOpen />
-                      <span>Training Managment</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link to="/admin/dashboard/reports">
-                      <Settings2 />
-                      <span>Reports</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroup>
-          ) : null}
 
           {isLinkAccessible([
             "admin",
             "superadmin",
-            "artisan_user",
-            "intending_artisan",
-          ]) ? (
-            <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-              <SidebarGroupLabel>Artisans</SidebarGroupLabel>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link to="/artisan/dashboard">
-                      <Frame />
-                      <span>Dashboard</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
-                {/* Only render this SidebarMenuItem if the user is not an intending_artisan */}
-                {isLinkAccessible(["admin","superadmin", "artisan_user"]) && (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/certification/upload">
-                        <Star />
-                        <span>Certification</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
-              </SidebarMenu>
-            </SidebarGroup>
-          ) : null}
-
-
-          {isLinkAccessible([
-            "admin",
-            "superadmin",
+            "training_center",
           ]) ? (
             <SidebarGroup className="group-data-[collapsible=icon]:hidden">
               <SidebarGroupLabel>Training Center</SidebarGroupLabel>
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link to="/artisan/dashboard">
+                    <Link to="/trainingcenter/dashboard">
                       <Frame />
                       <span>Dashboard</span>
                     </Link>
@@ -325,8 +178,7 @@ const isLinkAccessible = (allowedRoles) => {
           {isLinkAccessible([
             "admin",
             "superadmin",
-            "artisan_user",
-            "intending_artisan",
+            "training_center",
           ]) ? (
             <SidebarGroup className="mt-auto">
               <SidebarGroupContent>
@@ -365,13 +217,13 @@ const isLinkAccessible = (allowedRoles) => {
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage
                         src={userData.profileImage}
-                        alt={userData.firstName}
+                        alt={userData.trainingCentreName}
                       />
-                      <AvatarFallback>{userData.firstName}</AvatarFallback>
+                      <AvatarFallback>{userData.trainingCentreName}</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        {userData.firstName}
+                        {userData.trainingCentreName}
                       </span>
                       <span className="truncate text-xs">{userData.email}</span>
                     </div>
@@ -384,13 +236,13 @@ const isLinkAccessible = (allowedRoles) => {
                       <Avatar className="h-8 w-8 rounded-lg">
                         <AvatarImage
                           src={userData.profileImage}
-                          alt={userData.firstName}
+                          alt={userData.trainingCentreName}
                         />
-                        <AvatarFallback>{userData.firstName}</AvatarFallback>
+                        <AvatarFallback>{userData.trainingCentreName}</AvatarFallback>
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
                         <span className="truncate font-semibold">
-                          {userData.firstName}
+                          {userData.trainingCentreName}
                         </span>
                         <span className="truncate text-xs">
                           {userData.email}

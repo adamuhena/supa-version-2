@@ -9,6 +9,7 @@ import DashboardPage from '@/components/layout/DashboardLayout'
 import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from '@/pages/loginPage/logout'
 import axios from 'axios'
+import Spinner from '@/components/layout/spinner'
 
 
 const IntendingArtisanDashboard = ({ artisan = {  rating: 4.5 } }) => {
@@ -48,9 +49,12 @@ const IntendingArtisanDashboard = ({ artisan = {  rating: 4.5 } }) => {
 
 
   if (!userData) {
-    return <div>Loading...</div>; // Show loading state until data is fetched
-  }
-
+    return (
+    <div class="flex justify-center items-center h-screen">
+      <Spinner/>
+    </div>
+    );
+  }   
 
 
   return (

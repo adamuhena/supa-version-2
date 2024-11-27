@@ -1,18 +1,24 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 import { AlertDialog, AlertDialogContent } from "../ui/alert-dialog";
 import { CrossCircledIcon } from "@radix-ui/react-icons";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 
+
 import { BlurFade } from "../ui/blur-fade";
 
 export default function RegisterSuccess({ show, setshow }) {
-  const close = () => setshow?.(false);
+  const navigate = useNavigate();
+  const close = () => {
+    setshow?.(false);
+    navigate('/login'); // Replace '/login' with your actual login route
+};
 
   return (
     <AlertDialog open={show}>
       <AlertDialogContent className="max-w-[657px]">
         <div className="mx-auto flex w-full max-w-[450px] flex-col items-center justify-center gap-[8px] py-[30px]">
-          <button onClick={() => (window.location = "/")}>
+          <button onClick={() => (window.location = "/login")}>
             <CrossCircledIcon className="absolute right-[20px] top-[20px] h-[24] w-[24] text-[#1D2849]" />
           </button>
           <BlurFade delay={0} inView>
@@ -40,7 +46,7 @@ export default function RegisterSuccess({ show, setshow }) {
 
           <BlurFade delay={0.1} inView className="flex w-full flex-col gap-[4px]">
             <button
-              onClick={() => (window.location = "/")}
+              onClick={() => (window.location = "/login")}
               className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]"
             >
               Proceed to dashboard

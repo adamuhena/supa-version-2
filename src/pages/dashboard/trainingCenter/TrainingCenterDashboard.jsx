@@ -3,12 +3,14 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
 import { Badge } from "@/components/ui/badge"
 import { CalendarDays, Briefcase, Star, Settings, LogOut, UserCircle } from "lucide-react"
-import DashboardPage from '@/components/layout/DashboardLayout'
+import TrainingDashboardPage from './TrainingDashboardLayout';
 import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from '@/pages/loginPage/logout'
 import axios from 'axios'
+import Spinner from '@/components/layout/spinner'
 
 
 const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
@@ -51,16 +53,17 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
 
 
   if (!userData) {
-    return <div>Loading...</div>; // Show loading state until data is fetched
-  }
-
-
-
+    return (
+    <div class="flex justify-center items-center h-screen">
+      <Spinner/>
+    </div>
+    );
+  }   
   return (
     <ProtectedRoute href='/training-center/dashboard'>
 
     
-    {/* <DashboardPage  title="Training Center Dashboard"> */}
+    <TrainingDashboardPage  title="Training Center Dashboard">
     <div className="container mx-auto p-6">
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold"> Dashboard  </h1>
@@ -86,11 +89,11 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
           <CardContent className="flex flex-col items-center">
             <Avatar className="h-24 w-24 mb-4">
               <AvatarImage src="/placeholder.svg?height=96&width=96" alt={artisan.name} />
-              <AvatarFallback>{userData.trainingCentreName}</AvatarFallback> 
+              <AvatarFallback>{userData?.trainingCentreName}</AvatarFallback> 
               {/* {artisan.name.split(' ').map(n => n[0]).join('')}  */}
             </Avatar>
-            <h2 className="text-2xl font-semibold">{userData.trainingCentreName}</h2>
-            <Badge className="mt-2">{userData.contactPerson}</Badge>
+            <h2 className="text-2xl font-semibold">{userData?.trainingCentreName}</h2>
+            <Badge className="mt-2">{userData?.contactPerson}</Badge>
             <div className="flex items-center mt-2">
               <Star className="h-5 w-5 text-yellow-400 mr-1" />
               <span>{artisan.rating}</span>
@@ -113,10 +116,10 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
           </CardHeader>
           <CardContent>
           <div className="text-md text-emerald-800 mb-2">
-              Sector: {userData.contactPerson}
+              Sector: {userData?.contactPerson}
             </div>
             <div className="text-md text-emerald-800 mb-2">
-              Sector: {userData.contactPerson}
+              Sector: {userData?.contactPerson}
             </div>
               
           </CardContent>
@@ -136,7 +139,7 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
     </div>
 
       
-    {/* </DashboardPage> */}
+    </TrainingDashboardPage>
     </ProtectedRoute>
   )
 }

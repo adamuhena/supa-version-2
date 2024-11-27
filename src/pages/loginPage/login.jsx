@@ -9,6 +9,7 @@ import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import PageLayout from '@/components/layout/pageLayout';
+import { toast } from "sonner";
 
 
 
@@ -38,13 +39,14 @@ export default function LoginForm() {
       console.log('Full response:', response.data);
 
       const { success, data } = response.data; // Assuming `tokens` contains `accessToken` and `refreshToken`
-
+      
       if (success) {
         const userData = data[loginAs === 'user' ? 'user' : 'training_center'];
+        toast.success(`Login Successfully! Role: ${userData.role}`);
 
         if (!userData) {
           console.error("No valid user data found:", data);
-          alert("Login failed: Invalid user data.");
+          toast.error("Login failed: Invalid user data.");
           return;
         }
 
@@ -72,16 +74,20 @@ export default function LoginForm() {
               navigate('/register/artisan');
             } else if (userRole === 'intending_artisan') {
               navigate('/register/intendingArtisan');
-            } else if (userRole === 'super_admin') {
+            } else if (userRole === 'admin') {
+              navigate('/admin/dashboard'); // Default KYC route for other user types
+            } else if (userRole === 'admin') {
               navigate('/admin/dashboard'); // Default KYC route for other user types
             }
 
           } else if (userRole === 'superadmin') {
             navigate('/admin/dashboard');
+          } else if (userRole === 'admin') {
+            navigate('/admin/dashboard');
           } else if (userRole === 'artisan_user') {
             navigate('/artisan/dashboard');
           } else if (userRole === 'intending_artisan') {
-            navigate('/intendingArtisan/dashboard');
+            navigate('/artisan/dashboard');
           }
         } else if (loginAs === 'training_center') {
           if (isFirstTimeUser) {
@@ -90,14 +96,15 @@ export default function LoginForm() {
             navigate('/trainingcenter/dashboard');
           }
         } else {
-          navigate('/marketplace'); // Assuming this for regular users
+          navigate('/'); // Assuming this for regular users
         }
       } else {
-        alert("Login failed: " + response.data.message);
+        toast.error(`Login failed: Invalid user data. + ${response.data.message})`);
+        
       }
     } catch (error) {
       console.error("Error logging in:", error);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     }
   };
 

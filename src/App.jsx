@@ -13,7 +13,7 @@ import "./App.css";
 import ArtisanDashboard from "./pages/dashboard/artisan/ArtisanDashboard";
 import PublicRoute from "./components/PublicRoute";
 import BiodataPage from "./pages/dashboard/BiodataPage";
-import DocumentUpload from "./pages/dashboard/DocumentUpload";
+import DocumentUpload from "./pages/dashboard/artisan/DocumentUpload";
 import Biodata from "./pages/dashboard/BiodataPage";
 import TrainingCenterDashboard from "./pages/dashboard/trainingCenter/TrainingCenterDashboard";
 import TrainigCenterGroup from "./pages/dashboard/Admin/TrainingCenterGroups";
@@ -22,6 +22,7 @@ import AdminTrainingStatus from "./pages/dashboard/Admin/AdminTrainingStatus";
 import UserManagement from "./pages/dashboard/Admin/userManagement";
 import IntendingArtisanDashboard from "./pages/dashboard/intendingArtisan/IntendingArtisanDashboard";
 import AdminDashboardReports from "./pages/dashboard/Admin/adminDashboardReports";
+import TrainingStatus from "./pages/dashboard/trainingCenter/TrainingStatus";
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 
 function App() {
@@ -142,6 +143,11 @@ function App() {
 
         <Route path="/admin/dashboard/reports"
           element={<AdminDashboardReports/>}
+          allowedRoles={[ "admin", "superadmin"]}
+          />
+
+        <Route path="/training-center/status"
+          element={<TrainingStatus/>}
           allowedRoles={[ "admin", "superadmin"]}
           />
         

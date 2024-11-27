@@ -7,6 +7,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from '@/pages/loginPage/logout';
 import axios from 'axios';
 import Dashboard from './components/Dashboard';
+import Spinner from '@/components/layout/spinner';
 
 const AdminDashboard = () => {
   const logout = useLogout();
@@ -44,9 +45,9 @@ const AdminDashboard = () => {
 
   if (!userData) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="spinner" />
-      </div>
+    <div class="flex justify-center items-center h-screen">
+    <Spinner/>
+</div>
     );
   }
 
