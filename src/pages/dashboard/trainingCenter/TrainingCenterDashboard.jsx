@@ -12,6 +12,7 @@ import useLogout from '@/pages/loginPage/logout'
 import axios from 'axios'
 import Spinner from '@/components/layout/spinner'
 import TrainingGroupsList from './TrainingGroupList'
+import Calendar from '../Admin/components/Calendar'
 
 
 const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
@@ -72,9 +73,7 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
           <Button variant="outline" onClick={() => navigate('/biodata')}>
             <UserCircle className="mr-2 h-4 w-4" /> Update Profile
           </Button>
-          <Button variant="outline">
-            <Settings className="mr-2 h-4 w-4" /> Settings
-          </Button>
+          
           <Button variant="destructive" onClick={logout}>
             <LogOut className="mr-2 h-4 w-4" /> Logout
           </Button>
@@ -111,20 +110,8 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-green-400 p-4 rounded-lg shadow-md">
-          <CardHeader>
-            <CardTitle>Profession</CardTitle>
-          </CardHeader>
-          <CardContent>
-          <div className="text-md text-emerald-800 mb-2">
-              Sector: {userData?.contactPerson}
-            </div>
-            <div className="text-md text-emerald-800 mb-2">
-              Sector: {userData?.contactPerson}
-            </div>
-              
-          </CardContent>
-        </Card>
+        <Calendar/>
+        
       </div>
 
       <div className="mt-6">
