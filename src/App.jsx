@@ -23,6 +23,10 @@ import UserManagement from "./pages/dashboard/Admin/userManagement";
 import IntendingArtisanDashboard from "./pages/dashboard/intendingArtisan/IntendingArtisanDashboard";
 import AdminDashboardReports from "./pages/dashboard/Admin/adminDashboardReports";
 import TrainingStatus from "./pages/dashboard/trainingCenter/TrainingStatus";
+import TrainingGroupDetails from "./pages/dashboard/Admin/TrainingGroup";
+import AdminDocumentVerification from "./pages/dashboard/Admin/AdminDocumentVerification";
+import TrainingCenterReport from "./pages/dashboard/Admin/AdminTrainingCenterReport";
+
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 
 function App() {
@@ -145,11 +149,26 @@ function App() {
           element={<AdminDashboardReports/>}
           allowedRoles={[ "admin", "superadmin"]}
           />
+        <Route path="/admin/trainingcenter/reports"
+          element={<TrainingCenterReport/>}
+          allowedRoles={[ "admin", "superadmin"]}
+          />
+          
 
         <Route path="/training-center/status"
           element={<TrainingStatus/>}
           allowedRoles={[ "admin", "superadmin"]}
           />
+
+          <Route path="/training/groups"
+          element={<TrainingGroupDetails/>}
+          allowedRoles={[ "admin", "superadmin"]}
+          />
+
+          <Route path="/document/verification"
+           element={<AdminDocumentVerification/>}
+           allowedRoles = {["admin", "superadmin"]}
+           />
         
       </Routes>
     </Router>

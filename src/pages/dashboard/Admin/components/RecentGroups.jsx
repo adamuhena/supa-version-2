@@ -49,7 +49,12 @@ export default function RecentGroups() {
             {groups.map((group) => (
               <tr key={group.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{group.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{group.trainingCenter.companyName}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <span>{group.trainingCenter.companyName} </span>
+                  <span>{group.trainingCenter.state} </span>
+                  <span>{group.trainingCenter.address} </span>
+                  <span>{group.trainingCenter.phoneNumber} </span>
+                  </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(group.startDate).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Spinner from '@/components/layout/spinner';
 
 const UserGroupDetails = () => {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [groupDetails, setGroupDetails] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     const fetchGroupDetails = async () => {
@@ -40,7 +41,13 @@ const UserGroupDetails = () => {
     fetchGroupDetails();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
+  }  
   if (error) return <div>Error: {error}</div>;
 
   return (

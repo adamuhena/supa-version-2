@@ -117,10 +117,9 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
                   </div>
                 </div>
 
-                <div className="flex items-center font-semibold mt-2">
+                <div className="flex flex-row items-center font-semibold mt-2">
                   <Star className="h-5 w-5  text-yellow-400 mr-1" />
-                  <span> {role + " " + artisan.rating}</span>
-                  <span> {userData.priorSkillsCerts[0]?.tradeArea}</span>
+                  <span> {" "+role }</span>
                 </div>
 
               </CardContent>

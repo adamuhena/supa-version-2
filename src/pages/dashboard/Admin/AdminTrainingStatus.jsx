@@ -41,8 +41,6 @@ function AdminTrainingStatus() {
       } catch (error) {
         console.error("Error fetching training groups:", error);
         setError('Failed to fetch training groups');
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -98,7 +96,7 @@ function AdminTrainingStatus() {
       alert("Please provide both a score and feedback.");
       return;
     }
-  
+
     try {
       await axios.post(
         `${API_BASE_URL}/training-groups/${selectedGroup._id}/evaluate`,
@@ -117,17 +115,24 @@ function AdminTrainingStatus() {
       console.error('Error submitting evaluation:', error);
     }
   };
-  
-
-// Function to handle user preview
-const handleUserPreview = (users, evaluations) => {
-  setPreviewUsers(users, evaluations);
-  setUserPreviewModal(true);
-};
 
 
+  // Function to handle user preview
+  const handleUserPreview = (users, evaluations) => {
+    setPreviewUsers(users, evaluations);
+    setUserPreviewModal(true);
+  };
 
-  if (loading) return <p>Loading...</p>;
+
+
+
+  if (!trainingGroups) {
+    return (
+      <div class="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
+  }
   if (error) return <p>{error}</p>;
 
   return (
@@ -140,7 +145,7 @@ const handleUserPreview = (users, evaluations) => {
               <Button variant="outline" onClick={() => navigate('/biodata')}>
                 <UserCircle className="mr-2 h-4 w-4" /> Update Profile
               </Button>
-              
+
               <Button variant="destructive" onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" /> Logout
               </Button>
@@ -149,107 +154,128 @@ const handleUserPreview = (users, evaluations) => {
 
           <div className="mt-6">
             <Card className="border-2 border-red-400 p-4 rounded-lg shadow-md">
-              <CardHeader>
-                <CardTitle>User List</CardTitle>
-              </CardHeader>
               <CardContent>
 
                 <div className="p-6">
-                  <h1 className="text-2xl font-bold mb-4">Training Center Dashboard</h1>
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h2 className="text-xl font-semibold mb-2">Training Groups</h2>
-                      <select
-                        onChange={handleGroupSelect}
-                        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      >
-                        <option value="">Select a training group</option>
-                        {trainingGroups.map((group) => (
-                          <option key={group._id} value={group._id}>
-                            {group.name}
-                          </option>
-                        ))}
-                      </select>
+                    <div className="flex flex-col gap-2">
+                      <div>
+                        <h2 className="text-xl font-semibold mb-2">Training Groups</h2>
+                        <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                          Select a training group
+                        </label>
+                        <select
+                          onChange={handleGroupSelect}
+                          className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        >
+                          <option value="">Select a training group</option>
+                          {trainingGroups.map((group) => (
+                            <option key={group._id} value={group._id}>
+                              {group.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        {/* Users in the selected group */}
+                        {selectedGroup && (
+                          <div className="mt-6">
+                            <h2 className="text-xl font-semibold mb-4">Users in Group</h2>
+                            {selectedGroup.users && selectedGroup.users.length > 0 ? (
+                              <table className="min-w-full table-auto border-collapse border border-gray-300">
+                                <thead>
+                                  <tr className="bg-gray-200">
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Student Name</th>
+                                    <th className="border border-gray-300 px-4 py-2 text-left">Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {selectedGroup.users.map((user) => (
+                                    <tr key={user._id} className="hover:bg-gray-100">
+                                      <td className="border border-gray-300 px-4 py-2">{user.firstName + " " + user.lastName}</td>
+                                      <td className="border border-gray-300 px-4 py-2">
+                                        <button
+                                          onClick={() => handleEvaluateUser(user._id)}
+                                          className="py-1 px-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                        >
+                                          Evaluate
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            ) : (
+                              <p className="text-gray-500">No users in this group.</p>
+                            )}
+                          </div>
+                        )}
+
+                      </div>
+
                     </div>
+
+
 
                     <div>
                       <h2 className="text-xl font-semibold mb-2">Group Details</h2>
                       {selectedGroup ? (
-                        <>
-                          <div className="mb-2">
-                            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                              Start Date
-                            </label>
-                            <input
-                              type="date"
-                              id="startDate"
-                              value={startDate}
-                              onChange={(e) => setStartDate(e.target.value)}
-                              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                            />
+                        <div className="flex flex-col gap-2">
+                          <div className=" flex flex-row gap-12">
+                            <div className="mb-2 ">
+                              <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                                Start Date
+                              </label>
+                              <input
+                                type="date"
+                                id="startDate"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                              />
+                            </div>
+                            <div className="mb-2">
+                              <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
+                                End Date
+                              </label>
+                              <input
+                                type="date"
+                                id="endDate"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                              />
+                            </div>
+
                           </div>
-                          <div className="mb-2">
-                            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
-                              End Date
-                            </label>
-                            <input
-                              type="date"
-                              id="endDate"
-                              value={endDate}
-                              onChange={(e) => setEndDate(e.target.value)}
-                              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                            />
+                          <div>
+                            <div className="mb-2">
+                              <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+                                Status
+                              </label>
+                              <select
+                                id="status"
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value)}
+                                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                              >
+                                <option value="NOT_STARTED">Not Started</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="COMPLETED">Completed</option>
+                              </select>
+                            </div>
                           </div>
-                          <div className="mb-2">
-                            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                              Status
-                            </label>
-                            <select
-                              id="status"
-                              value={status}
-                              onChange={(e) => setStatus(e.target.value)}
-                              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                            >
-                              <option value="NOT_STARTED">Not Started</option>
-                              <option value="IN_PROGRESS">In Progress</option>
-                              <option value="COMPLETED">Completed</option>
-                            </select>
-                          </div>
-                          <button
-                            onClick={handleUpdateGroup}
-                            className="mt-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                          >
-                            Update Group
-                          </button>
-                        </>
+
+                          <Button onClick={handleUpdateGroup}>Update Group</Button>
+                        </div>
                       ) : (
-                        <p className="text-gray-500">Select a group to view details.</p>
+                        <p>Select a group to see details</p>
                       )}
                     </div>
                   </div>
 
-                  {selectedGroup && (
-                    <div className="mt-4">
-                      <h2 className="text-xl font-semibold mb-2">Users in Group</h2>
-                      <ul>
-                        {selectedGroup.users && selectedGroup.users.length > 0 ? (
-                          selectedGroup.users.map((user) => (
-                            <li key={user._id} className="mb-2">
-                              {user.firstName + " " + user.lastName}
-                              <button
-                                onClick={() => handleEvaluateUser(user._id)}
-                                className="ml-2 py-1 px-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                              >
-                                Evaluate
-                              </button>
-                            </li>
-                          ))
-                        ) : (
-                          <p>No users in this group.</p>
-                        )}
-                      </ul>
-                    </div>
-                  )}
+
 
                   {evaluationModal && (
                     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal">
@@ -299,57 +325,71 @@ const handleUserPreview = (users, evaluations) => {
               <CardHeader>
                 <CardTitle>Training Group Table</CardTitle>
               </CardHeader>
-<CardContent>
-  <table className="min-w-full divide-y divide-gray-200">
-    <thead className="bg-gray-50">
-      <tr>
-        <th>Group Name</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {trainingGroups.map((group) => (
-        <tr key={group._id}>
-          <td>{group.name}</td>
-          <td>{group.startDate}</td>
-          <td>{group.endDate}</td>
-          <td>{group.status}</td>
-          <td>
-            <button
-              onClick={() => handleUserPreview(group.users)}
-              className="text-indigo-600 hover:text-indigo-900"
-            >
-              Preview Users
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</CardContent>
-      </Card>
-      
-{userPreviewModal && (
-  <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-    <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-      <h3>User Evaluations</h3>
-      <ul>
-        {previewUsers.map((user) => (
-          <li key={user._id} className="flex justify-between mb-2">
-            <span>{user.firstName + " " + user.lastName}</span>
-            <span>{user.evaluation ? user.evaluation.score : 'No Evaluation'}</span>
-          </li>
-        ))}
-      </ul>
-      <button onClick={() => setUserPreviewModal(false)}>Close</button>
-    </div>
-  </div>
-)}
+              <CardContent>
+              <table className="min-w-full table-auto">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 border-b">Group Name</th>
+                <th className="px-4 py-2 border-b">Start Date</th>
+                <th className="px-4 py-2 border-b">End Date</th>
+                <th className="px-4 py-2 border-b">Status</th>
+                <th className="px-4 py-2 border-b">Users Assigned</th>
+                <th className="px-4 py-2 border-b">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trainingGroups.map((group) => (
+                <tr key={group._id}>
+                  <td className="px-4 py-2 border-b">{group.name}</td>
+                  <td className="px-4 py-2 border-b">
+                        {new Date(group.startDate).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}
+                    </td>
+                  <td className="px-4 py-2 border-b">
+                        {new Date(group.endDate).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}
+                    </td>
+                  <td className="px-4 py-2 border-b">{group.status}</td>
+                  <td className="px-4 py-2 border-b">{group.users.length}</td>
+                  <td>
+                          <button
+                            onClick={() => handleUserPreview(group.users)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                          >
+                            Preview Users
+                          </button>
+                        </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+              </CardContent>
+            </Card>
 
-{/* {userPreviewModal && (
+            {userPreviewModal && (
+              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+                <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                  <h3>User Evaluations</h3>
+                  <ul>
+                    {previewUsers.map((user) => (
+                      <li key={user._id} className="flex justify-between mb-2">
+                        <span>{user.firstName + " " + user.lastName}</span>
+                        <span>{user.evaluation ? user.evaluation.score : 'No Evaluation'}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <button onClick={() => setUserPreviewModal(false)}>Close</button>
+                </div>
+              </div>
+            )}
+
+            {/* {userPreviewModal && (
   <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
     <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
       <h3 className="text-lg font-bold mb-4">User Evaluations</h3>
@@ -397,7 +437,7 @@ const handleUserPreview = (users, evaluations) => {
 
 
 
-    </div>
+          </div>
         </div >
       </DashboardPage >
     </ProtectedRoute >
