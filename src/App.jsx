@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import About from "./pages/HomePage/About";
-import LoginForm from "./pages/loginPage/Login";
+import LoginForm from "./pages/loginPage/login";
 import SignupForm from "./pages/loginPage/signUp";
 import Register from "./pages/register/register";
 import ArtisanForm from "./pages/forms/artisan/index";
@@ -32,18 +32,15 @@ function App() {
         {/* test */}
         <Route path="/training-center" element={<TrainingCenterDashboard />} />
 
-
         {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
         {/* <Route path="/biodata2" element={<BiodataPage />} /> */}
         <Route path="/biodata" element={<Biodata />} />
-        <Route path="/certification/upload" element={<DocumentUpload/>}/>
+        <Route path="/certification/upload" element={<DocumentUpload />} />
 
-        
-       
-      {/* Public route for login */}
-      <Route
+        {/* Public route for login */}
+        <Route
           path="/login"
           element={
             <PublicRoute>
@@ -54,103 +51,83 @@ function App() {
 
         <Route path="/signUp" element={<SignupForm />} />
         <Route path="/register" element={<Register />} />
-       
+
         {/* Protected Routes */}
         <Route
           path="/admin/dashboard"
-          element={
-            <AdminDashboard/>
-          }
+          element={<AdminDashboard />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
         <Route
           path="/intending-artisan/dashboard"
-          element={
-            <IntendingArtisanDashboard/>
-          }
+          element={<IntendingArtisanDashboard />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
         <Route
           path="/admin/training-groups"
-          element={
-            <TrainigCenterGroup/>
-          }
+          element={<TrainigCenterGroup />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
         <Route
           path="/admin/training-status"
-          element={
-            <AdminTrainingStatus/>
-          }
+          element={<AdminTrainingStatus />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
         <Route
           path="/register/artisan"
-          element={
-            <ArtisanForm/>
-          }
+          element={<ArtisanForm />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
         <Route
           path="/register/intendingArtisan"
-          element={
-            <IntendingArtisanForm/>
-          }
+          element={<IntendingArtisanForm />}
           allowedRoles={["intending_artisan", "admin", "superadmin"]}
         />
         <Route
           path="/register/trainingcenter"
-          element={
-            <TrainingCenterForm />
-          }
+          element={<TrainingCenterForm />}
           allowedRoles={["training_center", "admin", "superadmin"]}
         />
 
         <Route
           path="/artisan/dashboard"
-          element={
-            < ArtisanDashboard />
-          }
+          element={<ArtisanDashboard />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
 
         <Route
           path="/intendingArtisan/dashboard"
-          element={
-            <ArtisanDashboard />
-          }
+          element={<ArtisanDashboard />}
           allowedRoles={["intending_artisan", "admin", "superadmin"]}
         />
         <Route
           path="/trainingcenter/dashboard"
-          element={
-            <TrainingCenterDashboard />
-          }
+          element={<TrainingCenterDashboard />}
           allowedRoles={["training_center", "admin", "superadmin"]}
         />
         <Route
           path="/admin/dashboard"
-          element={
-            < ArtisanDashboard/>
-          }
-          allowedRoles={[ "admin", "superadmin"]}
+          element={<ArtisanDashboard />}
+          allowedRoles={["admin", "superadmin"]}
         />
 
-        <Route path="/admin/usermanagement"
-          element={<UserManagement/>}
-          allowedRoles={[ "admin", "superadmin"]}
-          />
+        <Route
+          path="/admin/usermanagement"
+          element={<UserManagement />}
+          allowedRoles={["admin", "superadmin"]}
+        />
 
-        <Route path="/admin/dashboard/reports"
-          element={<AdminDashboardReports/>}
-          allowedRoles={[ "admin", "superadmin"]}
-          />
+        <Route
+          path="/admin/dashboard/reports"
+          element={<AdminDashboardReports />}
+          allowedRoles={["admin", "superadmin"]}
+        />
 
-        <Route path="/training-center/status"
-          element={<TrainingStatus/>}
-          allowedRoles={[ "admin", "superadmin"]}
-          />
-        
+        <Route
+          path="/training-center/status"
+          element={<TrainingStatus />}
+          allowedRoles={["admin", "superadmin"]}
+        />
       </Routes>
     </Router>
   );
