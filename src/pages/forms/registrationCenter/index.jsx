@@ -13,7 +13,7 @@ import { DotPattern } from "../../../components/ui/dot-pattern";
 import { cn } from "../../../lib/utils";
 import LegalInfo from "./LegalInfo.jsx";
 import TrainingAmenities from "./Amenities";
-import BankDetails from "./bankDetails";
+import BankDetails from "./BankDetails.jsx";
 // import ProtectedRoute from "@/components/ProtectedRoute";
 
 const TrainingCenterForm = () => {
