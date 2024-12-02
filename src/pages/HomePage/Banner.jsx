@@ -7,7 +7,7 @@ export default function Banner() {
   return (
     <div className="bg-[whitesmoke] pb-[10px]">
       <div className="flex w-full max-w-[1300px] mx-auto pt-[100px] items-center">
-        <div className="basis-[60%]   min-h-[50px] px-[20px]">
+        <div className="basis-[65%]   min-h-[50px] px-[20px]">
           <div className="relative rounded-[6px] px-3 text-sm/6 xl:text-xl text-black ring-1 ring-gray-200/10 hover:underline bg-transparent backdrop-blur-lg">
             Announcing our next Phase of SUPA.
             <Link
