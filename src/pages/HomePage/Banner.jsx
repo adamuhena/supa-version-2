@@ -36,7 +36,7 @@ export default function Banner() {
           />
         </div>
 
-        <div className="relative flex justify-center gap-2 items-center mx-auto max-w-7xl xl:px-0 px-4 pt-10 pb-30 md:py-10 lg:py-20 sm:py-10 xl:py-40 -mt-1 bg-transparent">
+        <div className="relative flex justify-center gap-2 items-center mx-auto max-w-7xl xl:px-0 px-4  pb-30 md:py-0 lg:py-10 sm:py-0 xl:py-20 -mt-1 bg-transparent">
           <div className="w-2/3 px-8 justify-center">
             <div className="w-full text-center mb-10">
               <div className="hidden sm:mb-8 sm:flex sm:justify-center">

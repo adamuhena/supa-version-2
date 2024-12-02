@@ -10,7 +10,7 @@ export default function About() {
         <div className="bg-gradient-to-t from-stone-100 to-current-black">
         <section className="bg-slate-900 pt-40 pb-10">
       
-        <div className="inline-block rounded-lg bg-muted pl-80 pr-5 py-5 text-5xl font-bold text-emerald-700">About SUPA</div>
+        <div className="inline-block rounded-lg bg-muted pl-80 pr-5 py-0 text-5xl font-bold text-emerald-700">About SUPA</div>
     </section>
         <div className="max-w-7xl mx-auto px- sm:px-0 lg:px-0 pt-0 ">
         <div className="flex flex-col min-h-[100dvh] ">

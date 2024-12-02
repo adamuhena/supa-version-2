@@ -23,6 +23,15 @@ import UserManagement from "./pages/dashboard/Admin/userManagement";
 import IntendingArtisanDashboard from "./pages/dashboard/intendingArtisan/IntendingArtisanDashboard";
 import AdminDashboardReports from "./pages/dashboard/Admin/adminDashboardReports";
 import TrainingStatus from "./pages/dashboard/trainingCenter/TrainingStatus";
+<<<<<<< Updated upstream
+=======
+import TrainingGroupDetails from "./pages/dashboard/Admin/TrainingGroup";
+import AdminDocumentVerification from "./pages/dashboard/Admin/AdminDocumentVerification";
+import TrainingCenterReport from "./pages/dashboard/Admin/AdminTrainingCenterReport";
+import TrainingCenterGroupRe from "./pages/dashboard/Admin/ReasignTrainingUser";
+import Mygroups from "./pages/groups/App";
+
+>>>>>>> Stashed changes
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 
 function App() {
@@ -31,6 +40,7 @@ function App() {
       <Routes>
         {/* test */}
         <Route path="/training-center" element={<TrainingCenterDashboard />} />
+        <Route path="/groups-test" element={<Mygroups />} />
 
 
         {/* Public Routes */}
@@ -150,6 +160,24 @@ function App() {
           element={<TrainingStatus/>}
           allowedRoles={[ "admin", "superadmin"]}
           />
+<<<<<<< Updated upstream
+=======
+
+          <Route path="/training/groups"
+          element={<TrainingGroupDetails/>}
+          allowedRoles={[ "admin", "superadmin"]}
+          />
+
+          <Route path="/document/verification"
+           element={<AdminDocumentVerification/>}
+           allowedRoles = {["admin", "superadmin"]}
+           />
+
+           <Route path="/feedback" 
+           element ={<TrainingCenterGroupRe/>}
+           allowedRoles = {["admin", "superadmin"]}
+           />
+>>>>>>> Stashed changes
         
       </Routes>
     </Router>
