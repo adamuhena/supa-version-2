@@ -124,7 +124,7 @@ export default function DashboardPage({ href, title, children }) {
 
   if (!userData) {
     return (
-    <div class="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen">
       <Spinner/>
     </div>
     );
@@ -233,12 +233,6 @@ const isLinkAccessible = (allowedRoles) => {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link to="/admin/training-groups">
-                      <SquarePen />
-                      <span>Artisan Placement</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  <SidebarMenuButton asChild>
                     <Link to="/admin/training-status">
                       <FolderKanban />
                       <span>Training Managment</span>
@@ -253,7 +247,19 @@ const isLinkAccessible = (allowedRoles) => {
                       <span>Training Groups</span>
                     </Link>
                   </SidebarMenuButton>
-                </SidebarMenuItem>)}
+                </SidebarMenuItem>
+                  )}
+                
+                <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/admin/sectors">
+                    <BookOpen />
+                    <span>Sector Managment</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+            
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <Link to="/document/verification">

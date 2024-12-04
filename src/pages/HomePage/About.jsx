@@ -1,10 +1,18 @@
-
+import React, { useState } from "react";
 import PageLayout from "@/components/layout/pageLayout"
 import { SVGProps } from "react"
 import { Link } from "react-router-dom"
 import HeaderThreeImages from "../../components/HeaderThreeImages/HeaderThreeImages"
 
 export default function About() {
+    
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleText = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  
     return (
       <PageLayout>
         <div className="bg-gradient-to-t from-stone-100 to-current-black">
@@ -14,35 +22,52 @@ export default function About() {
     </section>
         <div className="max-w-7xl mx-auto px- sm:px-0 lg:px-0 pt-0 ">
         <div className="flex flex-col min-h-[100dvh] ">
+        <div className="flex flex-row justify-center ">
+                  <div className="flex flex-col gap-4 justify-center items-center p-4 pt-10">
+                    <h1 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem]">
+                      Skill-<span className="text-emerald-900">Up</span> Artisans
+                      (SUPA)
+                    </h1>
+                    <p className="max-w-[1000px] text-justify text-muted-foreground md:text-xl lg:text-base xl:text-xl">
+                      Nigeria has a fast-growing population of over 220 million
+                      people, and the burden of unemployment has been prevalent
+                      over time. The country’s labour force was predicted to
+                      increase to over 67 million in 2022, and there is a need
+                      to ensure that employment is readily available as more
+                      citizens enter the job market.
+                    </p>
+                    {!isExpanded && (
+                      <Link
+                        to="#"
+                        onClick={toggleText}
+                        className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+                      >
+                        Learn More
+                      </Link>
+                    )}
+                  </div>
+                  {isExpanded && (
+                    <div className="flex flex-col gap-4 p-4 pt-16 items-center justify-center">
+                    <p className="max-w-[700px] text-justify text-muted-foreground md:text-xl lg:text-base xl:text-xl">
+                      President Bola Ahmed Tinubu, GCFR as part of the Renewed Hope Agenda of his administration, is committed to creating gainful employment for the teeming youth. President Tinubu’s vision for economic development and poverty reduction in Nigeria includes supporting artisans and promoting industrial development through a strong workforce of skilled individuals.
+                    </p>
+                    <Link
+                      to="#"
+                      onClick={toggleText}
+                      className="inline-flex items-center justify-center rounded-md bg-primary w-32 px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+                    >
+                      Show Less
+                    </Link>
+                  </div>
+                  
+                  )}
+                </div>
             <section className="w-full py-12 md:py-15 lg:py-22">
                 <div className="container grid items-center gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
-                    <div className="space-y-4">
-                        
-                        <h1 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem]">
-                            Skill-<span className="text-emerald-900">Up</span> Artisans (SUPA)
-                        </h1>
-                        <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            Nigeria has a fast-growing population of over 220 million people, and the burden of unemployment has been prevalent over time.
-                            The country’s labour force was predicted to increase to over 67 million in 2022 and there is a need to ensure that employment
-                            is readily available as more citizens enter the job market.
+                
 
-                        </p>
-                        <Link
-                            to="#"
-                            className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                        //prefetch={false}
-                        >
-                            Learn More
-                        </Link>
-                    </div>
-                    <div className="flex justify-center">
-                        <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            President Bola Ahmed Tinubu, GCFR as part of the Renewed Hope Agenda of his administration, is committed to creating gainful employment
-                            for the teeming youth. President Tinubu’s vision for economic development and poverty reduction in Nigeria includes supporting artisans and
-                            promoting industrial development through a strong workforce of skilled individuals.
-
-                        </p>
-                    </div>
+          
+          
 
                     <div className="flex col-span-2">
 
@@ -93,9 +118,9 @@ export default function About() {
                                 Greater opportunities towards Capacity Development
                             </h2>
                             <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                                To create requisite and greater opportunities towards Capacity Development,
-                                Quality Service Delivery, Employability, Growth, Market Promotion and Business Support for
-                                artisans in Nigeria.
+                            To be a prime catalyst for the up-skilling, licensing and
+                            empowerment of artisans to enhance job creation, economic
+                            growth and quality service delivery.
                             </p>
                         </div>
                         <div>
@@ -104,9 +129,9 @@ export default function About() {
                                 Integrity, Innovation, and Impact
                             </h2>
                             <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                                To create requisite and greater opportunities towards Capacity Development,
-                                Quality Service Delivery, Employability, Growth, Market Promotion and Business Support for
-                                artisans in Nigeria.
+                            Empowering artisans through tech-enabled skills training,
+                            licensing, access to essential toolkits, and promoting
+                            industry-standard excellence.
                             </p>
                         </div>
                         <div>
@@ -121,7 +146,11 @@ export default function About() {
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <CheckIcon className="h-5 w-5 text-primary" />
-                                    <p>To provide comprehensive Industry 4.0 compliant and certified training programs, including health and safety programmes for various trades.</p>
+                                    <p>To provide comprehensive Industry 4.0 compliant and
+                                        certified training programs, including health and
+                                        safety programmes for various trades such as
+                                        carpentry, masonry, plumbing, electrical work, and
+                                        many more.</p>
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <CheckIcon className="h-5 w-5 text-primary" />
@@ -162,13 +191,15 @@ export default function About() {
                     </div>
                 </div>
             </section>
-            <HeaderThreeImages
+            
+        </div>
+        
+        </div>
+        <HeaderThreeImages
           image_1={"/images/workers/5.jpg"}
           image_2={"/images/workers/2.jpg"}
           image_3={"/images/workers/4.jpg"}
         />
-        </div>
-        </div>
         </div>
         </PageLayout>
     )
