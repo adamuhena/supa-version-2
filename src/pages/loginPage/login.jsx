@@ -21,6 +21,7 @@ import { Button } from "../../components/ui/button";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import PageLayout from "@/components/layout/pageLayout";
 import { toast } from "sonner";
+import Spinner from "../../components/Spinner";
 
 export default function LoginForm() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -30,13 +31,14 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
   const handleRoleChange = (newRole) => {
     setRole(newRole);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    setLoading(true);
     try {
       const response = await axios.post(`${API_BASE_URL}/login`, {
         identifier: email,
@@ -50,11 +52,14 @@ export default function LoginForm() {
 
       if (success) {
         const userData = data[loginAs === "user" ? "user" : "training_center"];
-        toast.success(`Login Successfully! Role: ${userData.role}`);
+        toast.success(`Login Successfully! Role: ${userData.role}`, {
+          position: "top-right",
+        });
 
         if (!userData) {
           console.error("No valid user data found:", data);
           toast.error("Login failed: Invalid user data.");
+          setLoading(false);
           return;
         }
 
@@ -112,8 +117,19 @@ export default function LoginForm() {
         );
       }
     } catch (error) {
-      console.error("Error logging in:", error);
-      toast.error("An error occurred. Please try again.");
+      const message = "Error!";
+      const description =
+        typeof error?.response?.data === "string"
+          ? error?.response?.data
+          : error?.response?.data?.message ||
+            "An error occurred. Please try again.";
+      toast.error(message, {
+        description,
+        position: "top-right",
+        style: { textAlign: "left" },
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -140,19 +156,16 @@ export default function LoginForm() {
                   <Tabs
                     value={loginAs}
                     onValueChange={handleRoleChange}
-                    className="w-full"
-                  >
+                    className="w-full">
                     <TabsList className="grid w-full grid-cols-2 bg-gray-50">
                       <TabsTrigger
                         value="user"
-                        className="data-[state=active]:bg-emerald-800 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
-                      >
+                        className="data-[state=active]:bg-emerald-800 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600">
                         User
                       </TabsTrigger>
                       <TabsTrigger
                         value="training_center"
-                        className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
-                      >
+                        className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600">
                         Training Center
                       </TabsTrigger>
                     </TabsList>
@@ -161,8 +174,7 @@ export default function LoginForm() {
                         <div className="space-y-2">
                           <Label
                             htmlFor="email"
-                            className="block text-left text-xs text-gray-600"
-                          >
+                            className="block text-left text-xs text-gray-600">
                             Email
                           </Label>
                           <Input
@@ -177,8 +189,7 @@ export default function LoginForm() {
                         <div className="space-y-2">
                           <Label
                             htmlFor="password"
-                            className="block text-left text-xs text-gray-600"
-                          >
+                            className="block text-left text-xs text-gray-600">
                             Password
                           </Label>
                           <div className="relative">
@@ -198,8 +209,7 @@ export default function LoginForm() {
                               onClick={() => setShowPassword(!showPassword)}
                               aria-label={
                                 showPassword ? "Hide password" : "Show password"
-                              }
-                            >
+                              }>
                               {showPassword ? (
                                 <EyeOffIcon className="h-4 w-4" />
                               ) : (
@@ -209,7 +219,7 @@ export default function LoginForm() {
                           </div>
                         </div>
                         <Button type="submit" className="w-full bg-emerald-800">
-                          Sign In
+                          {loading ? <Spinner /> : "Sign In"}
                         </Button>
                       </form>
                     </TabsContent>
@@ -218,8 +228,7 @@ export default function LoginForm() {
                         <div className="space-y-2">
                           <Label
                             htmlFor="center-email"
-                            className="block text-left text-xs text-gray-600"
-                          >
+                            className="block text-left text-xs text-gray-600">
                             Training Center Email
                           </Label>
                           <Input
@@ -234,8 +243,7 @@ export default function LoginForm() {
                         <div className="space-y-2">
                           <Label
                             htmlFor="center-password"
-                            className="block text-left text-xs text-gray-600"
-                          >
+                            className="block text-left text-xs text-gray-600">
                             Password
                           </Label>
                           <div className="relative">
@@ -255,8 +263,7 @@ export default function LoginForm() {
                               onClick={() => setShowPassword(!showPassword)}
                               aria-label={
                                 showPassword ? "Hide password" : "Show password"
-                              }
-                            >
+                              }>
                               {showPassword ? (
                                 <EyeOffIcon className="h-4 w-4" />
                               ) : (
@@ -275,8 +282,7 @@ export default function LoginForm() {
                 <CardFooter className="flex justify-center">
                   <Link
                     to="/forgot-password"
-                    className="text-sm text-blue-600 hover:underline"
-                  >
+                    className="text-sm text-blue-600 hover:underline">
                     Forgot password?
                   </Link>
                 </CardFooter>
