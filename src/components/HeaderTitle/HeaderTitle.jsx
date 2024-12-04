@@ -182,9 +182,15 @@ function HeaderTitle({
 
   useGSAP(() => {
     if (withSplitType) {
-      const splitTop = SplitType.create("#header_text_1", { charClass: "char" });
-      const splitBottom = SplitType.create("#header_text_2", { charClass: "char" });
-      const splitSmall = SplitType.create("#header_text_3", { charClass: "char" });
+      const splitTop = SplitType.create("#header_text_1", {
+        charClass: "char",
+      });
+      const splitBottom = SplitType.create("#header_text_2", {
+        charClass: "char",
+      });
+      const splitSmall = SplitType.create("#header_text_3", {
+        charClass: "char",
+      });
 
       const chars = document.querySelectorAll(".char");
       gsap.set(chars, { opacity: 0 });
@@ -209,9 +215,14 @@ function HeaderTitle({
   }, []);
 
   return (
-    <div className={`flex flex-col items-center pb-12 ${centerText ? "text-center" : "text-left"}`}>
+    <div
+      className={`flex flex-col items-center pb-12 ${
+        centerText ? "text-center" : "text-left"
+      }`}>
       {captionText && (
-        <p className="text-sm font-medium uppercase text-gray-500 mb-4">{captionText}</p>
+        <p className="text-sm font-medium uppercase text-gray-500 mb-4">
+          {captionText}
+        </p>
       )}
       {title_top && (
         <motion.h1
@@ -266,7 +277,6 @@ function HeaderTitle({
 }
 
 export default HeaderTitle;
-
 
 // "use client";
 // import React from "react";

@@ -5,22 +5,21 @@ import { BlurFade } from "../../components/ui/blur-fade";
 import HeaderTitle from "../../components/HeaderTitle/HeaderTitle";
 export default function Banner() {
   return (
-    <div className="bg-[whitesmoke] pb-[10px]">
+    <div className="bg-[whitesmoke] pb-[10px] min-h-[100vh] flex">
       <div className="flex w-full max-w-[1300px] mx-auto pt-[100px] items-center">
         <div className="basis-[65%]   min-h-[50px] px-[20px]">
           <div className="relative rounded-[6px] px-3 text-sm/6 xl:text-xl text-black ring-1 ring-gray-200/10 hover:underline bg-transparent backdrop-blur-lg">
             Announcing our next Phase of SUPA.
             <Link
               to="#"
-              className="ml-[5px] font-bold text-emerald-900 hover:text-yellow-400"
-            >
+              className="ml-[5px] font-bold text-emerald-900 hover:text-yellow-400">
               Read more...
             </Link>
           </div>
 
           <HeaderTitle
             withSplitType
-            title_font_size="56px"
+            title_font_size="45px"
             title_top="Skill-Up Artisans (SUPA)"
             description="Empowering artisans with tech-driven training, official licensing, access to essential toolkits, and promoting industry standards to elevate skills, enhance craftsmanship, and drive professional excellence across sectors. "
             title_color="black"
