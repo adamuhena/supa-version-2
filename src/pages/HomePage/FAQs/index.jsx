@@ -43,13 +43,17 @@ function FAQs() {
     <section className="w-full py-[100px]">
       <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-[64px] lg:flex-row">
         {/* Text Section */}
-        <div className="flex w-full max-w-[380px] flex-col gap-[20px] px-4 sm:px-6 lg:max-w-[500px]">
+        <div className="flex w-full max-w-[380px] items-center flex-col gap-[20px] px-4 sm:px-6 lg:max-w-[500px]">
           <BlurFade delay={0.25} inView>
             <h1 className="text-[36px] font-[500] leading-[44px] text-[#1D2849] text-left sm:text-[32px] sm:leading-[40px]">
-              Some of the things you may have questions about
+                FAQ
             </h1>
           </BlurFade>
           <BlurFade delay={0.25} inView>
+          
+            <p className="text-[20px] leading-[27px] text-[#040404] sm:text-[18px] sm:leading-[26px]">
+              Some of the things you may have questions about
+            </p>
             <p className="text-[18px] leading-[27px] text-[#808DB3] sm:text-[16px] sm:leading-[24px]">
               We have answered them so you don’t have to ask
             </p>
