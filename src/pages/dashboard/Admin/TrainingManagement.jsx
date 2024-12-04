@@ -18,7 +18,7 @@ const EnhancedTrainingManagement = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const logout = useLogout();
   const accessToken = localStorage.getItem("accessToken");
-  const userRole = localStorage.getItem("userRole");
+  const [userRole, setUserRole] = useState([]);
   const [periods, setPeriods] = useState([]);
   const [trainingGroups, setTrainingGroups] = useState([]);
   const [users, setUsers] = useState([]);
@@ -46,7 +46,7 @@ const EnhancedTrainingManagement = () => {
     fetchUsers();
     fetchTrainingCenters();
     fetchUserData();
-  }, []);
+  }, [accessToken]);
 
   useEffect(() => {
     const options = users.map((user) => ({
@@ -70,7 +70,7 @@ const EnhancedTrainingManagement = () => {
       const response = await axios.get(`${API_BASE_URL}/users`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      localStorage.setItem("userRole", response.data.role);
+      setUserRole(response.data.role);
     } catch (error) {
       console.error('Error fetching user role:', error);
     }
