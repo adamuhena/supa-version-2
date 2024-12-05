@@ -24,7 +24,7 @@ const PublicRoute = ({ children }) => {
         return <Navigate to="/" replace />;
     }
   }
- 
+
   // Allow unauthenticated users to access the route
   return children;
 };

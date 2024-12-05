@@ -62,7 +62,6 @@ export default function Experience({ controlButtons, form, onchangeInput }) {
       }}
       className="relative w-full max-w-[700px] mx-auto py-[30px]   flex flex-col px-5 gap-[30px] bg-white rounded-[16px]">
       <h1 className="text-left font-[700]  text-[24px]">Experience</h1>
-      
 
       <div className="flex flex-col gap-y-[40px] ">
         {form?.experience.map((item) => {
@@ -104,8 +103,33 @@ export default function Experience({ controlButtons, form, onchangeInput }) {
                   className="w-[300px] text-left leading-[1.3]">
                   Date *
                 </Label>
-
                 <div className="flex gap-[30px] w-full">
+                  <div>
+                    <p className="text-left"> From</p>
+                    <Input
+                      placeholder="Start"
+                      value={item?.date_to}
+                      type="date"
+                      onChange={(e) =>
+                        onChange(item?.id, "date_to", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <p className="text-left">To</p>
+                    <Input
+                      placeholder="End"
+                      value={item?.date_from}
+                      type="date"
+                      onChange={(e) =>
+                        onChange(item?.id, "date_from", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+
+                {/* <div className="flex gap-[30px] w-full">
                   <Select
                     className="flex-1"
                     value={item?.date_from}
@@ -145,11 +169,10 @@ export default function Experience({ controlButtons, form, onchangeInput }) {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
               </div>
 
               <div className="flex items-start relative">
-               
                 {form?.experience?.length > 1 ? (
                   <button
                     onClick={() => remove(item?.id)}
@@ -169,7 +192,7 @@ export default function Experience({ controlButtons, form, onchangeInput }) {
           onClick={add}
           className="flex border border-gray-200 px-2  py-1 text-[12px]  gap-2 rounded-[100px]">
           <PlusCircledIcon />
-          <span>Add</span>
+          <span>Add another experience</span>
         </button>
       </div>
       {controlButtons}

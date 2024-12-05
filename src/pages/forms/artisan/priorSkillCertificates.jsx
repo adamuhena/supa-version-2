@@ -19,6 +19,10 @@ import {
 } from "@radix-ui/react-icons";
 import UploadInput from "../../../components/UploadInput";
 
+// const YEARS = Array.from({ length: 20 }, (_, i) =>
+//   (dayjs().year() - i).toString()
+// );
+
 export default function PriorSkills({ controlButtons, form, onchangeInput }) {
   const remove = (id) => {
     const old = [...(form?.priorSkillsCerts || [])];
@@ -69,54 +73,66 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
           return (
             <div key={item?.id} className="flex flex-col gap-y-[20px]">
               <div className="flex flex-row justify-center">
-      <div className="inputGroup">
-            <Label>Sector</Label>
-            <Select
-              value={form?.sector}
-              onValueChange={(value) => onchangeInput("sector", value)}>
-              <SelectTrigger className="">
-                <SelectValue placeholder="Select a Sector" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="Building and Construction">
-                    Building and Construction
-                  </SelectItem>
-                  <SelectItem value="Welding">Welding</SelectItem>
-                  <SelectItem value="ICT">ICT</SelectItem>
-                  <SelectItem value="Power">Power</SelectItem>
-                  <SelectItem value="Animal Husbandry">
-                    Animal Husbandry
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+                <div className="inputGroup">
+                  <Label>Sector</Label>
+                  <Select
+                    value={form?.sector}
+                    onValueChange={(value) => onchangeInput("sector", value)}>
+                    <SelectTrigger className="">
+                      <SelectValue placeholder="Select a Sector" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="Building and Construction">
+                          Building and Construction
+                        </SelectItem>
+                        <SelectItem value="Welding">Welding</SelectItem>
+                        <SelectItem value="ICT">ICT</SelectItem>
+                        <SelectItem value="Power">Power</SelectItem>
+                        <SelectItem value="Animal Husbandry">
+                          Animal Husbandry
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-          <div className="inputGroup">
-            <Label>Trade Area</Label>
-            <Select
-              value={form?.tradeArea}
-              onValueChange={(value) => onchangeInput("tradeArea", value)}>
-              <SelectTrigger className="">
-                <SelectValue placeholder="Select Trade Area" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="Trade Area 1">Trade Area 1</SelectItem>
-                  <SelectItem value="Trade Area 2">Trade Area 2</SelectItem>
-                  <SelectItem value="Trade Area 3">Trade Area 3</SelectItem>
-                  <SelectItem value="Trade Area 4">Trade Area 4</SelectItem>
-                  <SelectItem value="Trade Area 5">Trade Area 5</SelectItem>
-                  <SelectItem value="Trade Area 6">Trade Area 6</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-
-      </div>
+                <div className="inputGroup">
+                  <Label>Trade Area</Label>
+                  <Select
+                    value={form?.tradeArea}
+                    onValueChange={(value) =>
+                      onchangeInput("tradeArea", value)
+                    }>
+                    <SelectTrigger className="">
+                      <SelectValue placeholder="Select Trade Area" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="Trade Area 1">
+                          Trade Area 1
+                        </SelectItem>
+                        <SelectItem value="Trade Area 2">
+                          Trade Area 2
+                        </SelectItem>
+                        <SelectItem value="Trade Area 3">
+                          Trade Area 3
+                        </SelectItem>
+                        <SelectItem value="Trade Area 4">
+                          Trade Area 4
+                        </SelectItem>
+                        <SelectItem value="Trade Area 5">
+                          Trade Area 5
+                        </SelectItem>
+                        <SelectItem value="Trade Area 6">
+                          Trade Area 6
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               <div className="flex items-center ">
-                
                 <Label
                   htmlFor="email"
                   className="w-[300px] text-left leading-[1.3]">
@@ -133,9 +149,17 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
                 <Label
                   htmlFor="email"
                   className="w-[300px] text-left leading-[1.3]">
-                  Date attained obtained *
+                  Year obtained *
                 </Label>
-                <Select
+
+                <Input
+                  placeholder="Enter name"
+                  type="date"
+                  value={item?.year}
+                  onChange={(e) => onChange(item?.id, "year", e.target.value)}
+                />
+
+                {/* <Select
                   value={item?.year}
                   onValueChange={(value) => onChange(item?.id, "year", value)}>
                   <SelectTrigger className="">
@@ -143,14 +167,12 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="2001">2001</SelectItem>
-                      <SelectItem value="2002">2002</SelectItem>
-                      <SelectItem value="2003">2003</SelectItem>
-                      <SelectItem value="2004">2004</SelectItem>
-                      <SelectItem value="2005">2005</SelectItem>
+                      {YEARS.map((item) => {
+                        return <SelectItem value={item}>{item}</SelectItem>;
+                      })}
                     </SelectGroup>
                   </SelectContent>
-                </Select>
+                </Select> */}
               </div>
 
               <div className="flex items-start relative">
@@ -179,7 +201,7 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
           onClick={add}
           className="flex border border-gray-200 px-2  py-1 text-[12px]  gap-2 rounded-[100px]">
           <PlusCircledIcon />
-          <span>Add</span>
+          <span>Add Another Skill</span>
         </button>
       </div>
       {controlButtons}

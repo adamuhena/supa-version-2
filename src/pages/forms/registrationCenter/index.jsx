@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Stepper, Step } from "react-form-stepper";
-import CompanyInfo from "./companyInfo";
+import CompanyInfo from "./CompanyInfo";
+
 import Instructors from "./Instructors";
 import VerificationDocuments from "./VerificationDocuments";
 import Declaration from "./Declaration";
@@ -12,7 +13,7 @@ import { DotPattern } from "../../../components/ui/dot-pattern";
 import { cn } from "../../../lib/utils";
 import LegalInfo from "./LegalInfo.jsx";
 import TrainingAmenities from "./Amenities";
-import BankDetails from "./bankDetails";
+import BankDetails from "./BankDetails.jsx";
 // import ProtectedRoute from "@/components/ProtectedRoute";
 
 const TrainingCenterForm = () => {
@@ -88,7 +89,6 @@ const TrainingCenterForm = () => {
     createdAt: null, // Will be set as a Date object
     updatedAt: null, // Will be set as a Date object
   });
-  
 
   const onChangeBankInput = (id, value) => {
     setForm((prevForm) => ({
@@ -99,7 +99,6 @@ const TrainingCenterForm = () => {
       },
     }));
   };
-
 
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -132,134 +131,202 @@ const TrainingCenterForm = () => {
     }));
   };
   const userID = localStorage.getItem("userId"); // Replace 'userID' with your storage key if different
-console.log("userID",userID)
+  console.log("userID", userID);
 
-const submitForm = async () => {
-  // Ensure userID exists
-  if (!userID) {
-    toast.error("User ID is missing. Please log in again.", {
-      position: "top-right",
-    });
-    return;
-  }
+  const submitForm = async () => {
+    // Ensure userID exists
+    if (!userID) {
+      toast.error("User ID is missing. Please log in again.", {
+        position: "top-right",
+      });
+      return;
+    }
 
-  // Get the token from localStorage
-  const token = localStorage.getItem("accessToken"); // Replace 'accessToken' with the actual key if different
-  if (!token) {
-    toast.error("Authorization token is missing. Please log in again.", {
-      position: "top-right",
-    });
-    return;
-  }
+    // Get the token from localStorage
+    const token = localStorage.getItem("accessToken"); // Replace 'accessToken' with the actual key if different
+    if (!token) {
+      toast.error("Authorization token is missing. Please log in again.", {
+        position: "top-right",
+      });
+      return;
+    }
 
-  setLoading(true);
-  try {
-    await axios.patch(
-      `${API_BASE_URL}/training-centers/${userID}`,
-      form,
-      {
+    setLoading(true);
+    try {
+      await axios.patch(`${API_BASE_URL}/training-centers/${userID}`, form, {
         headers: {
           Authorization: `Bearer ${token}`, // Attach the bearer token
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-      }
-    );
-    toast.success("Training Center Registered Successfully!");
-    setShow(true); // Show success modal or message
-  } catch (error) {
-    toast.error(error?.response?.data?.message || "Submission failed!");
-  } finally {
-    setLoading(false);
-  }
-};
-
+      });
+      toast.success("Training Center Registered Successfully!");
+      setShow(true); // Show success modal or message
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Submission failed!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const controlButtons = (
-      <div className="flex w-full justify-end">
-        {step > 0 && (
-            <button
-                disabled={loading}
-                onClick={goBack}
-                className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-gray-300 text-[#00524d]"
-            >
-              Back
-            </button>
-        )}
-        {step === 5 ? (
-            form.agree && (
-
-                <button
-                    disabled={loading}
-                    onClick={submitForm}
-                    className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
-                >
-                  {loading ? "Submitting..." : "Submit"}
-                </button>
-            )
-        ) : (
-            <button
-                onClick={goNext}
-                className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
-            >
-              Next
-            </button>
-        )}
-      </div>
+    <div className="flex w-full justify-end">
+      {step > 0 && (
+        <button
+          disabled={loading}
+          onClick={goBack}
+          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-gray-300 text-[#00524d]"
+        >
+          Back
+        </button>
+      )}
+      {step === 5 ? (
+        form.agree && (
+          <button
+            disabled={loading}
+            onClick={submitForm}
+            className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </button>
+        )
+      ) : (
+        <button
+          onClick={goNext}
+          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
+        >
+          Next
+        </button>
+      )}
+    </div>
   );
 
-
   return (
-      <div>
-        {/*<ProtectedRoute>*/}
-        <RegisterSuccess show={show} setShow={setShow} />
-        <div className="container">
+    <div>
+      {/*<ProtectedRoute>*/}
+      <RegisterSuccess show={show} setShow={setShow} />
+      <div className="container">
+        <div>
+          <div className="sticky top-0 pt-16 pb-0 z-10 bg-slate-900 border-b-[1px]">
+            <h1 className="header text-xl text-emerald-600">
+              Training Center KYC
+            </h1>
+            <Stepper
+              activeStep={step}
+              className="border-b-gray-300 scale-[0.8]"
+            >
+              <Step
+                index={0}
+                label={
+                  <span className="text-sm font-semibold text-white">
+                    Company Information
+                  </span>
+                }
+              />
+              <Step
+                index={1}
+                label={
+                  <span className="text-sm font-semibold text-white">
+                    Training Center Amenities
+                  </span>
+                }
+              />
+              <Step
+                index={2}
+                label={
+                  <span className="text-sm font-semibold text-white">
+                    Training Centre Assessment
+                  </span>
+                }
+              />
+              <Step
+                index={3}
+                label={
+                  <span className="text-sm font-semibold text-white">
+                    Legal and Trade Information
+                  </span>
+                }
+              />
+              <Step
+                index={4}
+                label={
+                  <span className="text-sm font-semibold text-white">
+                    Bank Details
+                  </span>
+                }
+              />
+              <Step
+                index={5}
+                label={
+                  <span className="text-sm font-semibold text-white">
+                    Declaration
+                  </span>
+                }
+              />
+            </Stepper>
+          </div>
+
           <div>
-            <div className="sticky top-0 pt-16 pb-0 z-10 bg-slate-900 border-b-[1px]">
-              <h1 className="header text-xl text-emerald-600">
-                Training Center KYC
-              </h1>
-              <Stepper activeStep={step} className="border-b-gray-300 scale-[0.8]">
-                <Step index={0} label={<span className="text-sm font-semibold text-white">Company Information</span>} />
-                <Step index={1} label={<span className="text-sm font-semibold text-white">Training Center Amenities</span>} />
-                <Step index={2} label={<span className="text-sm font-semibold text-white">Training Centre Assessment</span>} />
-                <Step index={3} label={<span className="text-sm font-semibold text-white">Legal and Trade Information
-</span>} />
-                <Step index={4} label={<span className="text-sm font-semibold text-white">Bank Details</span>} />
-                <Step index={5} label={<span className="text-sm font-semibold text-white">Declaration</span>} />
-              </Stepper>
-            </div>
+            <div className="relative py-7">
+              <DotPattern
+                width={20}
+                height={20}
+                cx={1}
+                cy={1}
+                cr={1}
+                className={cn("fill-neutral-400/40")}
+              />
 
-            <div>
-              <div className="relative py-7">
-                <DotPattern
-                    width={20}
-                    height={20}
-                    cx={1}
-                    cy={1}
-                    cr={1}
-                    className={cn("fill-neutral-400/40")}
+              {step === 0 && (
+                <CompanyInfo
+                  form={form}
+                  setForm={setForm}
+                  controlButtons={controlButtons}
                 />
-
-                {step === 0 && <CompanyInfo form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 1 && <TrainingAmenities form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 2 && <Instructors form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 3 && <LegalInfo form={form} setForm={setForm} controlButtons={controlButtons}
-                    onChangeBankInput={onChangeBankInput}
-                    />}
-                {step === 4 && <BankDetails form={form} setForm={setForm} controlButtons={controlButtons}
-                                          onChangeBankInput={onChangeBankInput}
-                />}
-                {step === 5 && <Declaration   form={form}
-                    onchangeInput={onchangeInput}
-                    controlButtons={controlButtons} />}
-              </div>
+              )}
+              {step === 1 && (
+                <TrainingAmenities
+                  form={form}
+                  setForm={setForm}
+                  controlButtons={controlButtons}
+                />
+              )}
+              {step === 2 && (
+                <Instructors
+                  form={form}
+                  setForm={setForm}
+                  controlButtons={controlButtons}
+                />
+              )}
+              {step === 3 && (
+                <LegalInfo
+                  form={form}
+                  setForm={setForm}
+                  controlButtons={controlButtons}
+                  onChangeBankInput={onChangeBankInput}
+                />
+              )}
+              {step === 4 && (
+                <BankDetails
+                  form={form}
+                  setForm={setForm}
+                  controlButtons={controlButtons}
+                  onChangeBankInput={onChangeBankInput}
+                />
+              )}
+              {step === 5 && (
+                <Declaration
+                  form={form}
+                  onchangeInput={onchangeInput}
+                  controlButtons={controlButtons}
+                />
+              )}
             </div>
           </div>
         </div>
-        {/*</ProtectedRoute>*/}
       </div>
+      {/*</ProtectedRoute>*/}
+    </div>
   );
 };
 
 export default TrainingCenterForm;
-

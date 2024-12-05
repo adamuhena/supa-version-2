@@ -34,33 +34,36 @@ export default function ProfessionalInformaiton({
   const selectedStateLGASOriginFormatted =
     selectedStateLGASOrigin && selectedStateLGASOrigin?.length
       ? selectedStateLGASOrigin.map((x) => ({
-        label: x,
-        value: x,
-      }))
-      : [];
-
-      const selectedStateLGASResidence =
-      states.find(
-        (state) =>
-          replaceSymbolsWithSpace(`${state?.value}`) ===
-          replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
-      )?.lgas || [];
-  
-    const selectedStateLGASResidenceFormatted =
-      selectedStateLGASResidence && selectedStateLGASResidence?.length
-        ? selectedStateLGASResidence.map((x) => ({
           label: x,
           value: x,
         }))
-        : [];
- 
+      : [];
+
+  const selectedStateLGASResidence =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+    )?.lgas || [];
+
+  const selectedStateLGASResidenceFormatted =
+    selectedStateLGASResidence && selectedStateLGASResidence?.length
+      ? selectedStateLGASResidence.map((x) => ({
+          label: x,
+          value: x,
+        }))
+      : [];
+
   const [hasDisability, setHasDisability] = useState(""); // Track radio button value
   const [selectedDisability, setSelectedDisability] = useState(""); // Track selected disability
 
   const handleRadioChange = (e) => {
     setHasDisability(e.target.value); // Update state based on selection
     if (e.target.value === "no") {
+      onchangeInput("hasDisability", "no");
       setSelectedDisability(""); // Reset disability type if "No" is selected
+    } else {
+      onchangeInput("hasDisability", "yes");
     }
   };
 
@@ -79,8 +82,12 @@ export default function ProfessionalInformaiton({
       <div className="ParentDiv">
         <div className="firstDiv">
           <div className="inputGroup">
-            <Label htmlFor="firstName">First Name *</Label>
+            <p htmlFor="firstName">
+              First Name{" "}
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
             <Input
+              required
               placeholder=""
               value={form?.firstName}
               onChange={(e) => onchangeInput("firstName", e.target?.value)}
@@ -88,7 +95,7 @@ export default function ProfessionalInformaiton({
           </div>
 
           <div className="inputGroup">
-            <Label>Middle Name</Label>
+            <p>Middle Name</p>
             <Input
               placeholder="Middle name"
               required
@@ -97,7 +104,10 @@ export default function ProfessionalInformaiton({
             />
           </div>
           <div className="inputGroup">
-            <Label>Last Name</Label>
+            <p>
+              Last Name
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
             <Input
               placeholder="Last Name"
               value={form?.lastName}
@@ -130,7 +140,10 @@ export default function ProfessionalInformaiton({
             />
           </div> */}
           <div className="inputGroup">
-            <Label>Gender</Label>
+            <p>
+              Gender
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
             <Select
               value={form?.gender}
               onValueChange={(value) => onchangeInput("gender", value)}>
@@ -145,9 +158,12 @@ export default function ProfessionalInformaiton({
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="inputGroup">
-            <Label>State Of Origin</Label>
+            <p>
+              State Of Origin
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
             <Select
               value={form?.state}
               onValueChange={(value) => onchangeInput("stateOfOrigin", value)}>
@@ -167,7 +183,10 @@ export default function ProfessionalInformaiton({
           </div>
 
           <div className="inputGroup">
-            <Label>LGA Of Origin</Label>
+            <p>
+              LGA Of Origin
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
             <Select
               value={form?.lga}
               onValueChange={(value) => onchangeInput("lga", value)}>
@@ -187,10 +206,15 @@ export default function ProfessionalInformaiton({
           </div>
 
           <div className="inputGroup">
-            <Label>State Of Residence</Label>
+            <p>
+              State Of Residence
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
             <Select
               value={form?.stateOfResidence}
-              onValueChange={(value) => onchangeInput("stateOfResidence", value)}>
+              onValueChange={(value) =>
+                onchangeInput("stateOfResidence", value)
+              }>
               <SelectTrigger className="">
                 <SelectValue placeholder="" />
               </SelectTrigger>
@@ -207,7 +231,10 @@ export default function ProfessionalInformaiton({
           </div>
 
           <div className="inputGroup">
-            <Label>LGA Of Residence</Label>
+            <p>
+              LGA Of Residence
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
             <Select
               value={form?.lgaOfResidence}
               onValueChange={(value) => onchangeInput("lgaOfResidence", value)}>
@@ -227,7 +254,10 @@ export default function ProfessionalInformaiton({
           </div>
 
           <div className="inputGroup">
-            <Label>Residencial Address</Label>
+            <p>
+              Residencial Address
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
             <Input
               placeholder=""
               value={form?.street}
@@ -235,7 +265,10 @@ export default function ProfessionalInformaiton({
             />
           </div>
           <div className="inputGroup">
-            <Label>Marital Status</Label>
+            <p>
+              Marital Status
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
             <Select
               value={form?.maritalStatus}
               onValueChange={(value) => onchangeInput("maritalStatus", value)}>
@@ -252,9 +285,35 @@ export default function ProfessionalInformaiton({
           </div>
 
           <div className="inputGroup">
+            <p>
+              Senatorial District
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
+            <Select
+              value={form?.senetorialDistrict}
+              onValueChange={(value) =>
+                onchangeInput("senetorialDistrict", value)
+              }>
+              <SelectTrigger className="">
+                <SelectValue placeholder="" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {states.map((item) => {
+                    return (
+                      <SelectItem value={item?.value}>{item?.label}</SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="inputGroup">
             <div className="radioGroup">
               <div>
-                <span>Persons with disability {"(PWD)"}? </span>
+                <span>Are you a person with disability? </span>
+                <span className="text-red-600 ml-[4px] text-[13px]">*</span>
               </div>
 
               {/* <div>
@@ -264,7 +323,7 @@ export default function ProfessionalInformaiton({
                 <label for="no">No</label>
               </div> */}
 
-<div>
+              <div>
                 {/* Radio buttons */}
                 <div className="flex items-start gap-4">
                   {/* Radio buttons */}
@@ -275,8 +334,8 @@ export default function ProfessionalInformaiton({
                       name="disability"
                       value="yes"
                       onChange={handleRadioChange}
-                      checked={hasDisability === "yes"}
                     />
+
                     <label htmlFor="yes">Yes</label>
 
                     <input
@@ -293,7 +352,9 @@ export default function ProfessionalInformaiton({
                   {/* Dropdown for disabilities */}
                   {hasDisability === "yes" && (
                     <div className="flex">
-                      <label className="block text-sm font-medium mb-2 " htmlFor="disabilityType">
+                      <label
+                        className="block text-sm font-medium mb-2 "
+                        htmlFor="disabilityType">
                         Select your disability:
                       </label>
                       <Select onValueChange={setSelectedDisability}>
@@ -303,10 +364,18 @@ export default function ProfessionalInformaiton({
                         <SelectContent>
                           <SelectGroup>
                             <SelectLabel>Disability Types</SelectLabel>
-                            <SelectItem value="visual">Visual Impairment</SelectItem>
-                            <SelectItem value="hearing">Hearing Impairment</SelectItem>
-                            <SelectItem value="mobility">Mobility Impairment</SelectItem>
-                            <SelectItem value="cognitive">Cognitive Impairment</SelectItem>
+                            <SelectItem value="visual">
+                              Visual Impairment
+                            </SelectItem>
+                            <SelectItem value="hearing">
+                              Hearing Impairment
+                            </SelectItem>
+                            <SelectItem value="mobility">
+                              Mobility Impairment
+                            </SelectItem>
+                            <SelectItem value="cognitive">
+                              Cognitive Impairment
+                            </SelectItem>
                             <SelectItem value="other">Other</SelectItem>
                           </SelectGroup>
                         </SelectContent>
@@ -314,9 +383,7 @@ export default function ProfessionalInformaiton({
                     </div>
                   )}
                 </div>
-
               </div>
-              
             </div>
             <br />
 

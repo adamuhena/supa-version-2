@@ -8,11 +8,8 @@ function register() {
   return (
     <div>
       <PageLayout>
-      <ThreeBoxes />
+        <ThreeBoxes />
       </PageLayout>
-
-      
-
     </div>
   );
 }

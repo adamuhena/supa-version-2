@@ -12,15 +12,14 @@ function HomePage() {
     <>
       {/* <NavBar /> */}
       <PageLayout>
-
-      {/* <div
+        {/* <div
         style={{
           padding: "0 2rem",
           paddingTop: 50,
         }}> */}
-      <div>
-          <Banner/>
-        {/* <HeaderTitle
+        <div>
+          <Banner />
+          {/* <HeaderTitle
           withSplitType
           title_font_size="56px"
           title_top="Skill-Up Artisans (SUPA)"
@@ -46,65 +45,65 @@ function HomePage() {
           </BlurFade>
         </div> */}
 
-        <br />
-        <br />
-        <br />
-        <HeaderTitle
-          title_color="#064A3B"
-          title_top="RECENT PROGRAMMES"
-          title_font_size="56px"
-          description="Recent programmes reflecting our commitment to high-quality craftsmanship and exceptional results."
-          description_color="#000000"
-          centerText
-        />
+          <br />
+          <br />
+          <br />
+          <HeaderTitle
+            title_color="#064A3B"
+            title_top="RECENT PROGRAMMES"
+            title_font_size="40px"
+            description="Recent programmes reflecting our commitment to high-quality craftsmanship and exceptional results."
+            description_color="#000000"
+            centerText
+          />
 
-        <Marquee className={"mb-[20px] relative overflow-x-hidden"}>
-          {[
-            "/images/workers/1.jpg",
-            "/images/workers/2.jpg",
-            "/images/workers/3.jpg",
-            "/images/workers/4.jpg",
-            "/images/workers/5.jpg",
-          ].map((item, index) => {
-            return (
-              <div key={index.toString()} className={"translate-x-[-50%]"}>
-                <img
-                  src={item}
-                  className="w-[425px] h-[280px] mr-[20px] rounded-[16px] object-cover"
-                />
-              </div>
-            );
-          })}
-        </Marquee>
+          <Marquee className={"mb-[20px] relative overflow-x-hidden"}>
+            {[
+              "/images/workers/1.jpg",
+              "/images/workers/2.jpg",
+              "/images/workers/3.jpg",
+              "/images/workers/4.jpg",
+              "/images/workers/5.jpg",
+            ].map((item, index) => {
+              return (
+                <div key={index.toString()} className={"translate-x-[-50%]"}>
+                  <img
+                    src={item}
+                    className="w-[425px] h-[280px] mr-[20px] rounded-[16px] object-cover"
+                  />
+                </div>
+              );
+            })}
+          </Marquee>
 
-        <Marquee
-          className={"mb-[20px] relative overflow-x-hidden"}
-          direction="right">
-          {[
-            "/images/workers/1.jpg",
-            "/images/workers/2.jpg",
-            "/images/workers/3.jpg",
-            "/images/workers/4.jpg",
-            "/images/workers/5.jpg",
-          ].map((item, index) => {
-            return (
-              <div key={index.toString()} className={"translate-x-[-20%]"}>
-                <img
-                  src={item}
-                  className="w-[425px] h-[280px] mr-[20px] rounded-[16px] object-cover"
-                />
-              </div>
-            );
-          })}
-        </Marquee>
-      </div>
-      {/* <HeaderThreeImages
+          <Marquee
+            className={"mb-[20px] relative overflow-x-hidden"}
+            direction="right">
+            {[
+              "/images/workers/1.jpg",
+              "/images/workers/2.jpg",
+              "/images/workers/3.jpg",
+              "/images/workers/4.jpg",
+              "/images/workers/5.jpg",
+            ].map((item, index) => {
+              return (
+                <div key={index.toString()} className={"translate-x-[-20%]"}>
+                  <img
+                    src={item}
+                    className="w-[425px] h-[280px] mr-[20px] rounded-[16px] object-cover"
+                  />
+                </div>
+              );
+            })}
+          </Marquee>
+        </div>
+        {/* <HeaderThreeImages
           image_1={"/images/workers/5.jpg"}
           image_2={"/images/workers/2.jpg"}
           image_3={"/images/workers/4.jpg"}
         /> */}
         <FAQs />
-      {/* <Footer /> */}
+        {/* <Footer /> */}
       </PageLayout>
     </>
   );
