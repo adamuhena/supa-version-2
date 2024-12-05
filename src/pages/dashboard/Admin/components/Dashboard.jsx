@@ -111,26 +111,20 @@ export default function Dashboard() {
           {/* <div className="col-span-1 sm:col-span-2 lg:col-span-9">
             <RadarChart title="Skill Distribution" data={skillDistributionData} />
           </div> */}
-          <div className="col-span-1 sm:col-span-2 lg:col-span-6">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-9">
             <NigeriaMap />
           </div>
 
-          <div className="col-span-1 lg:col-span-3">
-            <BarChart title="Distribution by Disability" data={certificationData} />
+          <div className="col-span-1 lg:col-span-3 gap-4">
+            <div>
+              <BarChart title="Distribution by Disability" data={certificationData} />
+            </div>
+            <div>
+              <PieChart title="Certified vs Non-Certified" data={certificationData} />   
+            </div>
           </div>
 
-          <div className="col-span-1 lg:col-span-3 ">
-            <PieChart title="Certified vs Non-Certified" data={certificationData} />
-          </div>
-
-          <div className="col-span-1 lg:col-span-3">
-            <BarChart title="Distribution by Disability" data={certificationData} />
-          </div>
-          <div className="col-span-1 lg:col-span-3" >
-            <BarChart title="Distribution by Disability" data={certificationData} />
-          </div>
         </div>
-
         {/* Second Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 ">
           <div className="col-span-1 lg:col-span-12">
@@ -157,23 +151,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        
-
-        {/* Third Grid Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 pt-4">
-          <div className="col-span-1 lg:col-span-3">
-            <MapChart title="Senatorial Distribution" data={genderData} />
-          </div>
-
-          <div className="col-span-1 sm:col-span-2 lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <LineChart title="Registration Trend" data={genderData} />
-            <BarChart title="State of Residence" data={certificationData} />
-          </div>
-
-          <div className="col-span-1 lg:col-span-3">
-            <Metrics />
-          </div>
-        </div>
       </div>
     </div>
   );

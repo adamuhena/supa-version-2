@@ -71,10 +71,10 @@ const NigeriaMap = () => {
             map: topology,
           },
           title: {
-            text: "Distribution by Regions",
+            text: "Distribution by State",
           },
           subtitle: {
-            text: 'Artisan & Intending Artisan: <a href="https://code.highcharts.com/mapdata/countries/ng/ng-all.topo.json">Nigeria</a>',
+            text: 'Artisan & Intending Artisan: <a href="#">Nigeria</a>',
           },
           mapNavigation: {
             enabled: true,
@@ -110,7 +110,7 @@ const NigeriaMap = () => {
   return (
     <div
       ref={chartRef}
-      className="h-[500px] max-w-[800px] mx-auto"
+      className="h-[500px] max-w mx-auto"
       id="container"
     ></div>
   );
