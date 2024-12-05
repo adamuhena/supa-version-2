@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "npm install -g rollup"
   },
   "dependencies": {
     "@gsap/react": "^2.1.1",
@@ -58,6 +59,7 @@
     "react-pagination": "^1.0.0",
     "react-router-dom": "^6.28.0",
     "recharts": "^2.14.1",
+    "rollup": "^4.28.0",
     "separator": "^0.1.0",
     "shadcn": "^1.0.0",
     "sidebar": "^1.0.0",
