@@ -103,7 +103,8 @@ import HeaderTitle from "../../components/HeaderTitle/HeaderTitle";
 
 export default function Banner() {
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-slate-900">
+    //bg-slate-900
+    <div className="relative h-screen w-full overflow-hidden bg-slate-900"> 
       <div className="relative h-full w-full flex flex-col justify-between">
         {/* Background Gradient */}
         <div className="absolute inset-x-0 -top-20 -z-60 transform-gpu overflow-hidden blur-3xl sm:-top-80">
