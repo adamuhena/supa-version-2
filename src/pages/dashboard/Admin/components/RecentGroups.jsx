@@ -1,5 +1,5 @@
-import React,{ useState, useEffect }  from 'react';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 
 
@@ -8,7 +8,7 @@ export default function RecentGroups() {
   const [groups, setTrainingGroups] = useState([]);
 
 
-
+ß
     // Fetch trainingCenters from the database
     useEffect(() => {
       const fetchTrainingGroups = async () => {

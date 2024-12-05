@@ -1,14 +1,4 @@
-"use client"
-
-import React, { useEffect, useState, useMemo } from "react";
-import axios from "axios";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  XAxis,
-  Tooltip,
-} from "recharts";
+ß
 import {
   Card,
   CardContent,
@@ -20,6 +10,15 @@ import {
   ChartContainer,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import axios from "axios";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  Tooltip,
+  XAxis,
+} from "recharts";
 
 export function ArtisanDistributionChart() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
