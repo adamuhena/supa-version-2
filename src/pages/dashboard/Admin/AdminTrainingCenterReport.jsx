@@ -6,32 +6,63 @@ import Spinner from "@/components/layout/spinner";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Printer, Download } from "lucide-react";
+import {
+  Cross1Icon,
+  DashboardIcon,
+  DownloadIcon,
+  SewingPinFilledIcon,
+} from "@radix-ui/react-icons";
 import { CSVLink } from "react-csv";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+
+const ITEMS_PER_PAGE = 25;
 
 const TrainingCenterReport = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({
+    sector: "",
+    trade: "",
+    tradeArea: "",
+    email: "",
+    contactPerson: "",
+    phoneNumber: "",
+    senatorialDistrict: "",
+  });
 
   // Fetch training center reports
-  const fetchReports = async () => {
+  const fetchReports = async (filterParams = {}) => {
     setLoading(true);
     try {
       const accessToken = localStorage.getItem("accessToken");
-      const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.post(
+          `${API_BASE_URL}/trainingcenter/report`,
+          { filterParams },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+      );
       setReports(response?.data?.data || []);
     } catch (error) {
       console.error("Error fetching reports:", error);
@@ -44,17 +75,78 @@ const TrainingCenterReport = () => {
     fetchReports();
   }, []);
 
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const search = () => {
+    fetchReports(filters);
+    setCurrentPage(1);
+  };
+
+  const clear = () => {
+    setFilters({
+      sector: "",
+      trade: "",
+      tradeArea: "",
+      email: "",
+      contactPerson: "",
+      phoneNumber: "",
+      senatorialDistrict: "",
+    });
+    setReports([]);
+    setCurrentPage(1);
+  };
+
+  const showAll = () => {
+    setFilters({
+      sector: "",
+      trade: "",
+      tradeArea: "",
+      email: "",
+      contactPerson: "",
+      phoneNumber: "",
+      senatorialDistrict: "",
+    });
+    fetchReports();
+    setCurrentPage(1);
+  };
+
+  // Pagination
+  const totalPages = Math.ceil(reports.length / ITEMS_PER_PAGE);
+  const paginatedReports = reports.slice(
+      (currentPage - 1) * ITEMS_PER_PAGE,
+      currentPage * ITEMS_PER_PAGE
+  );
+
   // Memoized CSV Data
   const csvData = useMemo(() => {
     if (!reports.length) return [];
-    const headers = ["Training Center", "Address", "State", "LGA", "Phone", "Email"];
-    const rows = reports.map(({ name, address, state, lga, phone, email }) => [
-      name,
-      address,
-      state,
-      lga,
-      phone,
-      email,
+    const headers = [
+      "SN",
+      "Training Center",
+      "Sector",
+      "Trade",
+      "Trade Area",
+      "State",
+      "LGA",
+      "Contact Person",
+      "Phone Number",
+      "Email",
+      "Senatorial District"
+    ];
+    const rows = reports.map((center, index) => [
+      index + 1,
+      center.name,
+      center.sector,
+      center.trade,
+      center.tradeArea,
+      center.state,
+      center.lga,
+      center.contactPerson,
+      center.phoneNumber,
+      center.email,
+      center.senatorialDistrict,
     ]);
     return [headers, ...rows];
   }, [reports]);
@@ -62,77 +154,286 @@ const TrainingCenterReport = () => {
   // Generate PDF
   const generatePDF = () => {
     const doc = new jsPDF();
-    const headers = ["Training Center", "Address", "State", "LGA", "Phone", "Email"];
-    const data = reports.map(({ name, address, state, lga, phone, email }) => [
-      name,
-      address,
-      state,
-      lga,
-      phone,
-      email,
+    const headers = [
+      "SN",
+      "Training Center",
+      "Sector",
+      "Trade",
+      "Trade Area",
+      "State",
+      "LGA",
+      "Contact Person",
+      "Phone",
+      "Email",
+      "Senatorial District"
+    ];
+    const data = reports.map((center, index) => [
+      index + 1,
+      center.name,
+      center.sector,
+      center.trade,
+      center.tradeArea,
+      center.state,
+      center.lga,
+      center.contactPerson,
+      center.phoneNumber,
+      center.email,
+      center.senatorialDistrict,
     ]);
+
     doc.setFontSize(16);
-    doc.text("Training Center Report", 20, 20);
+    doc.text("Training Center Report", 20, 15);
+
     doc.autoTable({
       head: [headers],
       body: data,
-      startY: 30,
+      startY: 25,
+      headStyles: {
+        fillColor: [16, 185, 129],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      bodyStyles: {
+        textColor: 50,
+      },
     });
+
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(10);
+      doc.text(`Generated by: ITF SUPA`, 10, doc.internal.pageSize.height - 10);
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, doc.internal.pageSize.width - 50, doc.internal.pageSize.height - 10);
+    }
+
     doc.save("Training_Center_Report.pdf");
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spinner />
-      </div>
+        <div className="flex justify-center items-center h-screen">
+          <Spinner />
+        </div>
     );
   }
 
   return (
-    <ProtectedRoute>
-      <DashboardPage title="Training Center Report">
-        <div className="container mx-auto py-6">
-          <header className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold">Training Center Reports</h1>
-            <div className="flex gap-2">
-              {reports.length > 0 && (
-                <>
-                  <CSVLink data={csvData} filename="training_center_report.csv">
-                    <Button>Download CSV</Button>
-                  </CSVLink>
-                  <Button onClick={generatePDF}>Download PDF</Button>
-                </>
-              )}
+      <ProtectedRoute>
+        <DashboardPage title="Training Center Report">
+          <div className="container mx-auto py-6">
+            <header className="flex justify-between items-center mb-6">
+              <div>
+                <h1 className="text-3xl font-bold">TRAINING CENTER REPORTS</h1>
+                <h2 className="text-left font-[700] text-[14px]">
+                  (TRAINING CENTERS & FACILITIES)
+                </h2>
+              </div>
+              <div className="flex gap-2">
+                <CSVLink data={csvData} filename="training_center_report.csv">
+                  <Button className="bg-gray-900 text-white hover:bg-gray-800">
+                    <Download className="mr-2 h-4 w-4" /> Print CSV
+                  </Button>
+                </CSVLink>
+                <Button className="bg-gray-900 text-white hover:bg-gray-800" onClick={generatePDF}>
+                  <Printer className="mr-2 h-4 w-4" /> Print PDF
+                </Button>
+              </div>
+            </header>
+
+            <div className="flex gap-[20px] flex-wrap mb-6">
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Sector</p>
+                <Select
+                    value={filters.sector}
+                    onValueChange={(value) => handleFilterChange("sector", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="public">Public</SelectItem>
+                      <SelectItem value="private">Private</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Trade</p>
+                <Select
+                    value={filters.trade}
+                    onValueChange={(value) => handleFilterChange("trade", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="carpentry">Carpentry</SelectItem>
+                      <SelectItem value="welding">Welding</SelectItem>
+                      <SelectItem value="plumbing">Plumbing</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Trade Area</p>
+                <Select
+                    value={filters.tradeArea}
+                    onValueChange={(value) => handleFilterChange("tradeArea", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="construction">Construction</SelectItem>
+                      <SelectItem value="manufacturing">Manufacturing</SelectItem>
+                      <SelectItem value="services">Services</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Email</p>
+                <Input
+                    type="email"
+                    value={filters.email}
+                    onChange={(e) => handleFilterChange("email", e.target.value)}
+                    placeholder="Search by email"
+                    className="w-full"
+                />
+              </div>
+
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Contact Person</p>
+                <Input
+                    type="text"
+                    value={filters.contactPerson}
+                    onChange={(e) => handleFilterChange("contactPerson", e.target.value)}
+                    placeholder="Search by contact person"
+                    className="w-full"
+                />
+              </div>
+
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Phone Number</p>
+                <Input
+                    type="tel"
+                    value={filters.phoneNumber}
+                    onChange={(e) => handleFilterChange("phoneNumber", e.target.value)}
+                    placeholder="Search by phone"
+                    className="w-full"
+                />
+              </div>
+
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Senatorial District</p>
+                <Select
+                    value={filters.senatorialDistrict}
+                    onValueChange={(value) => handleFilterChange("senatorialDistrict", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="north">North</SelectItem>
+                      <SelectItem value="south">South</SelectItem>
+                      <SelectItem value="central">Central</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex gap-2 mt-auto">
+                <Button
+                    className="bg-primary"
+                    onClick={search}
+                    disabled={loading}>
+                  {loading ? (
+                      <SewingPinFilledIcon className="animate-spin" />
+                  ) : (
+                      "Search"
+                  )}
+                </Button>
+
+                <Button
+                    className="bg-gray-300 text-[black] hover:bg-gray-300"
+                    onClick={clear}
+                    disabled={loading}>
+                  Clear <Cross1Icon />
+                </Button>
+
+                <Button
+                    className="bg-gray-300 text-[black] hover:bg-gray-300"
+                    onClick={showAll}
+                    disabled={loading}>
+                  Show All <DashboardIcon />
+                </Button>
+              </div>
             </div>
-          </header>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Training Center</TableHead>
-                <TableHead>Address</TableHead>
-                <TableHead>State</TableHead>
-                <TableHead>LGA</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Email</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {reports.map((center) => (
-                <TableRow key={center.id}>
-                  <TableCell>{center.name}</TableCell>
-                  <TableCell>{center.address}</TableCell>
-                  <TableCell>{center.state}</TableCell>
-                  <TableCell>{center.lga}</TableCell>
-                  <TableCell>{center.phone}</TableCell>
-                  <TableCell>{center.email}</TableCell>
+
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-200">
+                  <TableHead>SN</TableHead>
+                  <TableHead>Training Center</TableHead>
+                  <TableHead>Sector</TableHead>
+                  <TableHead>Trade</TableHead>
+                  <TableHead>Trade Area</TableHead>
+                  <TableHead>State</TableHead>
+                  <TableHead>LGA</TableHead>
+                  <TableHead>Contact Person</TableHead>
+                  <TableHead>Phone Number</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Senatorial District</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </DashboardPage>
-    </ProtectedRoute>
+              </TableHeader>
+              <TableBody className="border-gray-200 border-[1px]">
+                {paginatedReports.map((center, index) => (
+                    <TableRow key={center.id} className="border-[1px] border-gray-200">
+                      <TableCell>{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</TableCell>
+                      <TableCell className="text-left">
+                        <div className="text-[16px]">{center.name}</div>
+                      </TableCell>
+                      <TableCell>{center.sector}</TableCell>
+                      <TableCell>{center.trade}</TableCell>
+                      <TableCell>{center.tradeArea}</TableCell>
+                      <TableCell>{center.state}</TableCell>
+                      <TableCell>{center.lga}</TableCell>
+                      <TableCell>{center.contactPerson}</TableCell>
+                      <TableCell>{center.phoneNumber}</TableCell>
+                      <TableCell>{center.email}</TableCell>
+                      <TableCell>{center.senatorialDistrict}</TableCell>
+                    </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {totalPages > 1 && (
+                <div className="flex justify-center gap-2 mt-4">
+                  <Button
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                      variant="outline"
+                  >
+                    Previous
+                  </Button>
+                  <span className="py-2 px-4">
+                Page {currentPage} of {totalPages}
+              </span>
+                  <Button
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                      variant="outline"
+                  >
+                    Next
+                  </Button>
+                </div>
+            )}
+          </div>
+        </DashboardPage>
+      </ProtectedRoute>
   );
 };
 
