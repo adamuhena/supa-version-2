@@ -1,5 +1,3 @@
-
-import { MapChart } from './charts/MapChart';
 import { LineChart } from './charts/LineChart';
 import { RadarChart } from './charts/RadarChart';
 import React, { useState, useEffect } from 'react';
