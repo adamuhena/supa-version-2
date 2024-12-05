@@ -119,7 +119,14 @@ export default function Dashboard() {
             <BarChart title="Distribution by Disability" data={certificationData} />
           </div>
 
+          <div className="col-span-1 lg:col-span-3 ">
+            <PieChart title="Certified vs Non-Certified" data={certificationData} />
+          </div>
+
           <div className="col-span-1 lg:col-span-3">
+            <BarChart title="Distribution by Disability" data={certificationData} />
+          </div>
+          <div className="col-span-1 lg:col-span-3" >
             <BarChart title="Distribution by Disability" data={certificationData} />
           </div>
         </div>

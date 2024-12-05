@@ -18,14 +18,14 @@ export default function About() {
         <div className="bg-gradient-to-t from-stone-100 to-current-black">
         <section className="bg-slate-900 pt-40 pb-10">
       
-        <div className="inline-block rounded-lg bg-muted pl-80 pr-5 py-5 text-5xl font-bold text-emerald-700">About SUPA</div>
+        <div className="inline-block rounded-lg bg-muted pl-80 pr-5 py-5 text-5xl font-bold text-emerald-600">About SUPA</div>
     </section>
         <div className="max-w-7xl mx-auto px- sm:px-0 lg:px-0 pt-0 ">
         <div className="flex flex-col min-h-[100dvh] ">
-        <div className="flex flex-row justify-center ">
+        <div className="flex flex-row  justify-center ">
                   <div className="flex flex-col gap-4 justify-center items-center p-4 pt-10">
-                    <h1 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem]">
-                      Skill-<span className="text-emerald-900">Up</span> Artisans
+                    <h1 className="lg:leading-tightertext-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem]">
+                      Skill-<span className="text-emerald-500">Up</span> Artisans
                       (SUPA)
                     </h1>
                     <p className="max-w-[1000px] text-justify text-muted-foreground md:text-xl lg:text-base xl:text-xl">
@@ -117,7 +117,7 @@ export default function About() {
                             <h2 className="text-2 font-bold tracking-tighter sm:text-4xl md:text-5xl">
                                 Greater opportunities towards Capacity Development
                             </h2>
-                            <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                            <p className="max-w-[600px]  pt-4 text-justify text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                             To be a prime catalyst for the up-skilling, licensing and
                             empowerment of artisans to enhance job creation, economic
                             growth and quality service delivery.
@@ -128,7 +128,7 @@ export default function About() {
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                                 Integrity, Innovation, and Impact
                             </h2>
-                            <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                            <p className="max-w-[600px]  pt-4 text-justify text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                             Empowering artisans through tech-enabled skills training,
                             licensing, access to essential toolkits, and promoting
                             industry-standard excellence.
@@ -139,10 +139,10 @@ export default function About() {
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                                 Driving Success for Our Clients
                             </h2>
-                            <ul className="grid gap-4 text-muted-foreground">
-                                <li className="flex items-center gap-2">
+                            <ul className="grid gap-4 pt-4 text-justify text-muted-foreground">
+                                <li className="flex  items-center gap-2">
                                     <CheckIcon className="h-5 w-5 text-primary" />
-                                    <p>To identify, register and categorise artisans across the different sectors of the economy.</p>
+                                    <p >To identify, register and categorise artisans across the different sectors of the economy.</p>
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <CheckIcon className="h-5 w-5 text-primary" />

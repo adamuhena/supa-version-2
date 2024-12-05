@@ -75,11 +75,11 @@ export default function Banner() {
               </div>
             </div>
 
-            <div className="mt-3 xl:mt-9 flex items-center justify-center gap-x-6 bg-transparent backdrop-blur-lg rounded-full w-fit mx-auto">
+            {/* <div className="mt-3 xl:mt-9 flex items-center justify-center gap-x-6 bg-transparent backdrop-blur-lg rounded-full w-fit mx-auto">
               <img src={logo1} alt="Logo 1" className="w-10 h-10 xl:w-16 xl:h-16" />
               <img src={logo2} alt="Logo 2" className="w-10 h-10 xl:w-16 xl:h-16" />
               <img src={logo3} alt="Logo 3" className="w-10 h-10 xl:w-16 xl:h-16" />
-            </div>
+            </div> */}
           </div>
 
           <div className="w-11/5 bg-transparent text-white md:block hidden text-center xl:py-10 py-6">
