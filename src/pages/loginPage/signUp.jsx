@@ -104,7 +104,7 @@ export default function SignupForm() {
                   <p className="text-green-600">Access your personal dashboard and track your progress.</p>
                   <img
                     src="/hairdresser copy.jpeg?height=200&width=200"
-                    alt="User learning illustration"
+                    alt="I am an artisan in this trade area"
                     className="mx-auto mt-4 h-48 w-48 object-cover"
                   />
                 </div>
@@ -116,7 +116,7 @@ export default function SignupForm() {
                   <p className="text-red-600">Access your personal dashboard and track your progress.</p>
                   <img
                     src="/hairdresser copy.jpeg?height=200&width=200"
-                    alt="User learning illustration"
+                    alt="I am an intending artisan in this trade area"
                     className="mx-auto mt-4 h-48 w-48 object-cover"
                   />
                 </div>
@@ -128,7 +128,7 @@ export default function SignupForm() {
                   <p className="text-blue-600">Access your personal dashboard and track your progress.</p>
                   <img
                     src="/hairdresser copy.jpeg?height=200&width=200"
-                    alt="User learning illustration"
+                    alt="I am a training center"
                     className="mx-auto mt-4 h-48 w-48 object-cover"
                   />
                 </div>

@@ -1,5 +1,3 @@
-
-// export default BiodataPage
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -9,8 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
 import DashboardPage from "@/components/layout/DashboardLayout";
-import { UserCircle, Settings, LogOut, Plus, Minus } from "lucide-react";
+import { UserCircle, Settings, LogOut, Plus, Minus, Upload } from 'lucide-react';
 import useLogout from "@/pages/loginPage/logout";
 import { toast } from "@/hooks/use-toast";
 import PasswordChange from "@/components/PasswordChange";
@@ -31,6 +31,7 @@ const Biodata = () => {
     gender: "",
     maritalStatus: "",
     stateOfOrigin: "",
+    senatorialDistrict: "",
     lga: "",
     stateOfResidence: "",
     lgaOfResidence: "",
@@ -162,25 +163,47 @@ const Biodata = () => {
       });
     }
   };
-  
 
+  const handleArrayUpdate = (section, index, value) => {
+    setChanges((prevChanges) => ({
+      ...prevChanges,
+      [section]: [
+        ...(prevChanges[section] || user[section]).slice(0, index),
+        value,
+        ...(prevChanges[section] || user[section]).slice(index + 1),
+      ],
+    }));
+  };
+
+  const addArrayItem = (section, item) => {
+    setChanges((prevChanges) => ({
+      ...prevChanges,
+      [section]: [...(prevChanges[section] || user[section]), item],
+    }));
+  };
+
+  const removeArrayItem = (section, index) => {
+    setChanges((prevChanges) => ({
+      ...prevChanges,
+      [section]: (prevChanges[section] || user[section]).filter((_, i) => i !== index),
+    }));
+  };
+  
   return (
-    <DashboardPage title="User Profile"  href="/artisan/dashboard">
+    <DashboardPage title="User Profile" href="/artisan/dashboard">
       <div className="container mx-auto p-6">
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">My Profile</h1>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => navigate("/biodata")}>
-              <UserCircle className="mr-2 h-4 w-4" /> Account 
-            </Button>
-            <Button variant="outline">
-              <Settings className="mr-2 h-4 w-4" /> Settings
+              <UserCircle className="mr-2 h-4 w-4" />Update Profile 
             </Button>
             <Button variant="destructive" onClick={logout}>
               <LogOut className="mr-2 h-4 w-4" /> Logout
             </Button>
           </div>
         </header>
+
         <Card className="border p-4 rounded-lg shadow-md mb-6">
           <CardContent className="flex items-center space-x-4">
             <div className="w-24 h-24 rounded-full overflow-hidden">
@@ -191,222 +214,256 @@ const Biodata = () => {
               <p className="text-gray-500">{user.email}</p>
               <p className="text-gray-500">{user.role}</p>
             </div>
-          </CardContent>
-        </Card>
-        <Card className="border p-4 rounded-lg shadow-md mb-6">
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {['firstName', 'middleName', 'lastName', 'phoneNumber', 'nin', 'email', 'street', 'stateOfOrigin', 'lga', 'stateOfResidence', 'lgaOfResidence'].map((field) => (
-                <div key={field} className="space-y-2">
-                  <label htmlFor={field} className="block text-sm font-medium text-gray-700">
-                    {field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}
-                  </label>
-                  <Input
-                    id={field}
-                    value={changes[`personalInfo.${field}`] ?? user[field] ?? ''}
-                    
-                    onChange={(e) => handleUpdate(`personalInfo.${field}`, e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                  
-                </div>
-              ))}
-              {['gender', 'maritalStatus'].map((field) => (
-                <div key={field} className="space-y-2">
-                  <label htmlFor={field} className="block text-sm font-medium text-gray-700">
-                    {field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}
-                  </label>
-                  <Select onValueChange={(value) => handleUpdate(`personalInfo.${field}`, value)} value={changes[`personalInfo.${field}`] ?? user[field] ?? ''}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder={`Select ${field}`} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {field === 'gender' ? (
-                        <>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </>
-                      ) : (
-                        <>
-                          <SelectItem value="single">Single</SelectItem>
-                          <SelectItem value="married">Married</SelectItem>
-                          <SelectItem value="divorced">Divorced</SelectItem>
-                          <SelectItem value="widowed">Widowed</SelectItem>
-                        </>
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-              ))}
-              <div className="space-y-2">
-                <label htmlFor="hasDisability" className="block text-sm font-medium text-gray-700">
-                  Has Disability
-                </label>
-                <Switch
-                  id="hasDisability"
-                  checked={user.hasDisability || false}
-                  onCheckedChange={(checked) => handleUpdate('personalInfo.hasDisability', checked)}
-                />
-              </div>
-              {user.hasDisability && (
-                <div className="space-y-2">
-                  <label htmlFor="disabilityType" className="block text-sm font-medium text-gray-700">
-                    Disability Type
-                  </label>
-                  <Input
-                    id="disabilityType"
-                    value={(changes[`personalInfo.disabilityType`] ?? (user.disabilityType || ''))}
-                    onChange={(e) => handleUpdate('personalInfo.disabilityType', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                </div>
-              )}
+            <div>
+              <Input
+                type="file"
+                onChange={(e) => handleFileUpload('profileImage', e.target.files[0])}
+                className="hidden"
+                id="profile-image-upload"
+              />
+              <Label htmlFor="profile-image-upload" className="cursor-pointer">
+                <Button variant="outline" as="span">
+                  <Upload className="mr-2 h-4 w-4" /> Update Profile Picture
+                </Button>
+              </Label>
             </div>
-            <Button onClick={() => submitChanges('personalInfo')} className="mt-4">Update Personal Information</Button>
           </CardContent>
         </Card>
 
-        <Card className="border p-4 rounded-lg shadow-md mb-6">
-          <CardHeader>
-            <CardTitle>Education</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {['school', 'highestQualification', 'graduationYear', 'eduUpload'].map((field) => (
-                <div key={field} className="space-y-2">
-                  <label htmlFor={`education-${field}`} className="block text-sm font-medium text-gray-700">
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
-                  <Input
-                    id={`education-${field}`}
-                    value={changes[`education.${field}`] ?? user.education[field] ?? ''}
-                    onChange={(e) => handleUpdate(`education.${field}`, e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                </div>
-              ))}
-            </div>
-            <Button onClick={() => submitChanges('education')} className="mt-4">Update Education</Button>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="personal" className="w-full">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="personal">Personal</TabsTrigger>
+            <TabsTrigger value="education">Education</TabsTrigger>
+            <TabsTrigger value="skills">Skills & Experience</TabsTrigger>
+            <TabsTrigger value="bank">Bank Account</TabsTrigger>
+            <TabsTrigger value="password">Change Password</TabsTrigger>
+          </TabsList>
 
-        <Card className="border p-4 rounded-lg shadow-md mb-6">
-          <CardHeader>
-            <CardTitle>Prior Skills and Certifications</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {user.priorSkillsCerts.map((cert, index) => (
-              <div key={index} className="mb-4 p-4 border rounded">
+          <TabsContent value="personal">
+            <Card>
+              <CardHeader>
+                <CardTitle>Personal Information</CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {['sector', 'tradeArea', 'name', 'year', 'priUpload'].map((field) => (
+                  {['firstName', 'middleName', 'lastName', 'phoneNumber', 'nin', 'email', 'street', 'stateOfOrigin', 'senatorialDistrict', 'lga', 'stateOfResidence', 'lgaOfResidence'].map((field) => (
                     <div key={field} className="space-y-2">
-                      <label htmlFor={`cert-${index}-${field}`} className="block text-sm font-medium text-gray-700">
-                        {field.charAt(0).toUpperCase() + field.slice(1)}
-                      </label>
+                      <Label htmlFor={field}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
                       <Input
-                        id={`cert-${index}-${field}`}
-                        value={cert[field]}
-                        onChange={(e) => handleArrayUpdate('priorSkillsCerts', index, { ...cert, [field]: e.target.value })}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        id={field}
+                        value={changes[`personalInfo.${field}`] ?? user[field] ?? ''}
+                        onChange={(e) => handleUpdate(`personalInfo.${field}`, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                  {['gender', 'maritalStatus'].map((field) => (
+                    <div key={field} className="space-y-2">
+                      <Label htmlFor={field}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
+                      <Select onValueChange={(value) => handleUpdate(`personalInfo.${field}`, value)} value={changes[`personalInfo.${field}`] ?? user[field] ?? ''}>
+                        <SelectTrigger>
+                          <SelectValue placeholder={`Select ${field}`} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {field === 'gender' ? (
+                            <>
+                              <SelectItem value="male">Male</SelectItem>
+                              <SelectItem value="female">Female</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </>
+                          ) : (
+                            <>
+                              <SelectItem value="single">Single</SelectItem>
+                              <SelectItem value="married">Married</SelectItem>
+                              <SelectItem value="divorced">Divorced</SelectItem>
+                              <SelectItem value="widowed">Widowed</SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))}
+                  <div className="space-y-2">
+                    <Label htmlFor="hasDisability">Has Disability</Label>
+                    <Switch
+                      id="hasDisability"
+                      checked={changes['personalInfo.hasDisability'] ?? user.hasDisability ?? false}
+                      onCheckedChange={(checked) => handleUpdate('personalInfo.hasDisability', checked)}
+                    />
+                  </div>
+                  {(changes['personalInfo.hasDisability'] ?? user.hasDisability) && (
+                    <div className="space-y-2">
+                      <Label htmlFor="disabilityType">Disability Type</Label>
+                      <Input
+                        id="disabilityType"
+                        value={changes['personalInfo.disabilityType'] ?? user.disabilityType ?? ''}
+                        onChange={(e) => handleUpdate('personalInfo.disabilityType', e.target.value)}
+                      />
+                    </div>
+                  )}
+                </div>
+                <Button onClick={() => submitChanges('personalInfo')} className="mt-4">Update Personal Information</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="education">
+            <Card>
+              <CardHeader>
+                <CardTitle>Education</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {['school', 'highestQualification', 'graduationYear'].map((field) => (
+                    <div key={field} className="space-y-2">
+                      <Label htmlFor={`education-${field}`}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
+                      <Input
+                        id={`education-${field}`}
+                        value={changes[`education.${field}`] ?? user.education[field] ?? ''}
+                        onChange={(e) => handleUpdate(`education.${field}`, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                  <div className="space-y-2">
+                    <Label htmlFor="education-upload">Education Document</Label>
+                    <Input
+                      id="education-upload"
+                      type="file"
+                      onChange={(e) => handleFileUpload('education.eduUpload', e.target.files[0])}
+                    />
+                  </div>
+                </div>
+                <Button onClick={() => submitChanges('education')} className="mt-4">Update Education</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="skills">
+            <Card>
+              <CardHeader>
+                <CardTitle>Skills, Certifications, and Experience</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <h3 className="text-lg font-semibold mb-4">Prior Skills and Certifications</h3>
+                {(changes.priorSkillsCerts ?? user.priorSkillsCerts).map((cert, index) => (
+                  <div key={index} className="mb-4 p-4 border rounded">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {['sector', 'tradeArea', 'name', 'year'].map((field) => (
+                        <div key={field} className="space-y-2">
+                          <Label htmlFor={`cert-${index}-${field}`}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
+                          <Input
+                            id={`cert-${index}-${field}`}
+                            value={cert[field]}
+                            onChange={(e) => handleArrayUpdate('priorSkillsCerts', index, { ...cert, [field]: e.target.value })}
+                          />
+                        </div>
+                      ))}
+                      <div className="space-y-2">
+                        <Label htmlFor={`cert-${index}-upload`}>Certificate Upload</Label>
+                        <Input
+                          id={`cert-${index}-upload`}
+                          type="file"
+                          onChange={(e) => handleFileUpload(`priorSkillsCerts.${index}.priUpload`, e.target.files[0])}
+                        />
+                      </div>
+                    </div>
+                    <Button variant="destructive" onClick={() => removeArrayItem('priorSkillsCerts', index)} className="mt-2">
+                      <Minus className="mr-2 h-4 w-4" /> Remove
+                    </Button>
+                  </div>
+                ))}
+                <Button onClick={() => addArrayItem('priorSkillsCerts', { sector: '', tradeArea: '', name: '', year: '', priUpload: '' })}>
+                  <Plus className="mr-2 h-4 w-4" /> Add Certification
+                </Button>
+
+                <h3 className="text-lg font-semibold mb-4 mt-8">Experience</h3>
+                {(changes.experience ?? user.experience).map((exp, index) => (
+                  <div key={index} className="mb-4 p-4 border rounded">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {['projectTitle', 'description', 'dateFrom', 'dateTo'].map((field) => (
+                        <div key={field} className="space-y-2">
+                          <Label htmlFor={`exp-${index}-${field}`}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
+                          {field === 'description' ? (
+                            <Textarea
+                              id={`exp-${index}-${field}`}
+                              value={exp[field]}
+                              onChange={(e) => handleArrayUpdate('experience', index, { ...exp, [field]: e.target.value })}
+                            />
+                          ) : (
+                            <Input
+                              id={`exp-${index}-${field}`}
+                              value={exp[field]}
+                              onChange={(e) => handleArrayUpdate('experience', index, { ...exp, [field]: e.target.value })}
+                            />
+                          )}
+                        </div>
+                      ))}
+                      <div className="space-y-2">
+                        <Label htmlFor={`exp-${index}-upload`}>Experience Document</Label>
+                        <Input
+                          id={`exp-${index}-upload`}
+                          type="file"
+                          onChange={(e) => handleFileUpload(`experience.${index}.exUpload`, e.target.files[0])}
+                        />
+                      </div>
+                    </div>
+                    <Button variant="destructive" onClick={() => removeArrayItem('experience', index)} className="mt-2">
+                      <Minus className="mr-2 h-4 w-4" /> Remove
+                    </Button>
+                  </div>
+                ))}
+                <Button onClick={() => addArrayItem('experience', { projectTitle: '', description: '', dateFrom: '', dateTo: '', exUpload: '' })}>
+                  <Plus className="mr-2 h-4 w-4" /> Add Experience
+                </Button>
+                <Button onClick={() => submitChanges('skills')} className="mt-4">Update Skills and Experience</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="bank">
+            <Card>
+              <CardHeader>
+                <CardTitle>Bank Account</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {['accountName', 'accountNumber', 'bank'].map((field) => (
+                    <div key={field} className="space-y-2">
+                      <Label htmlFor={`bank-${field}`}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
+                      <Input
+                        id={`bank-${field}`}
+                        value={changes[`bankAccount.${field}`] ?? user.bankAccount[field] ?? ''}
+                        onChange={(e) => handleUpdate(`bankAccount.${field}`, e.target.value)}
                       />
                     </div>
                   ))}
                 </div>
-                <Button variant="destructive" onClick={() => removeArrayItem('priorSkillsCerts', index)} className="mt-2">
-                  <Minus className="mr-2 h-4 w-4" /> Remove
-                </Button>
-              </div>
-            ))}
-            <Button onClick={() => addArrayItem('priorSkillsCerts', { sector: '', tradeArea: '', name: '', year: '', priUpload: '' })}>
-              <Plus className="mr-2 h-4 w-4" /> Add Certification
-            </Button>
-            <Button onClick={() => submitChanges('priorSkillsCerts')} className="mt-4">Update Prior Skills and Certifications</Button>
-          </CardContent>
-        </Card>
+                <Button onClick={() => submitChanges('bankAccount')} className="mt-4">Update Bank Account</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <Card className="border p-4 rounded-lg shadow-md mb-6">
-          <CardHeader>
-            <CardTitle>Experience</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {user.experience.map((exp, index) => (
-              <div key={index} className="mb-4 p-4 border rounded">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {['projectTitle', 'description', 'dateFrom', 'dateTo', 'exUpload'].map((field) => (
-                    <div key={field} className="space-y-2">
-                      <label htmlFor={`exp-${index}-${field}`} className="block text-sm font-medium text-gray-700">
-                        {field.charAt(0).toUpperCase() + field.slice(1)}
-                      </label>
-                      {field === 'description' ? (
-                        <Textarea
-                          id={`exp-${index}-${field}`}
-                          value={exp[field]}
-                          onChange={(e) => handleArrayUpdate('experience', index, { ...exp, [field]: e.target.value })}
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        />
-                      ) : (
-                        <Input
-                          id={`exp-${index}-${field}`}
-                          value={exp[field]}
-                          onChange={(e) => handleArrayUpdate('experience', index, { ...exp, [field]: e.target.value })}
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <Button variant="destructive" onClick={() => removeArrayItem('experience', index)} className="mt-2">
-                  <Minus className="mr-2 h-4 w-4" /> Remove
-                </Button>
-              </div>
-            ))}
-            <Button onClick={() => addArrayItem('experience', { projectTitle: '', description: '', dateFrom: '', dateTo: '', exUpload: '' })}>
-              <Plus className="mr-2 h-4 w-4" /> Add Experience
-            </Button>
-            <Button onClick={() => submitChanges('experience')} className="mt-4">Update Experience</Button>
-          </CardContent>
-        </Card>
+          <TabsContent value="password">
+            <Card>
+              <CardHeader>
+                <CardTitle>Change Password</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PasswordChange />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
-        <Card className="border p-4 rounded-lg shadow-md mb-6">
-          <CardHeader>
-            <CardTitle>Bank Account</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {['accountName', 'accountNumber', 'bank'].map((field) => (
-                <div key={field} className="space-y-2">
-                  <label htmlFor={`bank-${field}`} className="block text-sm font-medium text-gray-700">
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
-                  <Input
-                    id={`bank-${field}`}
-                    value={changes[`bankAccount.${field}`] ?? user.bankAccount[field] ?? ''}
-                    onChange={(e) => handleUpdate(`bankAccount.${field}`, e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  />
-                </div>
-              ))}
-            </div>
-            <Button onClick={() => submitChanges('bankAccount')} className="mt-4">Update Bank Account</Button>
-          </CardContent>
-        </Card>
-
-        <Card className="border p-4 rounded-lg shadow-md mb-6">
+        <Card className="border p-4 rounded-lg shadow-md mt-6">
           <CardHeader>
             <CardTitle>Additional Information</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                  Role
-                </label>
-                <Select onValueChange={(value) => handleUpdate('additionalInfo.role', value)} value={(changes[`additionalInfo.role`] ?? user.role) || ''}>
-                  <SelectTrigger className="w-full">
+                <Label htmlFor="role">Role</Label>
+                <Select onValueChange={(value) => handleUpdate('additionalInfo.role', value)} value={changes['additionalInfo.role'] ?? user.role ?? ''}>
+                  <SelectTrigger>
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -419,46 +476,31 @@ const Biodata = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label htmlFor="certifiedStatus" className="block text-sm font-medium text-gray-700">
-                  Certified Status
-                </label>
+                <Label htmlFor="certifiedStatus">Certified Status</Label>
                 <Switch
                   id="certifiedStatus"
-                  checked={user.certifiedStatus || false}
+                  checked={changes['additionalInfo.certifiedStatus'] ?? user.certifiedStatus ?? false}
                   onCheckedChange={(checked) => handleUpdate('additionalInfo.certifiedStatus', checked)}
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="licenseStatus" className="block text-sm font-medium text-gray-700">
-                  License Status
-                </label>
+                <Label htmlFor="licenseStatus">License Status</Label>
                 <Switch
                   id="licenseStatus"
-                  checked={user.licenseStatus || false}
+                  checked={changes['additionalInfo.licenseStatus'] ?? user.licenseStatus ?? false}
                   onCheckedChange={(checked) => handleUpdate('additionalInfo.licenseStatus', checked)}
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="agree" className="block text-sm font-medium text-gray-700">
-                  Agree to Terms
-                </label>
+                <Label htmlFor="agree">Agree to Terms</Label>
                 <Switch
                   id="agree"
-                  checked={user.agree || false}
+                  checked={changes['additionalInfo.agree'] ?? user.agree ?? false}
                   onCheckedChange={(checked) => handleUpdate('additionalInfo.agree', checked)}
                 />
               </div>
             </div>
             <Button onClick={() => submitChanges('additionalInfo')} className="mt-4">Update Additional Information</Button>
-          </CardContent>
-        </Card>
-
-        <Card className="border p-4 rounded-lg shadow-md">
-          <CardHeader>
-            <CardTitle>Change Password</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PasswordChange />
           </CardContent>
         </Card>
       </div>

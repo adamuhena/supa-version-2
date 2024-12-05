@@ -8,39 +8,38 @@ import Register from "./pages/register/register";
 import ArtisanForm from "./pages/forms/artisan/index";
 import IntendingArtisanForm from "./pages/forms/intendinArtisan/index";
 import TrainingCenterForm from "./pages/forms/registrationCenter/index";
-import PrivateRoute from "./components/ProtectedRoute"; // Import PrivateRoute component
 import "./App.css";
 import ArtisanDashboard from "./pages/dashboard/artisan/ArtisanDashboard";
 import PublicRoute from "./components/PublicRoute";
-import BiodataPage from "./pages/dashboard/BiodataPage";
 import DocumentUpload from "./pages/dashboard/artisan/DocumentUpload";
 import Biodata from "./pages/dashboard/BiodataPage";
 import TrainingCenterDashboard from "./pages/dashboard/trainingCenter/TrainingCenterDashboard";
-import TrainigCenterGroup from "./pages/dashboard/Admin/TrainingCenterGroups";
 import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
-import AdminTrainingStatus from "./pages/dashboard/Admin/AdminTrainingStatus";
 import UserManagement from "./pages/dashboard/Admin/userManagement";
 import IntendingArtisanDashboard from "./pages/dashboard/intendingArtisan/IntendingArtisanDashboard";
 import AdminDashboardReports from "./pages/dashboard/Admin/adminDashboardReports";
 import TrainingStatus from "./pages/dashboard/trainingCenter/TrainingStatus";
-<<<<<<< Updated upstream
-=======
+import TrainingManagement from "./pages/dashboard/Admin/TrainingManagement";
 import TrainingGroupDetails from "./pages/dashboard/Admin/TrainingGroup";
 import AdminDocumentVerification from "./pages/dashboard/Admin/AdminDocumentVerification";
 import TrainingCenterReport from "./pages/dashboard/Admin/AdminTrainingCenterReport";
-import TrainingCenterGroupRe from "./pages/dashboard/Admin/ReasignTrainingUser";
-import Mygroups from "./pages/groups/App";
+import AdminSectors from "./pages/dashboard/Admin/sectors";
+import TrainingCenterBiodata from "./pages/dashboard/trainingCenter/TrainingCenterBiodata";
 
->>>>>>> Stashed changes
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 
 function App() {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_relativeSplatPath: true, // Enable the v7 splat path behavior
+        v7_startTransition: true,
+      }}
+    >
       <Routes>
         {/* test */}
         <Route path="/training-center" element={<TrainingCenterDashboard />} />
-        <Route path="/groups-test" element={<Mygroups />} />
+        
 
 
         {/* Public Routes */}
@@ -49,6 +48,8 @@ function App() {
         {/* <Route path="/biodata2" element={<BiodataPage />} /> */}
         <Route path="/biodata" element={<Biodata />} />
         <Route path="/certification/upload" element={<DocumentUpload/>}/>
+        <Route path="/training-center/biodata" element={<TrainingCenterBiodata />} />
+        
 
         
        
@@ -81,16 +82,9 @@ function App() {
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
         <Route
-          path="/admin/training-groups"
-          element={
-            <TrainigCenterGroup/>
-          }
-          allowedRoles={["artisan_user", "admin", "superadmin"]}
-        />
-        <Route
           path="/admin/training-status"
           element={
-            <AdminTrainingStatus/>
+            <TrainingManagement/>
           }
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
@@ -155,13 +149,16 @@ function App() {
           element={<AdminDashboardReports/>}
           allowedRoles={[ "admin", "superadmin"]}
           />
-
-        <Route path="/training-center/status"
-          element={<TrainingStatus/>}
+        <Route path="/admin/trainingcenter/reports"
+          element={<TrainingCenterReport/>}
           allowedRoles={[ "admin", "superadmin"]}
           />
-<<<<<<< Updated upstream
-=======
+          
+
+        <Route path="/training-center/status"
+          element={<TrainingManagement/>}
+          allowedRoles={[ "admin", "superadmin"]}
+          />
 
           <Route path="/training/groups"
           element={<TrainingGroupDetails/>}
@@ -173,11 +170,10 @@ function App() {
            allowedRoles = {["admin", "superadmin"]}
            />
 
-           <Route path="/feedback" 
-           element ={<TrainingCenterGroupRe/>}
+          <Route path="/admin/sectors"
+           element={<AdminSectors/>}
            allowedRoles = {["admin", "superadmin"]}
            />
->>>>>>> Stashed changes
         
       </Routes>
     </Router>

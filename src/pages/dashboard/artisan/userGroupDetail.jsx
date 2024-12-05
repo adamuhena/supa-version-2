@@ -1,91 +1,161 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui//table"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui//card"
+import {toast} from 'sonner'
+import useLogout from '@/pages/loginPage/logout';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 
-const UserGroupDetails = () => {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const [groupDetails, setGroupDetails] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+const ArtisanTrainingManagement = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const accessToken = localStorage.getItem("accessToken");
+  const userId = localStorage.getItem("userId");
+  const [trainingGroups, setTrainingGroups] = useState([]);
+  const [currentUser, setCurrentUser] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
-    const fetchGroupDetails = async () => {
-      const accessToken = localStorage.getItem('accessToken');
-      const userId = localStorage.getItem('userId');
+    fetchTrainingGroups();
+    fetchUserData();
+  }, [accessToken]);
 
-      if (!accessToken || !userId) {
-        setError('User is not authenticated.');
-        return;
-      }
 
-      try {
-        const response = await axios.get(`${API_BASE_URL}/users/${userId}/group-details`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
 
-        if (response.data.success) {
-          setGroupDetails(response.data.data);
-        } else {
-          setError(response.data.message);
+  const fetchTrainingGroups = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/training-groups`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      setTrainingGroups(response.data);
+    } catch (error) {
+      console.error('Error fetching training groups:', error);
+    }
+  };
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
         }
-      } catch (err) {
-        setError('Failed to fetch group details.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      });
+      setCurrentUser(response.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
-    fetchGroupDetails();
-  }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = trainingGroups.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(trainingGroups.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+  const userRole = currentUser.role
+
+
+  const renderArtisanView = () => {
+    const filteredGroups = trainingGroups.filter(group => 
+      group.users.some(user => user._id === currentUser._id)
+    );
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Training Groups</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>S/N</TableHead>
+                <TableHead>Trade Area</TableHead>
+                <TableHead>Training Center</TableHead>
+                <TableHead>Start Date</TableHead>
+                <TableHead>End Date</TableHead>
+                <TableHead>Your Evaluation</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {/* {currentItems.map((group, index) => { */}
+              {filteredGroups.map((group, index) => {
+                const userEvaluation = group.users.find(user => user._id === currentUser._id); // Assuming you have the current user's ID
+                return (
+                  <TableRow key={group._id}>
+                    <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
+                    <TableCell>{group.name}</TableCell>
+                    <TableCell>
+                      {group.trainingCenter.trainingCentreName}<br />
+                      {group.trainingCenter.address}<br />
+                      {group.trainingCenter.state}, {group.trainingCenter.lga}<br />
+                      {group.trainingCenter.phoneNumber}
+                    </TableCell>
+                    <TableCell>{new Date(group.startTime).toLocaleDateString()}</TableCell>
+                    <TableCell>{new Date(group.endTime).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {userEvaluation ? (
+                        <>
+                          <p>Score: {userEvaluation.score}</p>
+                          <p>Comments: {userEvaluation.comments}</p>
+                        </>
+                      ) : (
+                        <p>Not Evaluated Yet</p>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+          {/* Pagination component */}
+        <div className="mt-4">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                  />
+                </PaginationItem>
+                {[...Array(totalPages)].map((_, index) => (
+                  <PaginationItem key={index}>
+                    <PaginationLink
+                      onClick={() => handlePageChange(index + 1)}
+                      isActive={currentPage === index + 1}
+                    >
+                      {index + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
-    <div>
-      <table className="w-full border-collapse border border-gray-200">
-        <thead className="bg-gray-50">
-            <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Group Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Training Center</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Evaluation</th>
-            </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {groupDetails.map((group, index) => (
-            <tr key={index} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{group.groupName}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{group.startDate ? new Date(group.startDate).toLocaleDateString(): "Not started"}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{group.endDate ? new Date(group.endDate).toLocaleDateString() : "Not ended"}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                <div>
-                  <p>{group.trainingCenter.name}</p>
-                  <p>{group.trainingCenter.sector}</p>
-                  <p>{group.trainingCenter.address}</p>
-                  <p>{group.trainingCenter.email}</p>
-                  <p>{group.trainingCenter.phoneNumber}</p>
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {group.evaluation ? (
-                  <>
-                    <p>Score: {group.evaluation.score}</p>
-                    <p>Feedback: {group.evaluation.feedback}</p>
-                  </>
-                ) : (
-                  <p>No evaluation available</p>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      <div className="container mx-auto p-6">
+          
+        <h1 className="text-3xl font-bold mb-8"></h1>
+        {(userRole === 'artisan_user' || userRole === 'intending_artisan') && renderArtisanView()}
+
+      </div>
+    
   );
 };
 
-export default UserGroupDetails;
+export default ArtisanTrainingManagement;

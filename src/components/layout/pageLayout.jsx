@@ -31,8 +31,8 @@ export default function PageLayout({ title, children, toggleDialog }) {
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/About' },
-    { name: 'Market Place', path: '/marketplace' },
-    { name: 'Contact', path: '/contact' }
+    { name: 'Market Place', path: '/' },
+    { name: 'Contact', path: '/' }
   ];
 
   // Function to open the Login dialog

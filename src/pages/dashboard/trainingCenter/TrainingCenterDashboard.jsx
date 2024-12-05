@@ -11,13 +11,14 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from '@/pages/loginPage/logout'
 import axios from 'axios'
 import Spinner from '@/components/layout/spinner'
+import TrainingGroupsList from './TrainingGroupList'
+import Calendar from '../Admin/components/Calendar'
 
 
 const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
   const logout = useLogout();
-
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
+  const userId = localStorage.getItem("userId");
   const [userData, setUserData] = useState(null); // Holds the user data
   const navigate = useNavigate();
 
@@ -52,6 +53,7 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
   }, []);
 
 
+
   if (!userData) {
     return (
     <div class="flex justify-center items-center h-screen">
@@ -68,12 +70,10 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold"> Dashboard  </h1>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate('/biodata')}>
+          <Button variant="outline" onClick={() => navigate('/training-center/biodata')}>
             <UserCircle className="mr-2 h-4 w-4" /> Update Profile
           </Button>
-          <Button variant="outline">
-            <Settings className="mr-2 h-4 w-4" /> Settings
-          </Button>
+          
           <Button variant="destructive" onClick={logout}>
             <LogOut className="mr-2 h-4 w-4" /> Logout
           </Button>
@@ -110,31 +110,14 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-green-400 p-4 rounded-lg shadow-md">
-          <CardHeader>
-            <CardTitle>Profession</CardTitle>
-          </CardHeader>
-          <CardContent>
-          <div className="text-md text-emerald-800 mb-2">
-              Sector: {userData?.contactPerson}
-            </div>
-            <div className="text-md text-emerald-800 mb-2">
-              Sector: {userData?.contactPerson}
-            </div>
-              
-          </CardContent>
-        </Card>
+        <Calendar/>
+        
       </div>
 
       <div className="mt-6">
-        <Card className="border-2 border-red-400 p-4 rounded-lg shadow-md">
-          <CardHeader>
-            <CardTitle> Assigned Up-Skilling Center</CardTitle>
-          </CardHeader>
-          <CardContent>
+       
+          <TrainingGroupsList userId={userId} />
 
-          </CardContent>
-        </Card>
       </div>
     </div>
 

@@ -41,12 +41,11 @@ export default function Calendar() {
   return (
      //bg-gray-300 rounded-lg hover:bg-gray-400
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Calendar</h2>
       <div className="text-center">
         <div className="flex justify-between items-center mb-4">
         <SkipBack color="#10b981" onClick={goToPreviousMonth}
             />
-          <p className="text-lg font-medium text-emerald-500">
+          <p className="text-md font-medium text-emerald-500">
             {new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}
           </p>
         <SkipForward color="#10b981" onClick={goToNextMonth}
@@ -54,7 +53,7 @@ export default function Calendar() {
         </div>
         <div className="grid grid-cols-7 gap-2">
           {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-            <div key={day} className="text-xs font-medium text-gray-500">{day}</div>
+            <div key={day} className="text-xs font-small text-gray-500">{day}</div>
           ))}
           {/* Empty cells for the previous month's remaining days */}
           {[...Array(startDay)].map((_, i) => (
@@ -64,7 +63,7 @@ export default function Calendar() {
           {days.map(day => (
             <div
               key={day}
-              className={`text-sm text-center p-2 rounded-lg ${
+              className={`text-sm text-center p-1 rounded-lg ${
                 day === currentDate ? 'bg-emerald-200' : 'text-gray-700'
               }`}
             >

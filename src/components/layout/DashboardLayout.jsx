@@ -5,12 +5,14 @@ import {
   BadgeCheck,
   Bell,
   BookOpen,
+  BookUser,
   Bot,
   ChevronRight,
   ChevronsUpDown,
   Command,
   CreditCard,
   Folder,
+  FolderKanban,
   Frame,
   LifeBuoy,
   LogOut,
@@ -20,7 +22,9 @@ import {
   Send,
   Settings2,
   Share,
+  ShieldQuestion,
   Sparkles,
+  SquarePen,
   SquareTerminal,
   Star,
   Trash2,
@@ -120,7 +124,7 @@ export default function DashboardPage({ href, title, children }) {
 
   if (!userData) {
     return (
-    <div class="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen">
       <Spinner/>
     </div>
     );
@@ -168,7 +172,7 @@ const isLinkAccessible = (allowedRoles) => {
         </SidebarHeader>
 
         <SidebarContent>
-          {userData && isLinkAccessible([ "superadmin", "artisan_user"]) ? ( // Set default roles or use `allowedRoles` property in data
+          {userData && isLinkAccessible([ "superadmin", "admin"]) ? ( // Set default roles or use `allowedRoles` property in data
             <SidebarGroup>
               <SidebarGroupLabel>User Setup</SidebarGroupLabel>
               {/* <SidebarMenu>
@@ -222,40 +226,63 @@ const isLinkAccessible = (allowedRoles) => {
                   </SidebarMenuButton>
                   <SidebarMenuButton asChild>
                     <Link to="/admin/usermanagement">
-                      <SquareTerminal />
+                      <BookUser />
                       <span>User Management</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link to="/company/placement">
-                      <BookOpen />
-                      <span>Artisan Placement</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link to="/admin/training-groups">
-                      <BookOpen />
-                      <span>Intending Artisan Placement</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  <SidebarMenuButton asChild>
                     <Link to="/admin/training-status">
-                      <BookOpen />
+                      <FolderKanban />
                       <span>Training Managment</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
+                {isLinkAccessible(["training_center"]) && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link to="/training/groups">
+                      <BookOpen />
+                      <span>Training Groups</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                  )}
+                
+                <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/admin/sectors">
+                    <BookOpen />
+                    <span>Sector Managment</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+            
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link to="/document/verification">
+                      <ShieldQuestion />
+                      <span>Document Verification</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <Link to="/admin/dashboard/reports">
                       <Settings2 />
-                      <span>Reports</span>
+                      <span>Artisan & Intending Artisan Reports</span>
                     </Link>
                   </SidebarMenuButton>
+                  <SidebarMenuButton asChild>
+                    <Link to="/admin/trainingcenter/reports">
+                      <Settings2 />
+                      <span>Training Center Reports</span>
+                    </Link>
+                  </SidebarMenuButton>
+                  
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroup>

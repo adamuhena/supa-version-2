@@ -12,6 +12,7 @@ import axios from 'axios'
 import UserGroupDetails from './userGroupDetail'
 import Calendar from '../Admin/components/Calendar'
 import Spinner from '@/components/layout/spinner'
+import ArtisanTrainingManagement from './userGroupDetail'
 
 
 const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
@@ -91,9 +92,7 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
               <Button variant="outline" onClick={() => navigate('/biodata')}>
                 <UserCircle className="mr-2 h-4 w-4" /> Update Profile
               </Button>
-              <Button variant="outline">
-                <Settings className="mr-2 h-4 w-4" /> Settings
-              </Button>
+              
               <Button variant="destructive" onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" /> Logout
               </Button>
@@ -119,10 +118,9 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
                   </div>
                 </div>
 
-                <div className="flex items-center font-semibold mt-2">
+                <div className="flex flex-row items-center font-semibold mt-2">
                   <Star className="h-5 w-5  text-yellow-400 mr-1" />
-                  <span> {role + " " + artisan.rating}</span>
-                  <span> {userData.priorSkillsCerts[0]?.tradeArea}</span>
+                  <span> {" "+role }</span>
                 </div>
 
               </CardContent>
@@ -177,6 +175,7 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
               </CardHeader>
               <CardContent>
                 <UserGroupDetails />
+               <ArtisanTrainingManagement/>
               </CardContent>
             </Card>
           </div>

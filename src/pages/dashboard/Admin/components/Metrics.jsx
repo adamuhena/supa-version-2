@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Users, UserPlus, School, UsersRound } from 'lucide-react';
 
 const MetricCard = ({ title, value, icon: Icon }) => (
-  <div className="bg-white p-6 rounded-lg shadow-md">
+  <div className="bg-white p-6 rounded-lg shadow-md ">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm font-medium text-gray-500">{title}</p>
@@ -116,7 +116,7 @@ useEffect(() => {
       fetchUsers();
     }, []);
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <MetricCard title="Registered Artisans" value={artisan_userCount} icon={Users} />
       <MetricCard title="Intending Artisans" value={intending_artisanCount} icon={UserPlus} />
       <MetricCard title="Training Centers" value={training_centerCount} icon={School} />

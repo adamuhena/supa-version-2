@@ -592,12 +592,7 @@ function TrainingCenterGroup() {
               <Button variant="outline" onClick={() => navigate('/biodata')}>
                 <UserCircle className="mr-2 h-4 w-4" /> Update Profile
               </Button>
-<<<<<<< Updated upstream
-              <Button variant="outline">
-                <Settings className="mr-2 h-4 w-4" /> Settings
-              </Button>
-=======
->>>>>>> Stashed changes
+              
               <Button variant="destructive" onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" /> Logout
               </Button>

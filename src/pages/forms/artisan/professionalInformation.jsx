@@ -254,7 +254,7 @@ export default function ProfessionalInformaiton({
           <div className="inputGroup">
             <div className="radioGroup">
               <div>
-                <span>Are you a person with disability? </span>
+                <span>Persons with disability {"(PWD)"}? </span>
               </div>
 
               {/* <div>

@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -11,7 +12,12 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import PageLayout from '@/components/layout/pageLayout';
 import { toast } from "sonner";
 
-
+// Helper function to validate email or phone
+const validateEmailOrPhone = (input) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email validation regex
+  const phoneRegex = /^234\d{10}$/; // Phone validation regex (10-15 digits)
+  return emailRegex.test(input) || phoneRegex.test(input);
+};
 
 export default function LoginForm() {
 
@@ -28,6 +34,12 @@ export default function LoginForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
+    // Check if the input is valid (either email or phone number)
+    if (!validateEmailOrPhone(email)) {
+      toast.error("Please enter a valid email or phone number.");
+      return;
+    }
 
     try {
       const response = await axios.post(`${API_BASE_URL}/login`, {
@@ -38,8 +50,8 @@ export default function LoginForm() {
 
       console.log('Full response:', response.data);
 
-      const { success, data } = response.data; // Assuming `tokens` contains `accessToken` and `refreshToken`
-      
+      const { success, data } = response.data;
+
       if (success) {
         const userData = data[loginAs === 'user' ? 'user' : 'training_center'];
         toast.success(`Login Successfully! Role: ${userData.role}`);
@@ -65,21 +77,16 @@ export default function LoginForm() {
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('isFirstTimeUser', JSON.stringify(isFirstTimeUser));
 
-
-        // Navigate to appropriate pages
+        // Navigate to appropriate pages based on user role
         if (loginAs === 'user') {
           if (isFirstTimeUser) {
-
             if (userRole === 'artisan_user') {
               navigate('/register/artisan');
             } else if (userRole === 'intending_artisan') {
               navigate('/register/intendingArtisan');
             } else if (userRole === 'admin') {
-              navigate('/admin/dashboard'); // Default KYC route for other user types
-            } else if (userRole === 'admin') {
-              navigate('/admin/dashboard'); // Default KYC route for other user types
+              navigate('/admin/dashboard');
             }
-
           } else if (userRole === 'superadmin') {
             navigate('/admin/dashboard');
           } else if (userRole === 'admin') {
@@ -96,20 +103,16 @@ export default function LoginForm() {
             navigate('/trainingcenter/dashboard');
           }
         } else {
-          navigate('/'); // Assuming this for regular users
+          navigate('/');
         }
       } else {
         toast.error(`Login failed: Invalid user data. + ${response.data.message})`);
-        
       }
     } catch (error) {
       console.error("Error logging in:", error);
       toast.error("An error occurred. Please try again.");
     }
   };
-
-
-
 
   return (
     <>
@@ -135,21 +138,28 @@ export default function LoginForm() {
                         value="user"
                         className="data-[state=active]:bg-emerald-800 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
                       >
-                        Regular User
+                        User Login
                       </TabsTrigger>
                       <TabsTrigger
                         value="training_center"
                         className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
                       >
-                        Training Center
+                        Training Center Login
                       </TabsTrigger>
                     </TabsList>
+
                     <TabsContent value="user">
                       <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2" >
-                          <Label htmlFor="email" className="block text-left text-xs text-gray-600">Email</Label>
-                          <Input id="email" type="email" placeholder="john@example.com" required
-                            value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="block text-left text-xs text-gray-600">User ID</Label>
+                          <Input
+                            id="email"
+                            type="text"
+                            placeholder="john@example.com | 2347080000000"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="password" className="block text-left text-xs text-gray-600">Password</Label>
@@ -173,10 +183,16 @@ export default function LoginForm() {
                     </TabsContent>
                     <TabsContent value="training_center">
                       <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="center-email" className="block text-left text-xs text-gray-600">Training Center Email</Label>
-                          <Input id="center-email" type="email" placeholder="center@example.com" required
-                            value={email} onChange={(e) => setEmail(e.target.value)} />
+                      <div className="space-y-2">
+                          <Label htmlFor="center-email" className="block text-left text-xs text-gray-600">Training Center ID</Label>
+                          <Input
+                            id="center-email"
+                            type="text"
+                            placeholder="center@example.com | 2347080000000"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="center-password" className="block text-left text-xs text-gray-600">Password</Label>
