@@ -18,6 +18,7 @@ const EnhancedTrainingManagement = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const logout = useLogout();
   const accessToken = localStorage.getItem("accessToken");
+  const userId = localStorage.getItem("userId");
   const [userRole, setUserRole] = useState([]);
   const [periods, setPeriods] = useState([]);
   const [trainingGroups, setTrainingGroups] = useState([]);

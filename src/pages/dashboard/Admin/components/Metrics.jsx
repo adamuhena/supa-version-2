@@ -116,7 +116,7 @@ useEffect(() => {
       fetchUsers();
     }, []);
   return (
-    <div className="grid grid-cols-2 gap-4" >
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <MetricCard title="Registered Artisans" value={artisan_userCount} icon={Users} />
       <MetricCard title="Intending Artisans" value={intending_artisanCount} icon={UserPlus} />
       <MetricCard title="Training Centers" value={training_centerCount} icon={School} />

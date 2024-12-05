@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import axios from "axios"; // Or fetch if you prefer
+import axios from "axios";
 import useLogout from "@/pages/loginPage/logout";
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -11,34 +11,39 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 
   const isAuthenticated = localStorage.getItem("userId");
   const accessToken = localStorage.getItem("accessToken");
+  const loginAs = localStorage.getItem("userRole");
   const location = useLocation();
   const logout = useLogout();
 
   useEffect(() => {
-    // If the user is authenticated, fetch their role from the API
-    if (isAuthenticated && accessToken) {
-      const fetchUserRole = async () => {
-        try {
-          const response = await axios.get(`${API_BASE_URL}/users/${isAuthenticated}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+    const fetchUserRole = async () => {
+      try {
+        if (isAuthenticated && accessToken) {
+          let response;
+          if (loginAs === "training_center") {
+            response = await axios.get(
+              `${API_BASE_URL}/training-center/${isAuthenticated}`,
+              {
+                headers: { Authorization: `Bearer ${accessToken}` },
+              }
+            );
+          } else {
+            response = await axios.get(`${API_BASE_URL}/users/${isAuthenticated}`, {
+              headers: { Authorization: `Bearer ${accessToken}` },
+            });
+          }
           setUserRole(response.data.data.role);
-        } catch (err) {
-          setError(err);
-          logout(); // Correctly call the logout function
-        } finally {
-          setLoading(false);
-          
         }
-      };
+      } catch (err) {
+        console.error("Error fetching user role:", err);
+        setError("Failed to fetch user role. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      fetchUserRole();
-    } else {
-      setLoading(false);
-    }
-  }, [isAuthenticated, accessToken, logout]);
+    fetchUserRole();
+  }, [isAuthenticated, accessToken, loginAs, API_BASE_URL]);
 
   // Handle redirect for already logged-in users on the login page
   if (location.pathname === "/login" && accessToken && userRole) {
@@ -55,6 +60,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 
   // Redirect unauthenticated users to the login page
   if (!isAuthenticated || !accessToken) {
+    logout(); // Ensure proper cleanup
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
@@ -65,13 +71,12 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 
   // Handle loading state while fetching role
   if (loading) {
-    return <div></div>; // You can replace this with a spinner or other indicator
+    return <div>Loading...</div>;
   }
 
   // Handle error during the role fetch
   if (error) {
-    console.error(error); // Log error for debugging
-    return <div>Error: {error.message}</div>;
+    return <div>{error}</div>;
   }
 
   // Allow access to the protected route
