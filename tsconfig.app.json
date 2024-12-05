@@ -32,8 +32,10 @@
     "**/*.ts",
     "**/*.js",
     "**/*.jsx",
-    "**/*.json"
+    "**/*.json",
+    "src"
   ],
+  "exclude": ["node_modules", "dist"] ,
 
   "baseUrl": ".",
   "paths": {

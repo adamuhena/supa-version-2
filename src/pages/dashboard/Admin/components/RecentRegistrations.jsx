@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 export default function RecentRegistrations() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -10,7 +10,7 @@ export default function RecentRegistrations() {
     const fetchUsers = async () => {
       try {
         const accessToken = localStorage.getItem("accessToken");
-
+ß
         const response = await axios.get(`${API_BASE_URL}/users`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
