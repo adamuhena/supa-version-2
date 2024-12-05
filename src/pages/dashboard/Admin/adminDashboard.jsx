@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { UserCircle, Settings, LogOut } from "lucide-react";
+import { UserCircle, LogOut } from "lucide-react";
 import DashboardPage from '@/components/layout/DashboardLayout';
 import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from '@/pages/loginPage/logout';
 import axios from 'axios';
 import Dashboard from './components/Dashboard';
 import Spinner from '@/components/layout/spinner';
+
 
 const AdminDashboard = () => {
   const logout = useLogout();
