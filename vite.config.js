@@ -7,6 +7,7 @@ import path from "path"; // Import path for alias configuration
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/",
   plugins: [react()],
   rollupOptions: {
     // Specify any necessary Rollup plugins or options

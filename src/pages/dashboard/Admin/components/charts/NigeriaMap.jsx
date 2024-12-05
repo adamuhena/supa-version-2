@@ -1,3 +1,165 @@
+// import React, { useEffect, useRef, useState } from "react";
+// import Highcharts from "highcharts/highmaps";
+// import axios from "axios";  // Add axios
+
+// const NigeriaMap = () => {
+//   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+//   const chartRef = useRef(null);
+//   const [userData, setUserData] = useState([]);
+//   const accessToken = localStorage.getItem("accessToken");
+
+//   // Fetch the topology (map data) from the JSON file
+//   const fetchTopology = async () => {
+//     try {
+//       const response = await fetch("/ng-all.topo.json");
+//       if (!response.ok) throw new Error("Failed to fetch map topology");
+//       return await response.json();
+//     } catch (error) {
+//       console.error("Error fetching topology data:", error);
+//       return null; // Return null if fetch fails
+//     }
+//   };
+
+//   // Fetch user data from the database
+//   const fetchUserData = async () => {
+//     try {
+//       const response = await axios.get(`${API_BASE_URL}/users`,{
+//         headers: {
+//           Authorization: `Bearer ${accessToken}`,
+//         },
+//       }
+//       );  // Replace with your actual endpoint
+//       setUserData(response.data.users || response.data); 
+//     } catch (error) {
+//       console.error("Error fetching user data:", error);
+//     }
+//   };
+
+//   // Prepare the data for Highcharts by counting artisan_user and intending_artisan per state
+//   const prepareChartData = () => {
+//     const stateData = {
+//       "ng-ri": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-kt": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-so": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-za": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-yo": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-ke": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-ad": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-bo": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-ak": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-ab": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-im": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-by": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-be": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-cr": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-ta": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-kw": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-la": { artisan_user: 7, intending_artisan: 0 },
+//       "ng-ni": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-fc": { artisan_user: 0, intending_artisan: 90 },
+//       "ng-og": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-on": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-ek": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-os": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-oy": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-an": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-ba": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-go": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-de": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-ed": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-en": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-eb": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-kd": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-ko": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-pl": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-na": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-ji": { artisan_user: 0, intending_artisan: 0 },
+//       "ng-kn": { artisan_user: 0, intending_artisan: 0 },
+//     };
+
+//     userData.forEach(user => {
+//       const stateCode = `ng-${user.state.toLowerCase()}`; // Assuming user.state contains the state name
+//       if (stateData[stateCode]) {
+//         // Count the user based on role
+//         if (user.role === "artisan_user") {
+//           stateData[stateCode].artisan_user++;
+//         } else if (user.role === "intending_artisan") {
+//           stateData[stateCode].intending_artisan++;
+//         }
+//       }
+//     });
+
+//     // Format the data for Highcharts
+//     return Object.entries(stateData).map(([state, counts]) => ({
+//       state,
+//       artisan_user: counts.artisan_user,
+//       intending_artisan: counts.intending_artisan,
+//     }));
+//   };
+
+//   useEffect(() => {
+//     (async () => {
+//       const topology = await fetchTopology();
+//       if (!topology) return;
+  
+//       await fetchUserData(); // Fetch user data
+  
+//       if (Array.isArray(userData)) {
+//         const chartData = prepareChartData(); // Prepare data for the map
+//         if (chartRef.current) {
+//           Highcharts.mapChart(chartRef.current, {
+//             chart: {
+//               map: topology,
+//             },
+//             title: {
+//               text: "Distribution by State",
+//             },
+//             subtitle: {
+//               text: "Artisan & Intending Artisan Distribution in Nigeria",
+//             },
+//             mapNavigation: {
+//               enabled: true,
+//               buttonOptions: {
+//                 verticalAlign: "bottom",
+//               },
+//             },
+//             colorAxis: {
+//               min: 0,
+//               max: 50,
+//               colors: ['#FF0000', '#FFFF00', '#00FF00'],
+//             },
+//             series: [
+//               {
+//                 data: chartData.map(state => ({
+//                   name: state.state,
+//                   value: state.artisan_user + state.intending_artisan,
+//                 })),
+//                 name: "Artisan & Intending Artisan Distribution",
+//                 states: {
+//                   hover: {
+//                     color: "#BADA55",
+//                   },
+//                 },
+//                 dataLabels: {
+//                   enabled: true,
+//                   format: "{point.name}",
+//                 },
+//               },
+//             ],
+//           });
+//         }
+//       } else {
+//         console.error("User data is not an array:", userData);
+//       }
+//     })();
+//   }, [userData]);
+  
+//   return (
+//     <div ref={chartRef} className="h-[500px] max-w mx-auto" id="container"></div>
+//   );
+// };
+
+// export default NigeriaMap;
 
 
 import React, { useEffect, useRef } from "react";

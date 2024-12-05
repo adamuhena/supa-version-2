@@ -1,12 +1,9 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import React, { useEffect, useState } from 'react';
+import react, { useEffect, useState } from 'react';
 import Calendar from './Calendar';
 import { BarChart } from './charts/BarChart';
 import NigeriaMap from './charts/NigeriaMap';
-import NigeriaMap from './charts/NigeriaMap';
 import { PieChart } from './charts/PieChart';
-import Metrics from './Metrics';
 import Metrics from './Metrics';
 
 export default function Dashboard() {
