@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Card, CardContent } from "@/components/ui/card";
 import Spinner from "@/components/layout/spinner";
+import { Card, CardContent } from "@/components/ui/card";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const TrainingGroupsList = ({ userId }) => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;

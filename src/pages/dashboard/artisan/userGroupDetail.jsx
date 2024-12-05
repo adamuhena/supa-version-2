@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui//card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui//table";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import axios from 'axios';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui//table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui//card"
-import {toast} from 'sonner'
-import useLogout from '@/pages/loginPage/logout';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
+import React, { useEffect, useState } from 'react';
 
 
 const ArtisanTrainingManagement = () => {

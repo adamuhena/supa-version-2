@@ -1,18 +1,18 @@
-import React , { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import Spinner from '@/components/layout/spinner'
+import ProtectedRoute from "@/components/ProtectedRoute"
 import { Badge } from "@/components/ui/badge"
-import { CalendarDays, Briefcase, Star, Settings, LogOut, UserCircle } from "lucide-react"
-import TrainingDashboardPage from './TrainingDashboardLayout';
-import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from '@/pages/loginPage/logout'
 import axios from 'axios'
-import Spinner from '@/components/layout/spinner'
-import TrainingGroupsList from './TrainingGroupList'
+import { LogOut, Star, UserCircle } from "lucide-react"
 import Calendar from '../Admin/components/Calendar'
+import TrainingDashboardPage from './TrainingDashboardLayout'
+import TrainingGroupsList from './TrainingGroupList'
 
 
 const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {

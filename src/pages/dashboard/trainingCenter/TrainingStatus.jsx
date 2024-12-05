@@ -1,15 +1,14 @@
 
 // export default TrainingStatus;
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate, Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bell, LogOut, UserCircle } from "lucide-react";
-import TrainingDashboardPage from "./TrainingDashboardLayout";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import useLogout from '@/pages/loginPage/logout';
 import Spinner from "@/components/layout/spinner";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import useLogout from '@/pages/loginPage/logout';
+import axios from "axios";
+import { LogOut, UserCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import TrainingDashboardPage from "./TrainingDashboardLayout";
 import TrainingGroupsList from "./TrainingGroupList";
 
 

@@ -1,13 +1,10 @@
-import { LineChart } from './charts/LineChart';
-import { RadarChart } from './charts/RadarChart';
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Metrics from './Metrics';
+import React, { useEffect, useState } from 'react';
 import Calendar from './Calendar';
 import { BarChart } from './charts/BarChart';
-import { PieChart } from './charts/PieChart';
 import NigeriaMap from './charts/NigeriaMap';
-import { ArtisanDistributionChart } from './charts/ArtisanDistributionChart';
+import { PieChart } from './charts/PieChart';
+import Metrics from './Metrics';
 
 export default function Dashboard() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;

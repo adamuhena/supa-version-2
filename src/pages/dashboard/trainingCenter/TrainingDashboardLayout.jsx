@@ -1,6 +1,3 @@
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { cn } from "../../../lib/utils";
 import {
   Bell,
   ChevronsUpDown,
@@ -12,6 +9,9 @@ import {
   Star,
   UserCircle,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { cn } from "../../../lib/utils";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -47,12 +47,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import logo3 from "../../../assets/logo.png";
-import { useNavigate } from "react-router-dom"; // To handle log out
 import axios from "axios"; // Make sure axios is installed or replace with your preferred HTTP client
-import { DotPattern } from "../../../components/ui/dot-pattern";
+import { useNavigate } from "react-router-dom"; // To handle log out
 import { toast } from "sonner";
+import logo3 from "../../../assets/logo.png";
 import Spinner from "../../../components/layout/spinner";
+import { DotPattern } from "../../../components/ui/dot-pattern";
 
 export default function TrainingDashboardPage({ href, title, children }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;

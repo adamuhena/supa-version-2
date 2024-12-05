@@ -1,17 +1,15 @@
 
 // export default ArtisanDashboard
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { CalendarDays, Briefcase, Star, Settings, LogOut, UserCircle, Edit, Trash2 } from "lucide-react";
 import DashboardPage from '@/components/layout/DashboardLayout';
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useLogout from '@/pages/loginPage/logout';
 import axios from 'axios';
+import { Edit, LogOut, Trash2, UserCircle } from "lucide-react";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const UserManagement = () => {
   const logout = useLogout();

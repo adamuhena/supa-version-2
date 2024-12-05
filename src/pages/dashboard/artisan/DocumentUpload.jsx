@@ -1,16 +1,15 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import DashboardPage from "@/components/layout/DashboardLayout";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import DashboardPage from "@/components/layout/DashboardLayout";
-import { UserCircle, Briefcase, Star } from 'lucide-react';
-import { Settings, LogOut } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import useLogout from '@/pages/loginPage/logout';
-import { Badge } from "@/components/ui/badge"
 import axios from 'axios';
+import { Briefcase, LogOut, UserCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const DocumentUpload = () => {
   const logout = useLogout();

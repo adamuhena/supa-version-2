@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import DashboardPage from "@/components/layout/DashboardLayout";
+import PasswordChange from "@/components/PasswordChange";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import DashboardPage from "@/components/layout/DashboardLayout";
-import { UserCircle, Settings, LogOut, Plus, Minus, Upload } from 'lucide-react';
-import useLogout from "@/pages/loginPage/logout";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import PasswordChange from "@/components/PasswordChange";
+import useLogout from "@/pages/loginPage/logout";
+import axios from "axios";
+import { LogOut, Minus, Plus, Upload, UserCircle } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 //import { url } from "inspector";
 
 const Biodata = () => {

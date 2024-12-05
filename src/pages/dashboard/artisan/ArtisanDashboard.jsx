@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import DashboardPage from '@/components/layout/DashboardLayout'
+import Spinner from '@/components/layout/spinner'
+import ProtectedRoute from "@/components/ProtectedRoute"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { CalendarDays, Briefcase, Star, Settings, LogOut, UserCircle } from "lucide-react"
-import DashboardPage from '@/components/layout/DashboardLayout'
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import useLogout from '@/pages/loginPage/logout'
 import axios from 'axios'
-import UserGroupDetails from './userGroupDetail'
+import { LogOut, Star, UserCircle } from "lucide-react"
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Calendar from '../Admin/components/Calendar'
-import Spinner from '@/components/layout/spinner'
-import ArtisanTrainingManagement from './userGroupDetail'
+import { default as ArtisanTrainingManagement, default as UserGroupDetails } from './userGroupDetail'
 
 
 const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
