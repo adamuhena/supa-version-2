@@ -8,6 +8,9 @@ import path from "path"; // Import path for alias configuration
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  rollupOptions: {
+    // Specify any necessary Rollup plugins or options
+  },
   css: {
     postcss: {
       plugins: [tailwindcss, autoprefixer],
