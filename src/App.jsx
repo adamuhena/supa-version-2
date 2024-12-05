@@ -24,6 +24,7 @@ import TrainingGroupDetails from "./pages/dashboard/Admin/TrainingGroup";
 import AdminDocumentVerification from "./pages/dashboard/Admin/AdminDocumentVerification";
 import TrainingCenterReport from "./pages/dashboard/Admin/AdminTrainingCenterReport";
 import AdminSectors from "./pages/dashboard/Admin/sectors";
+import TrainingCenterBiodata from "./pages/dashboard/trainingCenter/TrainingCenterBiodata";
 
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 
@@ -47,6 +48,8 @@ function App() {
         {/* <Route path="/biodata2" element={<BiodataPage />} /> */}
         <Route path="/biodata" element={<Biodata />} />
         <Route path="/certification/upload" element={<DocumentUpload/>}/>
+        <Route path="/training-center/biodata" element={<TrainingCenterBiodata />} />
+        
 
         
        

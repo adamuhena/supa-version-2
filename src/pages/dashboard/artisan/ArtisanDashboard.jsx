@@ -12,6 +12,7 @@ import axios from 'axios'
 import UserGroupDetails from './userGroupDetail'
 import Calendar from '../Admin/components/Calendar'
 import Spinner from '@/components/layout/spinner'
+import ArtisanTrainingManagement from './userGroupDetail'
 
 
 const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
@@ -174,6 +175,7 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
               </CardHeader>
               <CardContent>
                 <UserGroupDetails />
+               <ArtisanTrainingManagement/>
               </CardContent>
             </Card>
           </div>

@@ -70,7 +70,7 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold"> Dashboard  </h1>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate('/biodata')}>
+          <Button variant="outline" onClick={() => navigate('/training-center/biodata')}>
             <UserCircle className="mr-2 h-4 w-4" /> Update Profile
           </Button>
           
