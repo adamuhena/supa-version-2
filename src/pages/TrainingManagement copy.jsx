@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 const TrainingManagement = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;

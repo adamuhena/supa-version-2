@@ -1,42 +1,39 @@
-import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+import React, { useMemo, useState } from "react";
 
 import DashboardPage from "@/components/layout/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import useLogout from '@/pages/loginPage/logout'
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
 import { states } from "@/data/nigeria";
-import { Button } from "@/components/ui/button";
-import { PrinterCheckIcon, UserCircle, LogOut } from "lucide-react";
+import useLogout from '@/pages/loginPage/logout';
 import {
   Cross1Icon,
   DashboardIcon,
   DownloadIcon,
   SewingPinFilledIcon,
 } from "@radix-ui/react-icons";
+import { LogOut, UserCircle } from "lucide-react";
 
-import { CSVLink, CSVDownload } from "react-csv";
-import jsPDF from "jspdf";
-import "jspdf-autotable"; 
 import Spinner from "@/components/layout/spinner";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { CSVLink } from "react-csv";
 
 function formatString(input) {
   // Replace underscores with spaces
