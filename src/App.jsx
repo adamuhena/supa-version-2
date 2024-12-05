@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import About from "./pages/HomePage/About";
-import LoginForm from "./pages/loginPage/Login";
+import LoginForm from "./pages/loginPage/login";
 import SignupForm from "./pages/loginPage/signUp";
 import Register from "./pages/register/register";
 import ArtisanForm from "./pages/forms/artisan/index";
