@@ -12,7 +12,7 @@ import axios from 'axios'
 import { LogOut, Star, UserCircle } from "lucide-react"
 import Calendar from '../Admin/components/Calendar'
 import TrainingDashboardPage from './TrainingDashboardLayout'
-import TrainingGroupsList from './TrainingGroupList'
+import Trainingtable from "./TrainingGroupList"
 
 
 const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
@@ -101,22 +101,26 @@ const TrainingCenterDashboard = ({ artisan = { name: "John Doe", skill: "Carpent
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-yellow-400 p-4 rounded-lg shadow-md">
-          <CardHeader>
-            <CardTitle>Company Info</CardTitle>
-          </CardHeader>
-          <CardContent>
-            
-          </CardContent>
-        </Card>
+        <Card className="border-2 border-yellow-400 p-6 rounded-lg shadow-md bg-white">
+  <CardHeader className="border-b border-yellow-400 pb-2">
+    <CardTitle className="text-xl font-semibold text-gray-700">Company Info</CardTitle>
+  </CardHeader>
+  <CardContent className="space-y-2 mt-4 text-gray-600">
+    <p className="text-sm">{userData?.ownership && `Ownership: ${userData?.ownership}`}</p>
+    <p className="text-sm">{userData?.state && `State: ${userData?.state}`}</p>
+    <p className="text-sm">{userData?.lga && `LGA: ${userData?.lga}`}</p>
+    <p className="text-sm">{userData?.senatorialDistrict && `Senatorial District: ${userData?.senatorialDistrict}`}</p>
+    <p className="text-sm">{userData?.agree ? 'Agreed' : 'Not Agreed'}</p>
+  </CardContent>
+</Card>
+
 
         <Calendar/>
         
       </div>
 
       <div className="mt-6">
-       
-          <TrainingGroupsList userId={userId} />
+          <Trainingtable/>
 
       </div>
     </div>

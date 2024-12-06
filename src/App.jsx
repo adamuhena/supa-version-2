@@ -177,6 +177,11 @@ function App() {
            element={<AdminSectors/>}
            allowedRoles = {["admin", "superadmin"]}
            />
+
+        <Route path="/training-center/groups"
+          element={<TrainingStatus/>}
+          allowedRoles={[ "admin", "superadmin", "training_center"]}
+          />
         
       </Routes>
     </Router>

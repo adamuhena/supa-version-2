@@ -122,7 +122,7 @@ const TrainingCenterBiodata = () => {
   };
 
   return (
-    <ProtectedRoute>
+   
       <TrainingDashboardPage title="Training Center Dashboard">
         <div className="container mx-auto p-6">
           <header className="flex justify-between items-center mb-6">
@@ -468,7 +468,7 @@ const TrainingCenterBiodata = () => {
           </Card>
         </div>
       </TrainingDashboardPage>
-    </ProtectedRoute>
+    
   );
 };
 

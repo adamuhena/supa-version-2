@@ -165,7 +165,7 @@ const isLinkAccessible = (allowedRoles) => {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link to="/training-center/status">
+                    <Link to="/training-center/groups">
                       <Star />
                       <span>Students Assigned</span>
                     </Link>
@@ -185,7 +185,7 @@ const isLinkAccessible = (allowedRoles) => {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild size="sm">
-                      <Link to="/feedback">
+                      <Link to="/about">
                         <Send />
                         <span>Feedback</span>
                       </Link>
@@ -193,7 +193,7 @@ const isLinkAccessible = (allowedRoles) => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild size="sm">
-                      <Link to="/help-center">
+                      <Link to="/contact">
                         <LifeBuoy />
                         <span>Help Center</span>
                       </Link>

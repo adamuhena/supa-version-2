@@ -1,118 +1,122 @@
-import Spinner from "@/components/layout/spinner";
-import { Card, CardContent } from "@/components/ui/card";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import useLogout from '@/pages/loginPage/logout';
+import axios from 'axios';
+import { LogOut, UserCircle } from "lucide-react";
+import React, { useEffect, useState } from 'react';
+import TrainingDashboardPage from "./TrainingDashboardLayout";
 
-const TrainingGroupsList = ({ userId }) => {
+function Trainingtable() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const accessToken = localStorage.getItem("accessToken");
+  const userId = localStorage.getItem("userId");
+  const [userRole, setUserRole] = useState([]);
   const [trainingGroups, setTrainingGroups] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [userPreviewModal, setUserPreviewModal] = useState(false);
-  const [previewUsers, setPreviewUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
-    const fetchTrainingGroups = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/training-groups`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
-        });
-
-        // Filter groups based on the provided userId
-        const filteredGroups = response.data.data.filter(
-          (group) => group.trainingCenter._id === userId
-        );
-
-        setTrainingGroups(filteredGroups || []);
-      } catch (error) {
-        console.error("Error fetching training groups:", error);
-        setError("Failed to fetch training groups");
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    fetchUserRole();
     fetchTrainingGroups();
-  }, [API_BASE_URL, userId]);
+  }, [accessToken]);
 
-    // Function to handle user preview
-    const handleUserPreview = (users, evaluations) => {
-      setPreviewUsers(users, evaluations);
-      setUserPreviewModal(true);
-    };
+  const fetchUserRole = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/training-center/${userId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      console.log("user role", response.data.data);
+      setUserRole(response.data.data.role);
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+    }
+  };
 
-  if (loading) return <Spinner />;
-  if (error) return <p>{error}</p>;
+  const fetchTrainingGroups = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/training-groups`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      console.log("Fetched training groups: ", response.data);
+      setTrainingGroups(response.data);
+    } catch (error) {
+      console.error('Error fetching training groups:', error);
+    }
+  };
 
-  return (
-    <div className="mt-6">
-      <Card className="border-2 border-red-400 p-4 rounded-lg shadow-md">
-        <CardContent>
-          <h2 className="text-xl font-semibold mb-4">Training Groups List</h2>
-          <table className="min-w-full table-auto">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 border-b">Group Name</th>
-                <th className="px-4 py-2 border-b">Start Date</th>
-                <th className="px-4 py-2 border-b">End Date</th>
-                <th className="px-4 py-2 border-b">Status</th>
-                <th className="px-4 py-2 border-b">Users Assigned</th>
-                <th className="px-4 py-2 border-b">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {trainingGroups.map((group) => (
-                <tr key={group._id}>
-                  <td className="px-4 py-2 border-b">{group.name}</td>
-                  <td className="px-4 py-2 border-b">
-                        {new Date(group.startDate).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        })}
-                    </td>
-                  <td className="px-4 py-2 border-b">
-                        {new Date(group.endDate).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        })}
-                    </td>
-                  <td className="px-4 py-2 border-b">{group.status}</td>
-                  <td className="px-4 py-2 border-b">{group.users.length}</td>
-                  <td>
-                          <button
-                            onClick={() => handleUserPreview(group.users)}
-                            className="text-indigo-600 hover:text-indigo-900"
-                          >
-                            Preview Users
-                          </button>
-                        </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
+  // Filter training groups based on the logged-in user's training center
+  const filteredTrainingGroups = trainingGroups.filter(group =>
+    group.trainingCenter._id === userId
+  );
 
-      {userPreviewModal && (
-              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-                <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-                  <h3>User Evaluations</h3>
-                  <ul>
-                    {previewUsers.map((user) => (
-                      <li key={user._id} className="flex justify-between mb-2">
-                        <span>{user.firstName + " " + user.lastName}</span>
-                        <span>{user.evaluation ? user.evaluation.score : 'No Evaluation'}</span>
+  // Sort by start time in descending order and take the 5 most recent
+  const sortedGroups = filteredTrainingGroups.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+  const recentGroups = sortedGroups.slice(0, 5);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = recentGroups.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const TrainingCenterView = () => (
+    <Card>
+      <CardHeader>
+        <CardTitle>Your Training Trade Area Groups</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>S/N</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Period</TableHead>
+              <TableHead>Start Time</TableHead>
+              <TableHead>End Time</TableHead>
+              <TableHead>Users</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentItems.map((group, index) => (
+              <TableRow key={group._id}>
+                <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
+                <TableCell>{group.name}</TableCell>
+                <TableCell>{group.period ? `${group.period.name} - ${group.period.year}` : 'N/A'}</TableCell>
+                <TableCell>{new Date(group.startTime).toLocaleString()}</TableCell>
+                <TableCell>{new Date(group.endTime).toLocaleString()}</TableCell>
+                <TableCell>
+                  {group.users.length}
+                  {/* <ul>
+                    {group.users.map((user) => (
+                      <li key={user._id} className="flex items-center justify-between mb-2">
+                        <span>{user.firstName} {user.lastName}</span>
                       </li>
                     ))}
-                  </ul>
-                  <button onClick={() => setUserPreviewModal(false)}>Close</button>
-                </div>
-              </div>
-            )}
+                  </ul> */}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="container mx-auto p-6">
+      {userRole === 'training_center' ? (
+        TrainingCenterView()
+      ) : (
+        <p>No data available or user role is not training center.</p>
+      )}
     </div>
   );
-};
+}
 
-export default TrainingGroupsList;
+export default Trainingtable;
