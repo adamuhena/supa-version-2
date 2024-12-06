@@ -1,9 +1,21 @@
 import { footerLinks, socialLinks } from "./data";
+import { DotPattern } from "../../ui/dot-pattern";
+import { cn } from "../../../lib/utils";
 
 function Footer() {
   return (
     <div className="bg-slate-900 pt-[50px] pb-[40px] px-[20px]">
+      <DotPattern
+                    width={10}
+                    height={10}
+                    cx={1}
+                    cy={1}
+                    cr={1}
+                    className={cn("fill-neutral-600/40 opacity-15")}
+                  />
+      
   <div className="max-w-full lg:max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 justify-between">
+    
    <div className="flex flex-col items-left mx-auto lg:mx-0 max-w-[354px] gap-[32px]">
           <div className="p-[10px] bg-white w-fit rounded-[10px]">
             <img className="w-[100px]" src="/supaLogo.png" />

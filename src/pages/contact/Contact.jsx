@@ -2,6 +2,8 @@ import React from 'react';
 import { ContactForm } from './components/ContactForm';
 import { ContactInfo } from './components/ContactInfo';
 import PageLayout from "../../components/layout/pageLayout";
+import { DotPattern } from "../../components/ui/dot-pattern";
+import { cn } from "../../lib/utils";
 
 function ContactUs() {
   return (
@@ -16,7 +18,16 @@ function ContactUs() {
           backgroundImage: 'url("https://images.unsplash.com/photo-1596524430615-b46475ddff6e?auto=format&fit=crop&q=80")'
         }}
       >
+
         <div className="h-full w-full bg-slate-900 bg-opacity-100 flex items-center justify-center pt-16 pl-80">
+        <DotPattern
+                    width={10}
+                    height={10}
+                    cx={1}
+                    cy={1}
+                    cr={1}
+                    className={cn("fill-neutral-400/40 opacity-15")}
+                  />
           <h1 className="text-4xl font-bold text-emerald-700 text-center">Contact Us</h1>
         </div>
       </div>

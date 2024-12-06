@@ -14,6 +14,8 @@ import { cn } from "../../../lib/utils";
 import LegalInfo from "./LegalInfo.jsx";
 import TrainingAmenities from "./Amenities";
 import BankDetails from "./BankDetails.jsx";
+import useLogout from '@/pages/loginPage/logout';
+import { LogOutIcon } from "lucide-react";
 // import ProtectedRoute from "@/components/ProtectedRoute";
 
 const TrainingCenterForm = () => {
@@ -200,16 +202,24 @@ const TrainingCenterForm = () => {
     </div>
   );
 
+  const logout = useLogout();
+
+
   return (
     <div>
       {/*<ProtectedRoute>*/}
       <RegisterSuccess show={show} setShow={setShow} />
-      <div className="container">
+      <div className="">
         <div>
-          <div className="sticky top-0 pt-16 pb-0 z-10 bg-slate-900 border-b-[1px]">
-            <h1 className="header text-xl text-emerald-600">
-              Training Center KYC
+          <div className="sticky top-0 pt-16 pb-0 z-10 bg-slate-900  border-b-[1px]">
+            <h1 className="header text-sm text-emerald-600">
             </h1>
+            <button
+              onClick={logout}
+              className="absolute top-20 flex flex-row gap-4 right-16 hover:bg-slate-800 text-white text-sm"
+            >
+             LogOut <LogOutIcon />
+            </button>
             <Stepper
               activeStep={step}
               className="border-b-gray-300 scale-[0.8]"

@@ -138,7 +138,7 @@ export default function Banner() {
                 <div className="relative rounded-full px-3 py-1 text-sm text-white ring-1 ring-gray-200/10 hover:ring-gray-900/20 bg-transparent backdrop-blur-lg">
                   Announcing our next Phase of SUPA.
                   <Link
-                    to="#"
+                    to="/about"
                     className="ml-2 font-semibold text-green-500 hover:text-yellow-400"
                   >
                     Read more

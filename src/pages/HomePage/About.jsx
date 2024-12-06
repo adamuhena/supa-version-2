@@ -3,6 +3,8 @@ import PageLayout from "@/components/layout/pageLayout"
 import { SVGProps } from "react"
 import { Link } from "react-router-dom"
 import HeaderThreeImages from "../../components/HeaderThreeImages/HeaderThreeImages"
+import { DotPattern } from "../../components/ui/dot-pattern";
+import { cn } from "../../lib/utils";
 
 export default function About() {
     
@@ -16,7 +18,16 @@ export default function About() {
     return (
       <PageLayout>
         <div className="bg-gradient-to-t from-stone-100 to-current-black">
-        <section className="bg-slate-900 pt-40 pb-10">
+        <DotPattern
+                    width={10}
+                    height={10}
+                    cx={1}
+                    cy={1}
+                    cr={1}
+                    className={cn("fill-neutral-400/40 opacity-15")}
+                  />
+        <section className="bg-slate-900 pt-32 pb-10">
+        
       
         <div className="inline-block rounded-lg bg-muted pl-80 pr-5 py-5 text-5xl font-bold text-emerald-600">About SUPA</div>
     </section>
