@@ -27,7 +27,7 @@ import AdminSectors from "./pages/dashboard/Admin/sectors";
 import TrainingCenterBiodata from "./pages/dashboard/trainingCenter/TrainingCenterBiodata";
 import ContactUs from "./pages/contact/Contact";
 
-// import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
+// import AdminDashboard from "./pages/dashboard/Admin/adminDashboard"
 
 function App() {
   return (
@@ -80,7 +80,7 @@ function App() {
         <Route
           path="/intending-artisan/dashboard"
           element={
-            <IntendingArtisanDashboard/>
+            <ArtisanDashboard/>
           }
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
@@ -114,7 +114,7 @@ function App() {
         />
 
         <Route
-          path="/artisan/dashboard"
+          path="/trainee/dashboard"
           element={
             < ArtisanDashboard />
           }
@@ -138,7 +138,7 @@ function App() {
         <Route
           path="/admin/dashboard"
           element={
-            < ArtisanDashboard/>
+            < ArtisanDashboard />
           }
           allowedRoles={[ "admin", "superadmin"]}
         />

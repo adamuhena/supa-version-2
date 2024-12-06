@@ -1,4 +1,5 @@
-import DashboardPage from '@/components/layout/DashboardLayout'
+
+import { useParams } from 'react-router-dom';import DashboardPage from '@/components/layout/DashboardLayout'
 import Spinner from '@/components/layout/spinner'
 import ProtectedRoute from "@/components/ProtectedRoute"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -80,10 +81,10 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
 
 
   return (
-    <ProtectedRoute href='/artisan/dashboard'>
+    <ProtectedRoute href='/trainee/dashboard'>
 
 
-      <DashboardPage title="Artisan Dashboard">
+      <DashboardPage title="Trainee Dashboard">
         <div className="container mx-auto p-6">
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold"> Dashboard  </h1>

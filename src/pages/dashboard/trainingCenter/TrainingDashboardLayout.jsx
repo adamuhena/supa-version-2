@@ -254,7 +254,7 @@ const isLinkAccessible = (allowedRoles) => {
                   <DropdownMenuGroup>
                     <DropdownMenuItem
                       variant="outline"
-                      onClick={() => navigate("/biodata")}>
+                      onClick={() => navigate("/training-center/biodata")}>
                       <UserCircle />
                       Account
                     </DropdownMenuItem>

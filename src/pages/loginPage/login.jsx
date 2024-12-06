@@ -98,9 +98,9 @@ export default function LoginForm() {
           } else if (userRole === "admin") {
             navigate("/admin/dashboard");
           } else if (userRole === "artisan_user") {
-            navigate("/artisan/dashboard");
+            navigate("/trainee/dashboard");
           } else if (userRole === "intending_artisan") {
-            navigate("/artisan/dashboard");
+            navigate("/trainee/dashboard");
           }
         } else if (loginAs === "training_center") {
           if (isFirstTimeUser) {

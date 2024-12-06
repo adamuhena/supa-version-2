@@ -97,7 +97,7 @@ const DocumentUpload = () => {
   
 
   return (
-    <DashboardPage title="Certification / Licensing" href="/artisan/dashboard">
+    <DashboardPage title="Certification / Licensing" href="/trainee/dashboard">
       <div className="container mx-auto p-6">
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Document Upload</h1>

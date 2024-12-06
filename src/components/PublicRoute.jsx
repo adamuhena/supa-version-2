@@ -14,9 +14,9 @@ const PublicRoute = ({ children }) => {
       case "superadmin":
         return <Navigate to="/admin/dashboard" replace />;
       case "artisan_user":
-        return <Navigate to="/artisan/dashboard" replace />;
+        return <Navigate to="/trainee/dashboard" replace />;
       case "intending_artisan":
-        return <Navigate to="/intending_artisan/dashboard" replace />;
+        return <Navigate to="/trainee/dashboard" replace />;
       case "training_center":
         return <Navigate to="/trainingcenter/dashboard" replace />;
       default:

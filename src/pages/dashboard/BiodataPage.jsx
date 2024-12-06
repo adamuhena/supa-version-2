@@ -190,7 +190,7 @@ const Biodata = () => {
   };
   
   return (
-    <DashboardPage title="User Profile" href="/artisan/dashboard">
+    <DashboardPage title="User Profile" href="/trainee/dashboard">
       <div className="container mx-auto p-6">
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">My Profile</h1>

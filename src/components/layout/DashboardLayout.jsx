@@ -299,7 +299,7 @@ const isLinkAccessible = (allowedRoles) => {
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link to="/artisan/dashboard">
+                    <Link to="/trainee/dashboard">
                       <Frame />
                       <span>Dashboard</span>
                     </Link>
@@ -331,7 +331,7 @@ const isLinkAccessible = (allowedRoles) => {
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link to="/artisan/dashboard">
+                    <Link to="/trainee/dashboard">
                       <Frame />
                       <span>Dashboard</span>
                     </Link>

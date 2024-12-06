@@ -50,8 +50,8 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     const rolePaths = {
       admin: "/admin/dashboard",
       superadmin: "/admin/dashboard",
-      artisan_user: "/artisan/dashboard",
-      intending_artisan: "/intending-artisan/dashboard",
+      artisan_user: "/trainee/dashboard",
+      intending_artisan: "/trainee/dashboard",
       training_center: "/trainingcenter/dashboard",
     };
 
