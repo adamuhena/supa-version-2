@@ -100,11 +100,21 @@ import { Link } from "react-router-dom";
 import logo7 from "../HomePage/image/bimg.png";
 import { BlurFade } from "../../components/ui/blur-fade";
 import HeaderTitle from "../../components/HeaderTitle/HeaderTitle";
+import { DotPattern } from "../../components/ui/dot-pattern";
+import { cn } from "../../lib/utils";
 
 export default function Banner() {
   return (
     //bg-slate-900
     <div className="relative h-screen w-full overflow-hidden bg-slate-900"> 
+    <DotPattern
+                    width={10}
+                    height={10}
+                    cx={1}
+                    cy={1}
+                    cr={1}
+                    className={cn("fill-neutral-400/40 opacity-15")}
+                  />
       <div className="relative h-full w-full flex flex-col justify-between">
         {/* Background Gradient */}
         <div className="absolute inset-x-0 -top-20 -z-60 transform-gpu overflow-hidden blur-3xl sm:-top-80">
@@ -119,7 +129,7 @@ export default function Banner() {
 
         {/* Content */}
         <div className="relative flex flex-wrap justify-center gap-8 items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 sm:pt-28 md:pt-34 lg:pt-32 xl:pt-48 pb-10 bg-transparent">
-
+        
           {/* Left Section */}
           <div className="w-full sm:w-2/3 lg:w-1/2 px-4 text-center">
             <div className="mb-10">

@@ -81,7 +81,6 @@ export default function Dashboard() {
   ];
   
 
-  if (loading) return <div>Loading...</div>;
   if (error) return <div className="text-red-500 text-center">{error}</div>;
 
 

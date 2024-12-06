@@ -360,7 +360,7 @@ const isLinkAccessible = (allowedRoles) => {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild size="sm">
-                      <Link to="/feedback">
+                      <Link to="/about">
                         <Send />
                         <span>Feedback</span>
                       </Link>
@@ -368,7 +368,7 @@ const isLinkAccessible = (allowedRoles) => {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild size="sm">
-                      <Link to="/help-center">
+                      <Link to="/contact">
                         <LifeBuoy />
                         <span>Help Center</span>
                       </Link>
@@ -436,10 +436,7 @@ const isLinkAccessible = (allowedRoles) => {
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                      <CreditCard />
-                      Billing
-                    </DropdownMenuItem>
+                    
                     <DropdownMenuItem
                       variant="outline"
                       onClick={() => navigate("#")}>

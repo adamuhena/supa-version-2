@@ -8,6 +8,7 @@ import DashboardPage from "@/components/layout/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from "@/pages/loginPage/logout";
 import { Filter } from 'lucide-react';
+import Spinner from "@/components/layout/spinner";
 
 function TrainingCenterGroupRe() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -130,8 +131,10 @@ function TrainingCenterGroupRe() {
           </header>
 
           {error && <p className="text-red-500">{error}</p>}
-          {isLoading ? (
-            <p>Loading...</p>
+         {isLoading ? (
+          <div class="flex justify-center items-center h-screen">
+            <Spinner/>
+          </div>
           ) : (
             <>
               <div className="filters mb-4 grid grid-cols-3 gap-4">

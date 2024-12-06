@@ -172,9 +172,9 @@ export default function AdminSectors() {
                 value={sectorDescription}
                 onChange={(e) => setSectorDescription(e.target.value)}
               />
-              <Button type="submit">{editingSector ? 'Update Sector' : 'Add Sector'}</Button>
+              <Button className="bg-emerald-700" type="submit">{editingSector ? 'Update Sector' : 'Add Sector'}</Button>
               {editingSector && (
-                <Button type="button" variant="outline" onClick={() => {
+                <Button className="bg-red-500 text-white" type="button" variant="outline" onClick={() => {
                   setEditingSector(null)
                   setSectorName('')
                   setSectorDescription('')
@@ -203,11 +203,11 @@ export default function AdminSectors() {
                 value={tradeAreaDescription}
                 onChange={(e) => setTradeAreaDescription(e.target.value)}
               />
-              <Button type="submit" disabled={!selectedSector}>
+              <Button className="bg-emerald-700"  type="submit" disabled={!selectedSector}>
                 {editingTradeArea ? 'Update Trade Area' : 'Add Trade Area'}
               </Button>
               {editingTradeArea && (
-                <Button type="button" variant="outline" onClick={() => {
+                <Button  className="bg-red-500 text-white"  type="button" variant="outline" onClick={() => {
                   setEditingTradeArea(null)
                   setTradeAreaName('')
                   setTradeAreaDescription('')

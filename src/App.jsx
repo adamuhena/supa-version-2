@@ -25,6 +25,7 @@ import AdminDocumentVerification from "./pages/dashboard/Admin/AdminDocumentVeri
 import TrainingCenterReport from "./pages/dashboard/Admin/AdminTrainingCenterReport";
 import AdminSectors from "./pages/dashboard/Admin/sectors";
 import TrainingCenterBiodata from "./pages/dashboard/trainingCenter/TrainingCenterBiodata";
+import ContactUs from "./pages/contact/Contact";
 
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 
@@ -39,12 +40,14 @@ function App() {
       <Routes>
         {/* test */}
         <Route path="/training-center" element={<TrainingCenterDashboard />} />
+
         
 
 
         {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<ContactUs />} />
         {/* <Route path="/biodata2" element={<BiodataPage />} /> */}
         <Route path="/biodata" element={<Biodata />} />
         <Route path="/certification/upload" element={<DocumentUpload/>}/>

@@ -245,7 +245,7 @@ const EnhancedTrainingManagement = () => {
                   value={newPeriod.year}
                   onChange={(e) => setNewPeriod({ ...newPeriod, year: e.target.value })}
                 />
-                <Button type="submit">Create Period</Button>
+                <Button className="bg-emerald-700" type="submit">Create Period</Button>
               </form>
             </CardContent>
           </Card>
@@ -280,7 +280,7 @@ const EnhancedTrainingManagement = () => {
                   onChange={setSelectedUsers}
                   placeholder="Select Trainee"
                 />
-                <Button onClick={handleAssignUsers}>Assign to Trade Area</Button>
+                <Button className="bg-emerald-700" onClick={handleAssignUsers}>Assign to Trade Area</Button>
               </div>
             </CardContent>
           </Card>
@@ -339,7 +339,7 @@ const EnhancedTrainingManagement = () => {
                   value={newGroup.endTime}
                   onChange={(e) => setNewGroup({ ...newGroup, endTime: e.target.value })}
                 />
-                <Button type="submit">Create Trade Area Group</Button>
+                <Button className="bg-emerald-700" type="submit">Create Trade Area Group</Button>
               </form>
             </CardContent>
           </Card>
@@ -429,6 +429,7 @@ const EnhancedTrainingManagement = () => {
                       <li key={user._id} className="flex items-center justify-between">
                         <span>{user.firstName} {user.lastName}</span>
                         <Button
+                        className="bg-emerald-700"
                           variant="destructive"
                           size="sm"
                           onClick={() => handleRemoveUser(group._id, user._id)}

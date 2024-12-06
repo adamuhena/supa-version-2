@@ -10,8 +10,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import axios from 'axios';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import DashboardPage from '@/components/layout/DashboardLayout';
+import useLogout from '@/pages/loginPage/logout';
+import { LogOut, UserCircle } from "lucide-react";
 
 const AdminDocumentVerification = () => {
+  const logout = useLogout();
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [verificationStatus, setVerificationStatus] = useState('');
@@ -67,6 +70,24 @@ const AdminDocumentVerification = () => {
   return (
     <ProtectedRoute>
         <DashboardPage>
+          <div className="container mx-auto py-6">
+          <header className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-3xl font-bold">DOCUMENT APROVAL | VERIFICATION</h1>
+              <h2 className="text-left font-[700] text-[14px]">
+                (ARTISANS & INTENDIN ARTISANS)
+              </h2>
+            </div>
+            <div className="flex gap-2">
+          <Button variant="outline" onClick={() => navigate('/biodata')}>
+            <UserCircle className="mr-2 h-4 w-4" /> Update Profile
+          </Button>
+          
+          <Button variant="destructive" onClick={logout}>
+            <LogOut className="mr-2 h-4 w-4" /> Logout
+          </Button>
+        </div>
+          </header>
 
         
     <Card className="w-full">
@@ -97,7 +118,7 @@ const AdminDocumentVerification = () => {
           </Badge>
         </TableCell>
         <TableCell>
-          <Button onClick={() => {
+          <Button className="bg-emerald-800" onClick={() => {
             setSelectedDocument(doc);
             setIsDialogOpen(true);
           }}>
@@ -121,8 +142,8 @@ const AdminDocumentVerification = () => {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Verify Document</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-red-700 ">Verify Document</DialogTitle>
+              <DialogDescription className="text-slate-700">
                 Review and verify the selected document.
               </DialogDescription>
             </DialogHeader>
@@ -145,7 +166,7 @@ const AdminDocumentVerification = () => {
                     <SelectValue placeholder="Select verification status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="approved">Approve</SelectItem>
+                    <SelectItem className="text-red-700 hover:text-red-700" value="approved">Approve</SelectItem>
                     <SelectItem value="rejected">Reject</SelectItem>
                   </SelectContent>
                 </Select>
@@ -154,13 +175,14 @@ const AdminDocumentVerification = () => {
                   value={comments}
                   onChange={(e) => setComments(e.target.value)}
                 />
-                <Button onClick={handleVerify}>Submit Verification</Button>
+                <Button className="bg-emerald-700" onClick={handleVerify}>Submit Verification</Button>
               </div>
             )}
           </DialogContent>
         </Dialog>
       </CardContent>
     </Card>
+    </div>
     </DashboardPage>
         </ProtectedRoute>
   );

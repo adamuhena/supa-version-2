@@ -29,7 +29,6 @@ import {
   SewingPinFilledIcon,
 } from "@radix-ui/react-icons";
 import { LogOut, UserCircle } from "lucide-react";
-
 import Spinner from "@/components/layout/spinner";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -296,7 +295,8 @@ const AdminDashboardReports = () => {
           </Button>
         </div>
           </header>
-
+          <div className="bg-white p-6 rounded-lg shadow">
+            
           <div className="flex gap-[20px] flex-wrap">
             <div className="w-[200px]">
               <p className="text-left text-[14px] mb-1">User Type</p>
@@ -449,7 +449,7 @@ const AdminDashboardReports = () => {
             </div>
 
             <Button
-              className="mt-auto"
+            className="bg-emerald-700 mt-auto"
               onClick={() => search()}
               disabled={loading}>
               {loading ? (
@@ -460,14 +460,14 @@ const AdminDashboardReports = () => {
             </Button>
 
             <Button
-              className="bg-gray-300 text-[black] mt-auto hover:bg-gray-300"
+              className="bg-red-500 text-[white] mt-auto hover:bg-gray-300"
               onClick={() => clear()}
               disabled={loading}>
               Clear <Cross1Icon />
             </Button>
 
             <Button
-              className="bg-gray-300 text-[black] mt-auto hover:bg-gray-300"
+              className="bg-slate-500 text-[white] mt-auto hover:bg-gray-300"
               onClick={() => showAll()}
               disabled={loading}>
               Show All <DashboardIcon />
@@ -553,6 +553,8 @@ const AdminDashboardReports = () => {
               })}
             </TableBody>
           </Table>
+
+          </div>
         </div>
       </DashboardPage>
     </ProtectedRoute>
