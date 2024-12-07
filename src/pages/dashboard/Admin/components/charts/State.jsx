@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp } from "lucide-react"
+import { TrendingUp } from "lucide-react";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
 import {
@@ -33,7 +33,7 @@ function State() {
       const distribution = await fetchUserDistribution();
       const data = Object.entries(distribution).map(([state, count]) => ({
         state,
-        artisan: count.artisan_users + count.intending_artisans, // Combine artisans and intending artisans
+        count: count.artisan_users + count.intending_artisans, // Combine artisans and intending artisans
       }));
       setChartData(data);
     };
@@ -41,20 +41,23 @@ function State() {
     fetchData();
   }, []);
 
-  const mostUsersState = chartData.reduce((maxState, currentState) => {
-    return currentState.count > maxState.count ? currentState : maxState;
-  }, chartData[0]);
+  // Ensure chartData has at least one item before attempting to find mostUsersState
+  const mostUsersState = chartData.length
+    ? chartData.reduce((maxState, currentState) =>
+        currentState.count > maxState.count ? currentState : maxState
+      )
+    : { state: "N/A", count: 0 }; // Default to a placeholder if chartData is empty
 
   return (
     <div>
       <Card>
         <CardHeader>
-          <CardTitle> Total Artisan | Intending Artisan Distribution by State</CardTitle>
+          <CardTitle>Total Artisan | Intending Artisan Distribution by State</CardTitle>
           <CardDescription className="text-xs">Artisan & Intending Artisans</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig}>
-            <BarChart 
+            <BarChart
               color
               accessibilityLayer
               data={chartData}
@@ -71,25 +74,23 @@ function State() {
                 tickMargin={5}
                 axisLine={false}
               />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent  />}
-              />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
               <Bar dataKey="count" fill="#50C878" radius={10} />
             </BarChart>
           </ChartContainer>
         </CardContent>
-        <CardFooter className="flex-col  items-start gap-2 text-xs">
-            <div className="flex gap-2 font-medium text-emerald-600 leading-none">
-                <div className="flex gap-2 font-medium leading-none">
-                    {/* Display relevant insights based on the data */}
-                    <p>Most users are from: {mostUsersState.state}</p>
-                    <p>Total Users: {chartData.reduce((acc, curr) => acc + curr.count, 0)}</p>
-                </div>
+        <CardFooter className="flex-col items-start gap-2 text-xs">
+          <div className="flex gap-2 font-medium text-emerald-600 leading-none">
+            <div className="flex gap-2 font-medium leading-none">
+              <p>Most users are from: {mostUsersState.state}</p>
+              <p>
+                Total Users: {chartData.reduce((acc, curr) => acc + curr.count, 0) || 0}
+              </p>
             </div>
-            <div className="leading-none text-xs text-slate-600 text-muted-foreground">
-                Showing total Artisan / Intending Artisan by state
-            </div>
+          </div>
+          <div className="leading-none text-xs text-slate-600 text-muted-foreground">
+            Showing total Artisan / Intending Artisan by state
+          </div>
         </CardFooter>
       </Card>
     </div>
