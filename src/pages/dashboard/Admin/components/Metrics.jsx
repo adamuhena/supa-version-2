@@ -20,34 +20,6 @@ export default function Metrics() {
   const [trainingCenters, setTrainingCenters] = useState([]);
   const [trainingGroups, setTrainingGroups] = useState([]);
 
-  console.log(users);
-
-  let artisan_userCount = 0;
-  let intending_artisanCount = 0;
-  let training_centerCount = 0;
-  let training_groupCount = 0;
-  
-  users.forEach(user  => {
-    if (user.role === "artisan_user") {
-      artisan_userCount++;
-    }
-    if (user.role === "intending_artisan") {
-      intending_artisanCount++;
-    }
-  });
-
-  trainingCenters.forEach( trainingCenter => {
-    if (trainingCenter) {
-      training_centerCount++;
-  }}) //.status === "active"
-    
-  trainingGroups.forEach( trainingGroup => {
-    if (trainingGroup) {
-      training_groupCount++;
-  }}) //.status === "active"
-
-
-
 useEffect(() => {
   const fetchTrainingCenters = async () => {
     try {
@@ -59,9 +31,9 @@ useEffect(() => {
         },
       });
 
-      if (response.data.success) {
+      
         setTrainingCenters(response.data.data); // Assume data is an array of users
-      }
+      
     } catch (error) {
       console.error("Error fetching training centers:", error);
     }
@@ -81,10 +53,7 @@ useEffect(() => {
               Authorization: `Bearer ${accessToken}`,
             },
           });
-  
-          if (response.data.success) {
-            setTrainingGroups(response.data.data); // Assume data is an array of users
-          }
+            setTrainingGroups(response.data); // Assume data is an array of users
         } catch (error) {
           console.error("Error fetching training Groups:", error);
         }
@@ -115,6 +84,32 @@ useEffect(() => {
   
       fetchUsers();
     }, []);
+
+
+  let artisan_userCount = 0;
+  let intending_artisanCount = 0;
+  let training_centerCount = 0;
+  let training_groupCount = 0;
+  
+  users.forEach(user  => {
+    if (user.role === "artisan_user") {
+      artisan_userCount++;
+    }
+    if (user.role === "intending_artisan") {
+      intending_artisanCount++;
+    }
+  });
+
+  trainingCenters.forEach( trainingCenter => {
+    if (trainingCenter) {
+      training_centerCount++;
+  }})
+    
+  trainingGroups.forEach( trainingGroup => {
+    if (trainingGroup) {
+      training_groupCount++;
+  }}) 
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <MetricCard title="Registered Artisans" value={artisan_userCount} icon={Users} />

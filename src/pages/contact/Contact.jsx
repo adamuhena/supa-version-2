@@ -1,9 +1,9 @@
 import React from 'react';
-import { ContactForm } from './components/ContactForm';
-import { ContactInfo } from './components/ContactInfo';
 import PageLayout from "../../components/layout/pageLayout";
 import { DotPattern } from "../../components/ui/dot-pattern";
 import { cn } from "../../lib/utils";
+import { ContactForm } from './components/ContactForm';
+import { ContactInfo } from './components/ContactInfo';
 
 function ContactUs() {
   return (

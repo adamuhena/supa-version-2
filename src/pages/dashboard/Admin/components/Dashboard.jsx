@@ -1,10 +1,13 @@
 import axios from 'axios';
-import react, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Calendar from './Calendar';
 import { BarChart } from './charts/BarChart';
 import NigeriaMap from './charts/NigeriaMap';
 import { PieChart } from './charts/PieChart';
 import Metrics from './Metrics';
+// Import your NigerianMap component (assuming it's the correct one)
+import NigerianMap from '../../../../components/NigerianMap';
+import State from './charts/State';
 
 export default function Dashboard() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -95,57 +98,58 @@ export default function Dashboard() {
       <div className="container mx-auto px-4 py-4">
          {/* Metrics Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 ">
-          <div className="col-span-1 lg:col-span-12">
+          <div className="col-span-full lg:col-span-12">
             <Metrics />
           </div>
         </div>
 
         {/* Main Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 py-4">
-          {/* <div className="col-span-1 sm:col-span-2 lg:col-span-9">
-            <RadarChart title="Skill Distribution" data={skillDistributionData} />
-          </div> */}
-          <div className="col-span-1 sm:col-span-2 lg:col-span-9">
-            <NigeriaMap />
-          </div>
-
-          <div className="col-span-1 lg:col-span-3 gap-4">
-            <div>
-              <BarChart title="Distribution by Disability" data={certificationData} />
-            </div>
-            <div>
-              <PieChart title="Certified vs Non-Certified" data={certificationData} />   
-            </div>
-          </div>
-
-        </div>
-        {/* Second Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 ">
-          <div className="col-span-1 lg:col-span-12">
-            {/* <ArtisanDistributionChart/> */}
-          </div>
+        <div className="col-span-full sm:col-span-2 lg:col-span-9">
+          <NigerianMap />
         </div>
 
-        {/* Second Grid Layout */} 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">
-          {/* Metrics Section */}
-          <div className="col-span-1 lg:col-span-3">
-            <Metrics />
-          </div>
-
-          {/* Pie Charts */}
-          <div className="col-span-1 sm:col-span-2 lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <PieChart title="Gender Distribution" data={genderData} />
-            <PieChart title="Certified vs Non-Certified" data={certificationData} />
-          </div>
-
-          {/* Calendar Section */}
-          <div className="col-span-1 lg:col-span-3">
-            <Calendar />
-          </div>
+        <div className="col-span-full sm:col-span-2 lg:col-span-3 gap-4">
+          <State/>
         </div>
 
       </div>
+      {/* Second Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 ">
+        <div className="col-span-full lg:col-span-12">
+          {/* <ArtisanDistributionChart/> */}
+        </div>
+      </div>
+
+      {/* Second Grid Layout */} 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">
+        {/* Metrics Section */}
+        <div className="col-span-full lg:col-span-3">
+          <Metrics />
+        </div>
+
+        {/* Pie Charts */}
+        <div className="col-span-full sm:col-span-2 lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <PieChart title="Gender Distribution" data={genderData} />
+          <PieChart title="Certified vs Non-Certified" data={certificationData} />
+        </div>
+
+
+        {/* Calendar Section */}
+        <div className="col-span-full lg:col-span-3">
+          <Calendar />
+        </div>
+        <div>
+            <BarChart title="Distribution by Disability" data={certificationData} />
+          </div>
+          <div>
+            <PieChart title="Certified vs Non-Certified" data={certificationData} />   
+          </div>
+      </div>
+
+    </div>
     </div>
   );
 }
+
+          

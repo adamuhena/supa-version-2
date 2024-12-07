@@ -1,8 +1,7 @@
+import PageLayout from "@/components/layout/pageLayout";
 import React, { useState } from "react";
-import PageLayout from "@/components/layout/pageLayout"
-import { SVGProps } from "react"
-import { Link } from "react-router-dom"
-import HeaderThreeImages from "../../components/HeaderThreeImages/HeaderThreeImages"
+import { Link } from "react-router-dom";
+import HeaderThreeImages from "../../components/HeaderThreeImages/HeaderThreeImages";
 import { DotPattern } from "../../components/ui/dot-pattern";
 import { cn } from "../../lib/utils";
 

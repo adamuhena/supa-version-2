@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import useLogout from "@/pages/loginPage/logout";
+import Spinner from "../components/layout/spinner";
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const [loading, setLoading] = useState(true);
@@ -71,7 +72,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 
   // Handle loading state while fetching role
   if (loading) {
-    return <div>Loading...</div>;
+    return
   }
 
   // Handle error during the role fetch
