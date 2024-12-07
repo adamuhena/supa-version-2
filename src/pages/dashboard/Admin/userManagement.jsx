@@ -416,7 +416,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Download, Edit, Key, Printer, Trash2, UserPlus } from 'lucide-react';
+import { ActivitySquare, Download, Edit, Key, Printer, SquareCheckBig, Trash2, UserPlus } from 'lucide-react';
 import DashboardPage from '@/components/layout/DashboardLayout';
 import ProtectedRoute from "@/components/ProtectedRoute";
 import axios from 'axios';
@@ -793,6 +793,9 @@ const UserManagement = () => {
                           <div className="flex space-x-2">
                             <Button variant="outline" size="sm" onClick={() => handleEdit(user)}>
                               <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => handleBio(user.id)}>
+                              <SquareCheckBig className="h-4 w-4" />
                             </Button>
                             <Button variant="destructive" size="sm" onClick={() => handleDelete(user.id)}>
                               <Trash2 className="h-4 w-4" />

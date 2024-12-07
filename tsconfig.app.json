@@ -23,7 +23,12 @@
     "noUncheckedSideEffectImports": true,
 
     "noImplicitAny": false,
-    "checkJs": false
+    "checkJs": false,
+
+    "baseUrl": ".",
+    "paths": {
+    "@/*": ["./src/*"]
+  }
   },
   "include": [
     "*/**/*.ts",
@@ -37,8 +42,5 @@
   ],
   "exclude": ["node_modules", "dist"] ,
 
-  "baseUrl": ".",
-  "paths": {
-    "@/*": ["./src/*"]
-  }
+  
 }

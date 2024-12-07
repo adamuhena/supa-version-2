@@ -233,12 +233,21 @@ const isLinkAccessible = (allowedRoles) => {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
+                    <Link to="/admin/certification">
+                      <FolderKanban />
+                      <span>User Certification | MGT</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
                     <Link to="/admin/training-status">
                       <FolderKanban />
                       <span>Training Managment</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
+                
                 {isLinkAccessible(["training_center"]) && (
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>

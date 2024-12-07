@@ -26,6 +26,7 @@ import TrainingCenterReport from "./pages/dashboard/Admin/AdminTrainingCenterRep
 import AdminSectors from "./pages/dashboard/Admin/sectors";
 import TrainingCenterBiodata from "./pages/dashboard/trainingCenter/TrainingCenterBiodata";
 import ContactUs from "./pages/contact/Contact";
+import UserCert from "./pages/dashboard/Admin/userMgt/UserManagement";
 
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard"
 
@@ -77,6 +78,14 @@ function App() {
           }
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
+        <Route
+          path="/admin/certification"
+          element={
+            <UserCert/>
+          }
+          allowedRoles={["artisan_user", "admin", "superadmin"]}
+        />
+        
         <Route
           path="/intending-artisan/dashboard"
           element={
