@@ -65,9 +65,7 @@ export default function SignupForm() {
     // START VALIDATION
     let erroMsg = "";
 
-    if (
-      `${formData.confirmPassword}`?.trim() !== `${formData.password}`?.trim()
-    ) {
+    if (`${formData.confirmPassword}`?.trim() !== `${formData.password}`?.trim()) {
       erroMsg = "Password does not match the first one!";
     }
 
@@ -134,15 +132,34 @@ export default function SignupForm() {
           'Content-Type': 'application/json',
         },
       });
+
       if (response.data.success) {
         toast("Signup successful 🚀!", {
           position: "top-right",
-          description: "Please Login now",
+          description: "login Successfully",
           duration: 2000,
           style: { textAlign: "left" },
         });
+
+        const { accessToken, refreshToken } = response.data.data;
+
+        // Check if accessToken is an object and extract the token string if necessary
+        const accessTokenString = typeof accessToken === 'object' ? accessToken.accessToken : accessToken;
+        const refreshTokenString = typeof refreshToken === 'object' ? refreshToken.refreshToken : refreshToken;
+        
+        // Extract training center details
+        const { _id, role } = response.data.data.trainingCenter;
+        
+        // Save user details and tokens to localStorage
+        localStorage.setItem("userRole", role);
+        localStorage.setItem("userId", _id);
+        localStorage.setItem("accessToken", accessTokenString);
+        localStorage.setItem("refreshToken", refreshTokenString);
+        
+
+        // Redirect user to the dashboard or appropriate page
         setTimeout(() => {
-          navigate("/login"); // Redirect to login page
+          navigate("/login"); // Adjust this URL as per your app's routing
         }, 2000);
       } else {
         alert(`Signup failed: ${response.data.message}`);
@@ -152,8 +169,8 @@ export default function SignupForm() {
       const description =
         typeof error?.response?.data === "string"
           ? error?.response?.data
-          : error?.response?.data?.message ||
-            "An error occurred. Please try again.";
+          : error?.response?.data?.message || "An error occurred. Please try again.";
+
       toast.error(message, {
         description,
         position: "top-right",
@@ -163,6 +180,7 @@ export default function SignupForm() {
       setLoading(false);
     }
   };
+
 
   return (
     <section className="relative bg-slate-900 pt-40 pb-10 min-h-screen">
