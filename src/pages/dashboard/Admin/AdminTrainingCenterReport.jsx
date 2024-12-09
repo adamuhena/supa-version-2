@@ -143,6 +143,7 @@ import axios from "axios";
 import DashboardPage from "@/components/layout/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Spinner from "@/components/layout/spinner";
+import { states } from "@/data/nigeria";
 import {
   Table,
   TableBody,
@@ -155,6 +156,14 @@ import { Button } from "@/components/ui/button";
 import { CSVLink } from "react-csv";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -170,11 +179,13 @@ import { LogOut, UserCircle } from "lucide-react";
 const TrainingCenterReport = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const logout = useLogout();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
   const [filteredReports, setFilteredReports] = useState([]);
   const [filter, setFilter] = useState({
-    state: "",
+    stateOfResidence: "",
     localGovernment: "",
     senatorialDistrict: "",
     sector: "",
@@ -200,6 +211,16 @@ const TrainingCenterReport = () => {
     }
   };
 
+  const emptyForm = {
+    stateOfResidence: "",
+    lgaOfResidence: "",
+    stateOfOrigin: "",
+    lga: "",
+    gender: "",
+    hasDisability: "",
+    role: "",
+  };
+
   useEffect(() => {
     fetchReports();
   }, []);
@@ -208,13 +229,37 @@ const TrainingCenterReport = () => {
     applyFilter();
   }, [filter, reports]);
 
+  const [form, setForm] = useState({
+    ...emptyForm,
+  });
+
+  function replaceSymbolsWithSpace(str = "") {
+    let replacedStr = str.replace(/[-/]/g, " ");
+    return replacedStr.toLowerCase();
+  }
+
+  const selectedStateLGASResidence =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+    )?.lgas || [];
+
+  const selectedStateLGASResidenceFormatted =
+    selectedStateLGASResidence && selectedStateLGASResidence?.length
+      ? selectedStateLGASResidence.map((x) => ({
+          label: x,
+          value: x,
+        }))
+      : [];
+
   const applyFilter = () => {
     let filtered = reports;
-    if (filter.state) {
-      filtered = filtered.filter(center => center.state && center.state.toLowerCase() === filter.state.toLowerCase());
+    if (filter.stateOfResidence) {
+      filtered = filtered.filter(center => center.stateOfResidence && center.stateOfResidence.toLowerCase() === filter.state.toLowerCase());
     }
     if (filter.localGovernment) {
-      filtered = filtered.filter(center => center.localGovernment && center.localGovernment.toLowerCase() === filter.localGovernment.toLowerCase());
+      filtered = filtered.filter(center => center.lgaOfResidence && center.lgaOfResidence.toLowerCase() === filter.localGovernment.toLowerCase());
     }
     if (filter.senatorialDistrict) {
       filtered = filtered.filter(center => center.senatorialDistrict && center.senatorialDistrict.toLowerCase() === filter.senatorialDistrict.toLowerCase());
@@ -230,7 +275,7 @@ const TrainingCenterReport = () => {
 
   const clearFilter = () => {
     setFilter({
-      state: "",
+      stateOfResidence: "",
       localGovernment: "",
       senatorialDistrict: "",
       sector: "",
@@ -246,16 +291,16 @@ const TrainingCenterReport = () => {
   const csvData = useMemo(() => {
     if (!reports.length) return [];
     const headers = ["S/N", "Training Center", "Address", "State", "Local Government", "Senatorial District", "Sector", "Trade Area", "Phone", "Email"];
-    const rows = reports.map(({ name, address, state, localGovernment, senatorialDistrict, sector, tradeArea, phone, email }, index) => [
+    const rows = reports.map(({ name, address, stateOfResidence, lgaOfResidence, senatorialDistrict, sector, tradeArea, phoneNumber, email }, index) => [
       index + 1,
       name || "",
       address || "",
-      state || "",
-      localGovernment || "",
+      stateOfResidence || "",
+      lgaOfResidence || "",
       senatorialDistrict || "",
       sector || "",
       tradeArea || "",
-      phone || "",
+      phoneNumber || "",
       email || "",
     ]);
     return [headers, ...rows];
@@ -266,16 +311,16 @@ const TrainingCenterReport = () => {
     if (!reports.length) return;
     const doc = new jsPDF();
     const headers = ["S/N", "Training Center", "Address", "State", "Local Government", "Senatorial District", "Sector", "Trade Area", "Phone", "Email"];
-    const data = reports.map(({ name, address, state, localGovernment, senatorialDistrict, sector, tradeArea, phone, email }, index) => [
+    const data = reports.map(({ name, address, stateOfResidence, lgaOfResidence, senatorialDistrict, sector, tradeArea, phoneNumber, email }, index) => [
       index + 1,
       name || "",
       address || "",
-      state || "",
-      localGovernment || "",
+      stateOfResidence || "",
+      lgaOfResidence || "",
       senatorialDistrict || "",
       sector || "",
       tradeArea || "",
-      phone || "",
+      phoneNumber || "",
       email || "",
     ]);
     doc.setFontSize(16);
@@ -286,6 +331,16 @@ const TrainingCenterReport = () => {
       startY: 30,
     });
     doc.save("Training_Center_Report.pdf");
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredReports.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   if (loading) {
@@ -333,16 +388,20 @@ const TrainingCenterReport = () => {
             <div className="w-[200px]">
               <p className="text-left text-[14px] mb-1">State</p>
               <Select
-                value={filter.state}
-                onValueChange={(value) => handleFilterChange("state", value)}>
+                value={filter?.stateOfResidence}
+                onValueChange={(value) => handleFilterChange("stateOfResidence", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select State" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="Lagos">Lagos</SelectItem>
-                    <SelectItem value="Abuja">Abuja</SelectItem>
-                    {/* Add more states as needed */}
+                  {states.map((item) => {
+                      return (
+                        <SelectItem value={item?.value}>
+                          {item?.label}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -352,15 +411,19 @@ const TrainingCenterReport = () => {
               <p className="text-left text-[14px] mb-1">Local Government</p>
               <Select
                 value={filter.localGovernment}
-                onValueChange={(value) => handleFilterChange("localGovernment", value)}>
+                onValueChange={(value) => handleFilterChange("lgaOfResidence", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select LGA" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="Ikeja">Ikeja</SelectItem>
-                    <SelectItem value="Lekki">Lekki</SelectItem>
-                    {/* Add more LGAs as needed */}
+                  {selectedStateLGASResidenceFormatted.map((item) => {
+                      return (
+                        <SelectItem value={item?.value}>
+                          {item?.label}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -459,9 +522,9 @@ const TrainingCenterReport = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredReports.map((center, index) => (
+              {currentItems.map((center, index) => (
                 <TableRow key={center._id || index}>
-                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
                   <TableCell>{center.name || ""}</TableCell>
                   <TableCell>{center.address || ""}</TableCell>
                   <TableCell>{center.state || ""}</TableCell>
@@ -475,6 +538,39 @@ const TrainingCenterReport = () => {
               ))}
             </TableBody>
           </Table>
+
+          <div className="mt-4">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() =>
+                        handlePageChange(Math.max(1, currentPage - 1))
+                      }
+                      disabled={currentPage === 1}
+                    />
+                  </PaginationItem>
+                  {[...Array(totalPages)].map((_, index) => (
+                    <PaginationItem key={index}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(index + 1)}
+                        isActive={currentPage === index + 1}
+                      >
+                        {index + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() =>
+                        handlePageChange(Math.min(totalPages, currentPage + 1))
+                      }
+                      disabled={currentPage === totalPages}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
         </div>
       </DashboardPage>
     </ProtectedRoute>

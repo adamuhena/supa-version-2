@@ -13,6 +13,14 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
   Table,
   TableBody,
   TableCell,
@@ -37,6 +45,7 @@ import { CSVLink } from "react-csv";
 function formatString(input) {
   // Replace underscores with spaces
   const formatted = input.replace(/_/g, " ");
+  
 
   // Capitalize the first letter of each word
   return formatted
@@ -274,6 +283,18 @@ const AdminDashboardReports = () => {
 </div>
     );
   }
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <ProtectedRoute>
       <DashboardPage title="Artisan Dashboard">
@@ -495,6 +516,7 @@ const AdminDashboardReports = () => {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-200">
+                <TableHead>SN</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>NIN</TableHead>
@@ -505,11 +527,14 @@ const AdminDashboardReports = () => {
               </TableRow>
             </TableHeader>
             <TableBody className="border-gray-200 border-[1px]">
-              {(users || [])?.map((user) => {
+              {(currentItems || [])?.map((user, index) => {
                 return (
                   <TableRow
                     key={user?._id}
                     className="border-[1px] border-gray-200  ">
+                      <TableCell className="text-left">
+                      {index + 1 + (currentPage - 1) * itemsPerPage}
+                    </TableCell>
                     <TableCell className="text-left">
                       <div className="text-[16px]">
                         {user.firstName} {user.lastName}
@@ -553,6 +578,38 @@ const AdminDashboardReports = () => {
               })}
             </TableBody>
           </Table>
+          <div className="mt-4">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() =>
+                        handlePageChange(Math.max(1, currentPage - 1))
+                      }
+                      disabled={currentPage === 1}
+                    />
+                  </PaginationItem>
+                  {[...Array(totalPages)].map((_, index) => (
+                    <PaginationItem key={index}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(index + 1)}
+                        isActive={currentPage === index + 1}
+                      >
+                        {index + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() =>
+                        handlePageChange(Math.min(totalPages, currentPage + 1))
+                      }
+                      disabled={currentPage === totalPages}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
 
           </div>
         </div>

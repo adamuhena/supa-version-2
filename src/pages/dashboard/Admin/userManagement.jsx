@@ -417,6 +417,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ActivitySquare, Download, Edit, Key, Printer, SquareCheckBig, Trash2, UserPlus } from 'lucide-react';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import DashboardPage from '@/components/layout/DashboardLayout';
 import ProtectedRoute from "@/components/ProtectedRoute";
 import axios from 'axios';
@@ -434,6 +442,7 @@ const UserManagement = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const logout = useLogout();
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25;
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
     firstName: '',
@@ -595,12 +604,15 @@ const UserManagement = () => {
     }
   };
 
-  // Pagination
-  const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
-  const paginatedUsers = users.slice(
-      (currentPage - 1) * ITEMS_PER_PAGE,
-      currentPage * ITEMS_PER_PAGE
-  );
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   // CSV Data
   const csvData = useMemo(() => {
@@ -778,10 +790,10 @@ const UserManagement = () => {
                   </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                  {paginatedUsers.map((user, index) => (
+                  {currentItems.map((user, index) => (
                       <tr key={user.id} className="hover:bg-gray-50">
                         <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
+                        {index + 1 + (currentPage - 1) * itemsPerPage}
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {user.firstName} {user.lastName}
@@ -806,29 +818,41 @@ const UserManagement = () => {
                   ))}
                   </tbody>
                 </table>
+                
               </div>
 
-              {totalPages > 1 && (
-                  <div className="flex justify-center gap-2 mt-4">
-                    <Button
-                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                        disabled={currentPage === 1}
-                        variant="outline"
-                    >
-                      Previous
-                    </Button>
-                    <span className="py-2 px-4">
-                  Page {currentPage} of {totalPages}
-                </span>
-                    <Button
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                        disabled={currentPage === totalPages}
-                        variant="outline"
-                    >
-                      Next
-                    </Button>
-                  </div>
-              )}
+              <div className="mt-4">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() =>
+                        handlePageChange(Math.max(1, currentPage - 1))
+                      }
+                      disabled={currentPage === 1}
+                    />
+                  </PaginationItem>
+                  {[...Array(totalPages)].map((_, index) => (
+                    <PaginationItem key={index}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(index + 1)}
+                        isActive={currentPage === index + 1}
+                      >
+                        {index + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() =>
+                        handlePageChange(Math.min(totalPages, currentPage + 1))
+                      }
+                      disabled={currentPage === totalPages}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
             </div>
           </div>
 

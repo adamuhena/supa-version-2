@@ -11,11 +11,13 @@ const api = axios.create({
 
 export const fetchUserDistribution = async () => {
   try {
-    const response = await api.get('/users', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await Promise(
+      api.get('/users', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+    ) 
     console.log ("i got here ",response.data);
     
     // Process the response to group users by stateOfResidence

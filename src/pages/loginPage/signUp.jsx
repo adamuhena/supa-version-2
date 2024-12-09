@@ -129,7 +129,11 @@ export default function SignupForm() {
           };
 
     try {
-      const response = await axios.post(endpoint, payload);
+      const response = await axios.post(endpoint, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       if (response.data.success) {
         toast("Signup successful 🚀!", {
           position: "top-right",
