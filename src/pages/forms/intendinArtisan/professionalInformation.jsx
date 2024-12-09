@@ -34,34 +34,33 @@ export default function ProfessionalInformaiton({
   const selectedStateLGASOriginFormatted =
     selectedStateLGASOrigin && selectedStateLGASOrigin?.length
       ? selectedStateLGASOrigin.map((x) => ({
-        label: x,
-        value: x,
-      }))
-      : [];
-
-      const selectedStateLGASResidence =
-      states.find(
-        (state) =>
-          replaceSymbolsWithSpace(`${state?.value}`) ===
-          replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
-      )?.lgas || [];
-  
-    const selectedStateLGASResidenceFormatted =
-      selectedStateLGASResidence && selectedStateLGASResidence?.length
-        ? selectedStateLGASResidence.map((x) => ({
           label: x,
           value: x,
         }))
-        : [];
- 
-  const [hasDisability, setHasDisability] = useState(""); // Track radio button value
-  const [selectedDisability, setSelectedDisability] = useState(""); // Track selected disability
+      : [];
 
+  const selectedStateLGASResidence =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+    )?.lgas || [];
+
+  const selectedStateLGASResidenceFormatted =
+    selectedStateLGASResidence && selectedStateLGASResidence?.length
+      ? selectedStateLGASResidence.map((x) => ({
+          label: x,
+          value: x,
+        }))
+      : [];
+
+  const { hasDisability } = form;
   const handleRadioChange = (e) => {
-    setHasDisability(e.target.value); // Update state based on selection
-    if (e.target.value === "no") {
-      setSelectedDisability(""); // Reset disability type if "No" is selected
-    }
+    onchangeInput("hasDisability", e.target?.value);
+  };
+
+  const handleChangeSelectedDIsablity = (value) => {
+    onchangeInput("selectedDisability", value);
   };
 
   return (
@@ -145,7 +144,7 @@ export default function ProfessionalInformaiton({
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="inputGroup">
             <Label>State Of Origin</Label>
             <Select
@@ -190,7 +189,9 @@ export default function ProfessionalInformaiton({
             <Label>State Of Residence</Label>
             <Select
               value={form?.stateOfResidence}
-              onValueChange={(value) => onchangeInput("stateOfResidence", value)}>
+              onValueChange={(value) =>
+                onchangeInput("stateOfResidence", value)
+              }>
               <SelectTrigger className="">
                 <SelectValue placeholder="" />
               </SelectTrigger>
@@ -252,6 +253,31 @@ export default function ProfessionalInformaiton({
           </div>
 
           <div className="inputGroup">
+            <p>
+              Senatorial District
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
+            <Select
+              value={form?.senetorialDistrict}
+              onValueChange={(value) =>
+                onchangeInput("senetorialDistrict", value)
+              }>
+              <SelectTrigger className="">
+                <SelectValue placeholder="" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {states.map((item) => {
+                    return (
+                      <SelectItem value={item?.value}>{item?.label}</SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="inputGroup">
             <div className="radioGroup">
               <div>
                 <span>Persons with disability {"(PWD)"}? </span>
@@ -264,7 +290,7 @@ export default function ProfessionalInformaiton({
                 <label for="no">No</label>
               </div> */}
 
-<div>
+              <div>
                 {/* Radio buttons */}
                 <div className="flex items-start gap-4">
                   {/* Radio buttons */}
@@ -293,20 +319,30 @@ export default function ProfessionalInformaiton({
                   {/* Dropdown for disabilities */}
                   {hasDisability === "yes" && (
                     <div className="flex">
-                      <label className="block text-sm font-medium mb-2 " htmlFor="disabilityType">
+                      <label
+                        className="block text-sm font-medium mb-2 "
+                        htmlFor="disabilityType">
                         Select your disability:
                       </label>
-                      <Select onValueChange={setSelectedDisability}>
+                      <Select onValueChange={handleChangeSelectedDIsablity}>
                         <SelectTrigger id="disabilityType" className="w-full">
                           <SelectValue placeholder="-- Select --" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
                             <SelectLabel>Disability Types</SelectLabel>
-                            <SelectItem value="visual">Visual Impairment</SelectItem>
-                            <SelectItem value="hearing">Hearing Impairment</SelectItem>
-                            <SelectItem value="mobility">Mobility Impairment</SelectItem>
-                            <SelectItem value="cognitive">Cognitive Impairment</SelectItem>
+                            <SelectItem value="visual">
+                              Visual Impairment
+                            </SelectItem>
+                            <SelectItem value="hearing">
+                              Hearing Impairment
+                            </SelectItem>
+                            <SelectItem value="mobility">
+                              Mobility Impairment
+                            </SelectItem>
+                            <SelectItem value="cognitive">
+                              Cognitive Impairment
+                            </SelectItem>
                             <SelectItem value="other">Other</SelectItem>
                           </SelectGroup>
                         </SelectContent>
@@ -314,9 +350,7 @@ export default function ProfessionalInformaiton({
                     </div>
                   )}
                 </div>
-
               </div>
-              
             </div>
             <br />
 

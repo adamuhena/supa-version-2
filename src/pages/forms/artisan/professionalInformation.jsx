@@ -54,17 +54,13 @@ export default function ProfessionalInformaiton({
         }))
       : [];
 
-  const [hasDisability, setHasDisability] = useState(""); // Track radio button value
-  const [selectedDisability, setSelectedDisability] = useState(""); // Track selected disability
-
+  const { hasDisability } = form;
   const handleRadioChange = (e) => {
-    setHasDisability(e.target.value); // Update state based on selection
-    if (e.target.value === "no") {
-      onchangeInput("hasDisability", "no");
-      setSelectedDisability(""); // Reset disability type if "No" is selected
-    } else {
-      onchangeInput("hasDisability", "yes");
-    }
+    onchangeInput("hasDisability", e.target?.value);
+  };
+
+  const handleChangeSelectedDIsablity = (value) => {
+    onchangeInput("selectedDisability", value);
   };
 
   return (
@@ -357,7 +353,7 @@ export default function ProfessionalInformaiton({
                         htmlFor="disabilityType">
                         Select your disability:
                       </label>
-                      <Select onValueChange={setSelectedDisability}>
+                      <Select onValueChange={handleChangeSelectedDIsablity}>
                         <SelectTrigger id="disabilityType" className="w-full">
                           <SelectValue placeholder="-- Select --" />
                         </SelectTrigger>

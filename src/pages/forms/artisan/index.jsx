@@ -164,7 +164,8 @@ import axios from "axios";
 import { toast } from "sonner";
 import PageLayout from "../../../components/layout/pageLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import useLogout from '@/pages/loginPage/logout';
+import useLogout from "@/pages/loginPage/logout";
+import { LogOutIcon } from "lucide-react";
 
 const checkValidatePersonalInfo = ({ form }) => {
   let erroMsg = "";
@@ -272,6 +273,11 @@ const checkValidateBank = ({ form }) => {
   ) {
     erroMsg = "All bank details are required!";
   }
+
+  if (form?.bankAccount?.accountNumber?.length !== 10) {
+    erroMsg = "Account number must be 10 digits!";
+  }
+
   return { erroMsg };
 };
 
@@ -500,11 +506,10 @@ const ArtisanForm = () => {
               <div className="sticky top-0 pt-16 pb-0 z-10 bg-slate-900 border-b-[1px]">
                 <h2 className="header  text-xs pr-96 text-gray-100/65 text-slate-100 ]"></h2>
                 <button
-                    onClick={logout}
-                    className="absolute top-20 flex flex-row gap-4 right-16 hover:bg-slate-800 text-white text-sm"
-                  >
+                  onClick={logout}
+                  className="absolute top-20 flex flex-row gap-4 right-16 hover:bg-slate-800 text-white text-sm">
                   LogOut <LogOutIcon />
-                  </button>
+                </button>
                 <Stepper
                   activeStep={step}
                   className="border-b-gray-300 scale-[0.8] ">
