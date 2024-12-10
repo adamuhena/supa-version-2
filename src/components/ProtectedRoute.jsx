@@ -34,6 +34,10 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
             });
           }
           setUserRole(response.data.data.role);
+
+          console.log('My role ', response.data.data.role)
+
+
         }
       } catch (err) {
         console.error("Error fetching user role:", err);

@@ -90,7 +90,7 @@ export default function LoginForm() {
               navigate("/register/intendingArtisan");
             } else if (userRole === "admin") {
               navigate("/admin/dashboard"); // Default KYC route for other user types
-            } else if (userRole === "admin") {
+            } else if (userRole === "superadmin") {
               navigate("/admin/dashboard"); // Default KYC route for other user types
             }
           } else if (userRole === "superadmin") {

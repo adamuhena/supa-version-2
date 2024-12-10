@@ -13,10 +13,8 @@ export const fetchUserDistribution = async () => {
   try {
     const response = await
       api.get('/users', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
     
     console.log ("i got here ",response.data);
     
@@ -62,9 +60,7 @@ function PeriodicRequest() {
     const sendRequest = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/sectors`,{
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` },
         }); // Replace with your endpoint
         console.log('Server response:', response.data);
       } catch (error) {

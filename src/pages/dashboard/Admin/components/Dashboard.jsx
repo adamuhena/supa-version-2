@@ -1,12 +1,10 @@
+import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
 import Calendar from './Calendar';
 import { BarChart } from './charts/BarChart';
-import NigeriaMap from './charts/NigeriaMap';
+import NigerianMap from '../../../../components/NigerianMap';
 import { PieChart } from './charts/PieChart';
 import Metrics from './Metrics';
-// Import your NigerianMap component (assuming it's the correct one)
-import NigerianMap from '../../../../components/NigerianMap';
 import State from './charts/State';
 
 export default function Dashboard() {
@@ -15,22 +13,22 @@ export default function Dashboard() {
   const [trainingCenters, setTrainingCenters] = useState([]);
   const [trainingGroups, setTrainingGroups] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState({});
 
-  const fetchData = async (url, setter) => {
+  const fetchData = async (url, setter, setError) => {
     try {
-      const accessToken = localStorage.getItem("accessToken");
+      const accessToken = localStorage.getItem('accessToken');
       const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
       if (response.data.success) {
         setter(response.data.data);
       }
-    } catch (error) {
-      console.error(`Error fetching data from ${url}:`, error);
-      setError("Failed to fetch data. Please try again.");
+    } catch (err) {
+      setError((prevErrors) => ({
+        ...prevErrors,
+        [url]: 'Failed to fetch data.',
+      }));
     }
   };
 
@@ -38,118 +36,49 @@ export default function Dashboard() {
     const fetchAllData = async () => {
       setLoading(true);
       await Promise.all([
-        fetchData(`${API_BASE_URL}/training-centers`, setTrainingCenters),
-        fetchData(`${API_BASE_URL}/training-groups`, setTrainingGroups),
-        fetchData(`${API_BASE_URL}/users`, setUsers),
+        fetchData(`${API_BASE_URL}/training-centers`, setTrainingCenters, setError),
+        fetchData(`${API_BASE_URL}/training-groups`, setTrainingGroups, setError),
+        fetchData(`${API_BASE_URL}/users`, setUsers, setError),
       ]);
       setLoading(false);
     };
     fetchAllData();
   }, []);
 
-  const genderData = [
-    { 
-      name: 'Male', 
-      value: users.filter(
-        (user) => user.gender === 'Male' && 
-                  (user.role === 'artisan_user' || user.role === 'intending_artisan')
-      ).length 
-    },
-    { 
-      name: 'Female', 
-      value: users.filter(
-        (user) => user.gender === 'Female' && 
-                  (user.role === 'artisan_user' || user.role === 'intending_artisan')
-      ).length 
-    },
-  ];
-  
-  const certificationData = [
-    { 
-      name: 'Certified', 
-      value: users.filter(
-        (user) => user.certified && 
-                  (user.role === 'artisan_user' || user.role === 'intending_artisan')
-      ).length 
-    },
-    { 
-      name: 'Non-Certified', 
-      value: users.filter(
-        (user) => (user.role === 'artisan_user' || user.role === 'intending_artisan')
-      ).length - users.filter(
-        (user) => user.certified && 
-                  (user.role === 'artisan_user' || user.role === 'intending_artisan')
-      ).length
-    },
-  ];
-  
+  const genderData = useMemo(() => {
+    return [
+      { name: 'Male', value: users.filter((u) => u.gender === 'Male').length },
+      { name: 'Female', value: users.filter((u) => u.gender === 'Female').length },
+    ];
+  }, [users]);
 
-  if (error) return <div className="text-red-500 text-center">{error}</div>;
+  const certificationData = useMemo(() => {
+    return [
+      { name: 'Certified', value: users.filter((u) => u.certified).length },
+      { name: 'Non-Certified', value: users.length - users.filter((u) => u.certified).length },
+    ];
+  }, [users]);
 
-
-  const skillDistributionData = [
-    { subject: 'Carpentry', A: 120, fullMark: 150 },
-    { subject: 'Plumbing', A: 98, fullMark: 150 },
-    { subject: 'Electrical', A: 86, fullMark: 150 },
-  ];
+  if (loading) return <div className="text-center">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-4">
-         {/* Metrics Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 ">
-          <div className="col-span-full lg:col-span-12">
-            <Metrics />
+        <Metrics />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 py-4">
+          <div className="col-span-full lg:col-span-9">
+            <NigerianMap />
+          </div>
+          <div className="col-span-full lg:col-span-3">
+            <State />
           </div>
         </div>
-
-        {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 py-4">
-        <div className="col-span-full sm:col-span-2 lg:col-span-9">
-          <NigerianMap />
-        </div>
-
-        <div className="col-span-full sm:col-span-2 lg:col-span-3 gap-4">
-          <State/>
-        </div>
-
-      </div>
-      {/* Second Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 ">
-        <div className="col-span-full lg:col-span-12">
-          {/* <ArtisanDistributionChart/> */}
-        </div>
-      </div>
-
-      {/* Second Grid Layout */} 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">
-        {/* Metrics Section */}
-        <div className="col-span-full lg:col-span-3">
-          <Metrics />
-        </div>
-
-        {/* Pie Charts */}
-        <div className="col-span-full sm:col-span-2 lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
           <PieChart title="Gender Distribution" data={genderData} />
           <PieChart title="Certified vs Non-Certified" data={certificationData} />
         </div>
-
-
-        {/* Calendar Section */}
-        <div className="col-span-full lg:col-span-3">
-          <Calendar />
-        </div>
-        <div>
-            <BarChart title="Distribution by Disability" data={certificationData} />
-          </div>
-          <div>
-            <PieChart title="Certified vs Non-Certified" data={certificationData} />   
-          </div>
+        <Calendar />
       </div>
-
-    </div>
     </div>
   );
 }
-
-          

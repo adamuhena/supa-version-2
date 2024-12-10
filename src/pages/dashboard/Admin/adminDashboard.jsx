@@ -12,45 +12,10 @@ import Dashboard from './components/Dashboard';
 
 const AdminDashboard = () => {
   const logout = useLogout();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const [userData, setUserData] = useState(null);
+
   const navigate = useNavigate();
 
-  // Fetch user data
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        const userId = localStorage.getItem("userId");
 
-        if (!accessToken || !userId) {
-          navigate('/login'); // Redirect unauthenticated users
-          return;
-        }
-
-        const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-
-        if (response.data.success) {
-          setUserData(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        navigate('/login'); // Handle errors by redirecting
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  if (!userData) {
-    return (
-    <div className="flex justify-center items-center h-screen">
-    <Spinner/>
-</div>
-    );
-  }
 
   return (
     <ProtectedRoute href='/admin/dashboard'>
@@ -68,7 +33,7 @@ const AdminDashboard = () => {
               </Button>
             </div>
           </header>
-          <Dashboard user={userData} />
+          <Dashboard />
         </div>
       </DashboardPage>
     </ProtectedRoute>
