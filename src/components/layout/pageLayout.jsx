@@ -301,8 +301,9 @@ export default function PageLayout({ children }) {
       </motion.nav>
 
       {/* Main Content */}
-      <main className="flex-1 w-full p-0">{children}</main>
-
+      <main className="flex-1 w-full px-0 sm:px-0 md:px-0 lg:px-0 xl:px-0 py-0 max-w-full overflow-x-hidden">
+        {children}
+      </main>
       {/* Footer */}
       <Footer />
     </div>

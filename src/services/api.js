@@ -12,7 +12,7 @@ const api = axios.create({
 export const fetchUserDistribution = async () => {
   try {
     const response = await
-      api.get('/users', {
+      api.get(`${API_BASE_URL}/users`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
     

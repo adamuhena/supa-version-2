@@ -26,6 +26,7 @@ const UserAssignment = () => {
     try {
       const usersResponse = await axios.get(`${API_BASE_URL}/users`, {
         params: { userType }
+        
       });
       setUsers(usersResponse.data);
     } catch (error) {

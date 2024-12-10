@@ -40,55 +40,55 @@ const questions = [
 
 function FAQs() {
   return (
-    <section className="w-full py-[100px]">
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-[64px] lg:flex-row">
-        {/* Text Section */}
-        <div className="flex w-full max-w-[380px] items-center flex-col gap-[20px] px-4 sm:px-6 lg:max-w-[500px]">
-          <BlurFade delay={0.25} inView>
-            <h1 className="text-[36px] font-[500] leading-[44px] text-[#1D2849] text-left sm:text-[32px] sm:leading-[40px]">
+    <section className="w-full py-8 md:py-12 lg:py-[100px]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-10 lg:gap-[64px]">
+          {/* Text Section */}
+          <div className="w-full max-w-full lg:max-w-[380px] xl:max-w-[500px] text-center  lg:text-center mb-6 lg:mb-0">
+            <BlurFade delay={0.25} inView>
+              <h1 className="text-2xl sm:text-3xl md:text-[36px] font-medium leading-tight text-[#1D2849] mb-4">
                 FAQ
-            </h1>
-          </BlurFade>
-          <BlurFade delay={0.25} inView>
-          
-            <p className="text-[20px] leading-[27px] text-[#040404] sm:text-[18px] sm:leading-[26px]">
-              Some of the things you may have questions about
-            </p>
-            <p className="text-[18px] leading-[27px] text-[#808DB3] sm:text-[16px] sm:leading-[24px]">
-              We have answered them so you don’t have to ask
-            </p>
-          </BlurFade>
-        </div>
+              </h1>
+            </BlurFade>
+            
+            <BlurFade delay={0.25} inView>
+              <p className="text-base sm:text-lg md:text-xl text-[#040404] mb-2">
+                Some of the things you may have questions about
+              </p>
+              <p className="text-sm sm:text-base text-[#808DB3]">
+                We have answered them so you don't have to ask
+              </p>
+            </BlurFade>
+          </div>
 
-        {/* Accordion Section */}
-        <div className="w-full flex-1 px-4 sm:px-6 lg:px-0">
-          <Accordion type="single" collapsible className="w-full">
-            {questions.map((item, index) => {
-              return (
-                <BlurFade delay={0.25} inView key={`${index}`}>
+          {/* Accordion Section */}
+          <div className="w-full lg:flex-1">
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              {questions.map((item, index) => (
+                <BlurFade key={`faq-${index}`} delay={0.25} inView>
                   <AccordionItem
                     value={`item-${index + 1}`}
-                    className="mb-[20px] rounded-lg border border-[#D5D9E7] px-[24px] font-onest"
+                    className="rounded-lg border border-[#D5D9E7] overflow-hidden"
                   >
                     <AccordionTrigger
                       rightIcon={
                         <>
-                          <PlusCircledIcon className="closedactfaq h-[24px] w-[24px] shrink-0 text-[#1D2849] transition-transform duration-200 dark:text-neutral-400" />
-                          <MinusCircledIcon className="openactfaq hidden h-[24px] w-[24px] shrink-0 text-[#1D2849] transition-transform duration-200 dark:text-neutral-400" />
+                          <PlusCircledIcon className="closedactfaq h-6 w-6 text-[#1D2849] group-data-[state=open]:hidden" />
+                          <MinusCircledIcon className="openactfaq h-6 w-6 text-[#1D2849] hidden group-data-[state=open]:block" />
                         </>
                       }
-                      className="text-left font-onest text-[18px] font-[600] text-[#1D2849] max-sm:text-left [&[data-state=open]>.closedactfaq]:hidden [&[data-state=open] >.openactfaq]:flex"
+                      className="px-4 sm:px-6 py-4 text-left text-sm sm:text-base md:text-lg font-semibold text-[#1D2849] hover:bg-gray-50 transition-colors"
                     >
-                      {item?.question}
+                      {item.question}
                     </AccordionTrigger>
-                    <AccordionContent className="cht-text-16 font-onest text-[#808DB3] text-left">
-                      {item?.answer}
+                    <AccordionContent className="px-4 sm:px-6 py-4 text-sm sm:text-base text-[#808DB3]">
+                      {item.answer}
                     </AccordionContent>
                   </AccordionItem>
                 </BlurFade>
-              );
-            })}
-          </Accordion>
+              ))}
+            </Accordion>
+          </div>
         </div>
       </div>
     </section>

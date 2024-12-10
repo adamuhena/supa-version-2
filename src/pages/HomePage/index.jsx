@@ -12,38 +12,9 @@ function HomePage() {
     <>
       {/* <NavBar /> */}
       <PageLayout>
-        {/* <div
-        style={{
-          padding: "0 2rem",
-          paddingTop: 50,
-        }}> */}
+       
         <div>
           <Banner />
-          {/* <HeaderTitle
-          withSplitType
-          title_font_size="56px"
-          title_top="Skill-Up Artisans (SUPA)"
-          description="Empowering artisans with tech-driven training, official licensing, access to essential toolkits, and promoting industry standards to elevate skills, enhance craftsmanship, and drive professional excellence across sectors. "
-          title_color="#1b6f37"
-          description_color="#000000"
-          description_max_width="900px"
-          centerText
-        />
-
-        <div className="flex gap-[20px] w-full justify-center items-center">
-          <BlurFade delay={0.25} inView>
-            <Link to="/register">
-              <button className="h-[48px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-[#fff]">
-                Register
-              </button>
-            </Link>
-          </BlurFade>
-          <BlurFade delay={0.25} inView>
-            <button className="h-[48px] px-[40px] text-[14px] rounded-[40px] bg-[#fff] border-[1px] text-yellow-600 border-yellow-600">
-              View Marketplace
-            </button>
-          </BlurFade>
-        </div> */}
 
           <br />
           <br />
@@ -56,7 +27,6 @@ function HomePage() {
             description_color="#000000"
             centerText
           />
-
           <Marquee className={"mb-[20px] relative overflow-x-hidden"}>
             {[
               "/images/workers/1.jpg",
@@ -97,13 +67,8 @@ function HomePage() {
             })}
           </Marquee>
         </div>
-        {/* <HeaderThreeImages
-          image_1={"/images/workers/5.jpg"}
-          image_2={"/images/workers/2.jpg"}
-          image_3={"/images/workers/4.jpg"}
-        /> */}
+      
         <FAQs />
-        {/* <Footer /> */}
       </PageLayout>
     </>
   );

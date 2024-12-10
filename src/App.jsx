@@ -16,7 +16,6 @@ import Biodata from "./pages/dashboard/BiodataPage";
 import TrainingCenterDashboard from "./pages/dashboard/trainingCenter/TrainingCenterDashboard";
 import AdminDashboard from "./pages/dashboard/Admin/adminDashboard";
 import UserManagement from "./pages/dashboard/Admin/userManagement";
-import IntendingArtisanDashboard from "./pages/dashboard/intendingArtisan/IntendingArtisanDashboard";
 import AdminDashboardReports from "./pages/dashboard/Admin/adminDashboardReports";
 import TrainingStatus from "./pages/dashboard/trainingCenter/TrainingStatus";
 import TrainingManagement from "./pages/dashboard/Admin/TrainingManagement";

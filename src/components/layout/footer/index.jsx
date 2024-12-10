@@ -4,130 +4,99 @@ import { cn } from "../../../lib/utils";
 
 function Footer() {
   return (
-    <div className="bg-slate-900 pt-[50px] pb-[40px] px-[20px]">
+    <div className="relative bg-slate-900 py-12 px-4 sm:px-6 md:px-8 lg:px-12">
       <DotPattern
-                    width={10}
-                    height={10}
-                    cx={1}
-                    cy={1}
-                    cr={1}
-                    className={cn("fill-neutral-600/40 opacity-15")}
-                  />
+        width={10}
+        height={10}
+        cx={1}
+        cy={1}
+        cr={1}
+        className={cn("fill-neutral-600/40 opacity-15")}
+      />
       
-  <div className="max-w-full lg:max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 justify-between">
-    
-   <div className="flex flex-col items-left mx-auto lg:mx-0 max-w-[354px] gap-[32px]">
-          <div className="p-[10px] bg-white w-fit rounded-[10px]">
-            <img className="w-[100px]" src="/supaLogo.png" />
-          </div>
-          {/* <div className={"flex gap-[16px] items-center"}>
-            {socialLinks.map((socail, idx) => (
-              <a href={socail.url} key={`${idx}`} target="_blank">
-                {socail.img}
-              </a>
-            ))}
-          </div> */}
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+          {/* Logo and Contact Section */}
+          <div className="flex flex-col items-center md:items-start space-y-6">
+            <div className="p-3 bg-white rounded-lg w-fit">
+              <img 
+                className="w-24 h-auto" 
+                src="/supaLogo.png" 
+                alt="SUPA Logo" 
+              />
+            </div>
 
-          <div className={"flex flex-col gap-[16px] items-start"}>
-            {[
-              {
-                title: "supasec@itf.gov.ng",
-                path: "malito:info@fct-sip.com.ng",
-              },
-
-              {
-                title:
-                  "Industrial Training Fund – Along Miango Road, P.M.B 2199 Jos, Plateau State, Nigeria. 930272",
-              },
-
-              {
-                title: "+2348138202997, +2348138202997, +2348138202997",
-                path: "tel:08160000000",
-              },
-            ].map((item, index) => {
-              return (
+            <div className="flex flex-col space-y-4 text-center md:text-left">
+              {[
+                {
+                  title: "supasec@itf.gov.ng",
+                  path: "mailto:supasec@itf.gov.ng",
+                },
+                {
+                  title: "Industrial Training Fund – Along Miango Road, P.M.B 2199 Jos, Plateau State, Nigeria. 930272",
+                },
+                {
+                  title: "+2348138202997",
+                  path: "tel:+2348138202997",
+                },
+              ].map((item, index) => (
                 <a
-                  key={item?.title}
-                  href={item?.path ? item?.path : "#"}
-                  className={
-                    item?.header
-                      ? "text-[#1b6f37] font-[500] text-[16px] leading-[24px] cursor-default"
-                      : "text-[#ffffff] font-[400] text-[14px] leading-[22px flex items-center gap-3 hover:text-[#CDB972] cursor-pointer text-left"
-                  }>
-                  {item?.leftIcon ? (
-                    <>
-                      {typeof item?.leftIcon === "string" ? (
-                        <img src={item?.leftIcon} />
-                      ) : (
-                        item?.leftIcon
-                      )}
-                    </>
-                  ) : null}
-
-                  <span>{item?.title}</span>
+                  key={index}
+                  href={item.path || "#"}
+                  className="text-white text-sm hover:text-yellow-400 transition-colors"
+                >
+                  {item.title}
                 </a>
-              );
-            })}
+              ))}
+            </div>
+          </div>
+
+          {/* Footer Links Section */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 lg:col-span-2">
+            {footerLinks.map((column, columnIndex) => (
+              <div
+                key={columnIndex}
+                className="flex flex-col space-y-4"
+              >
+                {column.map((item, itemIndex) => (
+                  <a
+                    key={itemIndex}
+                    href={item.path || "#"}
+                    className={`
+                      text-white text-sm 
+                      ${item.header 
+                        ? 'text-emerald-500 font-semibold' 
+                        : 'hover:text-yellow-400 transition-colors'}
+                    `}
+                  >
+                    {item.title}
+                  </a>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row  w-full lg:w-auto flex-1  justify-center lg:justify-end gap-[32px] mx-auto lg:mx-0 flex-wrap lg:flex-nowrap">
-          {footerLinks.map((column, index) => {
-            return (
-              <div
-                key={`${index}`}
-                className="flex flex-col items-start gap-[20px] w-full max-w-[181px]">
-                {column.map((item) => {
-                  return (
-                    <a
-                      key={item?.title}
-                      href={item?.path ? item?.path : "#"}
-                      className={
-                        item?.header
-                          ? "text-[#047857] font-[500] text-[16px] leading-[24px] cursor-default"
-                          : "text-[#ffffff] font-[400] text-[14px] leading-[22px flex items-center gap-3 hover:text-[#CDB972] cursor-pointer"
-                      }>
-                      {item?.leftIcon ? (
-                        <>
-                          {typeof item?.leftIcon === "string" ? (
-                            <img src={item?.leftIcon} />
-                          ) : (
-                            item?.leftIcon
-                          )}
-                        </>
-                      ) : null}
-
-                      <span>{item?.title}</span>
-                    </a>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      <div className="widow-inner flex flex-col flex-wrap items-center border-t border-t-[#5C5C5C] mt-[40px] pt-[40px] gap-[32px]">
-        <div className="flex flex-col items-center gap-[20px]">
-          <p className="text-[14px] leading-[22px] text-white">
+        {/* Footer Bottom */}
+        <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+          <p className="text-sm text-white text-center md:text-left">
             © {new Date().getFullYear()} - SUPA
           </p>
-        </div>
-        <div className="flex  flex-wrap  flex-1 justify-end gap-[32px]">
-          <a
-            href="/terms-and-conditions"
-            className={
-              "text-[#ffffff] font-[400] text-[14px] leading-[22px flex items-center gap-3 hover:text-[#CDB972] cursor-pointer"
-            }>
-            <span> Terms & Conditions</span>
-          </a>
-
-          <a
-            href="/privacy-policy"
-            className={
-              "text-[#ffffff] font-[400] text-[14px] leading-[22px flex items-center gap-3 hover:text-[#CDB972] cursor-pointer"
-            }>
-            <span> Privacy Policy</span>
-          </a>
+          
+          <div className="flex flex-wrap justify-center md:justify-end gap-4 md:gap-6">
+            <a
+              href="/terms-and-conditions"
+              className="text-sm text-white hover:text-yellow-400 transition-colors"
+            >
+              Terms & Conditions
+            </a>
+            <a
+              href="/privacy-policy"
+              className="text-sm text-white hover:text-yellow-400 transition-colors"
+            >
+              Privacy Policy
+            </a>
+          </div>
         </div>
       </div>
     </div>

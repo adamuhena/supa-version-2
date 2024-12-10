@@ -69,9 +69,7 @@ useEffect(() => {
           const accessToken = localStorage.getItem("accessToken");
   
           const response = await axios.get(`${API_BASE_URL}/users`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+            headers: { Authorization: `Bearer ${accessToken}` },
           });
   
           if (response.data.success) {

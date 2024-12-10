@@ -6,6 +6,7 @@ import NigerianMap from '../../../../components/NigerianMap';
 import { PieChart } from './charts/PieChart';
 import Metrics from './Metrics';
 import State from './charts/State';
+import Spinner from '../../../../components/layout/spinner';
 
 export default function Dashboard() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -59,7 +60,7 @@ export default function Dashboard() {
     ];
   }, [users]);
 
-  if (loading) return <div className="text-center">Loading...</div>;
+  if (loading) return <div className="text-center"><Spinner/></div>;
 
   return (
     <div className="min-h-screen bg-gray-100">

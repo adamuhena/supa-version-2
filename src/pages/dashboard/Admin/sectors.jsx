@@ -12,6 +12,7 @@ import DashboardPage from '@/components/layout/DashboardLayout'
 import { UserCircle, Settings, LogOut } from "lucide-react";
 import useLogout from '@/pages/loginPage/logout';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
+import Spinner from '../../../components/layout/spinner'
 
 
 export default function AdminSectors() {
@@ -132,7 +133,7 @@ export default function AdminSectors() {
     setCurrentPage(page)
   }
 
-  if (loading) return <div className="text-center p-4">Loading...</div>
+  if (loading) return <div className="text-center p-4"><Spinner/></div>
   if (error) return <div className="text-center text-red-500 p-4">{error}</div>
 
   return (
