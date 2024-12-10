@@ -14,9 +14,118 @@ import { cn } from "../../../lib/utils";
 import LegalInfo from "./LegalInfo.jsx";
 import TrainingAmenities from "./Amenities";
 import BankDetails from "./BankDetails.jsx";
-import useLogout from '@/pages/loginPage/logout';
+import useLogout from "@/pages/loginPage/logout";
 import { LogOutIcon } from "lucide-react";
 // import ProtectedRoute from "@/components/ProtectedRoute";
+
+const checkValidateCompanyInfo = ({ form }) => {
+  let erroMsg = "";
+  console.log("form", form);
+
+  if (!form?.itfRegistered) {
+    erroMsg = "Centre register status is required!";
+  }
+
+  if (!form?.trainingNature) {
+    erroMsg = "Nature of training is required!";
+  }
+
+  if (!form?.ownership) {
+    erroMsg = "Ownership is required!";
+  }
+
+  if (!form?.establishmentDate) {
+    erroMsg = "Establishment Date is required!";
+  }
+
+  if (!form?.email) {
+    erroMsg = "Email is required!";
+  }
+
+  if (!form?.phoneNumber) {
+    erroMsg = "Phone is required!";
+  }
+
+  if (!form?.contactPerson) {
+    erroMsg = "Name of contact person is required!";
+  }
+
+  if (!form?.address) {
+    erroMsg = "Training Centre address is required!";
+  }
+
+  if (!form?.trainingCentreName) {
+    erroMsg = "Training Centre Name is required!";
+  }
+
+  if (!form?.areaOffice) {
+    erroMsg = "Area Office is required!";
+  }
+
+  if (!form?.state) {
+    erroMsg = "State   is required!";
+  }
+
+  return { erroMsg };
+};
+
+const checkAmeanities = ({ form }) => {
+  let erroMsg = "";
+  console.log("form", form);
+
+  if (!form?.portableWater || !form?.observeBreak) {
+    erroMsg = "Please complete form to proceed!";
+  }
+
+  return { erroMsg };
+};
+
+const checkAsssessment = ({ form }) => {
+  let erroMsg = "";
+  console.log("form", form);
+
+  if (
+    !form?.traineeInstructorRatio ||
+    !form?.practicalTheoryRatio ||
+    !form?.trainingDurationPerDay ||
+    !form?.trainingDurationPerWeek ||
+    !form?.weeklyTrainingSchedule ||
+    !form?.trainingCurriculum
+  ) {
+    erroMsg = "Please complete form to proceed!";
+  }
+
+  return { erroMsg };
+};
+
+const checkLegal = ({ form }) => {
+  let erroMsg = "";
+  console.log("form", form);
+
+  if (!form?.legalRegistration) {
+    erroMsg = "Please complete legal registration to proceed!";
+  }
+
+  return { erroMsg };
+};
+
+const checkValidateBank = ({ form }) => {
+  let erroMsg = "";
+  console.log("experience", form?.experience);
+  if (
+    !form?.bankAccount?.accountName ||
+    !form?.bankAccount?.accountNumber ||
+    !form?.bankAccount?.bank
+  ) {
+    erroMsg = "All bank details are required!";
+  }
+
+  if (form?.bankAccount?.accountNumber?.length !== 10) {
+    erroMsg = "Account number must be 10 digits!";
+  }
+
+  return { erroMsg };
+};
 
 const TrainingCenterForm = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -30,6 +139,7 @@ const TrainingCenterForm = () => {
     establishmentDate: null, // Will be set as a Date object
     ownership: "",
     otherOwnership: "",
+    trainingCentreName: "",
     trainingNature: "",
     itfRegistered: "",
     itfRegistrationNumber: "",
@@ -110,21 +220,45 @@ const TrainingCenterForm = () => {
   }, [step]);
 
   const goNext = () => {
-    if (validateStep()) {
-      setStep((prev) => prev + 1);
+    if (step === 0) {
+      const erroMsg = checkValidateCompanyInfo({ form })?.erroMsg;
+      if (erroMsg) {
+        return toast.error(erroMsg, { position: "top-right" });
+      }
     }
+
+    if (step === 1) {
+      const erroMsg = checkAmeanities({ form })?.erroMsg;
+      if (erroMsg) {
+        return toast.error(erroMsg, { position: "top-right" });
+      }
+    }
+
+    if (step === 2) {
+      const erroMsg = checkAsssessment({ form })?.erroMsg;
+      if (erroMsg) {
+        return toast.error(erroMsg, { position: "top-right" });
+      }
+    }
+
+    if (step === 3) {
+      const erroMsg = checkLegal({ form })?.erroMsg;
+      if (erroMsg) {
+        return toast.error(erroMsg, { position: "top-right" });
+      }
+    }
+
+    if (step === 4) {
+      const erroMsg = checkValidateBank({ form })?.erroMsg;
+      if (erroMsg) {
+        return toast.error(erroMsg, { position: "top-right" });
+      }
+    }
+
+    setStep((prev) => prev + 1);
   };
 
   const goBack = () => setStep((prev) => prev - 1);
-
-  const validateStep = () => {
-    // if (step === 0 && !form.companyName) {
-    //   toast.error("Company name is required.");
-    //   return false;
-    // }
-    // Add further validations for other steps as needed
-    return true;
-  };
 
   const onchangeInput = (id, value) => {
     setForm((prevForm) => ({
@@ -164,6 +298,7 @@ const TrainingCenterForm = () => {
       toast.success("Training Center Registered Successfully!");
       setShow(true); // Show success modal or message
     } catch (error) {
+      console.log("error?.respons", error?.respons);
       toast.error(error?.response?.data?.message || "Submission failed!");
     } finally {
       setLoading(false);
@@ -171,13 +306,12 @@ const TrainingCenterForm = () => {
   };
 
   const controlButtons = (
-    <div className="flex w-full justify-end">
+    <div className="flex w-full justify-end gap-3">
       {step > 0 && (
         <button
           disabled={loading}
           onClick={goBack}
-          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-gray-300 text-[#00524d]"
-        >
+          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-gray-300 text-[#00524d]">
           Back
         </button>
       )}
@@ -186,16 +320,14 @@ const TrainingCenterForm = () => {
           <button
             disabled={loading}
             onClick={submitForm}
-            className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
-          >
+            className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white">
             {loading ? "Submitting..." : "Submit"}
           </button>
         )
       ) : (
         <button
           onClick={goNext}
-          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
-        >
+          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white">
           Next
         </button>
       )}
@@ -204,7 +336,6 @@ const TrainingCenterForm = () => {
 
   const logout = useLogout();
 
-
   return (
     <div>
       {/*<ProtectedRoute>*/}
@@ -212,18 +343,15 @@ const TrainingCenterForm = () => {
       <div className="">
         <div>
           <div className="sticky top-0 pt-16 pb-0 z-10 bg-slate-900  border-b-[1px]">
-            <h1 className="header text-sm text-emerald-600">
-            </h1>
+            <h1 className="header text-sm text-emerald-600"></h1>
             <button
               onClick={logout}
-              className="absolute top-20 flex flex-row gap-4 right-16 hover:bg-slate-800 text-white text-sm"
-            >
-             LogOut <LogOutIcon />
+              className="absolute top-20 flex flex-row gap-4 right-16 hover:bg-slate-800 text-white text-sm">
+              LogOut <LogOutIcon />
             </button>
             <Stepper
               activeStep={step}
-              className="border-b-gray-300 scale-[0.8]"
-            >
+              className="border-b-gray-300 scale-[0.8]">
               <Step
                 index={0}
                 label={
