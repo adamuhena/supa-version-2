@@ -30,6 +30,7 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const [user, setUser] = useState({
+    _id:"",
     firstName: "",
     middleName: "",
     lastName: "",
@@ -125,7 +126,7 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
       }
 
       const response = await axios.put(
-        `${API_BASE_URL}/update/${localStorage.getItem("userId")}`,
+        `${API_BASE_URL}/update/${user._id}`,
         sectionChanges,
         { headers: { Authorization: `Bearer ${token}` } }
       );
