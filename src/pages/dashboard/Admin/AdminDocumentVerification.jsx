@@ -33,11 +33,10 @@ const AdminDocumentVerification = () => {
   }, []);
 
   const fetchDocuments = async () => {
+    const accessToken = localStorage.getItem("accessToken");
     try {
-      const response = await axios.get(`${API_BASE_URL}/documents`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+      const response = await axios.get(`${API_BASE_URL}/documents`,{
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
 
       if (response.data.success) {
@@ -195,7 +194,7 @@ const AdminDocumentVerification = () => {
                   {selectedDocument && (
                     <div className="space-y-4">
                       <div>
-                        <strong>User:</strong> {selectedDocument.user.firstName} {selectedDocument.user.lastName}
+                        <strong>User:</strong> {selectedDocument.user?.firstName} {selectedDocument.user?.lastName}
                       </div>
                       <div>
                         <strong>Document Type:</strong> {selectedDocument.type}

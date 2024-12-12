@@ -4,6 +4,7 @@ import { DotPattern } from "../../components/ui/dot-pattern";
 import { cn } from "../../lib/utils";
 import { ContactForm } from './components/ContactForm';
 import { ContactInfo } from './components/ContactInfo';
+import NigerianMap from '../../components/NigerianMap';
 
 function ContactUs() {
   return (
@@ -46,6 +47,8 @@ function ContactUs() {
           </div>
         </div>
       </div>
+
+      <NigerianMap/>
     </div>
     </PageLayout>
   );

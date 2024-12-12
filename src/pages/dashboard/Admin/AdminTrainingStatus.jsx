@@ -33,8 +33,9 @@ function AdminTrainingStatus() {
   useEffect(() => {
     const fetchTrainingGroups = async () => {
       try {
+        const accessToken = localStorage.getItem("accessToken");
         const response = await axios.get(`${API_BASE_URL}/training-groups`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
         console.log('Training Groups response:', response.data);
         setTrainingGroups(response.data.data || []);
