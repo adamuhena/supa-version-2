@@ -15,10 +15,11 @@ export default function Dashboard() {
   const [trainingGroups, setTrainingGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState({});
+  const accessToken = localStorage.getItem('accessToken');
 
   const fetchData = async (url, setter, setError) => {
     try {
-      const accessToken = localStorage.getItem('accessToken');
+      
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });

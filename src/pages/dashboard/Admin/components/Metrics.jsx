@@ -21,12 +21,13 @@ export default function Metrics() {
   const [users, setUsers] = useState([]); // Holds userCounts data
   const [trainingCenters, setTrainingCenters] = useState([]);
   const [trainingGroups, setTrainingGroups] = useState([]);
+  const accessToken = localStorage.getItem('accessToken');
 
   // Fetch userCounts data from the dashboard analytics API
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const accessToken = localStorage.getItem('accessToken');
+        
         const response = await axios.get(`${API_BASE_URL}/dashboard-analytics`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
@@ -46,7 +47,7 @@ export default function Metrics() {
   useEffect(() => {
     const fetchTrainingCenters = async () => {
       try {
-        const accessToken = localStorage.getItem('accessToken');
+        
         const response = await axios.get(`${API_BASE_URL}/training-centers`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
@@ -64,7 +65,6 @@ export default function Metrics() {
   useEffect(() => {
     const fetchTrainingGroups = async () => {
       try {
-        const accessToken = localStorage.getItem('accessToken');
         const response = await axios.get(`${API_BASE_URL}/training-groups`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });

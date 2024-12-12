@@ -12,7 +12,6 @@ const api = axios.create({
 
 
 export const fetchUserDist = async () => {
-  const accessToken = localStorage.getItem('accessToken'); // Fetch access token
 
   if (!accessToken) {
     console.error('Access token is missing');
@@ -71,7 +70,7 @@ export const fetchUserDist = async () => {
 
 export const fetchUserDistribution = async () => {
   try {
-    const accessToken = localStorage.getItem("accessToken");
+
     const response = await
       axios.get(`${API_BASE_URL}/users`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -115,33 +114,33 @@ export const fetchUserDistribution = async () => {
   }
 };
 
-function PeriodicRequest() {
-  useEffect(() => {
-    // Function to send a request to the server
-    const sendRequest = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/sectors`,{
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }); // Replace with your endpoint
-        console.log('Server response:', response.data);
-      } catch (error) {
-        console.error('Error making the request:', error);
-      }
-    };
+// function PeriodicRequest() {
+//   useEffect(() => {
+//     // Function to send a request to the server
+//     const sendRequest = async () => {
+//       try {
+//         const response = await axios.get(`${API_BASE_URL}/sectors`,{
+//           headers: { Authorization: `Bearer ${accessToken}` },
+//         }); // Replace with your endpoint
+//         console.log('Server response:', response.data);
+//       } catch (error) {
+//         console.error('Error making the request:', error);
+//       }
+//     };
 
-    // Call the function immediately on mount
-    sendRequest();
+//     // Call the function immediately on mount
+//     sendRequest();
 
-    // Set up an interval to call the function every 5 minutes
-    const intervalId = setInterval(() => {
-      sendRequest();
-    }, 300000); // 300,000 ms = 5 minutes
+//     // Set up an interval to call the function every 5 minutes
+//     const intervalId = setInterval(() => {
+//       sendRequest();
+//     }, 300000); // 300,000 ms = 5 minutes
 
-    // Cleanup the interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []); // Empty dependency array ensures this runs only once
+//     // Cleanup the interval on component unmount
+//     return () => clearInterval(intervalId);
+//   }, []); // Empty dependency array ensures this runs only once
 
-  return null; // This component does not render anything
-}
+//   return null; // This component does not render anything
+// }
 
-export default PeriodicRequest;
+// export default PeriodicRequest;

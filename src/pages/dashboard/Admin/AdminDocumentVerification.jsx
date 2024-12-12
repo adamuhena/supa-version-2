@@ -25,7 +25,7 @@ const AdminDocumentVerification = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 25;
-
+  const accessToken = localStorage.getItem('accessToken');
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const AdminDocumentVerification = () => {
   }, []);
 
   const fetchDocuments = async () => {
-    const accessToken = localStorage.getItem("accessToken");
+    
     try {
       const response = await axios.get(`${API_BASE_URL}/documents`,{
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -52,8 +52,6 @@ const AdminDocumentVerification = () => {
   };
 
 
-
-
   const handleVerify = async () => {
     try {
       await axios.put(`${API_BASE_URL}/documents/${selectedDocument._id}/verify`, {
@@ -61,7 +59,7 @@ const AdminDocumentVerification = () => {
         comments: comments
       }, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       setIsDialogOpen(false);
@@ -70,7 +68,7 @@ const AdminDocumentVerification = () => {
       console.error('Error verifying document:', error);
     }
   };
-
+console.log('sellected ' ,selectedDocument)
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = documents.slice(indexOfFirstItem, indexOfLastItem);
@@ -125,7 +123,9 @@ const AdminDocumentVerification = () => {
                     currentItems.map((doc, index) => (
                       <TableRow key={doc._id}>
                         <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage} </TableCell>
-                        <TableCell>{doc.user?.firstName} {doc.user?.lastName}</TableCell>
+                        <TableCell>
+                          {doc.user?.firstName ? `${doc.user.firstName} ${doc.user.lastName}` : 'No Name'}
+                        </TableCell>
                         <TableCell>{doc?.type}</TableCell>
                         <TableCell>{doc?.purpose}</TableCell>
                         <TableCell>
