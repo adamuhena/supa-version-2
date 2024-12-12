@@ -9,7 +9,7 @@ import PeriodicRequest from "./services/api.js";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Toaster />
-    <PeriodicRequest/>
+    {/* <PeriodicRequest/> */}
     <App />
   </StrictMode>
 );

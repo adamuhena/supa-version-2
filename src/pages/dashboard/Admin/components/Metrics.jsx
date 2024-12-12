@@ -1,9 +1,10 @@
-import React,{ useState, useEffect }  from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Users, UserPlus, School, UsersRound } from 'lucide-react';
 
+// Reusable MetricCard component
 const MetricCard = ({ title, value, icon: Icon }) => (
-  <div className="bg-white p-6 rounded-lg shadow-md ">
+  <div className="bg-white p-6 rounded-lg shadow-md">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm font-medium text-gray-500">{title}</p>
@@ -16,100 +17,75 @@ const MetricCard = ({ title, value, icon: Icon }) => (
 
 export default function Metrics() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const [users, setUsers] = useState([]); // Holds user data
+
+  const [users, setUsers] = useState([]); // Holds userCounts data
   const [trainingCenters, setTrainingCenters] = useState([]);
   const [trainingGroups, setTrainingGroups] = useState([]);
 
-useEffect(() => {
-  const fetchTrainingCenters = async () => {
-    try {
-      const accessToken = localStorage.getItem("accessToken");
+  // Fetch userCounts data from the dashboard analytics API
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.get(`${API_BASE_URL}/dashboard-analytics`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
 
-      const response = await axios.get(`${API_BASE_URL}/training-centers`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      
-        setTrainingCenters(response.data.data); // Assume data is an array of users
-      
-    } catch (error) {
-      console.error("Error fetching training centers:", error);
-    }
-  };
-
-  fetchTrainingCenters();
-}, []);
-
-    // Fetch trainingCenters from the database
-    useEffect(() => {
-      const fetchTrainingGroups = async () => {
-        try {
-          const accessToken = localStorage.getItem("accessToken");
-  
-          const response = await axios.get(`${API_BASE_URL}/training-groups`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-            setTrainingGroups(response.data); // Assume data is an array of users
-        } catch (error) {
-          console.error("Error fetching training Groups:", error);
+        if (response.data.success) {
+          setUsers(response.data.data.userCounts || []);
         }
-      };
-  
-      fetchTrainingGroups();
-    }, []);
+      } catch (error) {
+        console.error('Error fetching user counts:', error);
+      }
+    };
 
-     // Fetch users from the database
-     useEffect(() => {
-      const fetchUsers = async () => {
-        try {
-          const accessToken = localStorage.getItem("accessToken");
-  
-          const response = await axios.get(`${API_BASE_URL}/users`, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          });
-  
-          if (response.data.success) {
-            setUsers(response.data.data); // Assume data is an array of users
-          }
-        } catch (error) {
-          console.error("Error fetching users:", error);
-        }
-      };
-  
-      fetchUsers();
-    }, []);
+    fetchUsers();
+  }, []);
 
+  // Fetch trainingCenters data
+  useEffect(() => {
+    const fetchTrainingCenters = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.get(`${API_BASE_URL}/training-centers`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
 
-  let artisan_userCount = 0;
-  let intending_artisanCount = 0;
-  let training_centerCount = 0;
-  let training_groupCount = 0;
-  
-  users.forEach(user  => {
-    if (user.role === "artisan_user") {
-      artisan_userCount++;
-    }
-    if (user.role === "intending_artisan") {
-      intending_artisanCount++;
-    }
-  });
+        setTrainingCenters(response.data.data || []);
+      } catch (error) {
+        console.error('Error fetching training centers:', error);
+      }
+    };
 
-  trainingCenters.forEach( trainingCenter => {
-    if (trainingCenter) {
-      training_centerCount++;
-  }})
-    
-  trainingGroups.forEach( trainingGroup => {
-    if (trainingGroup) {
-      training_groupCount++;
-  }}) 
+    fetchTrainingCenters();
+  }, []);
+
+  // Fetch trainingGroups data
+  useEffect(() => {
+    const fetchTrainingGroups = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.get(`${API_BASE_URL}/training-groups`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        setTrainingGroups(response.data.data || []);
+      } catch (error) {
+        console.error('Error fetching training groups:', error);
+      }
+    };
+
+    fetchTrainingGroups();
+  }, []);
+
+  // Calculate counts for metrics
+  const artisan_userCount = users.find((user) => user._id === 'artisan_user')?.count || 0;
+  const intending_artisanCount = users.find((user) => user._id === 'intending_artisan')?.count || 0;
+  const training_centerCount = trainingCenters.length;
+  const training_groupCount = trainingGroups.length;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
       <MetricCard title="Registered Artisans" value={artisan_userCount} icon={Users} />
       <MetricCard title="Intending Artisans" value={intending_artisanCount} icon={UserPlus} />
       <MetricCard title="Training Centers" value={training_centerCount} icon={School} />
@@ -117,4 +93,3 @@ useEffect(() => {
     </div>
   );
 }
-

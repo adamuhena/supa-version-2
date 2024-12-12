@@ -1,5 +1,6 @@
 import axios from "axios";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import DashboardPage from "@/components/layout/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -42,28 +43,23 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { CSVLink } from "react-csv";
 
+// Utility Functions
 function formatString(input) {
-  // Replace underscores with spaces
-  const formatted = input.replace(/_/g, " ");
-  
-
-  // Capitalize the first letter of each word
-  return formatted
+  // Replace underscores with spaces and capitalize
+  return input
+    .replace(/_/g, " ")
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 }
 
 function formatUsersToCSV(users) {
-  
   if (!Array.isArray(users) || users.length === 0) {
     return [];
   }
 
-  // Define header mapping for user-friendly column names
   const headerMapping = {
     phoneNumber: "Phone Number",
-    password: "Password",
     firstName: "First Name",
     lastName: "Last Name",
     email: "Email",
@@ -77,16 +73,17 @@ function formatUsersToCSV(users) {
     nin: "NIN",
   };
 
-  // Get headers and use the friendly names from the mapping
   const headers = Object.keys(users[0]).map((key) => headerMapping[key] || key);
-
-  // Map each user object into an array of its values
   const rows = users.map((user) => Object.keys(user).map((key) => user[key]));
 
-  // Combine headers and rows into the final CSV format
   return [headers, ...rows];
 }
 
+function replaceSymbolsWithSpace(str = "") {
+  return str.replace(/[-/]/g, " ").toLowerCase();
+}
+
+// Initial Form State
 const emptyForm = {
   stateOfResidence: "",
   lgaOfResidence: "",
@@ -96,64 +93,180 @@ const emptyForm = {
   hasDisability: "",
   role: "",
 };
-function replaceSymbolsWithSpace(str = "") {
-  let replacedStr = str.replace(/[-/]/g, " ");
-  return replacedStr.toLowerCase();
-}
 
 const AdminDashboardReports = () => {
+  const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const [loading, setloading] = useState(false); // Holds user data
-  const [users, setUsers] = useState([]); // Holds user data
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  
+  // Pagination State
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 0,
+    totalUsers: 0,
+    limit: 50
+  });
+
+  // Form State
+  const [form, setForm] = useState({
+    ...emptyForm,
+  });
 
   // Memoized CSV data
   const csvData = useMemo(() => {
     return formatUsersToCSV(
-      users.map((user) => {
-        return {
-          phoneNumber: user?.phoneNumber,
-          firstName: user?.firstName,
-          lastName: user?.lastName,
-          email: user?.email,
-          phone: user?.phone,
-          role: user?.role,
-          gender: user?.gender,
-          stateOfOrigin: user?.stateOfOrigin,
-          lga: user?.lga,
-          stateOfResidence: user?.stateOfResidence,
-          lgaOfResidence: user?.lgaOfResidence,
-          nin: user?.nin,
-        };
-      })
+      users.map((user) => ({
+        phoneNumber: user?.phoneNumber,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        email: user?.email,
+        phone: user?.phone,
+        role: user?.role,
+        gender: user?.gender,
+        stateOfOrigin: user?.stateOfOrigin,
+        lga: user?.lga,
+        stateOfResidence: user?.stateOfResidence,
+        lgaOfResidence: user?.lgaOfResidence,
+        nin: user?.nin,
+      }))
     );
   }, [users]);
 
+  // Fetch Users with Pagination
+  const fetchUsers = async (
+    filterParams, 
+    page = 1, 
+    limit= 50
+  ) => {
+    setLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+
+      const response = await axios.post(
+        `${API_BASE_URL}/users-reports`,
+        { 
+          filterParams: {
+            ...filterParams,
+            page,
+            limit
+          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const { users, pagination: serverPagination } = response?.data?.data || {};
+
+      setUsers(users || []); 
+      setPagination(prevPagination => ({
+        ...prevPagination,
+        ...serverPagination,
+        currentPage: page,
+        limit
+      }));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get LGA options for selected state
+  const getStateLGAS = (selectedState) => {
+    const state = states.find(
+      (state) => replaceSymbolsWithSpace(`${state?.value}`) === replaceSymbolsWithSpace(`${selectedState}`)
+    );
+
+    return (state?.lgas || []).map((x) => ({
+      label: x,
+      value: x,
+    }));
+  };
+
+  // Event Handlers
+  const onChangeInput = (id, value) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      [id]: value,
+    }));
+  };
+
+  const search = () => {
+    fetchUsers(form);
+  };
+
+  const clear = () => {
+    setForm({ ...emptyForm });
+    setUsers([]);
+    setPagination({
+      currentPage: 1,
+      totalPages: 0,
+      totalUsers: 0,
+      limit: 50
+    });
+  };
+
+  const showAll = () => {
+    setForm({ ...emptyForm });
+    fetchUsers(emptyForm);
+  };
+
+  const handlePageChange = (page) => {
+    fetchUsers(form, page, pagination.limit);
+  };
+  const selectedStateLGASOrigin =
+  states.find(
+    (state) =>
+      replaceSymbolsWithSpace(`${state?.value}`) ===
+      replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
+  )?.lgas || [];
+
+const selectedStateLGASOriginFormatted =
+  selectedStateLGASOrigin && selectedStateLGASOrigin?.length
+    ? selectedStateLGASOrigin.map((x) => ({
+        label: x,
+        value: x,
+      }))
+    : [];
+
+const selectedStateLGASResidence =
+  states.find(
+    (state) =>
+      replaceSymbolsWithSpace(`${state?.value}`) ===
+      replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+  )?.lgas || [];
+
+const selectedStateLGASResidenceFormatted =
+  selectedStateLGASResidence && selectedStateLGASResidence?.length
+    ? selectedStateLGASResidence.map((x) => ({
+        label: x,
+        value: x,
+      }))
+    : [];
+
+  const onchangeInput = (id, value) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      [id]: value,
+    }));
+  };
+
+  
+  // PDF Generation
   const generatePDF = () => {
     const doc = new jsPDF();
-  
-    // Add a logo (make sure the image is in base64 format or a publicly accessible URL)
-    const logoUrl = "/Users/j3phy/Documents/GitHub/supa-version-2/src/assets/logo.png"; 
-    const logoUrl2 ="@/assets/images/logo.png" ; // Replace with your logo URL or base64 string
-    const logoUrl3 ="https://via.placeholder.com/50" ;
-    const name = "Industrial Training Fund - SKILL-UP Artisan - wwww.itf.gov.ng / www.supa-itf.gov.ng"; // Replace with the dynamic name if necessary
+    const name = "Industrial Training Fund - SKILL-UP Artisan";
     const date = new Date().toLocaleDateString();
-  
-    // Load the logo
-    // doc.addImage(logoUrl, "PNG", 10, 5, 20, 20); // x, y, width, height
-  
-    // Add title
+
     doc.setFontSize(16);
-    doc.text("SUPA Report Artisan/Intending Artisan Report", 35, 15); // Adjust positioning based on the logo
-  
-    // Prepare table data
+    doc.text("SUPA Report Artisan/Intending Artisan Report", 35, 15);
+
     const headers = [
-      "Name",
-      "Role",
-      "NIN",
-      "Phone",
-      "Gender",
-      "Residence",
-      "Origin",
+      "Name", "Role", "NIN", "Phone", "Gender", "Residence", "Origin"
     ];
     const data = users.map((user) => [
       `${user.firstName} ${user.lastName}`,
@@ -164,137 +277,44 @@ const AdminDashboardReports = () => {
       `${user.stateOfResidence || "---"}, ${user.lgaOfResidence || "---"}`,
       `${user.stateOfOrigin || "---"}, ${user.lga || "---"}`,
     ]);
-  
-    // Add table
+
     doc.autoTable({
       head: [headers],
       body: data,
       startY: 25,
       headStyles: {
-        fillColor: [16, 185, 129], // RGB color for the header background
-        textColor: 255, // White text color
+        fillColor: [16, 185, 129],
+        textColor: 255,
         fontStyle: "bold",
       },
       bodyStyles: {
-        textColor: 50, // Dark gray for the body text
-      }, // Ensure the table starts below the title and logo
+        textColor: 50,
+      },
     });
-  
-    // Add footer with name and date
-    const pageCount = doc.internal.getNumberOfPages(); // Get the total number of pages
+
+    const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i); // Go to page i
+      doc.setPage(i);
       doc.setFontSize(10);
-      doc.text(`Generated by: ${name}`, 10, doc.internal.pageSize.height - 10); // Bottom-left corner
-      doc.text(`Date: ${date}`, doc.internal.pageSize.width - 50, doc.internal.pageSize.height - 10); // Bottom-right corner
+      doc.text(`Generated by: ${name}`, 10, doc.internal.pageSize.height - 10);
+      doc.text(`Date: ${date}`, doc.internal.pageSize.width - 50, doc.internal.pageSize.height - 10);
     }
-  
-    // Save the PDF
+
     doc.save("Admin_Reports.pdf");
   };
-  
 
-  const [form, setForm] = useState({
-    ...emptyForm,
-  });
-
-  const onchangeInput = (id, value) => {
-    setForm((prevForm) => ({
-      ...prevForm,
-      [id]: value,
-    }));
-  };
-
-  const selectedStateLGASOrigin =
-    states.find(
-      (state) =>
-        replaceSymbolsWithSpace(`${state?.value}`) ===
-        replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
-    )?.lgas || [];
-
-  const selectedStateLGASOriginFormatted =
-    selectedStateLGASOrigin && selectedStateLGASOrigin?.length
-      ? selectedStateLGASOrigin.map((x) => ({
-          label: x,
-          value: x,
-        }))
-      : [];
-
-  const selectedStateLGASResidence =
-    states.find(
-      (state) =>
-        replaceSymbolsWithSpace(`${state?.value}`) ===
-        replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
-    )?.lgas || [];
-
-  const selectedStateLGASResidenceFormatted =
-    selectedStateLGASResidence && selectedStateLGASResidence?.length
-      ? selectedStateLGASResidence.map((x) => ({
-          label: x,
-          value: x,
-        }))
-      : [];
-
-  const fetchUsers = async (filterParams) => {
-    setloading(true);
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-
-      const response = await axios.post(
-        `${API_BASE_URL}/users-reports`,
-        { filterParams },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      setUsers(response?.data?.data); // Assume data is an array of users
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    } finally {
-      setloading(false);
-    }
-  };
-
-  const search = () => {
-    fetchUsers(form);
-  };
-
-  const clear = () => {
-    setForm({
-      ...emptyForm,
-    });
-    setUsers([]);
-  };
-
-  const showAll = () => {
-    setForm({
-      ...emptyForm,
-    });
-    fetchUsers(emptyForm);
-  };
+  // Logout handler
   const logout = useLogout();
-  if (!users) {
+
+  // Render
+  if (loading) {
     return (
-    <div class="flex justify-center items-center h-screen">
-    <Spinner/>
-</div>
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
     );
   }
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 25;
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
-
-  const totalPages = Math.ceil(users.length / itemsPerPage);
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
   return (
     <ProtectedRoute>
       <DashboardPage title="Artisan Dashboard">
@@ -303,41 +323,42 @@ const AdminDashboardReports = () => {
             <div>
               <h1 className="text-3xl font-bold">ADMIN DASHBOARD REPORTS</h1>
               <h2 className="text-left font-[700] text-[14px]">
-                (ARTISANS & INTENDIN ARTISANS)
+                (ARTISANS & INTENDING ARTISANS)
               </h2>
             </div>
             <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate('/biodata')}>
-            <UserCircle className="mr-2 h-4 w-4" /> Update Profile
-          </Button>
-          
-          <Button variant="destructive" onClick={logout}>
-            <LogOut className="mr-2 h-4 w-4" /> Logout
-          </Button>
-        </div>
-          </header>
-          <div className="bg-white p-6 rounded-lg shadow">
-            
-          <div className="flex gap-[20px] flex-wrap">
-            <div className="w-[200px]">
-              <p className="text-left text-[14px] mb-1">User Type</p>
-              <Select
-                value={form?.role}
-                onValueChange={(value) => onchangeInput("role", value)}>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value={"artisan_user"}>Artisan User</SelectItem>
-
-                    <SelectItem value={"intending_artisan"}>
-                      Intending Artisan
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <Button variant="outline" onClick={() => navigate('/biodata')}>
+                <UserCircle className="mr-2 h-4 w-4" /> Update Profile
+              </Button>
+              
+              <Button variant="destructive" onClick={logout}>
+                <LogOut className="mr-2 h-4 w-4" /> Logout
+              </Button>
             </div>
+          </header>
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex gap-[20px] flex-wrap">
+              {/* Filter Dropdowns */}
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">User Type</p>
+                <Select
+                  value={form?.role}
+                  onValueChange={(value) => onChangeInput("role", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="artisan_user">Artisan User</SelectItem>
+                      <SelectItem value="intending_artisan">
+                        Intending Artisan
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
 
             <div className="w-[200px]">
               <p className="text-left text-[14px] mb-1">State Of Residence</p>
@@ -375,7 +396,7 @@ const AdminDashboardReports = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {selectedStateLGASResidenceFormatted.map((item) => {
+                    {selectedStateLGASResidenceFormatted?.map((item) => {
                       return (
                         <SelectItem value={item?.value}>
                           {item?.label}
@@ -470,147 +491,128 @@ const AdminDashboardReports = () => {
             </div>
 
             <Button
-            className="bg-emerald-700 mt-auto"
-              onClick={() => search()}
-              disabled={loading}>
-              {loading ? (
-                <SewingPinFilledIcon className="animate-spin" />
-              ) : (
-                "Search"
-              )}
-            </Button>
+                className="bg-emerald-700 mt-auto"
+                onClick={search}
+                disabled={loading}>
+                {loading ? <SewingPinFilledIcon className="animate-spin" /> : "Search"}
+              </Button>
 
-            <Button
-              className="bg-red-500 text-[white] mt-auto hover:bg-gray-300"
-              onClick={() => clear()}
-              disabled={loading}>
-              Clear <Cross1Icon />
-            </Button>
+              <Button
+                className="bg-red-500 text-[white] mt-auto hover:bg-gray-300"
+                onClick={clear}
+                disabled={loading}>
+                Clear <Cross1Icon />
+              </Button>
 
-            <Button
-              className="bg-slate-500 text-[white] mt-auto hover:bg-gray-300"
-              onClick={() => showAll()}
-              disabled={loading}>
-              Show All <DashboardIcon />
-            </Button>
-          </div>
-        </div>
-
-        <div>
-          <div className="w-full flex justify-end gap-2 mb-3">
-            {!users?.length ? null : (
-              <>
-              
-              <CSVLink data={csvData}>
-                <Button className=" mt-auto ">
-                  Download <DownloadIcon />
-                </Button>
-              </CSVLink>
-              <Button className="mt-auto" onClick={generatePDF}>
-              Download PDF <DownloadIcon />
-            </Button>
-            </>
-            )}
+              <Button
+                className="bg-slate-500 text-[white] mt-auto hover:bg-gray-300"
+                onClick={showAll}
+                disabled={loading}>
+                Show All <DashboardIcon />
+              </Button>
+            </div>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-200">
-                <TableHead>SN</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>NIN</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Gender</TableHead>
-                <TableHead>Residence</TableHead>
-                <TableHead>Origin</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="border-gray-200 border-[1px]">
-              {(currentItems || [])?.map((user, index) => {
-                return (
-                  <TableRow
-                    key={user?._id}
-                    className="border-[1px] border-gray-200  ">
-                      <TableCell className="text-left">
-                      {index + 1 + (currentPage - 1) * itemsPerPage}
-                    </TableCell>
-                    <TableCell className="text-left">
-                      <div className="text-[16px]">
-                        {user.firstName} {user.lastName}
-                      </div>
-                      <div className="text-[12px] font-[600] text-gray-600">
-                        {user.email}
-                      </div>
-                    </TableCell>
-
-                    <TableCell className="text-left">
-                      {formatString(`${user.role || ""}`)}
-                    </TableCell>
-                    <TableCell className="text-left">{user.nin}</TableCell>
-
-                    <TableCell className="text-left">
-                      {user.phoneNumber}
-                    </TableCell>
-
-                    <TableCell className="text-left capitalize">
-                      {user.gender || "---"}
-                    </TableCell>
-
-                    <TableCell className="text-left">
-                      <div className="text-[12px] font-[600] text-gray-600">
-                        {user.stateOfResidence}
-                      </div>
-                      <div className="text-[12px] font-[600] text-gray-600">
-                        {user.lgaOfResidence}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-left">
-                      <div className="text-[12px] font-[600] text-gray-600">
-                        {user.stateOfOrigin}
-                      </div>
-                      <div className="text-[12px] font-[600] text-gray-600">
-                        {user.lga}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
           <div className="mt-4">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() =>
-                        handlePageChange(Math.max(1, currentPage - 1))
-                      }
-                      disabled={currentPage === 1}
-                    />
-                  </PaginationItem>
-                  {[...Array(totalPages)].map((_, index) => (
-                    <PaginationItem key={index}>
-                      <PaginationLink
-                        onClick={() => handlePageChange(index + 1)}
-                        isActive={currentPage === index + 1}
-                      >
-                        {index + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() =>
-                        handlePageChange(Math.min(totalPages, currentPage + 1))
-                      }
-                      disabled={currentPage === totalPages}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+            {/* Download Buttons */}
+            <div className="w-full flex justify-end gap-2 mb-3">
+              {users?.length > 0 && (
+                <>
+                  <CSVLink data={csvData}>
+                    <Button className="mt-auto">
+                      Download CSV <DownloadIcon />
+                    </Button>
+                  </CSVLink>
+                  <Button className="mt-auto" onClick={generatePDF}>
+                    Download PDF <DownloadIcon />
+                  </Button>
+                </>
+              )}
             </div>
 
+            {/* Users Table */}
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-200">
+                  <TableHead>SN</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>NIN</TableHead>
+                  <TableHead>Phone</TableHead>
+                  <TableHead>Gender</TableHead>
+                  <TableHead>Residence</TableHead>
+                  <TableHead>Origin</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {users.map((user, index) => (
+                  <TableRow key={user?._id}>
+                    <TableCell>
+                      {index + 1 + (pagination.currentPage - 1) * pagination.limit}
+                    </TableCell>
+                    <TableCell>
+                      <div>{user.firstName} {user.lastName}</div>
+                      <div className="text-sm text-gray-500">{user.email}</div>
+                    </TableCell>
+                    <TableCell>{formatString(user.role || "")}</TableCell>
+                    <TableCell>{user.nin}</TableCell>
+                    <TableCell>{user.phoneNumber}</TableCell>
+                    <TableCell className="capitalize">{user.gender || "---"}</TableCell>
+                    <TableCell>
+                      <div>{user.stateOfResidence}</div>
+                      <div className="text-sm text-gray-500">{user.lgaOfResidence}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div>{user.stateOfOrigin}</div>
+                      <div className="text-sm text-gray-500">{user.lga}</div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {/* Pagination */}
+            {pagination.totalPages > 0 && (
+              <div className="mt-4 flex flex-col items-center">
+                <Pagination>
+  <PaginationContent>
+    <PaginationItem>
+      <PaginationPrevious
+        onClick={() => handlePageChange(Math.max(1, pagination?.currentPage - 1))}
+        disabled={pagination?.currentPage === 1}
+      />
+    </PaginationItem>
+
+    {/* Display a limited number of page links around the current page */}
+    {Array.from({ length: Math.min(pagination?.totalPages, 5) }, (_, index) => {
+      const pageNumber = index + 1;
+      const distanceFromCurrent = Math.abs(pageNumber - pagination?.currentPage);
+      const showLink = distanceFromCurrent <= 2 || pageNumber === 1 || pageNumber === pagination?.totalPages;
+
+      return showLink && (
+        <PaginationItem key={index} active={pagination?.currentPage === pagination?.pageNumber}>
+          <PaginationLink onClick={() => handlePageChange(pageNumber)}>
+            {pageNumber}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    })}
+
+    <PaginationItem>
+      <PaginationNext
+        onClick={() => handlePageChange(Math.min(pagination?.totalPages, pagination?.currentPage + 1))}
+        disabled={pagination?.currentPage === pagination?.totalPages}
+      />
+    </PaginationItem>
+  </PaginationContent>
+</Pagination>
+
+<div className="text-sm text-gray-500 mt-2">
+  Page {pagination.currentPage} of {pagination.totalPages} 
+  | Total {pagination.totalUsers} users
+</div>
+              </div>
+            )}
           </div>
         </div>
       </DashboardPage>

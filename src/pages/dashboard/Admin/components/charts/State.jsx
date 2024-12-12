@@ -16,7 +16,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-import { fetchUserDistribution } from '../../../../../services/api'; // Assuming api.js is in the same directory
+import { fetchUserDist } from '../../../../../services/api'; // Assuming api.js is in the same directory
 import { Label } from '@/components/ui/label';
 
 const chartConfig = {
@@ -31,7 +31,7 @@ function State() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const distribution = await fetchUserDistribution();
+      const distribution = await fetchUserDist();
       const data = Object.entries(distribution).map(([state, count], index) => ({
         state,
         count: count.artisan_users + count.intending_artisans, // Combine artisans and intending artisans

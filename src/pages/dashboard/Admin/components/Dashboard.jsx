@@ -10,7 +10,7 @@ import Spinner from '../../../../components/layout/spinner';
 
 export default function Dashboard() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([]); // Make sure this is an empty array
   const [trainingCenters, setTrainingCenters] = useState([]);
   const [trainingGroups, setTrainingGroups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,28 +39,53 @@ export default function Dashboard() {
       await Promise.all([
         fetchData(`${API_BASE_URL}/training-centers`, setTrainingCenters, setError),
         fetchData(`${API_BASE_URL}/training-groups`, setTrainingGroups, setError),
-        fetchData(`${API_BASE_URL}/users`, setUsers, setError),
+        fetchData(`${API_BASE_URL}/dashboard-analytics`, setUsers, setError),
       ]);
       setLoading(false);
     };
     fetchAllData();
   }, []);
 
-  const genderData = useMemo(() => {
-    return [
-      { name: 'Male', value: users.filter((u) => u.gender === 'Male').length },
-      { name: 'Female', value: users.filter((u) => u.gender === 'Female').length },
-    ];
+  // Ensure that users is an array before using filter
+  const artisanGenderData = useMemo(() => {
+    if (Array.isArray(users)) {
+      const genderDistribution = users.filter((user) => user.role === 'artisan_user');
+      const maleCount = genderDistribution.filter((user) => user.gender === 'male').length;
+      const femaleCount = genderDistribution.filter((user) => user.gender === 'female').length;
+      return [
+        { name: 'Male', value: maleCount },
+        { name: 'Female', value: femaleCount },
+      ];
+    }
+    return []; // Return an empty array if users is not an array
+  }, [users]);
+
+  const intendingArtisanGenderData = useMemo(() => {
+    if (Array.isArray(users)) {
+      const genderDistribution = users.filter((user) => user.role === 'intending_artisan');
+      const maleCount = genderDistribution.filter((user) => user.gender === 'male').length;
+      const femaleCount = genderDistribution.filter((user) => user.gender === 'female').length;
+      return [
+        { name: 'Male', value: maleCount },
+        { name: 'Female', value: femaleCount },
+      ];
+    }
+    return []; // Return an empty array if users is not an array
   }, [users]);
 
   const certificationData = useMemo(() => {
-    return [
-      { name: 'Certified', value: users.filter((u) => u.certified).length },
-      { name: 'Non-Certified', value: users.length - users.filter((u) => u.certified).length },
-    ];
+    if (Array.isArray(users)) {
+      const certifiedCount = users.filter((user) => user.certified).length;
+      const nonCertifiedCount = users.length - certifiedCount;
+      return [
+        { name: 'Certified', value: certifiedCount },
+        { name: 'Non-Certified', value: nonCertifiedCount },
+      ];
+    }
+    return []; // Return an empty array if users is not an array
   }, [users]);
 
-  if (loading) return <div className="text-center"><Spinner/></div>;
+  if (loading) return <div className="text-center"><Spinner /></div>;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -74,11 +99,21 @@ export default function Dashboard() {
             <State />
           </div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
-          <PieChart title="Gender Distribution" data={genderData} />
+
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid  gap-4">
           <PieChart title="Certified vs Non-Certified" data={certificationData} />
         </div>
+        <div className="grid gap-4">
+          <PieChart title="Gender Distribution - Artisan Users" data={artisanGenderData} />
+        </div>
+        <div className="grid  gap-4">
+          <PieChart title="Gender Distribution - Intending Artisans" data={intendingArtisanGenderData} />
+        </div>
         <Calendar />
+
+        </div>
+        
       </div>
     </div>
   );
