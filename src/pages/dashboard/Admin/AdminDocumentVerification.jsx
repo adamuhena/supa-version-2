@@ -125,9 +125,9 @@ const AdminDocumentVerification = () => {
                     currentItems.map((doc, index) => (
                       <TableRow key={doc._id}>
                         <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage} </TableCell>
-                        <TableCell>{doc.user.firstName} {doc.user.lastName}</TableCell>
-                        <TableCell>{doc.type}</TableCell>
-                        <TableCell>{doc.purpose}</TableCell>
+                        <TableCell>{doc.user?.firstName} {doc.user?.lastName}</TableCell>
+                        <TableCell>{doc?.type}</TableCell>
+                        <TableCell>{doc?.purpose}</TableCell>
                         <TableCell>
                           <Badge variant={doc.status === 'approved' ? 'success' : doc.status === 'rejected' ? 'destructive' : 'default'}>
                             {doc.status}
