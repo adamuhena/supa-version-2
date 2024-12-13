@@ -20,18 +20,19 @@ import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
 import Spinner from "../../components/Spinner";
 
+
 export default function SignupForm() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const location = useLocation();
   const initialTab = location.state?.tab || "artisan_user";
-  const [signupAs, setRole] = useState(initialTab); // Default role is 'artisan_user'
+  const [signupAs, setRole] = useState(initialTab);
   const [formData, setFormData] = useState({
     nin: "",
     email: "",
     phoneNumber: "",
     password: "",
     confirmPassword: "",
-    trainingCentreName: "", // Only for training_center
+    trainingCentreName: "",
     regNum: "",
   });
   const [loading, setLoading] = useState(false);
@@ -58,9 +59,45 @@ export default function SignupForm() {
   function isOnlyNumbers(str) {
     return /^\d+$/.test(str);
   }
+  const setAuthState = (userData) => {
+    // Set is logged in flag
+    localStorage.setItem('isLoggedIn', 'true');
+  
+    // Handle different user types
+    if (userData.trainingCenter.role === 'training_center') {
+      // For training center
+      localStorage.setItem('userRole', userData.trainingCenter.role);
+      localStorage.setItem('userId', userData.trainingCenter._id);
+      localStorage.setItem('isFirstTimeUser', userData.trainingCenter.agree || false);
+      localStorage.setItem('trainingCentreName', userData.trainingCenter.trainingCentreName);
+      localStorage.setItem('regNum', userData.trainingCenter.regNum);
+    } else {
+      // For artisan and intending artisan
+      localStorage.setItem('userRole', userData.user.role);
+      localStorage.setItem('userId', userData.user._id);
+      localStorage.setItem('isFirstTimeUser', userData.user.agree || false);
+    }
+  
+    // Handle tokens
+    localStorage.setItem(
+      'accessToken',
+      typeof userData.accessToken === "object"
+        ? userData.accessToken.accessToken
+        : userData.accessToken
+    );
+  
+    localStorage.setItem(
+      'refreshToken',
+      typeof userData.refreshToken === "object"
+        ? userData.refreshToken.refreshToken
+        : userData.refreshToken
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
 
     // START VALIDATION
     let erroMsg = "";
@@ -96,93 +133,91 @@ export default function SignupForm() {
       return toast.error(erroMsg, { position: "top-right" });
     }
     // END VALIDATION
-
-    setLoading(true);
-
-    const endpoint =
-      signupAs === "training_center"
-        ? `${API_BASE_URL}/training-centers/register`
-        : `${API_BASE_URL}/signup`;
-
-    const payload =
-      signupAs === "training_center"
-        ? {
-            trainingCentreName: formData.trainingCentreName,
-            regNum: formData.regNum,
-            email: formData.email,
-            phoneNumber: formData.phoneNumber,
-            password: formData.password,
-            confirm_password: formData.confirmPassword,
-            agree: false,
-            role: signupAs,
+    
+        const endpoint =
+          signupAs === "training_center"
+            ? `${API_BASE_URL}/training-centers/register`
+            : `${API_BASE_URL}/signup`;
+        
+        const payload =
+          signupAs === "training_center"
+            ? {
+                trainingCentreName: formData.trainingCentreName,
+                regNum: formData.regNum,
+                email: formData.email,
+                phoneNumber: formData.phoneNumber,
+                password: formData.password,
+                confirm_password: formData.confirmPassword,
+                agree: false,
+                role: signupAs,
+              }
+            : {
+                role: signupAs,
+                nin: formData.nin,
+                email: formData.email,
+                phoneNumber: formData.phoneNumber,
+                password: formData.password,
+                confirm_password: formData.confirmPassword,
+                agree: false,
+              };
+        
+        try {
+          const response = await axios.post(endpoint, payload, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+        
+          if (response.data.success) {
+            // Set authentication state
+            setAuthState(response.data.data);
+    
+            // Success toast
+            toast.success("Signup successful 🚀!", {
+              description: "Login Successfully",
+              position: "top-right",
+              duration: 2000,
+            });
+    
+            // Redirect based on role
+            setTimeout(() => {
+              const role = response.data.data.trainingCenter 
+                ? response.data.data.trainingCenter.role 
+                : response.data.data.user.role;
+            
+              switch(role) {
+                case "artisan_user":
+                  navigate("/register/artisan");
+                  break;
+                case "intending_artisan":
+                  navigate("/register/intendingArtisan");
+                  break;
+                case "training_center":
+                  navigate("/register/trainingcenter");
+                  break;
+                default:
+                  navigate("/dashboard");
+              }
+            }, 2000);
+          } else {
+            toast.error(`Signup failed: ${response.data.message}`);
           }
-        : {
-            role: signupAs,
-            nin: formData.nin,
-            email: formData.email,
-            phoneNumber: formData.phoneNumber,
-            password: formData.password,
-            confirm_password: formData.confirmPassword,
-            agree: false,
-          };
-
-    try {
-      const response = await axios.post(endpoint, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.data.success) {
-        toast("Signup successful 🚀!", {
-          position: "top-right",
-          description: "login Successfully",
-          duration: 2000,
-          style: { textAlign: "left" },
-        });
-
-        const { accessToken, refreshToken } = response.data.data;
-
-        // Check if accessToken is an object and extract the token string if necessary
-        const accessTokenString = typeof accessToken === 'object' ? accessToken.accessToken : accessToken;
-        const refreshTokenString = typeof refreshToken === 'object' ? refreshToken.refreshToken : refreshToken;
+        } catch (error) {
+          const message = "Error!";   
+          const description =
+            typeof error?.response?.data === "string"
+              ? error?.response?.data
+              : error?.response?.data?.message || "An error occurred. Please try again.";
         
-        // Extract training center details
-        const { _id, role, agree } = response.data.data.trainingCenter;
-        
-        // Save user details and tokens to localStorage
-        localStorage.setItem("userRole", role);
-        localStorage.setItem("isFirstTimeUser", agree);
-        localStorage.setItem("userId", _id);
-        localStorage.setItem("accessToken", accessTokenString);
-        localStorage.setItem("refreshToken", refreshTokenString);
-        
-
-        // Redirect user to the dashboard or appropriate page
-        setTimeout(() => {
-          navigate("/login"); // Adjust this URL as per your app's routing
-        }, 2000);
-      } else {
-        alert(`Signup failed: ${response.data.message}`);
-      }
-    } catch (error) {
-      const message = "Error!";
-      const description =
-        typeof error?.response?.data === "string"
-          ? error?.response?.data
-          : error?.response?.data?.message || "An error occurred. Please try again.";
-
-      toast.error(message, {
-        description,
-        position: "top-right",
-        style: { textAlign: "left" },
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
+          toast.error(message, {
+            description,
+            position: "top-right",
+            style: { textAlign: "left" },
+          });
+        } finally {
+          setLoading(false);
+        }
+      };
   return (
     <section className="relative bg-slate-900 pt-40 pb-10 min-h-screen">
       <div className="flex items-center justify-center absolute top-0 left-0 right-0 bottom-0">

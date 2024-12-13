@@ -4,6 +4,7 @@ import { geoMercator, geoPath } from 'd3-geo';
 import { feature } from 'topojson-client';
 import MapTooltip from './MapTooltip';
 import { fetchUserDist } from '../services/api';
+// import nigeriaTopoData from '../data/nigeriaTopo.json';
 import nigeriaTopoData from '../data/nigeriaTopo.json'; // Import the TopoJSON file
 import { stateData } from '../data/nigerianStates'; // Your state data
 

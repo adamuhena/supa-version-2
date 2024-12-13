@@ -13,6 +13,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const isAuthenticated = localStorage.getItem("userId");
   const accessToken = localStorage.getItem("accessToken");
   const loginAs = localStorage.getItem("userRole");
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(null)
   const location = useLocation();
   const logout = useLogout();
 
@@ -34,9 +35,10 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
             });
           }
           setUserRole(response.data.data.role);
+          setIsFirstTimeUser(response.data.data.agree)
 
           console.log('My role ', response.data.data.role)
-
+          console.log('isFirstTimeUser ', response.data.data.agree)
 
         }
       } catch (err) {
@@ -44,6 +46,10 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
         setError("Failed to fetch user role. Please try again.");
       } finally {
         setLoading(false);
+        // Check if user was previously authenticated and now lacks credentials
+        if (isAuthenticated !== localStorage.getItem("userId")) {
+          logout(); // Logout only if necessary
+        }
       }
     };
 
@@ -52,15 +58,24 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 
   // Handle redirect for already logged-in users on the login page
   if (location.pathname === "/login" && accessToken && userRole) {
-    const rolePaths = {
-      admin: "/admin/dashboard",
-      superadmin: "/admin/dashboard",
-      artisan_user: "/trainee/dashboard",
-      intending_artisan: "/trainee/dashboard",
-      training_center: "/trainingcenter/dashboard",
-    };
+    if (isFirstTimeUser === false) {
+      const rolePaths = {
+        artisan_user: "/register/artisan",
+        intending_artisan: "/register/intendingArtisan",
+        training_center: "/register/trainingcenter",
+      }
+      return <Navigate to={rolePaths[userRole] || "/"} replace />;
+    } else {
+      const rolePaths = {
+        admin: "/admin/dashboard",
+        superadmin: "/admin/dashboard",
+        artisan_user: "/trainee/dashboard",
+        intending_artisan: "/trainee/dashboard",
+        training_center: "/trainingcenter/dashboard",
+      }
+      return <Navigate to={rolePaths[userRole] || "/"} replace />;
+    }
 
-    return <Navigate to={rolePaths[userRole] || "/"} replace />;
   }
 
   // Redirect unauthenticated users to the login page

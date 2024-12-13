@@ -89,7 +89,7 @@ export default function Metrics() {
       <MetricCard title="Registered Artisans" value={artisan_userCount} icon={Users} />
       <MetricCard title="Intending Artisans" value={intending_artisanCount} icon={UserPlus} />
       <MetricCard title="Training Centers" value={training_centerCount} icon={School} />
-      <MetricCard title="Training Center Groups" value={training_groupCount} icon={UsersRound} />
+      <MetricCard title="Trade Area Groups" value={training_groupCount} icon={UsersRound} />
     </div>
   );
 }

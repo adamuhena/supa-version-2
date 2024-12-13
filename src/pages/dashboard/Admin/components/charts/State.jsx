@@ -175,9 +175,9 @@ function State() {
     </CardContent>
     <CardFooter className="flex-col items-start gap-2 text-xs">
       <div className="flex gap-2 font-medium text-emerald-600 leading-none">
-        <p>Most users are from: {mostUsersState.state}</p>
+        <p>Most Trainnee are from: {mostUsersState.state}</p>
         <p>
-          Total Users: {chartData.reduce((acc, curr) => acc + curr.count, 0) || 0}
+          Total Trainnee: {chartData.reduce((acc, curr) => acc + curr.count, 0) || 0}
         </p>
       </div>
       <div className="leading-none text-xs text-slate-600 text-muted-foreground">
