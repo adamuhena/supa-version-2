@@ -33,7 +33,7 @@ export default function Metrics() {
         });
 
         if (response.data.success) {
-          setUsers(response.data.data.userCounts || []);
+          setUsers(response.data.data?.[0]?.userCounts || []);
         }
       } catch (error) {
         console.error('Error fetching user counts:', error);

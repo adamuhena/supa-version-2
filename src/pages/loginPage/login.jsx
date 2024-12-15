@@ -282,7 +282,7 @@ export default function LoginForm() {
                 </CardContent>
                 <CardFooter className="flex justify-center">
                   <Link
-                    to="/forgot-password"
+                    to="/forget-password"
                     className="text-sm text-blue-600 hover:underline">
                     Forgot password?
                   </Link>

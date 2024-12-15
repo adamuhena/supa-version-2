@@ -26,6 +26,7 @@ import AdminSectors from "./pages/dashboard/Admin/sectors";
 import TrainingCenterBiodata from "./pages/dashboard/trainingCenter/TrainingCenterBiodata";
 import ContactUs from "./pages/contact/Contact";
 import UserCert from "./pages/dashboard/Admin/userMgt/UserManagement";
+import ForgotPassword from "./pages/loginPage/ForgetPassword";
 
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard"
 
@@ -62,6 +63,15 @@ function App() {
           element={
             <PublicRoute>
               <LoginForm />
+            </PublicRoute>
+          }
+        />
+
+<Route
+          path="/forget-password"
+          element={
+            <PublicRoute>
+              <ForgotPassword />
             </PublicRoute>
           }
         />

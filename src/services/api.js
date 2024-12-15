@@ -11,8 +11,60 @@ const api = axios.create({
 
 
 
-export const fetchUserDist = async () => {
+// export const fetchUserDist = async () => {
 
+//   if (!accessToken) {
+//     console.error('Access token is missing');
+//     return {}; // Return empty object if token is not found
+//   }
+
+//   try {
+//     // Make sure to pass the access token in the Authorization header
+//     const response = await axios.get(`${API_BASE_URL}/dashboard-analytics`, {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+
+//     console.log('Full response data:', response.data); // Log full response data for debugging
+
+//     const dist = {};
+
+//     // Access locationDistributions directly
+//     const locationDistributions = response.data.locationDistributions || [];
+//     console.log('Location distributions:', locationDistributions);
+
+//     if (!Array.isArray(locationDistributions)) {
+//       console.error('Expected locationDistributions to be an array');
+//       return {};
+//     }
+
+//     locationDistributions.forEach((user) => {
+//       const { role, stateOfResidence } = user._id;
+
+//       if (!stateOfResidence) return;
+
+//       const state = stateOfResidence.toLowerCase();
+//       if (!dist[state]) {
+//         dist[state] = { artisan_users: 0, intending_artisans: 0 };
+//       }
+
+//       if (role === 'artisan_user') {
+//         dist[state].artisan_users += user.count;
+//       } else if (role === 'intending_artisan') {
+//         dist[state].intending_artisans += user.count;
+//       }
+//     });
+
+//     return dist;
+//   } catch (error) {
+//     console.error('Error fetching user distribution:', error);
+//     throw error; // Rethrow error after logging
+//   }
+// };
+
+
+export const fetchUserDist = async () => {
   if (!accessToken) {
     console.error('Access token is missing');
     return {}; // Return empty object if token is not found
@@ -30,8 +82,10 @@ export const fetchUserDist = async () => {
 
     const dist = {};
 
-    // Access locationDistributions directly
-    const locationDistributions = response.data.data.locationDistributions || [];
+    // Access locationDistributions correctly from the response structure
+    const locationDistributions =
+      response.data.data?.[0]?.locationDistributions || [];
+
     console.log('Location distributions:', locationDistributions);
 
     if (!Array.isArray(locationDistributions)) {
@@ -62,8 +116,6 @@ export const fetchUserDist = async () => {
     throw error; // Rethrow error after logging
   }
 };
-
-
 
 
 

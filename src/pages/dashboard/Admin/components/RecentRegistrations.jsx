@@ -110,7 +110,7 @@ export default function RecentRegistrations() {
         });
 
         if (response.data.success) {
-          const profileCompleteness = response.data.data.profileCompleteness;
+          const profileCompleteness = response.data.data?.[0]?.profileCompleteness;
 
           // Aggregate the visitors based on profile completion status
           let completedCount = 0;
