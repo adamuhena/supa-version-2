@@ -514,26 +514,53 @@ function TrainingCenterGroup() {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
+  // const fetchData = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const [usersRes, trainingCentersRes] = await Promise.all([
+  //       axios.get(`${API_BASE_URL}/users`, {
+  //         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+  //       }),
+  //       axios.get(`${API_BASE_URL}/training-centers`, {
+  //         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+  //       }),
+  //     ]);
+  //     setUsers(usersRes.data.data || []);
+  //     setTrainingCenters(trainingCentersRes.data.data || []);
+  //   } catch (err) {
+  //     setError('Failed to fetch data');
+  //     console.error(err);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const fetchData = async (page = 1, limit = 25) => {
     setIsLoading(true);
     try {
       const [usersRes, trainingCentersRes] = await Promise.all([
-        axios.get(`${API_BASE_URL}/users`, {
+        axios.get(`${API_BASE_URL}/userscert`, {
+          params: { page, limit },
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
         }),
-        axios.get(`${API_BASE_URL}/training-centers`, {
+        axios.get(`${API_BASE_URL}/pagetraining-centers`, {
+          params: { page, limit },
           headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
         }),
       ]);
-      setUsers(usersRes.data.data || []);
-      setTrainingCenters(trainingCentersRes.data.data || []);
+
+      console.log('userResponse: ', usersRes);
+  
+      setUsers(usersRes.data.data.users || []);
+      setTrainingCenters(trainingCentersRes.data.data.trainingCenters || []);
     } catch (err) {
-      setError('Failed to fetch data');
+      setError("Failed to fetch data");
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   const handleCreateGroup = async () => {
     if (!groupName.trim()) {

@@ -66,12 +66,15 @@ const EnhancedTrainingManagement = () => {
     console.log('Updated users options:', options); // Add this line
   }, [users]);
 
-  const fetchUserRole = async () => {
+  const fetchUserRole = async (page = 1, limit = 25)  => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/users`, {
+      const response = await axios.get(`${API_BASE_URL}/userscert`, {
+        params: { page, limit },
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      setUserRole(response.data.role);
+
+      console.log('user Data: ', response)
+      setUserRole(response.data.data.users.role);
     } catch (error) {
       console.error('Error fetching user role:', error);
     }
@@ -112,14 +115,15 @@ const EnhancedTrainingManagement = () => {
     }
   };
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (page = 1, limit = 25) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/users`, {
+          const response = await axios.get(`${API_BASE_URL}/userscert`, {
+            params: { page, limit },
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      
+
       // If data is not an array, fall back to an empty array
-      const usersData = Array.isArray(response.data.data) ? response.data.data : [];
+      const usersData = Array.isArray(response.data.data.users) ? response.data.data.users : [];
       setUsers(usersData);
       console.log('Fetched users:', usersData);
     } catch (error) {
