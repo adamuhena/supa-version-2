@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";import DashboardPage from "@/components/layout/DashboardLayout";
+import { useNavigate } from "react-router-dom";
+import DashboardPage from "@/components/layout/DashboardLayout";
 import PasswordChange from "@/components/PasswordChange";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import useLogout from "@/pages/loginPage/logout";
 import axios from "axios";
-import { LogOut, Minus, Plus, Upload, UserCircle } from 'lucide-react';
+import { LogOut, Minus, Plus, Upload, UserCircle } from "lucide-react";
+import UploadButton from "@/components/UploadButton";
 
 //import { url } from "inspector";
 
@@ -70,9 +78,9 @@ const Biodata = () => {
           throw new Error("User ID not found in localStorage");
         }
 
-        const response = await axios.get(`${API_BASE_URL}/users/${userId}`,{
-          headers: { 
-            Authorization: `Bearer ${accessToken}`, 
+        const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
           },
         });
         const userData = response.data;
@@ -82,7 +90,10 @@ const Biodata = () => {
             ...prevUser,
             ...userData.data,
             education: { ...prevUser.education, ...userData.data.education },
-            bankAccount: { ...prevUser.bankAccount, ...userData.data.bankAccount },
+            bankAccount: {
+              ...prevUser.bankAccount,
+              ...userData.data.bankAccount,
+            },
           }));
         } else {
           console.warn("Unexpected API response:", userData);
@@ -114,14 +125,14 @@ const Biodata = () => {
       if (!token) {
         throw new Error("No token found. Please log in again.");
       }
-  
+
       const sectionChanges = Object.keys(changes)
         .filter((key) => key.startsWith(section))
         .reduce((obj, key) => {
           obj[key.replace(`${section}.`, "")] = changes[key];
           return obj;
         }, {});
-  
+
       if (Object.keys(sectionChanges).length === 0) {
         toast({
           title: "No changes",
@@ -131,7 +142,7 @@ const Biodata = () => {
         });
         return;
       }
-  
+
       const response = await axios.put(
         `${API_BASE_URL}/update/${localStorage.getItem("userId")}`,
         sectionChanges,
@@ -141,12 +152,14 @@ const Biodata = () => {
           },
         }
       );
-  
+
       if (response.data.success) {
         setUser((prevUser) => ({ ...prevUser, ...sectionChanges }));
         setChanges((prevChanges) => {
           const updatedChanges = { ...prevChanges };
-          Object.keys(sectionChanges).forEach((key) => delete updatedChanges[`${section}.${key}`]);
+          Object.keys(sectionChanges).forEach(
+            (key) => delete updatedChanges[`${section}.${key}`]
+          );
           return updatedChanges;
         });
         toast({
@@ -160,6 +173,45 @@ const Biodata = () => {
       }
     } catch (error) {
       console.error(`Error updating ${section}:`, error);
+      toast({
+        title: "Error",
+        description: `Failed to update ${section}`,
+        status: "error",
+        duration: 3000,
+      });
+    }
+  };
+
+  const updateProfilePicture = async (url) => {
+    try {
+      const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
+      if (!token) {
+        throw new Error("No token found. Please log in again.");
+      }
+
+      const response = await axios.put(
+        `${API_BASE_URL}/update/${localStorage.getItem("userId")}`,
+        { profileImage: url },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token here
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setUser((prevUser) => ({ ...prevUser }));
+
+        toast({
+          title: "Success",
+          description: `Picture updated successfully`,
+          status: "success",
+          duration: 3000,
+        });
+      } else {
+        throw new Error(response.data.message || "Failed to update");
+      }
+    } catch (error) {
       toast({
         title: "Error",
         description: `Failed to update ${section}`,
@@ -190,10 +242,12 @@ const Biodata = () => {
   const removeArrayItem = (section, index) => {
     setChanges((prevChanges) => ({
       ...prevChanges,
-      [section]: (prevChanges[section] || user[section]).filter((_, i) => i !== index),
+      [section]: (prevChanges[section] || user[section]).filter(
+        (_, i) => i !== index
+      ),
     }));
   };
-  
+
   return (
     <DashboardPage title="User Profile" href="/trainee/dashboard">
       <div className="container mx-auto p-6">
@@ -201,7 +255,8 @@ const Biodata = () => {
           <h1 className="text-2xl font-bold">My Profile</h1>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => navigate("/biodata")}>
-              <UserCircle className="mr-2 h-4 w-4" />Update Profile 
+              <UserCircle className="mr-2 h-4 w-4" />
+              Update Profile
             </Button>
             <Button variant="destructive" onClick={logout}>
               <LogOut className="mr-2 h-4 w-4" /> Logout
@@ -212,7 +267,11 @@ const Biodata = () => {
         <Card className="border p-4 rounded-lg shadow-md mb-6">
           <CardContent className="flex items-center space-x-4">
             <div className="w-24 h-24 rounded-full overflow-hidden">
-              <img src={user.profileImage || '/placeholder.svg?height=96&width=96'} alt="Profile" className="w-full h-full object-cover" />
+              <img
+                src={user.profileImage || "/placeholder.svg?height=96&width=96"}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <h2 className="text-2xl font-bold">{`${user.firstName} ${user.lastName}`}</h2>
@@ -222,15 +281,35 @@ const Biodata = () => {
             <div>
               <Input
                 type="file"
-                onChange={(e) => handleFileUpload('profileImage', e.target.files[0])}
+                onChange={(e) =>
+                  handleFileUpload("profileImage", e.target.files[0])
+                }
                 className="hidden"
                 id="profile-image-upload"
               />
-              <Label htmlFor="profile-image-upload" className="cursor-pointer">
+              <UploadButton
+                fileUrl={user?.profileImage}
+                handleFileChange={(url) => {
+                  setUser((old) => {
+                    return { ...old, profileImage: url };
+                  });
+                  updateProfilePicture(url);
+                }}
+                removeFile={() => {
+                  const url = "";
+                  setUser((old) => {
+                    return { ...old, profileImage: url };
+                  });
+                  updateProfilePicture(url);
+                }}
+              />
+              {/* <Label htmlFor="profile-image-upload" className="cursor-pointer">
+
+              
                 <Button variant="outline" as="span">
                   <Upload className="mr-2 h-4 w-4" /> Update Profile Picture
                 </Button>
-              </Label>
+              </Label> */}
             </div>
           </CardContent>
         </Card>
@@ -251,25 +330,68 @@ const Biodata = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {['firstName', 'middleName', 'lastName', 'phoneNumber', 'nin', 'email', 'street', 'stateOfOrigin', 'senatorialDistrict', 'lga', 'stateOfResidence', 'lgaOfResidence'].map((field) => (
+                  {[
+                    "firstName",
+                    "middleName",
+                    "lastName",
+                    "phoneNumber",
+                    "nin",
+                    "email",
+                    "street",
+                    "stateOfOrigin",
+                    "senatorialDistrict",
+                    "lga",
+                    "stateOfResidence",
+                    "lgaOfResidence",
+                  ].map((field) => (
                     <div key={field} className="space-y-2">
-                      <Label htmlFor={field}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
+                      <Label htmlFor={field}>
+                        {field
+                          .split(/(?=[A-Z])/)
+                          .join(" ")
+                          .charAt(0)
+                          .toUpperCase() +
+                          field
+                            .split(/(?=[A-Z])/)
+                            .join(" ")
+                            .slice(1)}
+                      </Label>
                       <Input
                         id={field}
-                        value={changes[`personalInfo.${field}`] ?? user[field] ?? ''}
-                        onChange={(e) => handleUpdate(`personalInfo.${field}`, e.target.value)}
+                        value={
+                          changes[`personalInfo.${field}`] ?? user[field] ?? ""
+                        }
+                        onChange={(e) =>
+                          handleUpdate(`personalInfo.${field}`, e.target.value)
+                        }
                       />
                     </div>
                   ))}
-                  {['gender', 'maritalStatus'].map((field) => (
+                  {["gender", "maritalStatus"].map((field) => (
                     <div key={field} className="space-y-2">
-                      <Label htmlFor={field}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
-                      <Select onValueChange={(value) => handleUpdate(`personalInfo.${field}`, value)} value={changes[`personalInfo.${field}`] ?? user[field] ?? ''}>
+                      <Label htmlFor={field}>
+                        {field
+                          .split(/(?=[A-Z])/)
+                          .join(" ")
+                          .charAt(0)
+                          .toUpperCase() +
+                          field
+                            .split(/(?=[A-Z])/)
+                            .join(" ")
+                            .slice(1)}
+                      </Label>
+                      <Select
+                        onValueChange={(value) =>
+                          handleUpdate(`personalInfo.${field}`, value)
+                        }
+                        value={
+                          changes[`personalInfo.${field}`] ?? user[field] ?? ""
+                        }>
                         <SelectTrigger>
                           <SelectValue placeholder={`Select ${field}`} />
                         </SelectTrigger>
                         <SelectContent>
-                          {field === 'gender' ? (
+                          {field === "gender" ? (
                             <>
                               <SelectItem value="male">Male</SelectItem>
                               <SelectItem value="female">Female</SelectItem>
@@ -291,22 +413,42 @@ const Biodata = () => {
                     <Label htmlFor="hasDisability">Has Disability</Label>
                     <Switch
                       id="hasDisability"
-                      checked={changes['personalInfo.hasDisability'] ?? user.hasDisability ?? false}
-                      onCheckedChange={(checked) => handleUpdate('personalInfo.hasDisability', checked)}
+                      checked={
+                        changes["personalInfo.hasDisability"] ??
+                        user.hasDisability ??
+                        false
+                      }
+                      onCheckedChange={(checked) =>
+                        handleUpdate("personalInfo.hasDisability", checked)
+                      }
                     />
                   </div>
-                  {(changes['personalInfo.hasDisability'] ?? user.hasDisability) && (
+                  {(changes["personalInfo.hasDisability"] ??
+                    user.hasDisability) && (
                     <div className="space-y-2">
                       <Label htmlFor="disabilityType">Disability Type</Label>
                       <Input
                         id="disabilityType"
-                        value={changes['personalInfo.disabilityType'] ?? user.disabilityType ?? ''}
-                        onChange={(e) => handleUpdate('personalInfo.disabilityType', e.target.value)}
+                        value={
+                          changes["personalInfo.disabilityType"] ??
+                          user.disabilityType ??
+                          ""
+                        }
+                        onChange={(e) =>
+                          handleUpdate(
+                            "personalInfo.disabilityType",
+                            e.target.value
+                          )
+                        }
                       />
                     </div>
                   )}
                 </div>
-                <Button onClick={() => submitChanges('personalInfo')} className="mt-4">Update Personal Information</Button>
+                <Button
+                  onClick={() => submitChanges("personalInfo")}
+                  className="mt-4">
+                  Update Personal Information
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -318,26 +460,53 @@ const Biodata = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {['school', 'highestQualification', 'graduationYear'].map((field) => (
-                    <div key={field} className="space-y-2">
-                      <Label htmlFor={`education-${field}`}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
-                      <Input
-                        id={`education-${field}`}
-                        value={changes[`education.${field}`] ?? user.education[field] ?? ''}
-                        onChange={(e) => handleUpdate(`education.${field}`, e.target.value)}
-                      />
-                    </div>
-                  ))}
+                  {["school", "highestQualification", "graduationYear"].map(
+                    (field) => (
+                      <div key={field} className="space-y-2">
+                        <Label htmlFor={`education-${field}`}>
+                          {field
+                            .split(/(?=[A-Z])/)
+                            .join(" ")
+                            .charAt(0)
+                            .toUpperCase() +
+                            field
+                              .split(/(?=[A-Z])/)
+                              .join(" ")
+                              .slice(1)}
+                        </Label>
+                        <Input
+                          id={`education-${field}`}
+                          value={
+                            changes[`education.${field}`] ??
+                            user.education[field] ??
+                            ""
+                          }
+                          onChange={(e) =>
+                            handleUpdate(`education.${field}`, e.target.value)
+                          }
+                        />
+                      </div>
+                    )
+                  )}
                   <div className="space-y-2">
                     <Label htmlFor="education-upload">Education Document</Label>
                     <Input
                       id="education-upload"
                       type="file"
-                      onChange={(e) => handleFileUpload('education.eduUpload', e.target.files[0])}
+                      onChange={(e) =>
+                        handleFileUpload(
+                          "education.eduUpload",
+                          e.target.files[0]
+                        )
+                      }
                     />
                   </div>
                 </div>
-                <Button onClick={() => submitChanges('education')} className="mt-4">Update Education</Button>
+                <Button
+                  onClick={() => submitChanges("education")}
+                  className="mt-4">
+                  Update Education
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -348,35 +517,69 @@ const Biodata = () => {
                 <CardTitle>Skills, Certifications, and Experience</CardTitle>
               </CardHeader>
               <CardContent>
-                <h3 className="text-lg font-semibold mb-4">Prior Skills and Certifications</h3>
-                {(changes.priorSkillsCerts ?? user.priorSkillsCerts).map((cert, index) => (
-                  <div key={index} className="mb-4 p-4 border rounded">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {['sector', 'tradeArea', 'name', 'year'].map((field) => (
-                        <div key={field} className="space-y-2">
-                          <Label htmlFor={`cert-${index}-${field}`}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
+                <h3 className="text-lg font-semibold mb-4">
+                  Prior Skills and Certifications
+                </h3>
+                {(changes.priorSkillsCerts ?? user.priorSkillsCerts).map(
+                  (cert, index) => (
+                    <div key={index} className="mb-4 p-4 border rounded">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {["sector", "tradeArea", "name", "year"].map(
+                          (field) => (
+                            <div key={field} className="space-y-2">
+                              <Label htmlFor={`cert-${index}-${field}`}>
+                                {field.charAt(0).toUpperCase() + field.slice(1)}
+                              </Label>
+                              <Input
+                                id={`cert-${index}-${field}`}
+                                value={cert[field]}
+                                onChange={(e) =>
+                                  handleArrayUpdate("priorSkillsCerts", index, {
+                                    ...cert,
+                                    [field]: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                          )
+                        )}
+                        <div className="space-y-2">
+                          <Label htmlFor={`cert-${index}-upload`}>
+                            Certificate Upload
+                          </Label>
                           <Input
-                            id={`cert-${index}-${field}`}
-                            value={cert[field]}
-                            onChange={(e) => handleArrayUpdate('priorSkillsCerts', index, { ...cert, [field]: e.target.value })}
+                            id={`cert-${index}-upload`}
+                            type="file"
+                            onChange={(e) =>
+                              handleFileUpload(
+                                `priorSkillsCerts.${index}.priUpload`,
+                                e.target.files[0]
+                              )
+                            }
                           />
                         </div>
-                      ))}
-                      <div className="space-y-2">
-                        <Label htmlFor={`cert-${index}-upload`}>Certificate Upload</Label>
-                        <Input
-                          id={`cert-${index}-upload`}
-                          type="file"
-                          onChange={(e) => handleFileUpload(`priorSkillsCerts.${index}.priUpload`, e.target.files[0])}
-                        />
                       </div>
+                      <Button
+                        variant="destructive"
+                        onClick={() =>
+                          removeArrayItem("priorSkillsCerts", index)
+                        }
+                        className="mt-2">
+                        <Minus className="mr-2 h-4 w-4" /> Remove
+                      </Button>
                     </div>
-                    <Button variant="destructive" onClick={() => removeArrayItem('priorSkillsCerts', index)} className="mt-2">
-                      <Minus className="mr-2 h-4 w-4" /> Remove
-                    </Button>
-                  </div>
-                ))}
-                <Button onClick={() => addArrayItem('priorSkillsCerts', { sector: '', tradeArea: '', name: '', year: '', priUpload: '' })}>
+                  )
+                )}
+                <Button
+                  onClick={() =>
+                    addArrayItem("priorSkillsCerts", {
+                      sector: "",
+                      tradeArea: "",
+                      name: "",
+                      year: "",
+                      priUpload: "",
+                    })
+                  }>
                   <Plus className="mr-2 h-4 w-4" /> Add Certification
                 </Button>
 
@@ -384,42 +587,90 @@ const Biodata = () => {
                 {(changes.experience ?? user.experience).map((exp, index) => (
                   <div key={index} className="mb-4 p-4 border rounded">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {['projectTitle', 'description', 'dateFrom', 'dateTo'].map((field) => (
+                      {[
+                        "projectTitle",
+                        "description",
+                        "dateFrom",
+                        "dateTo",
+                      ].map((field) => (
                         <div key={field} className="space-y-2">
-                          <Label htmlFor={`exp-${index}-${field}`}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
-                          {field === 'description' ? (
+                          <Label htmlFor={`exp-${index}-${field}`}>
+                            {field
+                              .split(/(?=[A-Z])/)
+                              .join(" ")
+                              .charAt(0)
+                              .toUpperCase() +
+                              field
+                                .split(/(?=[A-Z])/)
+                                .join(" ")
+                                .slice(1)}
+                          </Label>
+                          {field === "description" ? (
                             <Textarea
                               id={`exp-${index}-${field}`}
                               value={exp[field]}
-                              onChange={(e) => handleArrayUpdate('experience', index, { ...exp, [field]: e.target.value })}
+                              onChange={(e) =>
+                                handleArrayUpdate("experience", index, {
+                                  ...exp,
+                                  [field]: e.target.value,
+                                })
+                              }
                             />
                           ) : (
                             <Input
                               id={`exp-${index}-${field}`}
                               value={exp[field]}
-                              onChange={(e) => handleArrayUpdate('experience', index, { ...exp, [field]: e.target.value })}
+                              onChange={(e) =>
+                                handleArrayUpdate("experience", index, {
+                                  ...exp,
+                                  [field]: e.target.value,
+                                })
+                              }
                             />
                           )}
                         </div>
                       ))}
                       <div className="space-y-2">
-                        <Label htmlFor={`exp-${index}-upload`}>Experience Document</Label>
+                        <Label htmlFor={`exp-${index}-upload`}>
+                          Experience Document
+                        </Label>
                         <Input
                           id={`exp-${index}-upload`}
                           type="file"
-                          onChange={(e) => handleFileUpload(`experience.${index}.exUpload`, e.target.files[0])}
+                          onChange={(e) =>
+                            handleFileUpload(
+                              `experience.${index}.exUpload`,
+                              e.target.files[0]
+                            )
+                          }
                         />
                       </div>
                     </div>
-                    <Button variant="destructive" onClick={() => removeArrayItem('experience', index)} className="mt-2">
+                    <Button
+                      variant="destructive"
+                      onClick={() => removeArrayItem("experience", index)}
+                      className="mt-2">
                       <Minus className="mr-2 h-4 w-4" /> Remove
                     </Button>
                   </div>
                 ))}
-                <Button onClick={() => addArrayItem('experience', { projectTitle: '', description: '', dateFrom: '', dateTo: '', exUpload: '' })}>
+                <Button
+                  onClick={() =>
+                    addArrayItem("experience", {
+                      projectTitle: "",
+                      description: "",
+                      dateFrom: "",
+                      dateTo: "",
+                      exUpload: "",
+                    })
+                  }>
                   <Plus className="mr-2 h-4 w-4" /> Add Experience
                 </Button>
-                <Button onClick={() => submitChanges('skills')} className="mt-4">Update Skills and Experience</Button>
+                <Button
+                  onClick={() => submitChanges("skills")}
+                  className="mt-4">
+                  Update Skills and Experience
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -431,18 +682,38 @@ const Biodata = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {['accountName', 'accountNumber', 'bank'].map((field) => (
+                  {["accountName", "accountNumber", "bank"].map((field) => (
                     <div key={field} className="space-y-2">
-                      <Label htmlFor={`bank-${field}`}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
+                      <Label htmlFor={`bank-${field}`}>
+                        {field
+                          .split(/(?=[A-Z])/)
+                          .join(" ")
+                          .charAt(0)
+                          .toUpperCase() +
+                          field
+                            .split(/(?=[A-Z])/)
+                            .join(" ")
+                            .slice(1)}
+                      </Label>
                       <Input
                         id={`bank-${field}`}
-                        value={changes[`bankAccount.${field}`] ?? user.bankAccount[field] ?? ''}
-                        onChange={(e) => handleUpdate(`bankAccount.${field}`, e.target.value)}
+                        value={
+                          changes[`bankAccount.${field}`] ??
+                          user.bankAccount[field] ??
+                          ""
+                        }
+                        onChange={(e) =>
+                          handleUpdate(`bankAccount.${field}`, e.target.value)
+                        }
                       />
                     </div>
                   ))}
                 </div>
-                <Button onClick={() => submitChanges('bankAccount')} className="mt-4">Update Bank Account</Button>
+                <Button
+                  onClick={() => submitChanges("bankAccount")}
+                  className="mt-4">
+                  Update Bank Account
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -467,7 +738,11 @@ const Biodata = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="role">Role</Label>
-                <Select onValueChange={(value) => handleUpdate('additionalInfo.role', value)} value={changes['additionalInfo.role'] ?? user.role ?? ''}>
+                <Select
+                  onValueChange={(value) =>
+                    handleUpdate("additionalInfo.role", value)
+                  }
+                  value={changes["additionalInfo.role"] ?? user.role ?? ""}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
@@ -475,7 +750,9 @@ const Biodata = () => {
                     <SelectItem value="superadmin">Superadmin</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="artisan_user">Artisan User</SelectItem>
-                    <SelectItem value="intending_artisan">Intending Artisan</SelectItem>
+                    <SelectItem value="intending_artisan">
+                      Intending Artisan
+                    </SelectItem>
                     <SelectItem value="regular_user">Regular User</SelectItem>
                   </SelectContent>
                 </Select>
@@ -484,28 +761,48 @@ const Biodata = () => {
                 <Label htmlFor="certifiedStatus">Certified Status</Label>
                 <Switch
                   id="certifiedStatus"
-                  checked={changes['additionalInfo.certifiedStatus'] ?? user.certifiedStatus ?? false}
-                  onCheckedChange={(checked) => handleUpdate('additionalInfo.certifiedStatus', checked)}
+                  checked={
+                    changes["additionalInfo.certifiedStatus"] ??
+                    user.certifiedStatus ??
+                    false
+                  }
+                  onCheckedChange={(checked) =>
+                    handleUpdate("additionalInfo.certifiedStatus", checked)
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="licenseStatus">License Status</Label>
                 <Switch
                   id="licenseStatus"
-                  checked={changes['additionalInfo.licenseStatus'] ?? user.licenseStatus ?? false}
-                  onCheckedChange={(checked) => handleUpdate('additionalInfo.licenseStatus', checked)}
+                  checked={
+                    changes["additionalInfo.licenseStatus"] ??
+                    user.licenseStatus ??
+                    false
+                  }
+                  onCheckedChange={(checked) =>
+                    handleUpdate("additionalInfo.licenseStatus", checked)
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="agree">Agree to Terms</Label>
                 <Switch
                   id="agree"
-                  checked={changes['additionalInfo.agree'] ?? user.agree ?? false}
-                  onCheckedChange={(checked) => handleUpdate('additionalInfo.agree', checked)}
+                  checked={
+                    changes["additionalInfo.agree"] ?? user.agree ?? false
+                  }
+                  onCheckedChange={(checked) =>
+                    handleUpdate("additionalInfo.agree", checked)
+                  }
                 />
               </div>
             </div>
-            <Button onClick={() => submitChanges('additionalInfo')} className="mt-4">Update Additional Information</Button>
+            <Button
+              onClick={() => submitChanges("additionalInfo")}
+              className="mt-4">
+              Update Additional Information
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -514,4 +811,3 @@ const Biodata = () => {
 };
 
 export default Biodata;
-

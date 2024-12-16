@@ -7,18 +7,17 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ImageIcon, StarFilledIcon } from "@radix-ui/react-icons";
-import UploadInput from "../../../components/UploadInput";
+import UploadButton from "@/components/UploadButton";
 
 export default function Education({
   controlButtons,
   form,
   onchangeEducationInput,
 }) {
+  console.log("form", form);
   return (
     <div
       style={{
@@ -93,7 +92,17 @@ export default function Education({
         <Label htmlFor="email" className="w-[300px] text-left leading-[1.3]">
           Supporting Document *
         </Label>
-        <UploadInput />
+        {/* <UploadInput /> */}
+
+        <UploadButton
+          fileUrl={form?.education?.eduUpload}
+          handleFileChange={function (url) {
+            onchangeEducationInput("eduUpload", url);
+          }}
+          removeFile={() => {
+            onchangeEducationInput("eduUpload", "");
+          }}
+        />
       </div>
 
       {controlButtons}

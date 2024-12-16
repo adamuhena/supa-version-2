@@ -27,6 +27,7 @@ import TrainingCenterBiodata from "./pages/dashboard/trainingCenter/TrainingCent
 import ContactUs from "./pages/contact/Contact";
 import UserCert from "./pages/dashboard/Admin/userMgt/UserManagement";
 import ForgotPassword from "./pages/loginPage/ForgetPassword";
+import TestPage from "./pages/testpage";
 
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard"
 
@@ -36,14 +37,10 @@ function App() {
       future={{
         v7_relativeSplatPath: true, // Enable the v7 splat path behavior
         v7_startTransition: true,
-      }}
-    >
+      }}>
       <Routes>
         {/* test */}
         <Route path="/training-center" element={<TrainingCenterDashboard />} />
-
-        
-
 
         {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
@@ -51,14 +48,14 @@ function App() {
         <Route path="/contact" element={<ContactUs />} />
         {/* <Route path="/biodata2" element={<BiodataPage />} /> */}
         <Route path="/biodata" element={<Biodata />} />
-        <Route path="/certification/upload" element={<DocumentUpload/>}/>
-        <Route path="/training-center/biodata" element={<TrainingCenterBiodata />} />
-        
+        <Route path="/certification/upload" element={<DocumentUpload />} />
+        <Route
+          path="/training-center/biodata"
+          element={<TrainingCenterBiodata />}
+        />
 
-        
-       
-      {/* Public route for login */}
-      <Route
+        {/* Public route for login */}
+        <Route
           path="/login"
           element={
             <PublicRoute>
@@ -67,7 +64,7 @@ function App() {
           }
         />
 
-<Route
+        <Route
           path="/forget-password"
           element={
             <PublicRoute>
@@ -78,129 +75,115 @@ function App() {
 
         <Route path="/signUp" element={<SignupForm />} />
         <Route path="/register" element={<Register />} />
-       
+
         {/* Protected Routes */}
         <Route
           path="/admin/dashboard"
-          element={
-            <AdminDashboard/>
-          }
+          element={<AdminDashboard />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
         <Route
           path="/admin/certification"
-          element={
-            <UserCert/>
-          }
+          element={<UserCert />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
-        
+
         <Route
           path="/intending-artisan/dashboard"
-          element={
-            <ArtisanDashboard/>
-          }
+          element={<ArtisanDashboard />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
         <Route
           path="/admin/training-status"
-          element={
-            <TrainingManagement/>
-          }
+          element={<TrainingManagement />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
         <Route
           path="/register/artisan"
-          element={
-            <ArtisanForm/>
-          }
+          element={<ArtisanForm />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
         <Route
           path="/register/intendingArtisan"
-          element={
-            <IntendingArtisanForm/>
-          }
+          element={<IntendingArtisanForm />}
           allowedRoles={["intending_artisan", "admin", "superadmin"]}
         />
         <Route
           path="/register/trainingcenter"
-          element={
-            <TrainingCenterForm />
-          }
+          element={<TrainingCenterForm />}
           allowedRoles={["training_center", "admin", "superadmin"]}
         />
 
         <Route
           path="/trainee/dashboard"
-          element={
-            < ArtisanDashboard />
-          }
+          element={<ArtisanDashboard />}
           allowedRoles={["artisan_user", "admin", "superadmin"]}
         />
 
         <Route
           path="/intendingArtisan/dashboard"
-          element={
-            <ArtisanDashboard />
-          }
+          element={<ArtisanDashboard />}
           allowedRoles={["intending_artisan", "admin", "superadmin"]}
         />
         <Route
           path="/trainingcenter/dashboard"
-          element={
-            <TrainingCenterDashboard />
-          }
+          element={<TrainingCenterDashboard />}
           allowedRoles={["training_center", "admin", "superadmin"]}
         />
         <Route
           path="/admin/dashboard"
-          element={
-            < ArtisanDashboard />
-          }
-          allowedRoles={[ "admin", "superadmin"]}
+          element={<ArtisanDashboard />}
+          allowedRoles={["admin", "superadmin"]}
         />
 
-        <Route path="/admin/usermanagement"
-          element={<UserManagement/>}
-          allowedRoles={[ "admin", "superadmin"]}
-          />
+        <Route
+          path="/admin/usermanagement"
+          element={<UserManagement />}
+          allowedRoles={["admin", "superadmin"]}
+        />
 
-        <Route path="/admin/dashboard/reports"
-          element={<AdminDashboardReports/>}
-          allowedRoles={[ "admin", "superadmin"]}
-          />
-        <Route path="/admin/trainingcenter/reports"
-          element={<TrainingCenterReport/>}
-          allowedRoles={[ "admin", "superadmin"]}
-          />
-          
+        <Route
+          path="/admin/dashboard/reports"
+          element={<AdminDashboardReports />}
+          allowedRoles={["admin", "superadmin"]}
+        />
+        <Route
+          path="/admin/trainingcenter/reports"
+          element={<TrainingCenterReport />}
+          allowedRoles={["admin", "superadmin"]}
+        />
 
-        <Route path="/training-center/status"
-          element={<TrainingManagement/>}
-          allowedRoles={[ "admin", "superadmin"]}
-          />
+        <Route
+          path="/training-center/status"
+          element={<TrainingManagement />}
+          allowedRoles={["admin", "superadmin"]}
+        />
 
-          <Route path="/training/groups"
-          element={<TrainingGroupDetails/>}
-          allowedRoles={[ "admin", "superadmin"]}
-          />
+        <Route
+          path="/training/groups"
+          element={<TrainingGroupDetails />}
+          allowedRoles={["admin", "superadmin"]}
+        />
 
-          <Route path="/document/verification"
-           element={<AdminDocumentVerification/>}
-           allowedRoles = {["admin", "superadmin"]}
-           />
+        <Route
+          path="/document/verification"
+          element={<AdminDocumentVerification />}
+          allowedRoles={["admin", "superadmin"]}
+        />
 
-          <Route path="/admin/sectors"
-           element={<AdminSectors/>}
-           allowedRoles = {["admin", "superadmin"]}
-           />
+        <Route
+          path="/admin/sectors"
+          element={<AdminSectors />}
+          allowedRoles={["admin", "superadmin"]}
+        />
 
-        <Route path="/training-center/groups"
-          element={<TrainingStatus/>}
-          allowedRoles={[ "admin", "superadmin", "training_center"]}
-          />
-        
+        <Route
+          path="/training-center/groups"
+          element={<TrainingStatus />}
+          allowedRoles={["admin", "superadmin", "training_center"]}
+        />
+
+        <Route path="/test" element={<TestPage />} />
       </Routes>
     </Router>
   );
