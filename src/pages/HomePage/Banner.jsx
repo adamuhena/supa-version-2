@@ -24,7 +24,7 @@ export default function Banner() {
 
     {/* Gradient Background */}
     <div 
-      className="absolute inset-x-0 -top-20 z-50 transform-gpu overflow-hidden blur-3xl 
+      className="absolute inset-x-0 -top-20 z-10 transform-gpu overflow-hidden blur-3xl 
       sm:-top-80 md:-top-96 lg:-top-110"
     >
       <div
@@ -104,7 +104,7 @@ export default function Banner() {
       </div>
     </div>
     <div 
-  className="absolute bottom-0 right-0 z-50 transform-gpu overflow-hidden blur-3xl"
+  className="absolute bottom-0 right-0 z-10 transform-gpu overflow-hidden blur-3xl"
 >
   <div
     style={{
