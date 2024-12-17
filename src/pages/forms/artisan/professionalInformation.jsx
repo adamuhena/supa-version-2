@@ -24,36 +24,100 @@ export default function ProfessionalInformaiton({
   form,
   onchangeInput,
 }) {
-  const selectedStateLGASOrigin =
-    states.find(
-      (state) =>
-        replaceSymbolsWithSpace(`${state?.value}`) ===
-        replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
-    )?.lgas || [];
+  // const selectedStateLGASOrigin =
+  //   states.find(
+  //     (state) =>
+  //       replaceSymbolsWithSpace(`${state?.value}`) ===
+  //       replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
+  //   )?.lgas || [];
 
-  const selectedStateLGASOriginFormatted =
-    selectedStateLGASOrigin && selectedStateLGASOrigin?.length
-      ? selectedStateLGASOrigin.map((x) => ({
-          label: x,
-          value: x,
-        }))
-      : [];
+  // const selectedStateLGASOriginFormatted =
+  //   selectedStateLGASOrigin && selectedStateLGASOrigin?.length
+  //     ? selectedStateLGASOrigin.map((x) => ({
+  //         label: x,
+  //         value: x,
+  //       }))
+  //     : [];
 
-  const selectedStateLGASResidence =
-    states.find(
-      (state) =>
-        replaceSymbolsWithSpace(`${state?.value}`) ===
-        replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
-    )?.lgas || [];
+  
 
-  const selectedStateLGASResidenceFormatted =
-    selectedStateLGASResidence && selectedStateLGASResidence?.length
-      ? selectedStateLGASResidence.map((x) => ({
-          label: x,
-          value: x,
-        }))
-      : [];
+  // const selectedStateLGASResidence =
+  //   states.find(
+  //     (state) =>
+  //       replaceSymbolsWithSpace(`${state?.value}`) ===
+  //       replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+  //   )?.lgas || [];
 
+  // const selectedStateLGASResidenceFormatted =
+  //   selectedStateLGASResidence && selectedStateLGASResidence?.length
+  //     ? selectedStateLGASResidence.map((x) => ({
+  //         label: x,
+  //         value: x,
+  //       }))
+  //     : [];
+// Function to find the LGAs and Senatorial Districts for State of Origin
+const selectedStateLGASOrigin = 
+  states.find(
+    (state) =>
+      replaceSymbolsWithSpace(`${state?.value}`) ===
+      replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
+  )?.lgas || [];
+
+const selectedStateLGASOriginFormatted =
+  selectedStateLGASOrigin && selectedStateLGASOrigin?.length
+    ? selectedStateLGASOrigin.map((x) => ({
+        label: x,
+        value: x,
+      }))
+    : [];
+
+// Find the Senatorial Districts for State of Origin
+const selectedStateSenatorialDistrictsOrigin = 
+  states.find(
+    (state) =>
+      replaceSymbolsWithSpace(`${state?.value}`) ===
+      replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
+  )?.senatorialDistricts || [];
+
+const selectedStateSenatorialDistrictsOriginFormatted =
+  selectedStateSenatorialDistrictsOrigin && selectedStateSenatorialDistrictsOrigin?.length
+    ? selectedStateSenatorialDistrictsOrigin.map((x) => ({
+        label: x,
+        value: x,
+      }))
+    : [];
+
+// Similarly for State of Residence
+const selectedStateLGASResidence = 
+  states.find(
+    (state) =>
+      replaceSymbolsWithSpace(`${state?.value}`) ===
+      replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+  )?.lgas || [];
+
+const selectedStateLGASResidenceFormatted =
+  selectedStateLGASResidence && selectedStateLGASResidence?.length
+    ? selectedStateLGASResidence.map((x) => ({
+        label: x,
+        value: x,
+      }))
+    : [];
+
+// Find the Senatorial Districts for State of Residence
+const selectedStateSenatorialDistrictsResidence = 
+  states.find(
+    (state) =>
+      replaceSymbolsWithSpace(`${state?.value}`) ===
+      replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+  )?.senatorialDistricts || [];
+
+const selectedStateSenatorialDistrictsResidenceFormatted =
+  selectedStateSenatorialDistrictsResidence && selectedStateSenatorialDistrictsResidence?.length
+    ? selectedStateSenatorialDistrictsResidence.map((x) => ({
+        label: x,
+        value: x,
+      }))
+    : [];
   const { hasDisability } = form;
   const handleRadioChange = (e) => {
     onchangeInput("hasDisability", e.target?.value);
@@ -84,7 +148,7 @@ export default function ProfessionalInformaiton({
             </p>
             <Input
               required
-              placeholder=""
+              placeholder="First Name"
               value={form?.firstName}
               onChange={(e) => onchangeInput("firstName", e.target?.value)}
             />
@@ -295,7 +359,7 @@ export default function ProfessionalInformaiton({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {states.map((item) => {
+                  {selectedStateSenatorialDistrictsOriginFormatted.map((item) => {
                     return (
                       <SelectItem value={item?.value}>{item?.label}</SelectItem>
                     );

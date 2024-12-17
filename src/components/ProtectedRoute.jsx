@@ -44,6 +44,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
       } catch (err) {
         console.error("Error fetching user role:", err);
         setError("Failed to fetch user role. Please try again.");
+        logout();
       } finally {
         setLoading(false);
         // Check if user was previously authenticated and now lacks credentials

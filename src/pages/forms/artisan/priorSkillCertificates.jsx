@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import "./index.css";
@@ -17,13 +17,19 @@ import {
   PlusCircledIcon,
   TrashIcon,
 } from "@radix-ui/react-icons";
-import UploadInput from "../../../components/UploadInput";
+import { fetchSectors } from "@/services/api";
+import UploadButton from "@/components/UploadButton";
 
 // const YEARS = Array.from({ length: 20 }, (_, i) =>
 //   (dayjs().year() - i).toString()
 // );
 
 export default function PriorSkills({ controlButtons, form, onchangeInput }) {
+
+  const [sectors, setSectors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const remove = (id) => {
     const old = [...(form?.priorSkillsCerts || [])];
 
@@ -56,6 +62,24 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
     );
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await fetchSectors(accessToken);
+        console.log('sectore: ', response)
+        setSectors(response);
+      } catch (err) {
+        setError('Failed to fetch sectors');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div
       style={{
@@ -72,7 +96,7 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
         {form?.priorSkillsCerts.map((item) => {
           return (
             <div key={item?.id} className="flex flex-col gap-y-[20px]">
-              <div className="flex flex-row justify-center">
+              {/* <div className="flex flex-row justify-center">
                 <div className="inputGroup">
                   <Label>Sector</Label>
                   <Select
@@ -131,7 +155,53 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
                     </SelectContent>
                   </Select>
                 </div>
+              </div> */}
+              <div className="flex flex-row justify-center">
+              <div className="inputGroup">
+                  <Label>Sector</Label>
+                  <Select
+                    value={item?.sector}
+                    onValueChange={(value) => onChange(item?.id, "sector", value)}
+                  >
+                    <SelectTrigger className="">
+                      <SelectValue placeholder="Select a Sector" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {sectors.map((sector) => (
+                          <SelectItem key={sector._id} value={sector.name}>
+                            {sector.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="inputGroup">
+                  <Label>Trade Area</Label>
+                  <Select
+                    value={item?.tradeArea}
+                    onValueChange={(value) => onChange(item?.id, "tradeArea", value)}
+                  >
+                    <SelectTrigger className="">
+                      <SelectValue placeholder="Select Trade Area" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {sectors
+                          .find((sector) => sector.name === item?.sector)?.tradeAreas
+                          ?.map((tradeArea) => (
+                            <SelectItem key={tradeArea._id} value={tradeArea.name}>
+                              {tradeArea.name}
+                            </SelectItem>
+                          ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
+
               <div className="flex items-center ">
                 <Label
                   htmlFor="email"
@@ -175,21 +245,22 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
                 </Select> */}
               </div>
 
-              <div className="flex items-start relative">
-                <Label
-                  htmlFor="email"
-                  className="w-[300px] text-left leading-[1.3]">
+              
+              <div className="flex items-start ">
+                <Label htmlFor="email" className="w-[300px] text-left leading-[1.3]">
                   Supporting Document *
                 </Label>
-                <UploadInput />
-                {form?.priorSkillsCerts?.length > 1 ? (
-                  <button
-                    onClick={() => remove(item?.id)}
-                    className="absolute flex border border-red-700 text-red-700 px-2  py-1 text-[11px]  gap-2 rounded-[100px] left-0 bottom-[20px]">
-                    <TrashIcon />
-                    <span>Delete</span>
-                  </button>
-                ) : null}
+                {/* <UploadInput /> */}
+
+                <UploadButton
+                  fileUrl={form?.priorSkillsCerts?.priUpload}
+                  handleFileChange={function (url) {
+                    onchangeInput("priUpload", url);
+                  }}
+                  removeFile={() => {
+                    onchangeInput("priUpload", "");
+                  }}
+                />
               </div>
             </div>
           );

@@ -65,6 +65,7 @@ const api = axios.create({
 
 
 export const fetchUserDist = async () => {
+  const accessToken = localStorage.getItem("accessToken");
   if (!accessToken) {
     console.error('Access token is missing');
     return {}; // Return empty object if token is not found
@@ -196,3 +197,28 @@ export const fetchUserDistribution = async () => {
 // }
 
 // export default PeriodicRequest;
+
+
+export const fetchSectors = async (accessToken) => {
+  try {
+    // Send GET request to fetch sectors
+    const response = await axios.get(`${API_BASE_URL}/sectors`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    console.log('sectors: ', response)
+
+    // Assuming response.data contains the sectors
+    if (response.data.success) {
+      // Return sectors if success
+      return response.data.data;
+    } else {
+      // Handle the error case where response doesn't contain the expected structure
+      throw new Error(response.data.message || 'Failed to fetch sectors');
+    }
+  } catch (error) {
+    // Handle the error
+    console.error('Error fetching sectors:', error);
+    throw error;  // Rethrow the error for further handling if necessary
+  }
+};

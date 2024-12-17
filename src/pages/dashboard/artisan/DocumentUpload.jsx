@@ -21,7 +21,7 @@ const DocumentUpload = () => {
   ]);
   const [documentPurpose, setDocumentPurpose] = useState("");
 
-  const documentTypes = ["Passport", "NIN Slip", "Certificate", "Utility Bill"];
+  const documentTypes = ["Passport", "Certificate",];
 
   const handleAttachmentChange = (id, field, value) => {
     setAttachments((prev) =>

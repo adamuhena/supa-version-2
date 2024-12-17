@@ -97,7 +97,7 @@ export default function TrainingDashboardPage({ href, title, children }) {
 
   if (!userData) {
     return (
-    <div class="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen">
       <Spinner/>
     </div>
     );

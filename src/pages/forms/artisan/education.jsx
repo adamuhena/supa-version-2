@@ -17,6 +17,11 @@ export default function Education({
   form,
   onchangeEducationInput,
 }) {
+  // Generate an array of years dynamically
+  const startYear = 1980;
+  const endYear = new Date().getFullYear();
+  const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
+
   console.log("form", form);
   return (
     <div
@@ -54,17 +59,17 @@ export default function Education({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="Option 1">Option 1</SelectItem>
-              <SelectItem value="Option 2">Option 2</SelectItem>
-              <SelectItem value="Option 3">Option 3</SelectItem>
-              <SelectItem value="Option 4">Option 4</SelectItem>
-              <SelectItem value="Option 5">Option 5</SelectItem>
+              <SelectItem value="none">None</SelectItem>
+              <SelectItem value="pslc">Primary School Leaving Certificate (PSLC)</SelectItem>
+              <SelectItem value="ssec">Senior Secondary Education Certificate (SSEC)</SelectItem>
+              <SelectItem value="graduate">Graduate</SelectItem>
+              <SelectItem value="post-graduate">Post-Graduate</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
       </div>
 
-      <div className="flex items-center ">
+      {/* <div className="flex items-center ">
         <Label htmlFor="email" className="w-[300px] text-left leading-[1.3]">
           Graduation year *
         </Label>
@@ -86,7 +91,30 @@ export default function Education({
             </SelectGroup>
           </SelectContent>
         </Select>
-      </div>
+      </div> */}
+
+        <div className="flex items-center">
+          <Label htmlFor="graduation-year" className="w-[300px] text-left leading-[1.3]">
+            Graduation year *
+          </Label>
+          <Select
+            value={form?.education?.graduation_year}
+            onValueChange={(value) => onchangeEducationInput("graduation_year", value)}
+          >
+            <SelectTrigger className="">
+              <SelectValue placeholder="Select graduation year" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {years.map((year) => (
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
 
       <div className="flex items-start ">
         <Label htmlFor="email" className="w-[300px] text-left leading-[1.3]">

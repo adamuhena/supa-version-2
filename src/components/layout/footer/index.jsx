@@ -15,7 +15,7 @@ function Footer() {
       />
       
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-8 lg:gap-12">
           {/* Logo and Contact Section */}
           <div className="flex flex-col items-center md:items-start space-y-6">
             <div className="p-3 bg-white rounded-lg w-fit">
@@ -52,7 +52,7 @@ function Footer() {
           </div>
 
           {/* Footer Links Section */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 lg:col-span-2">
+          <div className="grid grid-cols-2 md:grid-cols-2 md:justify-items-end lg:justify-items-end gap-6 lg:col-span-2">
             {footerLinks.map((column, columnIndex) => (
               <div
                 key={columnIndex}

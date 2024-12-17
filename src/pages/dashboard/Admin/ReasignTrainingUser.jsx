@@ -132,7 +132,7 @@ function TrainingCenterGroupRe() {
 
           {error && <p className="text-red-500">{error}</p>}
          {isLoading ? (
-          <div class="flex justify-center items-center h-screen">
+          <div className="flex justify-center items-center h-screen">
             <Spinner/>
           </div>
           ) : (
