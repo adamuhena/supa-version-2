@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import PasswordChange from './PasswordChange';
 import TrainingDashboardPage from './TrainingDashboardLayout';
+import UploadButton from "@/components/UploadButton";
 
 
 const TrainingCenterBiodata = () => {
@@ -123,6 +124,45 @@ const TrainingCenterBiodata = () => {
     }
   };
 
+  const updateProfilePicture = async (url) => {
+    try {
+      const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
+      if (!token) {
+        throw new Error("No token found. Please log in again.");
+      }
+
+      const response = await axios.put(
+        `${API_BASE_URL}/training-center/${localStorage.getItem("userId")}`,
+        { profileImage: url },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token here
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setUser((prevUser) => ({ ...prevUser }));
+
+        toast({
+          title: "Success",
+          description: `Picture updated successfully`,
+          status: "success",
+          duration: 3000,
+        });
+      } else {
+        throw new Error(response.data.message || "Failed to update");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `Failed to update ${section}`,
+        status: "error",
+        duration: 3000,
+      });
+    }
+  };
+
   return (
    
       <TrainingDashboardPage title="Training Center Dashboard">
@@ -138,6 +178,56 @@ const TrainingCenterBiodata = () => {
               </Button>
             </div>
           </header>
+
+          <Card className="border p-4 rounded-lg shadow-md mb-6">
+          <CardContent className="flex items-center space-x-4">
+            <div className="w-24 h-24 rounded-full overflow-hidden">
+              <img
+                src={center.profileImage || "/placeholder.svg?height=96&width=96"}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold">{center.trainingCentreName}</h2>
+              <p className="text-gray-500">{center.email}</p>
+              <p className="text-gray-500">{center.contactPerson}</p>
+            </div>
+            <div>
+              <Input
+                type="file"
+                onChange={(e) =>
+                  handleFileUpload("profileImage", e.target.files[0])
+                }
+                className="hidden"
+                id="profile-image-upload"
+              />
+              <UploadButton
+                fileUrl={center?.profileImage}
+                handleFileChange={(url) => {
+                  setUser((old) => {
+                    return { ...old, profileImage: url };
+                  });
+                  updateProfilePicture(url);
+                }}
+                removeFile={() => {
+                  const url = "";
+                  setUser((old) => {
+                    return { ...old, profileImage: url };
+                  });
+                  updateProfilePicture(url);
+                }}
+              />
+              {/* <Label htmlFor="profile-image-upload" className="cursor-pointer">
+
+              
+                <Button variant="outline" as="span">
+                  <Upload className="mr-2 h-4 w-4" /> Update Profile Picture
+                </Button>
+              </Label> */}
+            </div>
+          </CardContent>
+        </Card>
           
           <Card>
             <CardHeader>

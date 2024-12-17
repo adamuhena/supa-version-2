@@ -98,55 +98,80 @@ export default function Experience({ controlButtons, form, onchangeInput }) {
                 />
               </div>
 
-              <div className="flex items-center ">
-                <Label
-                  htmlFor="email"
-                  className="w-[300px] text-left leading-[1.3]">
-                  Date *
-                </Label>
-
-                <div className="flex gap-[30px] w-full">
-                  <Select
-                    className="flex-1"
-                    value={item?.date_from}
-                    onValueChange={(value) =>
-                      onChange(item?.id, "date_from", value)
-                    }>
-                    <SelectTrigger className="">
-                      <SelectValue placeholder="From" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="2001">2001</SelectItem>
-                        <SelectItem value="2002">2002</SelectItem>
-                        <SelectItem value="2003">2003</SelectItem>
-                        <SelectItem value="2004">2004</SelectItem>
-                        <SelectItem value="2005">2005</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-
-                  <Select
-                    className="flex-1"
-                    value={item?.date_to}
-                    onValueChange={(value) =>
-                      onChange(item?.id, "date_to", value)
-                    }>
-                    <SelectTrigger className="">
-                      <SelectValue placeholder="To" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="2001">2001</SelectItem>
-                        <SelectItem value="2002">2002</SelectItem>
-                        <SelectItem value="2003">2003</SelectItem>
-                        <SelectItem value="2004">2004</SelectItem>
-                        <SelectItem value="2005">2005</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+               <div className="flex items-center ">
+                              <Label
+                                htmlFor="email"
+                                className="w-[300px] text-left leading-[1.3]">
+                                Date *
+                              </Label>
+                              <div className="flex gap-[30px] w-full">
+                                <div>
+                                  <p className="text-left"> From</p>
+                                  <Input
+                                    placeholder="Start"
+                                    value={item?.date_to}
+                                    type="date"
+                                    onChange={(e) =>
+                                      onChange(item?.id, "date_to", e.target.value)
+                                    }
+                                  />
+                                </div>
+              
+                                <div>
+                                  <p className="text-left">To</p>
+                                  <Input
+                                    placeholder="End"
+                                    value={item?.date_from}
+                                    type="date"
+                                    onChange={(e) =>
+                                      onChange(item?.id, "date_from", e.target.value)
+                                    }
+                                  />
+                                </div>
+                              </div>
+              
+                              {/* <div className="flex gap-[30px] w-full">
+                                <Select
+                                  className="flex-1"
+                                  value={item?.date_from}
+                                  onValueChange={(value) =>
+                                    onChange(item?.id, "date_from", value)
+                                  }>
+                                  <SelectTrigger className="">
+                                    <SelectValue placeholder="From" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      <SelectItem value="2001">2001</SelectItem>
+                                      <SelectItem value="2002">2002</SelectItem>
+                                      <SelectItem value="2003">2003</SelectItem>
+                                      <SelectItem value="2004">2004</SelectItem>
+                                      <SelectItem value="2005">2005</SelectItem>
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+              
+                                <Select
+                                  className="flex-1"
+                                  value={item?.date_to}
+                                  onValueChange={(value) =>
+                                    onChange(item?.id, "date_to", value)
+                                  }>
+                                  <SelectTrigger className="">
+                                    <SelectValue placeholder="To" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      <SelectItem value="2001">2001</SelectItem>
+                                      <SelectItem value="2002">2002</SelectItem>
+                                      <SelectItem value="2003">2003</SelectItem>
+                                      <SelectItem value="2004">2004</SelectItem>
+                                      <SelectItem value="2005">2005</SelectItem>
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                              </div> */}
+                            </div>
 
               <div className="flex items-start relative">
                

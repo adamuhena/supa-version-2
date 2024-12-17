@@ -275,6 +275,7 @@ const ArtisanForm = () => {
     middleName: "",
     lastName: "",
     gender: "",
+    dob:"",
     maritalStatus: "",
     stateOfOrigin: "",
     lga: "",

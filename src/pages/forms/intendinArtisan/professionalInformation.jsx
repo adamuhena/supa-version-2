@@ -24,6 +24,7 @@ export default function ProfessionalInformaiton({
   form,
   onchangeInput,
 }) {
+  // Function to find the LGAs and Senatorial Districts for State of Origin
   const selectedStateLGASOrigin =
     states.find(
       (state) =>
@@ -34,11 +35,28 @@ export default function ProfessionalInformaiton({
   const selectedStateLGASOriginFormatted =
     selectedStateLGASOrigin && selectedStateLGASOrigin?.length
       ? selectedStateLGASOrigin.map((x) => ({
-          label: x,
-          value: x,
-        }))
+        label: x,
+        value: x,
+      }))
       : [];
 
+  // Find the Senatorial Districts for State of Origin
+  const selectedStateSenatorialDistrictsOrigin =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
+    )?.senatorialDistricts || [];
+
+  const selectedStateSenatorialDistrictsOriginFormatted =
+    selectedStateSenatorialDistrictsOrigin && selectedStateSenatorialDistrictsOrigin?.length
+      ? selectedStateSenatorialDistrictsOrigin.map((x) => ({
+        label: x,
+        value: x,
+      }))
+      : [];
+
+  // Similarly for State of Residence
   const selectedStateLGASResidence =
     states.find(
       (state) =>
@@ -49,11 +67,26 @@ export default function ProfessionalInformaiton({
   const selectedStateLGASResidenceFormatted =
     selectedStateLGASResidence && selectedStateLGASResidence?.length
       ? selectedStateLGASResidence.map((x) => ({
-          label: x,
-          value: x,
-        }))
+        label: x,
+        value: x,
+      }))
       : [];
 
+  // Find the Senatorial Districts for State of Residence
+  const selectedStateSenatorialDistrictsResidence =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+    )?.senatorialDistricts || [];
+
+  const selectedStateSenatorialDistrictsResidenceFormatted =
+    selectedStateSenatorialDistrictsResidence && selectedStateSenatorialDistrictsResidence?.length
+      ? selectedStateSenatorialDistrictsResidence.map((x) => ({
+        label: x,
+        value: x,
+      }))
+      : [];
   const { hasDisability } = form;
   const handleRadioChange = (e) => {
     onchangeInput("hasDisability", e.target?.value);
@@ -80,7 +113,7 @@ export default function ProfessionalInformaiton({
           <div className="inputGroup">
             <Label htmlFor="firstName">First Name *</Label>
             <Input
-              placeholder=""
+              placeholder="First name"
               value={form?.firstName}
               onChange={(e) => onchangeInput("firstName", e.target?.value)}
             />
@@ -128,22 +161,7 @@ export default function ProfessionalInformaiton({
               onChange={(e) => onchangeInput("nin", e.target?.value)}
             />
           </div> */}
-          <div className="inputGroup">
-            <Label>Gender</Label>
-            <Select
-              value={form?.gender}
-              onValueChange={(value) => onchangeInput("gender", value)}>
-              <SelectTrigger className="">
-                <SelectValue placeholder="Select a Gender" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
+
 
           <div className="inputGroup">
             <Label>State Of Origin</Label>
@@ -176,6 +194,31 @@ export default function ProfessionalInformaiton({
               <SelectContent>
                 <SelectGroup>
                   {selectedStateLGASOriginFormatted.map((item) => {
+                    return (
+                      <SelectItem value={item?.value}>{item?.label}</SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="inputGroup">
+            <p>
+              Senatorial District
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </p>
+            <Select
+              value={form?.senetorialDistrict}
+              onValueChange={(value) =>
+                onchangeInput("senetorialDistrict", value)
+              }>
+              <SelectTrigger className="">
+                <SelectValue placeholder="" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {selectedStateSenatorialDistrictsOriginFormatted.map((item) => {
                     return (
                       <SelectItem value={item?.value}>{item?.label}</SelectItem>
                     );
@@ -253,29 +296,38 @@ export default function ProfessionalInformaiton({
           </div>
 
           <div className="inputGroup">
-            <p>
-              Senatorial District
-              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
-            </p>
+            <Label>Gender</Label>
             <Select
-              value={form?.senetorialDistrict}
-              onValueChange={(value) =>
-                onchangeInput("senetorialDistrict", value)
-              }>
+              value={form?.gender}
+              onValueChange={(value) => onchangeInput("gender", value)}>
               <SelectTrigger className="">
-                <SelectValue placeholder="" />
+                <SelectValue placeholder="Select a Gender" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {states.map((item) => {
-                    return (
-                      <SelectItem value={item?.value}>{item?.label}</SelectItem>
-                    );
-                  })}
+                  <SelectItem value="Male">Male</SelectItem>
+                  <SelectItem value="Female">Female</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
+
+          <div className="inputGroup">
+            <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
+              Date of Birth
+              <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+            </label>
+            <Input
+              id="dob"
+              placeholder="Enter your date of birth"
+              value={form?.dob}
+              onChange={(e) => onchangeInput("dob", e.target.value)}
+              type="date" // This is a good practice for date inputs
+            />
+          </div>
+
+
+
 
           <div className="inputGroup">
             <div className="radioGroup">

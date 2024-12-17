@@ -72,21 +72,21 @@ export default function Dashboard() {
             <NigerianMap />
           </div>
           <div className="col-span-full lg:col-span-3">
-          {/* <RecentRegistrations /> */}
+          <RecentRegistrations />
           </div>
         </div>
-        {/* <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 py-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 py-4">
           <div className="col-span-full lg:col-span-9">
           <StateDistribution/>
           </div>
           <div className="col-span-full lg:col-span-3">
             <State />
           </div>
-        </div> */}
-        {/* <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-4">
+        </div> 
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-4">
          
           <Calendar />
-        </div> */}
+        </div>
 
         
         

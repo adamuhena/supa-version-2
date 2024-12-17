@@ -36,6 +36,7 @@ const Biodata = () => {
     phoneNumber: "",
     nin: "",
     password: "",
+    dob:"",
     gender: "",
     maritalStatus: "",
     stateOfOrigin: "",

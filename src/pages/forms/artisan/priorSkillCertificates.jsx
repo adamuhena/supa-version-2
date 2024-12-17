@@ -157,7 +157,7 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
                 </div>
               </div> */}
               <div className="flex flex-row justify-center">
-              <div className="inputGroup">
+                <div className="inputGroup">
                   <Label>Sector</Label>
                   <Select
                     value={item?.sector}
@@ -245,7 +245,7 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
                 </Select> */}
               </div>
 
-              
+
               <div className="flex items-start ">
                 <Label htmlFor="email" className="w-[300px] text-left leading-[1.3]">
                   Supporting Document *
@@ -261,6 +261,16 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
                     onchangeInput("priUpload", "");
                   }}
                 />
+              </div>
+              <div className="flex items-start relative">
+                {form?.priorSkillsCerts?.length > 1 ? (
+                  <button
+                    onClick={() => remove(item?.id)}
+                    className=" flex border border-red-700 text-red-700 px-2  py-1 text-[11px]  gap-2 rounded-[100px] left-0 bottom-[20px]">
+                    <TrashIcon />
+                    <span>Delete</span>
+                  </button>
+                ) : null}
               </div>
             </div>
           );

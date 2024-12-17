@@ -18,8 +18,12 @@ import {
   TrashIcon,
 } from "@radix-ui/react-icons";
 import UploadInput from "../../../components/UploadInput";
+import { fetchSectors } from "@/services/api";
 
 export default function PriorSkills({ controlButtons, form, onchangeInput }) {
+  const [sectors, setSectors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const remove = (id) => {
     const old = [...(form?.priorSkillsCerts || [])];
 
@@ -52,6 +56,24 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
     );
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await fetchSectors(accessToken);
+        console.log('sectore: ', response)
+        setSectors(response);
+      } catch (err) {
+        setError('Failed to fetch sectors');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div
       style={{
@@ -66,26 +88,23 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
         {form?.priorSkillsCerts.map((item) => {
           return (
             <div key={item?.id} className="flex flex-col gap-y-[20px]">
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-row justify-center">
                 <div className="inputGroup">
                   <Label>Sector</Label>
                   <Select
-                    value={form?.sector}
-                    onValueChange={(value) => onchangeInput("sector", value)}>
+                    value={item?.sector}
+                    onValueChange={(value) => onChange(item?.id, "sector", value)}
+                  >
                     <SelectTrigger className="">
                       <SelectValue placeholder="Select a Sector" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="Building and Construction">
-                          Building and Construction
-                        </SelectItem>
-                        <SelectItem value="Welding">Welding</SelectItem>
-                        <SelectItem value="ICT">ICT</SelectItem>
-                        <SelectItem value="Power">Power</SelectItem>
-                        <SelectItem value="Animal Husbandry">
-                          Animal Husbandry
-                        </SelectItem>
+                        {sectors.map((sector) => (
+                          <SelectItem key={sector._id} value={sector.name}>
+                            {sector.name}
+                          </SelectItem>
+                        ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -94,33 +113,21 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
                 <div className="inputGroup">
                   <Label>Trade Area</Label>
                   <Select
-                    value={form?.tradeArea}
-                    onValueChange={(value) =>
-                      onchangeInput("tradeArea", value)
-                    }>
+                    value={item?.tradeArea}
+                    onValueChange={(value) => onChange(item?.id, "tradeArea", value)}
+                  >
                     <SelectTrigger className="">
                       <SelectValue placeholder="Select Trade Area" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="Trade Area 1">
-                          Trade Area 1
-                        </SelectItem>
-                        <SelectItem value="Trade Area 2">
-                          Trade Area 2
-                        </SelectItem>
-                        <SelectItem value="Trade Area 3">
-                          Trade Area 3
-                        </SelectItem>
-                        <SelectItem value="Trade Area 4">
-                          Trade Area 4
-                        </SelectItem>
-                        <SelectItem value="Trade Area 5">
-                          Trade Area 5
-                        </SelectItem>
-                        <SelectItem value="Trade Area 6">
-                          Trade Area 6
-                        </SelectItem>
+                        {sectors
+                          .find((sector) => sector.name === item?.sector)?.tradeAreas
+                          ?.map((tradeArea) => (
+                            <SelectItem key={tradeArea._id} value={tradeArea.name}>
+                              {tradeArea.name}
+                            </SelectItem>
+                          ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
