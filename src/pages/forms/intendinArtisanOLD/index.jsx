@@ -71,7 +71,6 @@
 //     agree: false, // New field for user account status
 //     profileImage: "", // New field for profile picture upload
 //   });
-  
 
 //   const [show, setShow] = useState(false);
 //   const [loading, setLoading] = useState(false);
@@ -230,7 +229,6 @@
 
 // export default IntendingArtisanForm;
 
-
 import React, { useEffect, useState } from "react";
 import { Stepper, Step } from "react-form-stepper";
 import ProfessionalInformation from "./professionalInformation";
@@ -245,10 +243,9 @@ import RegisterSuccess from "../../../components/SuccessRegister";
 import axios from "axios";
 import { toast } from "sonner";
 import PageLayout from "../../../components/layout/pageLayout";
+import { API_BASE_URL } from "@/config/env";
 
 const IntendingArtisanForm = () => {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   // Retrieve userID from local storage
   const userID = localStorage.getItem("userID"); // Replace 'userID' with your storage key if different
 
@@ -356,9 +353,12 @@ const IntendingArtisanForm = () => {
         _id: userID, // Include userID in the payload
       };
 
-      console.log("userID",userID)
+      console.log("userID", userID);
       // POST request to submit KYC
-      const response = await axios.post(`${API_BASE_URL}/kyc/${userID}`, payload);
+      const response = await axios.post(
+        `${API_BASE_URL}/kyc/${userID}`,
+        payload
+      );
 
       // Success: Display success message
       toast.success("KYC submitted successfully!", {
@@ -380,7 +380,6 @@ const IntendingArtisanForm = () => {
     }
   };
 
-
   const onChangeBankInput = (id, value) => {
     setForm((prevForm) => ({
       ...prevForm,
@@ -391,15 +390,13 @@ const IntendingArtisanForm = () => {
     }));
   };
 
-
   const controlButtons = (
     <div className="flex w-full justify-end">
       {step > 0 && (
         <button
           disabled={loading}
           onClick={goBack}
-          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-gray-300 text-[#00524d]"
-        >
+          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-gray-300 text-[#00524d]">
           Back
         </button>
       )}
@@ -408,16 +405,14 @@ const IntendingArtisanForm = () => {
           <button
             disabled={loading}
             onClick={submit}
-            className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
-          >
+            className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white">
             {loading ? "Submitting..." : "Submit"}
           </button>
         )
       ) : (
         <button
           onClick={goFront}
-          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
-        >
+          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white">
           Next
         </button>
       )}
@@ -436,8 +431,7 @@ const IntendingArtisanForm = () => {
               </h1>
               <Stepper
                 activeStep={step}
-                className="border-b-gray-300 scale-[0.8]"
-              >
+                className="border-b-gray-300 scale-[0.8]">
                 <Step
                   index={0}
                   label={

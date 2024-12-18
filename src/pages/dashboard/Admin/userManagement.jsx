@@ -45,11 +45,11 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import useLogout from "@/pages/loginPage/logout";
 import { LogOut, UserCircle } from "lucide-react";
+import { API_BASE_URL } from "@/config/env";
 
 const ITEMS_PER_PAGE = 25;
 
 const UserManagement = () => {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const logout = useLogout();
   const itemsPerPage = 25;
   const [newUser, setNewUser] = useState({
@@ -75,7 +75,7 @@ const UserManagement = () => {
   });
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -124,7 +124,7 @@ const UserManagement = () => {
         setPagination({
           totalPages: response.data.data.pagination?.totalPages || 1,
           totalUsers: response.data.data.pagination?.totalUsers || 0,
-          pageSize: response.data.data.pagination?.pageSize || limit
+          pageSize: response.data.data.pagination?.pageSize || limit,
         });
 
         toast.success("Users fetched successfully");
@@ -144,7 +144,6 @@ const UserManagement = () => {
     fetchUsers(page, pagination.pageSize, roleFilter, search);
   };
   const totalPages = Math.ceil(pagination.totalUsers / pagination.pageSize);
-  
 
   const handleRoleChange = (value) => {
     setRoleFilter(value);
@@ -364,8 +363,7 @@ const UserManagement = () => {
             </CSVLink>
             <Button
               className="bg-gray-900 text-white hover:bg-gray-800"
-              onClick={generatePDF}
-            >
+              onClick={generatePDF}>
               <Printer className="mr-2 h-4 w-4" /> Print PDF
             </Button>
           </div>
@@ -399,8 +397,7 @@ const UserManagement = () => {
               </h2>
               <Dialog
                 open={isCreateDialogOpen}
-                onOpenChange={setIsCreateDialogOpen}
-              >
+                onOpenChange={setIsCreateDialogOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline">
                     <UserPlus className="mr-2 h-4 w-4" /> Create New User
@@ -485,8 +482,7 @@ const UserManagement = () => {
                         onValueChange={(value) =>
                           handleRoleChange(value, setNewUser)
                         }
-                        value={newUser.role}
-                      >
+                        value={newUser.role}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a role" />
                         </SelectTrigger>
@@ -559,15 +555,13 @@ const UserManagement = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleEdit(user)}
-                          >
+                            onClick={() => handleEdit(user)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleDelete(user.id)}
-                          >
+                            onClick={() => handleDelete(user.id)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -578,13 +572,14 @@ const UserManagement = () => {
               </table>
             </div>
 
-
             <div className="flex justify-end mt-4">
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                      onClick={() =>
+                        handlePageChange(Math.max(1, currentPage - 1))
+                      }
                       disabled={currentPage === 1}
                     />
                   </PaginationItem>
@@ -593,7 +588,9 @@ const UserManagement = () => {
                   {currentPage > 3 && (
                     <>
                       <PaginationItem>
-                        <PaginationLink onClick={() => handlePageChange(1)}>1</PaginationLink>
+                        <PaginationLink onClick={() => handlePageChange(1)}>
+                          1
+                        </PaginationLink>
                       </PaginationItem>
                       {currentPage > 4 && (
                         <PaginationItem>
@@ -604,19 +601,24 @@ const UserManagement = () => {
                   )}
 
                   {/* Dynamic Page Range */}
-                  {Array.from({ length: Math.min(5, totalPages - 2) }, (_, i) => {
-                    const pageNumber = Math.max(1, Math.min(totalPages, currentPage + i - 2));
-                    return (
-                      <PaginationItem key={pageNumber}>
-                        <PaginationLink
-                          isActive={pageNumber === currentPage}
-                          onClick={() => handlePageChange(pageNumber)}
-                        >
-                          {pageNumber}
-                        </PaginationLink>
-                      </PaginationItem>
-                    );
-                  })}
+                  {Array.from(
+                    { length: Math.min(5, totalPages - 2) },
+                    (_, i) => {
+                      const pageNumber = Math.max(
+                        1,
+                        Math.min(totalPages, currentPage + i - 2)
+                      );
+                      return (
+                        <PaginationItem key={pageNumber}>
+                          <PaginationLink
+                            isActive={pageNumber === currentPage}
+                            onClick={() => handlePageChange(pageNumber)}>
+                            {pageNumber}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    }
+                  )}
 
                   {/* Last Page and Ellipsis */}
                   {currentPage < totalPages - 2 && (
@@ -627,7 +629,8 @@ const UserManagement = () => {
                         </PaginationItem>
                       )}
                       <PaginationItem>
-                        <PaginationLink onClick={() => handlePageChange(totalPages)}>
+                        <PaginationLink
+                          onClick={() => handlePageChange(totalPages)}>
                           {totalPages}
                         </PaginationLink>
                       </PaginationItem>
@@ -636,14 +639,15 @@ const UserManagement = () => {
 
                   <PaginationItem>
                     <PaginationNext
-                      onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+                      onClick={() =>
+                        handlePageChange(Math.min(currentPage + 1, totalPages))
+                      }
                       disabled={currentPage === totalPages}
                     />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
             </div>
-
           </div>
         </div>
 
@@ -717,8 +721,7 @@ const UserManagement = () => {
                     onValueChange={(value) =>
                       handleRoleChange(value, setEditUser)
                     }
-                    value={editUser.role}
-                  >
+                    value={editUser.role}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
@@ -751,8 +754,7 @@ const UserManagement = () => {
                     type="button"
                     variant="outline"
                     className="w-1/2 ml-2"
-                    onClick={handleChangePassword}
-                  >
+                    onClick={handleChangePassword}>
                     <Key className="mr-2 h-4 w-4" /> Change Password
                   </Button>
                 </div>

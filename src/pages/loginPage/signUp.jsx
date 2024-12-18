@@ -19,10 +19,9 @@ import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
 import Spinner from "../../components/Spinner";
-
+import { API_BASE_URL } from "@/config/env";
 
 export default function SignupForm() {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const location = useLocation();
   const initialTab = location.state?.tab || "artisan_user";
   const [signupAs, setRole] = useState(initialTab);
@@ -61,33 +60,39 @@ export default function SignupForm() {
   }
   const setAuthState = (userData) => {
     // Set is logged in flag
-    localStorage.setItem('isLoggedIn', 'true');
-  
+    localStorage.setItem("isLoggedIn", "true");
+
     // Handle different user types
-    if (userData.trainingCenter.role === 'training_center') {
+    if (userData.trainingCenter.role === "training_center") {
       // For training center
-      localStorage.setItem('userRole', userData.trainingCenter.role);
-      localStorage.setItem('userId', userData.trainingCenter._id);
-      localStorage.setItem('isFirstTimeUser', userData.trainingCenter.agree || false);
-      localStorage.setItem('trainingCentreName', userData.trainingCenter.trainingCentreName);
-      localStorage.setItem('regNum', userData.trainingCenter.regNum);
+      localStorage.setItem("userRole", userData.trainingCenter.role);
+      localStorage.setItem("userId", userData.trainingCenter._id);
+      localStorage.setItem(
+        "isFirstTimeUser",
+        userData.trainingCenter.agree || false
+      );
+      localStorage.setItem(
+        "trainingCentreName",
+        userData.trainingCenter.trainingCentreName
+      );
+      localStorage.setItem("regNum", userData.trainingCenter.regNum);
     } else {
       // For artisan and intending artisan
-      localStorage.setItem('userRole', userData.user.role);
-      localStorage.setItem('userId', userData.user._id);
-      localStorage.setItem('isFirstTimeUser', userData.user.agree || false);
+      localStorage.setItem("userRole", userData.user.role);
+      localStorage.setItem("userId", userData.user._id);
+      localStorage.setItem("isFirstTimeUser", userData.user.agree || false);
     }
-  
+
     // Handle tokens
     localStorage.setItem(
-      'accessToken',
+      "accessToken",
       typeof userData.accessToken === "object"
         ? userData.accessToken.accessToken
         : userData.accessToken
     );
-  
+
     localStorage.setItem(
-      'refreshToken',
+      "refreshToken",
       typeof userData.refreshToken === "object"
         ? userData.refreshToken.refreshToken
         : userData.refreshToken
@@ -98,11 +103,12 @@ export default function SignupForm() {
     e.preventDefault();
     setLoading(true);
 
-
     // START VALIDATION
     let erroMsg = "";
 
-    if (`${formData.confirmPassword}`?.trim() !== `${formData.password}`?.trim()) {
+    if (
+      `${formData.confirmPassword}`?.trim() !== `${formData.password}`?.trim()
+    ) {
       erroMsg = "Password does not match the first one!";
     }
 
@@ -133,91 +139,92 @@ export default function SignupForm() {
       return toast.error(erroMsg, { position: "top-right" });
     }
     // END VALIDATION
-    
-        const endpoint =
-          signupAs === "training_center"
-            ? `${API_BASE_URL}/training-centers/register`
-            : `${API_BASE_URL}/signup`;
-        
-        const payload =
-          signupAs === "training_center"
-            ? {
-                trainingCentreName: formData.trainingCentreName,
-                regNum: formData.regNum,
-                email: formData.email,
-                phoneNumber: formData.phoneNumber,
-                password: formData.password,
-                confirm_password: formData.confirmPassword,
-                agree: false,
-                role: signupAs,
-              }
-            : {
-                role: signupAs,
-                nin: formData.nin,
-                email: formData.email,
-                phoneNumber: formData.phoneNumber,
-                password: formData.password,
-                confirm_password: formData.confirmPassword,
-                agree: false,
-              };
-        
-        try {
-          const response = await axios.post(endpoint, payload, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-        
-          if (response.data.success) {
-            // Set authentication state
-            setAuthState(response.data.data);
-    
-            // Success toast
-            toast.success("Signup successful 🚀!", {
-              description: "Login Successfully",
-              position: "top-right",
-              duration: 2000,
-            });
-    
-            // Redirect based on role
-            setTimeout(() => {
-              const role = response.data.data.trainingCenter 
-                ? response.data.data.trainingCenter.role 
-                : response.data.data.user.role;
-            
-              switch(role) {
-                case "artisan_user":
-                  navigate("/register/artisan");
-                  break;
-                case "intending_artisan":
-                  navigate("/register/intendingArtisan");
-                  break;
-                case "training_center":
-                  navigate("/register/trainingcenter");
-                  break;
-                default:
-                  navigate("/dashboard");
-              }
-            }, 2000);
-          } else {
-            toast.error(`Signup failed: ${response.data.message}`);
+
+    const endpoint =
+      signupAs === "training_center"
+        ? `${API_BASE_URL}/training-centers/register`
+        : `${API_BASE_URL}/signup`;
+
+    const payload =
+      signupAs === "training_center"
+        ? {
+            trainingCentreName: formData.trainingCentreName,
+            regNum: formData.regNum,
+            email: formData.email,
+            phoneNumber: formData.phoneNumber,
+            password: formData.password,
+            confirm_password: formData.confirmPassword,
+            agree: false,
+            role: signupAs,
           }
-        } catch (error) {
-          const message = "Error!";   
-          const description =
-            typeof error?.response?.data === "string"
-              ? error?.response?.data
-              : error?.response?.data?.message || "An error occurred. Please try again.";
-        
-          toast.error(message, {
-            description,
-            position: "top-right",
-            style: { textAlign: "left" },
-          });
-        } finally {
-          setLoading(false);
-        }
-      };
+        : {
+            role: signupAs,
+            nin: formData.nin,
+            email: formData.email,
+            phoneNumber: formData.phoneNumber,
+            password: formData.password,
+            confirm_password: formData.confirmPassword,
+            agree: false,
+          };
+
+    try {
+      const response = await axios.post(endpoint, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.success) {
+        // Set authentication state
+        setAuthState(response.data.data);
+
+        // Success toast
+        toast.success("Signup successful 🚀!", {
+          description: "Login Successfully",
+          position: "top-right",
+          duration: 2000,
+        });
+
+        // Redirect based on role
+        setTimeout(() => {
+          const role = response.data.data.trainingCenter
+            ? response.data.data.trainingCenter.role
+            : response.data.data.user.role;
+
+          switch (role) {
+            case "artisan_user":
+              navigate("/register/artisan");
+              break;
+            case "intending_artisan":
+              navigate("/register/intendingArtisan");
+              break;
+            case "training_center":
+              navigate("/register/trainingcenter");
+              break;
+            default:
+              navigate("/dashboard");
+          }
+        }, 2000);
+      } else {
+        toast.error(`Signup failed: ${response.data.message}`);
+      }
+    } catch (error) {
+      const message = "Error!";
+      const description =
+        typeof error?.response?.data === "string"
+          ? error?.response?.data
+          : error?.response?.data?.message ||
+            "An error occurred. Please try again.";
+
+      toast.error(message, {
+        description,
+        position: "top-right",
+        style: { textAlign: "left" },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <section className="relative bg-slate-900 pt-40 pb-10 min-h-screen">
       <div className="flex items-center justify-center absolute top-0 left-0 right-0 bottom-0">

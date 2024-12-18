@@ -166,6 +166,7 @@ import PageLayout from "../../../components/layout/pageLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from "@/pages/loginPage/logout";
 import { LogOutIcon } from "lucide-react";
+import { API_BASE_URL } from "@/config/env";
 
 const checkValidatePersonalInfo = ({ form }) => {
   let erroMsg = "";
@@ -282,8 +283,6 @@ const checkValidateBank = ({ form }) => {
 };
 
 const ArtisanForm = () => {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   // Retrieve userID from local storage
   const userID = localStorage.getItem("userId"); // Replace 'userID' with your storage key if different
 
@@ -293,7 +292,7 @@ const ArtisanForm = () => {
     middleName: "",
     lastName: "",
     gender: "",
-    dob:"",
+    dob: "",
     maritalStatus: "",
     stateOfOrigin: "",
     lga: "",

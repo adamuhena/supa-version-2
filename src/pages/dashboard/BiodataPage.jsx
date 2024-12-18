@@ -21,13 +21,13 @@ import useLogout from "@/pages/loginPage/logout";
 import axios from "axios";
 import { LogOut, Minus, Plus, Upload, UserCircle } from "lucide-react";
 import UploadButton from "@/components/UploadButton";
+import { API_BASE_URL } from "@/config/env";
 
 //import { url } from "inspector";
 
 const Biodata = () => {
   const logout = useLogout();
   const navigate = useNavigate();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const [user, setUser] = useState({
     firstName: "",
@@ -36,7 +36,7 @@ const Biodata = () => {
     phoneNumber: "",
     nin: "",
     password: "",
-    dob:"",
+    dob: "",
     gender: "",
     maritalStatus: "",
     stateOfOrigin: "",

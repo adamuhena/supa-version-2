@@ -11,7 +11,7 @@ import {
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
 import {
   Pagination,
@@ -27,10 +27,10 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import { states } from "@/data/nigeria";
-import useLogout from '@/pages/loginPage/logout';
+import useLogout from "@/pages/loginPage/logout";
 import {
   Cross1Icon,
   DashboardIcon,
@@ -42,6 +42,7 @@ import Spinner from "@/components/layout/spinner";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { CSVLink } from "react-csv";
+import { API_BASE_URL } from "@/config/env";
 
 // Utility Functions
 function formatString(input) {
@@ -96,16 +97,16 @@ const emptyForm = {
 
 const AdminDashboardReports = () => {
   const navigate = useNavigate();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  
+
   // Pagination State
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 0,
     totalUsers: 0,
-    limit: 50
+    limit: 50,
   });
 
   // Form State
@@ -134,23 +135,19 @@ const AdminDashboardReports = () => {
   }, [users]);
 
   // Fetch Users with Pagination
-  const fetchUsers = async (
-    filterParams, 
-    page = 1, 
-    limit= 50
-  ) => {
+  const fetchUsers = async (filterParams, page = 1, limit = 50) => {
     setLoading(true);
     try {
       const accessToken = localStorage.getItem("accessToken");
 
       const response = await axios.post(
         `${API_BASE_URL}/users-reports`,
-        { 
+        {
           filterParams: {
             ...filterParams,
             page,
-            limit
-          }
+            limit,
+          },
         },
         {
           headers: {
@@ -159,14 +156,15 @@ const AdminDashboardReports = () => {
         }
       );
 
-      const { users, pagination: serverPagination } = response?.data?.data || {};
+      const { users, pagination: serverPagination } =
+        response?.data?.data || {};
 
-      setUsers(users || []); 
-      setPagination(prevPagination => ({
+      setUsers(users || []);
+      setPagination((prevPagination) => ({
         ...prevPagination,
         ...serverPagination,
         currentPage: page,
-        limit
+        limit,
       }));
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -178,7 +176,9 @@ const AdminDashboardReports = () => {
   // Get LGA options for selected state
   const getStateLGAS = (selectedState) => {
     const state = states.find(
-      (state) => replaceSymbolsWithSpace(`${state?.value}`) === replaceSymbolsWithSpace(`${selectedState}`)
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${selectedState}`)
     );
 
     return (state?.lgas || []).map((x) => ({
@@ -206,7 +206,7 @@ const AdminDashboardReports = () => {
       currentPage: 1,
       totalPages: 0,
       totalUsers: 0,
-      limit: 50
+      limit: 50,
     });
   };
 
@@ -219,34 +219,34 @@ const AdminDashboardReports = () => {
     fetchUsers(form, page, pagination.limit);
   };
   const selectedStateLGASOrigin =
-  states.find(
-    (state) =>
-      replaceSymbolsWithSpace(`${state?.value}`) ===
-      replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
-  )?.lgas || [];
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
+    )?.lgas || [];
 
-const selectedStateLGASOriginFormatted =
-  selectedStateLGASOrigin && selectedStateLGASOrigin?.length
-    ? selectedStateLGASOrigin.map((x) => ({
-        label: x,
-        value: x,
-      }))
-    : [];
+  const selectedStateLGASOriginFormatted =
+    selectedStateLGASOrigin && selectedStateLGASOrigin?.length
+      ? selectedStateLGASOrigin.map((x) => ({
+          label: x,
+          value: x,
+        }))
+      : [];
 
-const selectedStateLGASResidence =
-  states.find(
-    (state) =>
-      replaceSymbolsWithSpace(`${state?.value}`) ===
-      replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
-  )?.lgas || [];
+  const selectedStateLGASResidence =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+    )?.lgas || [];
 
-const selectedStateLGASResidenceFormatted =
-  selectedStateLGASResidence && selectedStateLGASResidence?.length
-    ? selectedStateLGASResidence.map((x) => ({
-        label: x,
-        value: x,
-      }))
-    : [];
+  const selectedStateLGASResidenceFormatted =
+    selectedStateLGASResidence && selectedStateLGASResidence?.length
+      ? selectedStateLGASResidence.map((x) => ({
+          label: x,
+          value: x,
+        }))
+      : [];
 
   const onchangeInput = (id, value) => {
     setForm((prevForm) => ({
@@ -255,7 +255,6 @@ const selectedStateLGASResidenceFormatted =
     }));
   };
 
-  
   // PDF Generation
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -266,7 +265,13 @@ const selectedStateLGASResidenceFormatted =
     doc.text("SUPA Report Artisan/Intending Artisan Report", 35, 15);
 
     const headers = [
-      "Name", "Role", "NIN", "Phone", "Gender", "Residence", "Origin"
+      "Name",
+      "Role",
+      "NIN",
+      "Phone",
+      "Gender",
+      "Residence",
+      "Origin",
     ];
     const data = users.map((user) => [
       `${user.firstName} ${user.lastName}`,
@@ -297,7 +302,11 @@ const selectedStateLGASResidenceFormatted =
       doc.setPage(i);
       doc.setFontSize(10);
       doc.text(`Generated by: ${name}`, 10, doc.internal.pageSize.height - 10);
-      doc.text(`Date: ${date}`, doc.internal.pageSize.width - 50, doc.internal.pageSize.height - 10);
+      doc.text(
+        `Date: ${date}`,
+        doc.internal.pageSize.width - 50,
+        doc.internal.pageSize.height - 10
+      );
     }
 
     doc.save("Admin_Reports.pdf");
@@ -327,10 +336,10 @@ const selectedStateLGASResidenceFormatted =
               </h2>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate('/biodata')}>
+              <Button variant="outline" onClick={() => navigate("/biodata")}>
                 <UserCircle className="mr-2 h-4 w-4" /> Update Profile
               </Button>
-              
+
               <Button variant="destructive" onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" /> Logout
               </Button>
@@ -359,142 +368,145 @@ const selectedStateLGASResidenceFormatted =
                 </Select>
               </div>
 
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">State Of Residence</p>
+                <Select
+                  value={form?.stateOfResidence}
+                  onValueChange={(value) =>
+                    onchangeInput("stateOfResidence", value)
+                  }>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {states.map((item) => {
+                        return (
+                          <SelectItem value={item?.value}>
+                            {item?.label}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="w-[200px]">
-              <p className="text-left text-[14px] mb-1">State Of Residence</p>
-              <Select
-                value={form?.stateOfResidence}
-                onValueChange={(value) =>
-                  onchangeInput("stateOfResidence", value)
-                }>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {states.map((item) => {
-                      return (
-                        <SelectItem value={item?.value}>
-                          {item?.label}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">LGA Of Residence</p>
+                <Select
+                  value={form?.lgaOfResidence}
+                  onValueChange={(value) =>
+                    onchangeInput("lgaOfResidence", value)
+                  }>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {selectedStateLGASResidenceFormatted?.map((item) => {
+                        return (
+                          <SelectItem value={item?.value}>
+                            {item?.label}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="w-[200px]">
-              <p className="text-left text-[14px] mb-1">LGA Of Residence</p>
-              <Select
-                value={form?.lgaOfResidence}
-                onValueChange={(value) =>
-                  onchangeInput("lgaOfResidence", value)
-                }>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {selectedStateLGASResidenceFormatted?.map((item) => {
-                      return (
-                        <SelectItem value={item?.value}>
-                          {item?.label}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">State Of Origin</p>
+                <Select
+                  value={form?.stateOfOrigin}
+                  onValueChange={(value) =>
+                    onchangeInput("stateOfOrigin", value)
+                  }>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {states.map((item) => {
+                        return (
+                          <SelectItem value={item?.value}>
+                            {item?.label}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="w-[200px]">
-              <p className="text-left text-[14px] mb-1">State Of Origin</p>
-              <Select
-                value={form?.stateOfOrigin}
-                onValueChange={(value) =>
-                  onchangeInput("stateOfOrigin", value)
-                }>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {states.map((item) => {
-                      return (
-                        <SelectItem value={item?.value}>
-                          {item?.label}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">LGA Of Origin</p>
+                <Select
+                  value={form?.lga}
+                  onValueChange={(value) => onchangeInput("lga", value)}>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {selectedStateLGASOriginFormatted.map((item) => {
+                        return (
+                          <SelectItem value={item?.value}>
+                            {item?.label}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="w-[200px]">
-              <p className="text-left text-[14px] mb-1">LGA Of Origin</p>
-              <Select
-                value={form?.lga}
-                onValueChange={(value) => onchangeInput("lga", value)}>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {selectedStateLGASOriginFormatted.map((item) => {
-                      return (
-                        <SelectItem value={item?.value}>
-                          {item?.label}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Gender</p>
+                <Select
+                  value={form?.gender}
+                  onValueChange={(value) => onchangeInput("gender", value)}>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="w-[200px]">
-              <p className="text-left text-[14px] mb-1">Gender</p>
-              <Select
-                value={form?.gender}
-                onValueChange={(value) => onchangeInput("gender", value)}>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Male">Male</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Has Disability</p>
+                <Select
+                  value={form?.hasDisability}
+                  onValueChange={(value) =>
+                    onchangeInput("hasDisability", value)
+                  }>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="Yes">Yes</SelectItem>
+                      <SelectItem value="No">No</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="w-[200px]">
-              <p className="text-left text-[14px] mb-1">Has Disability</p>
-              <Select
-                value={form?.hasDisability}
-                onValueChange={(value) =>
-                  onchangeInput("hasDisability", value)
-                }>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Yes">Yes</SelectItem>
-                    <SelectItem value="No">No</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Button
+              <Button
                 className="bg-emerald-700 mt-auto"
                 onClick={search}
                 disabled={loading}>
-                {loading ? <SewingPinFilledIcon className="animate-spin" /> : "Search"}
+                {loading ? (
+                  <SewingPinFilledIcon className="animate-spin" />
+                ) : (
+                  "Search"
+                )}
               </Button>
 
               <Button
@@ -548,19 +560,27 @@ const selectedStateLGASResidenceFormatted =
                 {users.map((user, index) => (
                   <TableRow key={user?._id}>
                     <TableCell>
-                      {index + 1 + (pagination.currentPage - 1) * pagination.limit}
+                      {index +
+                        1 +
+                        (pagination.currentPage - 1) * pagination.limit}
                     </TableCell>
                     <TableCell>
-                      <div>{user.firstName} {user.lastName}</div>
+                      <div>
+                        {user.firstName} {user.lastName}
+                      </div>
                       <div className="text-sm text-gray-500">{user.email}</div>
                     </TableCell>
                     <TableCell>{formatString(user.role || "")}</TableCell>
                     <TableCell>{user.nin}</TableCell>
                     <TableCell>{user.phoneNumber}</TableCell>
-                    <TableCell className="capitalize">{user.gender || "---"}</TableCell>
+                    <TableCell className="capitalize">
+                      {user.gender || "---"}
+                    </TableCell>
                     <TableCell>
                       <div>{user.stateOfResidence}</div>
-                      <div className="text-sm text-gray-500">{user.lgaOfResidence}</div>
+                      <div className="text-sm text-gray-500">
+                        {user.lgaOfResidence}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <div>{user.stateOfOrigin}</div>
@@ -575,42 +595,71 @@ const selectedStateLGASResidenceFormatted =
             {pagination.totalPages > 0 && (
               <div className="mt-4 flex flex-col items-center">
                 <Pagination>
-  <PaginationContent>
-    <PaginationItem>
-      <PaginationPrevious
-        onClick={() => handlePageChange(Math.max(1, pagination?.currentPage - 1))}
-        disabled={pagination?.currentPage === 1}
-      />
-    </PaginationItem>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        onClick={() =>
+                          handlePageChange(
+                            Math.max(1, pagination?.currentPage - 1)
+                          )
+                        }
+                        disabled={pagination?.currentPage === 1}
+                      />
+                    </PaginationItem>
 
-    {/* Display a limited number of page links around the current page */}
-    {Array.from({ length: Math.min(pagination?.totalPages, 5) }, (_, index) => {
-      const pageNumber = index + 1;
-      const distanceFromCurrent = Math.abs(pageNumber - pagination?.currentPage);
-      const showLink = distanceFromCurrent <= 2 || pageNumber === 1 || pageNumber === pagination?.totalPages;
+                    {/* Display a limited number of page links around the current page */}
+                    {Array.from(
+                      { length: Math.min(pagination?.totalPages, 5) },
+                      (_, index) => {
+                        const pageNumber = index + 1;
+                        const distanceFromCurrent = Math.abs(
+                          pageNumber - pagination?.currentPage
+                        );
+                        const showLink =
+                          distanceFromCurrent <= 2 ||
+                          pageNumber === 1 ||
+                          pageNumber === pagination?.totalPages;
 
-      return showLink && (
-        <PaginationItem key={index} active={pagination?.currentPage === pagination?.pageNumber}>
-          <PaginationLink onClick={() => handlePageChange(pageNumber)}>
-            {pageNumber}
-          </PaginationLink>
-        </PaginationItem>
-      );
-    })}
+                        return (
+                          showLink && (
+                            <PaginationItem
+                              key={index}
+                              active={
+                                pagination?.currentPage ===
+                                pagination?.pageNumber
+                              }>
+                              <PaginationLink
+                                onClick={() => handlePageChange(pageNumber)}>
+                                {pageNumber}
+                              </PaginationLink>
+                            </PaginationItem>
+                          )
+                        );
+                      }
+                    )}
 
-    <PaginationItem>
-      <PaginationNext
-        onClick={() => handlePageChange(Math.min(pagination?.totalPages, pagination?.currentPage + 1))}
-        disabled={pagination?.currentPage === pagination?.totalPages}
-      />
-    </PaginationItem>
-  </PaginationContent>
-</Pagination>
+                    <PaginationItem>
+                      <PaginationNext
+                        onClick={() =>
+                          handlePageChange(
+                            Math.min(
+                              pagination?.totalPages,
+                              pagination?.currentPage + 1
+                            )
+                          )
+                        }
+                        disabled={
+                          pagination?.currentPage === pagination?.totalPages
+                        }
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
 
-<div className="text-sm text-gray-500 mt-2">
-  Page {pagination.currentPage} of {pagination.totalPages} 
-  | Total {pagination.totalUsers} users
-</div>
+                <div className="text-sm text-gray-500 mt-2">
+                  Page {pagination.currentPage} of {pagination.totalPages}|
+                  Total {pagination.totalUsers} users
+                </div>
               </div>
             )}
           </div>

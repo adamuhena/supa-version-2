@@ -1,19 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { API_BASE_URL } from "@/config/env";
 
 const TrainingCenterGroups = ({ trainingCenterId }) => {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
-  const [evaluation, setEvaluation] = useState({ userId: '', score: '', feedback: '' });
+  const [evaluation, setEvaluation] = useState({
+    userId: "",
+    score: "",
+    feedback: "",
+  });
 
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/training-center-groups/${trainingCenterId}`);
+        const response = await axios.get(
+          `${API_BASE_URL}/training-center-groups/${trainingCenterId}`
+        );
         setGroups(response.data);
       } catch (error) {
-        console.error('Error fetching groups:', error);
+        console.error("Error fetching groups:", error);
       }
     };
     fetchGroups();
@@ -21,7 +27,7 @@ const TrainingCenterGroups = ({ trainingCenterId }) => {
 
   const handleGroupSelect = (group) => {
     setSelectedGroup(group);
-    setEvaluation({ userId: '', score: '', feedback: '' });
+    setEvaluation({ userId: "", score: "", feedback: "" });
   };
 
   const handleEvaluationChange = (e) => {
@@ -32,13 +38,13 @@ const TrainingCenterGroups = ({ trainingCenterId }) => {
     try {
       await axios.post(`${API_BASE_URL}/evaluate-user`, {
         groupId: selectedGroup._id,
-        ...evaluation
+        ...evaluation,
       });
-      alert('Evaluation submitted successfully!');
-      setEvaluation({ userId: '', score: '', feedback: '' });
+      alert("Evaluation submitted successfully!");
+      setEvaluation({ userId: "", score: "", feedback: "" });
     } catch (error) {
-      console.error('Error submitting evaluation:', error);
-      alert('Failed to submit evaluation');
+      console.error("Error submitting evaluation:", error);
+      alert("Failed to submit evaluation");
     }
   };
 
@@ -49,12 +55,15 @@ const TrainingCenterGroups = ({ trainingCenterId }) => {
         <div>
           <h3 className="text-xl font-semibold mb-2">Groups</h3>
           <ul className="space-y-2">
-            {groups.map(group => (
-              <li 
-                key={group._id} 
-                className={`cursor-pointer p-2 rounded ${selectedGroup?._id === group._id ? 'bg-blue-100' : 'hover:bg-gray-100'}`}
-                onClick={() => handleGroupSelect(group)}
-              >
+            {groups.map((group) => (
+              <li
+                key={group._id}
+                className={`cursor-pointer p-2 rounded ${
+                  selectedGroup?._id === group._id
+                    ? "bg-blue-100"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => handleGroupSelect(group)}>
                 {group.name}
               </li>
             ))}
@@ -68,8 +77,10 @@ const TrainingCenterGroups = ({ trainingCenterId }) => {
             <p>Status: {selectedGroup.status}</p>
             <h4 className="text-lg font-semibold mt-4 mb-2">Users</h4>
             <ul>
-              {selectedGroup.users.map(user => (
-                <li key={user._id}>{user.firstName} {user.lastName}</li>
+              {selectedGroup.users.map((user) => (
+                <li key={user._id}>
+                  {user.firstName} {user.lastName}
+                </li>
               ))}
             </ul>
             <h4 className="text-lg font-semibold mt-4 mb-2">Evaluate User</h4>
@@ -78,11 +89,12 @@ const TrainingCenterGroups = ({ trainingCenterId }) => {
                 name="userId"
                 value={evaluation.userId}
                 onChange={handleEvaluationChange}
-                className="w-full px-3 py-2 border rounded"
-              >
+                className="w-full px-3 py-2 border rounded">
                 <option value="">Select a user</option>
-                {selectedGroup.users.map(user => (
-                  <option key={user._id} value={user._id}>{user.firstName} {user.lastName}</option>
+                {selectedGroup.users.map((user) => (
+                  <option key={user._id} value={user._id}>
+                    {user.firstName} {user.lastName}
+                  </option>
                 ))}
               </select>
               <input
@@ -98,13 +110,11 @@ const TrainingCenterGroups = ({ trainingCenterId }) => {
                 placeholder="Feedback"
                 value={evaluation.feedback}
                 onChange={handleEvaluationChange}
-                className="w-full px-3 py-2 border rounded"
-              ></textarea>
+                className="w-full px-3 py-2 border rounded"></textarea>
               <button
                 onClick={handleSubmitEvaluation}
                 disabled={!evaluation.userId || !evaluation.score}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-400"
-              >
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-400">
                 Submit Evaluation
               </button>
             </div>
@@ -116,4 +126,3 @@ const TrainingCenterGroups = ({ trainingCenterId }) => {
 };
 
 export default TrainingCenterGroups;
-

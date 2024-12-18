@@ -1,15 +1,14 @@
-
 import React, { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import useLogout from "@/pages/loginPage/logout";
 import Spinner from "../components/layout/spinner";
+import { API_BASE_URL } from "@/config/env";
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState(null);
   const [error, setError] = useState(null);
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const isAuthenticated = localStorage.getItem("userId");
   const accessToken = localStorage.getItem("accessToken");
@@ -31,9 +30,12 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
               }
             );
           } else {
-            response = await axios.get(`${API_BASE_URL}/users/${isAuthenticated}`, {
-              headers: { Authorization: `Bearer ${accessToken}` },
-            });
+            response = await axios.get(
+              `${API_BASE_URL}/users/${isAuthenticated}`,
+              {
+                headers: { Authorization: `Bearer ${accessToken}` },
+              }
+            );
           }
           setUserRole(response.data.data.role);
           setIsFirstTimeUser(response.data.data.agree);
@@ -80,11 +82,10 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
           intending_artisan: "/register/intendingArtisan",
           training_center: "/register/trainingcenter",
         };
-  
+
     console.log("Redirecting to:", rolePaths[userRole]);
     return <Navigate to={rolePaths[userRole] || "/"} replace />;
   }
-  
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
     return <Navigate to="/not-authorized" replace />;

@@ -24,13 +24,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
 import { Minus, Plus, Upload } from "lucide-react";
+import { API_BASE_URL } from "@/config/env";
 
 export function BioDataDialog({ isOpen, onClose, userData }) {
   const accessToken = localStorage.getItem("accessToken");
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const [user, setUser] = useState({
-    _id:"",
+    _id: "",
     firstName: "",
     middleName: "",
     lastName: "",
@@ -135,8 +135,8 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
         setUser((prevUser) => ({ ...prevUser, ...sectionChanges }));
         setChanges((prevChanges) => {
           const updatedChanges = { ...prevChanges };
-          Object.keys(sectionChanges).forEach((key) =>
-            delete updatedChanges[`${section}.${key}`]
+          Object.keys(sectionChanges).forEach(
+            (key) => delete updatedChanges[`${section}.${key}`]
           );
           return updatedChanges;
         });
@@ -168,8 +168,9 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
         <DialogHeader>
           <DialogTitle>User Biodata</DialogTitle>
           <DialogDescription>
-            Fill in the additional information for the user, including their role and status.
-        </DialogDescription>
+            Fill in the additional information for the user, including their
+            role and status.
+          </DialogDescription>
         </DialogHeader>
         <Card className="border p-4 rounded-lg shadow-md mb-6">
           <CardContent className="flex items-center space-x-4">
@@ -188,7 +189,9 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
             <div>
               <Input
                 type="file"
-                onChange={(e) => handleUpdate("profileImage", e.target.files[0])}
+                onChange={(e) =>
+                  handleUpdate("profileImage", e.target.files[0])
+                }
                 className="hidden"
                 id="profile-image-upload"
               />
@@ -239,7 +242,11 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
                       </Label>
                       <Input
                         id={field}
-                        value={changes[`personalInfo.${field}`] ?? user?.[field] ?? ""}
+                        value={
+                          changes[`personalInfo.${field}`] ??
+                          user?.[field] ??
+                          ""
+                        }
                         onChange={(e) =>
                           handleUpdate(`personalInfo.${field}`, e.target.value)
                         }
@@ -258,8 +265,11 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
                         onValueChange={(value) =>
                           handleUpdate(`personalInfo.${field}`, value)
                         }
-                        value={changes[`personalInfo.${field}`] ?? user?.[field] ?? ""}
-                      >
+                        value={
+                          changes[`personalInfo.${field}`] ??
+                          user?.[field] ??
+                          ""
+                        }>
                         <SelectTrigger>
                           <SelectValue placeholder={`Select ${field}`} />
                         </SelectTrigger>
@@ -296,7 +306,8 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
                       }
                     />
                   </div>
-                  {(changes["personalInfo.hasDisability"] ?? user?.hasDisability) && (
+                  {(changes["personalInfo.hasDisability"] ??
+                    user?.hasDisability) && (
                     <div className="space-y-2">
                       <Label htmlFor="disabilityType">Disability Type</Label>
                       <Input
@@ -307,14 +318,21 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
                           ""
                         }
                         onChange={(e) =>
-                          handleUpdate("personalInfo.disabilityType", e.target.value)
+                          handleUpdate(
+                            "personalInfo.disabilityType",
+                            e.target.value
+                          )
                         }
                       />
                     </div>
                   )}
                 </div>
 
-                <Button onClick={() => submitChanges('personalInfo')} className="mt-4">Update Personal Information</Button>
+                <Button
+                  onClick={() => submitChanges("personalInfo")}
+                  className="mt-4">
+                  Update Personal Information
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -326,26 +344,53 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {['school', 'highestQualification', 'graduationYear'].map((field) => (
-                    <div key={field} className="space-y-2">
-                      <Label htmlFor={`education-${field}`}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
-                      <Input
-                        id={`education-${field}`}
-                        value={changes[`education.${field}`] ?? user?.education[field] ?? ''}
-                        onChange={(e) => handleUpdate(`education.${field}`, e.target.value)}
-                      />
-                    </div>
-                  ))}
+                  {["school", "highestQualification", "graduationYear"].map(
+                    (field) => (
+                      <div key={field} className="space-y-2">
+                        <Label htmlFor={`education-${field}`}>
+                          {field
+                            .split(/(?=[A-Z])/)
+                            .join(" ")
+                            .charAt(0)
+                            .toUpperCase() +
+                            field
+                              .split(/(?=[A-Z])/)
+                              .join(" ")
+                              .slice(1)}
+                        </Label>
+                        <Input
+                          id={`education-${field}`}
+                          value={
+                            changes[`education.${field}`] ??
+                            user?.education[field] ??
+                            ""
+                          }
+                          onChange={(e) =>
+                            handleUpdate(`education.${field}`, e.target.value)
+                          }
+                        />
+                      </div>
+                    )
+                  )}
                   <div className="space-y-2">
                     <Label htmlFor="education-upload">Education Document</Label>
                     <Input
                       id="education-upload"
                       type="file"
-                      onChange={(e) => handleFileUpload('education.eduUpload', e.target.files[0])}
+                      onChange={(e) =>
+                        handleFileUpload(
+                          "education.eduUpload",
+                          e.target.files[0]
+                        )
+                      }
                     />
                   </div>
                 </div>
-                <Button onClick={() => submitChanges('education')} className="mt-4">Update Education</Button>
+                <Button
+                  onClick={() => submitChanges("education")}
+                  className="mt-4">
+                  Update Education
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -356,39 +401,70 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
                 <CardTitle>Skills, Certifications, and Experience</CardTitle>
               </CardHeader>
               <CardContent>
-  <h3 className="text-lg font-semibold mb-4">Prior Skills and Certifications</h3>
-  {(changes?.priorSkillsCerts ?? user?.priorSkillsCerts ?? []).map((cert, index) => (
-    <div key={index} className="mb-4 p-4 border rounded">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {['sector', 'tradeArea', 'name', 'year'].map((field) => (
-          <div key={field} className="space-y-2">
-            <Label htmlFor={`cert-${index}-${field}`}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
-            <Input
-              id={`cert-${index}-${field}`}
-              value={cert[field] ?? ''}
-              onChange={(e) => handleArrayUpdate('priorSkillsCerts', index, { ...cert, [field]: e.target.value })}
-            />
-          </div>
-        ))}
-        <div className="space-y-2">
-          <Label htmlFor={`cert-${index}-upload`}>Certificate Upload</Label>
-          <Input
-            id={`cert-${index}-upload`}
-            type="file"
-            onChange={(e) => handleFileUpload(`priorSkillsCerts.${index}.priUpload`, e.target.files[0])}
-          />
-        </div>
-      </div>
-      <Button variant="destructive" onClick={() => removeArrayItem('priorSkillsCerts', index)} className="mt-2">
-        <Minus className="mr-2 h-4 w-4" /> Remove
-      </Button>
-    </div>
-  ))}
-  <Button onClick={() => addArrayItem('priorSkillsCerts', { sector: '', tradeArea: '', name: '', year: '', priUpload: '' })}>
-    <Plus className="mr-2 h-4 w-4" /> Add Certification
-  </Button>
-</CardContent>
-
+                <h3 className="text-lg font-semibold mb-4">
+                  Prior Skills and Certifications
+                </h3>
+                {(
+                  changes?.priorSkillsCerts ??
+                  user?.priorSkillsCerts ??
+                  []
+                ).map((cert, index) => (
+                  <div key={index} className="mb-4 p-4 border rounded">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {["sector", "tradeArea", "name", "year"].map((field) => (
+                        <div key={field} className="space-y-2">
+                          <Label htmlFor={`cert-${index}-${field}`}>
+                            {field.charAt(0).toUpperCase() + field.slice(1)}
+                          </Label>
+                          <Input
+                            id={`cert-${index}-${field}`}
+                            value={cert[field] ?? ""}
+                            onChange={(e) =>
+                              handleArrayUpdate("priorSkillsCerts", index, {
+                                ...cert,
+                                [field]: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      ))}
+                      <div className="space-y-2">
+                        <Label htmlFor={`cert-${index}-upload`}>
+                          Certificate Upload
+                        </Label>
+                        <Input
+                          id={`cert-${index}-upload`}
+                          type="file"
+                          onChange={(e) =>
+                            handleFileUpload(
+                              `priorSkillsCerts.${index}.priUpload`,
+                              e.target.files[0]
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      variant="destructive"
+                      onClick={() => removeArrayItem("priorSkillsCerts", index)}
+                      className="mt-2">
+                      <Minus className="mr-2 h-4 w-4" /> Remove
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  onClick={() =>
+                    addArrayItem("priorSkillsCerts", {
+                      sector: "",
+                      tradeArea: "",
+                      name: "",
+                      year: "",
+                      priUpload: "",
+                    })
+                  }>
+                  <Plus className="mr-2 h-4 w-4" /> Add Certification
+                </Button>
+              </CardContent>
             </Card>
           </TabsContent>
 
@@ -399,18 +475,38 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {['accountName', 'accountNumber', 'bank'].map((field) => (
+                  {["accountName", "accountNumber", "bank"].map((field) => (
                     <div key={field} className="space-y-2">
-                      <Label htmlFor={`bank-${field}`}>{field.split(/(?=[A-Z])/).join(' ').charAt(0).toUpperCase() + field.split(/(?=[A-Z])/).join(' ').slice(1)}</Label>
+                      <Label htmlFor={`bank-${field}`}>
+                        {field
+                          .split(/(?=[A-Z])/)
+                          .join(" ")
+                          .charAt(0)
+                          .toUpperCase() +
+                          field
+                            .split(/(?=[A-Z])/)
+                            .join(" ")
+                            .slice(1)}
+                      </Label>
                       <Input
                         id={`bank-${field}`}
-                        value={changes[`bankAccount.${field}`] ?? user?.bankAccount[field] ?? ''}
-                        onChange={(e) => handleUpdate(`bankAccount.${field}`, e.target.value)}
+                        value={
+                          changes[`bankAccount.${field}`] ??
+                          user?.bankAccount[field] ??
+                          ""
+                        }
+                        onChange={(e) =>
+                          handleUpdate(`bankAccount.${field}`, e.target.value)
+                        }
                       />
                     </div>
                   ))}
                 </div>
-                <Button onClick={() => submitChanges('bankAccount')} className="mt-4">Update Bank Account</Button>
+                <Button
+                  onClick={() => submitChanges("bankAccount")}
+                  className="mt-4">
+                  Update Bank Account
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -435,7 +531,11 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="role">Role</Label>
-                <Select onValueChange={(value) => handleUpdate('additionalInfo.role', value)} value={changes['additionalInfo.role'] ?? user?.role ?? ''}>
+                <Select
+                  onValueChange={(value) =>
+                    handleUpdate("additionalInfo.role", value)
+                  }
+                  value={changes["additionalInfo.role"] ?? user?.role ?? ""}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
@@ -443,7 +543,9 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
                     <SelectItem value="superadmin">Superadmin</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="artisan_user">Artisan User</SelectItem>
-                    <SelectItem value="intending_artisan">Intending Artisan</SelectItem>
+                    <SelectItem value="intending_artisan">
+                      Intending Artisan
+                    </SelectItem>
                     <SelectItem value="regular_user">Regular User</SelectItem>
                   </SelectContent>
                 </Select>
@@ -452,28 +554,48 @@ export function BioDataDialog({ isOpen, onClose, userData }) {
                 <Label htmlFor="certifiedStatus">Certified Status</Label>
                 <Switch
                   id="certifiedStatus"
-                  checked={changes['additionalInfo.certifiedStatus'] ?? user?.certifiedStatus ?? false}
-                  onCheckedChange={(checked) => handleUpdate('additionalInfo.certifiedStatus', checked)}
+                  checked={
+                    changes["additionalInfo.certifiedStatus"] ??
+                    user?.certifiedStatus ??
+                    false
+                  }
+                  onCheckedChange={(checked) =>
+                    handleUpdate("additionalInfo.certifiedStatus", checked)
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="licenseStatus">License Status</Label>
                 <Switch
                   id="licenseStatus"
-                  checked={changes['additionalInfo.licenseStatus'] ?? user?.licenseStatus ?? false}
-                  onCheckedChange={(checked) => handleUpdate('additionalInfo.licenseStatus', checked)}
+                  checked={
+                    changes["additionalInfo.licenseStatus"] ??
+                    user?.licenseStatus ??
+                    false
+                  }
+                  onCheckedChange={(checked) =>
+                    handleUpdate("additionalInfo.licenseStatus", checked)
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="agree">Agree to Terms</Label>
                 <Switch
                   id="agree"
-                  checked={changes['additionalInfo.agree'] ?? user?.agree ?? false}
-                  onCheckedChange={(checked) => handleUpdate('additionalInfo.agree', checked)}
+                  checked={
+                    changes["additionalInfo.agree"] ?? user?.agree ?? false
+                  }
+                  onCheckedChange={(checked) =>
+                    handleUpdate("additionalInfo.agree", checked)
+                  }
                 />
               </div>
             </div>
-            <Button onClick={() => submitChanges('additionalInfo')} className="mt-4">Update Additional Information</Button>
+            <Button
+              onClick={() => submitChanges("additionalInfo")}
+              className="mt-4">
+              Update Additional Information
+            </Button>
           </CardContent>
         </Card>
       </DialogContent>

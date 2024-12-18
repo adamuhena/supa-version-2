@@ -44,34 +44,34 @@
 
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
-  
+
 //     if (!documentPurpose) {
 //       alert("Please select a document purpose (Certification or Licensing)");
 //       return;
 //     }
-  
+
 //     const formData = new FormData();
 //     formData.append("purpose", documentPurpose);
-  
+
 //     const userId = localStorage.getItem("userId");
-  
+
 //     if (!userId) {
 //       alert("User ID is required. Please log in.");
 //       return;
 //     }
-  
+
 //     formData.append("userId", userId);
-  
+
 //     attachments.forEach((attachment, index) => {
 //       if (!attachment.type || !attachment.file) {
 //         alert(`Attachment #${index + 1} is incomplete.`);
 //         return;
 //       }
-  
+
 //       formData.append("types", attachment.type);
 //       formData.append("documents", attachment.file);
 //     });
-  
+
 //     try {
 //       const response = await axios.post(`${API_BASE_URL}/documents/upload`, formData, {
 //         headers: {
@@ -79,9 +79,9 @@
 //           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
 //         },
 //       });
-  
+
 //       console.log(response.data); // Log the response data to inspect the structure
-  
+
 //       // Check if response contains a success field and its value
 //       if (response.data && response.data.success) {
 //         alert("Documents uploaded successfully!");
@@ -93,8 +93,6 @@
 //       alert("Error uploading documents. Please try again.");
 //     }
 //   };
-  
-  
 
 //   return (
 //     <DashboardPage title="Certification / Licensing" href="/trainee/dashboard">
@@ -212,25 +210,37 @@
 
 // export default DocumentUpload;
 
-
-
 import DashboardPage from "@/components/layout/DashboardLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import useLogout from '@/pages/loginPage/logout';
-import axios from 'axios';
-import { Briefcase, LogOut, UserCircle } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import useLogout from "@/pages/loginPage/logout";
+import axios from "axios";
+import { Briefcase, LogOut, UserCircle } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "@/config/env";
 
 const DocumentUpload = () => {
   const logout = useLogout();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const navigate = useNavigate();
 
   const [attachments, setAttachments] = useState([
@@ -255,11 +265,14 @@ const DocumentUpload = () => {
         return;
       }
 
-      const response = await axios.get(`${API_BASE_URL}/documents/user/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.get(
+        `${API_BASE_URL}/documents/user/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
       if (response.data.success) {
         setUserDocuments(response.data.data);
@@ -290,42 +303,46 @@ const DocumentUpload = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!documentPurpose) {
       alert("Please select a document purpose (Certification or Licensing)");
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("purpose", documentPurpose);
-  
+
     const userId = localStorage.getItem("userId");
-  
+
     if (!userId) {
       alert("User ID is required. Please log in.");
       return;
     }
-  
+
     formData.append("userId", userId);
-  
+
     attachments.forEach((attachment, index) => {
       if (!attachment.type || !attachment.file) {
         alert(`Attachment #${index + 1} is incomplete.`);
         return;
       }
-  
+
       formData.append("types", attachment.type);
       formData.append("documents", attachment.file);
     });
-  
+
     try {
-      const response = await axios.post(`${API_BASE_URL}/documents/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
-  
+      const response = await axios.post(
+        `${API_BASE_URL}/documents/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+
       if (response.data && response.data.success) {
         alert("Documents uploaded successfully!");
         fetchUserDocuments(); // Refresh documents after upload
@@ -340,13 +357,13 @@ const DocumentUpload = () => {
 
   const getStatusVariant = (status) => {
     switch (status) {
-      case 'approved':
-        return 'success';
-      case 'rejected':
-        return 'destructive';
-      case 'pending':
+      case "approved":
+        return "success";
+      case "rejected":
+        return "destructive";
+      case "pending":
       default:
-        return 'default';
+        return "default";
     }
   };
 
@@ -356,7 +373,7 @@ const DocumentUpload = () => {
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Document Upload</h1>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate('/biodata')}>
+            <Button variant="outline" onClick={() => navigate("/biodata")}>
               <UserCircle className="mr-2 h-4 w-4" /> Account
             </Button>
             <Button variant="destructive" onClick={logout}>
@@ -372,7 +389,9 @@ const DocumentUpload = () => {
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <Label htmlFor="documentPurpose">Document Purpose</Label>
-                <Select onValueChange={setDocumentPurpose} value={documentPurpose}>
+                <Select
+                  onValueChange={setDocumentPurpose}
+                  value={documentPurpose}>
                   <SelectTrigger id="documentPurpose">
                     <SelectValue placeholder="Select Purpose" />
                   </SelectTrigger>
@@ -385,13 +404,11 @@ const DocumentUpload = () => {
               {attachments.map((attachment, index) => (
                 <div
                   key={attachment.id}
-                  className="flex items-center gap-4 mb-4 border p-4 rounded-lg"
-                >
+                  className="flex items-center gap-4 mb-4 border p-4 rounded-lg">
                   <Select
                     onValueChange={(value) =>
                       handleAttachmentChange(attachment.id, "type", value)
-                    }
-                  >
+                    }>
                     <SelectTrigger className="w-40">
                       <SelectValue placeholder="Select Document Type" />
                     </SelectTrigger>
@@ -407,19 +424,25 @@ const DocumentUpload = () => {
                     type="file"
                     accept="image/*,application/pdf"
                     onChange={(e) =>
-                      handleAttachmentChange(attachment.id, "file", e.target.files[0])
+                      handleAttachmentChange(
+                        attachment.id,
+                        "file",
+                        e.target.files[0]
+                      )
                     }
                   />
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => handleRemoveAttachment(attachment.id)}
-                  >
+                    onClick={() => handleRemoveAttachment(attachment.id)}>
                     Remove
                   </Button>
                 </div>
               ))}
-              <Button variant="outline" type="button" onClick={handleAddAttachment}>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={handleAddAttachment}>
                 Add Attachment
               </Button>
               {/* <Button type="submit" className="ml-4">
@@ -428,7 +451,7 @@ const DocumentUpload = () => {
             </form>
           </CardContent>
         </Card>
-        
+
         {/* Documents Status Table */}
         <Card className="w-full">
           <CardHeader>

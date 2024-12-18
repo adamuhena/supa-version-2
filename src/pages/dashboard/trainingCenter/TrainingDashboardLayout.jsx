@@ -53,10 +53,9 @@ import { toast } from "sonner";
 import logo3 from "../../../assets/logo.png";
 import Spinner from "../../../components/layout/spinner";
 import { DotPattern } from "../../../components/ui/dot-pattern";
+import { API_BASE_URL } from "@/config/env";
 
 export default function TrainingDashboardPage({ href, title, children }) {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   const [userData, setUserData] = useState(null); // Holds the user data
   const navigate = useNavigate();
 
@@ -71,11 +70,14 @@ export default function TrainingDashboardPage({ href, title, children }) {
           return; // If no token or userId, you can handle this with a redirect or error state
         }
 
-        const response = await axios.get(`${API_BASE_URL}/training-center/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await axios.get(
+          `${API_BASE_URL}/training-center/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
         if (response.data.success) {
           setUserData(response.data.data); // Set the user data in state
@@ -97,22 +99,21 @@ export default function TrainingDashboardPage({ href, title, children }) {
 
   if (!userData) {
     return (
-    <div className="flex justify-center items-center h-screen">
-      <Spinner/>
-    </div>
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
     );
-  }   
-
-// Role-based filtering function
-const isLinkAccessible = (allowedRoles) => {
-  if (!userData || !userData.role) {
-    toast.error(`User data or role is missing: ${userData}`);
-    console.error("User data or role is missing:", userData);
-    return false;
   }
-  return allowedRoles.includes(userData.role);
-};
 
+  // Role-based filtering function
+  const isLinkAccessible = (allowedRoles) => {
+    if (!userData || !userData.role) {
+      toast.error(`User data or role is missing: ${userData}`);
+      console.error("User data or role is missing:", userData);
+      return false;
+    }
+    return allowedRoles.includes(userData.role);
+  };
 
   return (
     <SidebarProvider>
@@ -146,12 +147,7 @@ const isLinkAccessible = (allowedRoles) => {
         </SidebarHeader>
 
         <SidebarContent>
-
-          {isLinkAccessible([
-            "admin",
-            "superadmin",
-            "training_center",
-          ]) ? (
+          {isLinkAccessible(["admin", "superadmin", "training_center"]) ? (
             <SidebarGroup className="group-data-[collapsible=icon]:hidden">
               <SidebarGroupLabel>Training Center</SidebarGroupLabel>
               <SidebarMenu>
@@ -175,11 +171,7 @@ const isLinkAccessible = (allowedRoles) => {
             </SidebarGroup>
           ) : null}
 
-          {isLinkAccessible([
-            "admin",
-            "superadmin",
-            "training_center",
-          ]) ? (
+          {isLinkAccessible(["admin", "superadmin", "training_center"]) ? (
             <SidebarGroup className="mt-auto">
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -219,7 +211,9 @@ const isLinkAccessible = (allowedRoles) => {
                         src={userData.profileImage}
                         alt={userData.trainingCentreName}
                       />
-                      <AvatarFallback>{userData.trainingCentreName}</AvatarFallback>
+                      <AvatarFallback>
+                        {userData.trainingCentreName}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
@@ -238,7 +232,9 @@ const isLinkAccessible = (allowedRoles) => {
                           src={userData.profileImage}
                           alt={userData.trainingCentreName}
                         />
-                        <AvatarFallback>{userData.trainingCentreName}</AvatarFallback>
+                        <AvatarFallback>
+                          {userData.trainingCentreName}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
                         <span className="truncate font-semibold">

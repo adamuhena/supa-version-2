@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Users, UserPlus, School, UsersRound } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Users, UserPlus, School, UsersRound } from "lucide-react";
+import { API_BASE_URL } from "@/config/env";
 
 // Reusable MetricCard component
 const MetricCard = ({ title, value, icon: Icon }) => (
@@ -16,27 +17,27 @@ const MetricCard = ({ title, value, icon: Icon }) => (
 );
 
 export default function Metrics() {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   const [users, setUsers] = useState([]); // Holds userCounts data
   const [trainingCenters, setTrainingCenters] = useState([]);
   const [trainingGroups, setTrainingGroups] = useState([]);
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem("accessToken");
 
   // Fetch userCounts data from the dashboard analytics API
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        
-        const response = await axios.get(`${API_BASE_URL}/dashboard-analytics`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
+        const response = await axios.get(
+          `${API_BASE_URL}/dashboard-analytics`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
 
         if (response.data.success) {
           setUsers(response.data.data?.[0]?.userCounts || []);
         }
       } catch (error) {
-        console.error('Error fetching user counts:', error);
+        console.error("Error fetching user counts:", error);
       }
     };
 
@@ -47,14 +48,13 @@ export default function Metrics() {
   useEffect(() => {
     const fetchTrainingCenters = async () => {
       try {
-        
         const response = await axios.get(`${API_BASE_URL}/training-centers`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
 
         setTrainingCenters(response.data.data || []);
       } catch (error) {
-        console.error('Error fetching training centers:', error);
+        console.error("Error fetching training centers:", error);
       }
     };
 
@@ -71,7 +71,7 @@ export default function Metrics() {
 
         setTrainingGroups(response.data.data || []);
       } catch (error) {
-        console.error('Error fetching training groups:', error);
+        console.error("Error fetching training groups:", error);
       }
     };
 
@@ -79,17 +79,35 @@ export default function Metrics() {
   }, []);
 
   // Calculate counts for metrics
-  const artisan_userCount = users.find((user) => user._id === 'artisan_user')?.count || 0;
-  const intending_artisanCount = users.find((user) => user._id === 'intending_artisan')?.count || 0;
+  const artisan_userCount =
+    users.find((user) => user._id === "artisan_user")?.count || 0;
+  const intending_artisanCount =
+    users.find((user) => user._id === "intending_artisan")?.count || 0;
   const training_centerCount = trainingCenters.length;
   const training_groupCount = trainingGroups.length;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-      <MetricCard title="Registered Artisans" value={artisan_userCount} icon={Users} />
-      <MetricCard title="Intending Artisans" value={intending_artisanCount} icon={UserPlus} />
-      <MetricCard title="Training Centers" value={training_centerCount} icon={School} />
-      <MetricCard title="Trade Area Groups" value={training_groupCount} icon={UsersRound} />
+      <MetricCard
+        title="Registered Artisans"
+        value={artisan_userCount}
+        icon={Users}
+      />
+      <MetricCard
+        title="Intending Artisans"
+        value={intending_artisanCount}
+        icon={UserPlus}
+      />
+      <MetricCard
+        title="Training Centers"
+        value={training_centerCount}
+        icon={School}
+      />
+      <MetricCard
+        title="Trade Area Groups"
+        value={training_groupCount}
+        icon={UsersRound}
+      />
     </div>
   );
 }

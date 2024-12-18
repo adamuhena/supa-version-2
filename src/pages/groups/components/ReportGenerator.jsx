@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { API_BASE_URL } from "@/config/env";
 
 const ReportGenerator = () => {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [groups, setGroups] = useState([]);
   const [filters, setFilters] = useState({
-    trainingPeriod: '',
-    status: '',
-    startDate: '',
-    endDate: '',
-    trainingCenter: ''
+    trainingPeriod: "",
+    status: "",
+    startDate: "",
+    endDate: "",
+    trainingCenter: "",
   });
   const [report, setReport] = useState(null);
 
@@ -19,7 +19,7 @@ const ReportGenerator = () => {
         const response = await axios.get(`${API_BASE_URL}/training-groups`);
         setGroups(response.data);
       } catch (error) {
-        console.error('Error fetching groups:', error);
+        console.error("Error fetching groups:", error);
       }
     };
     fetchGroups();
@@ -30,24 +30,31 @@ const ReportGenerator = () => {
   };
 
   const generateReport = () => {
-    const filteredGroups = groups.filter(group => {
+    const filteredGroups = groups.filter((group) => {
       return (
-        (!filters.trainingPeriod || group.trainingPeriod === filters.trainingPeriod) &&
+        (!filters.trainingPeriod ||
+          group.trainingPeriod === filters.trainingPeriod) &&
         (!filters.status || group.status === filters.status) &&
-        (!filters.startDate || new Date(group.startDate) >= new Date(filters.startDate)) &&
-        (!filters.endDate || new Date(group.endDate) <= new Date(filters.endDate)) &&
-        (!filters.trainingCenter || group.trainingCenter.trainingCentreName === filters.trainingCenter)
+        (!filters.startDate ||
+          new Date(group.startDate) >= new Date(filters.startDate)) &&
+        (!filters.endDate ||
+          new Date(group.endDate) <= new Date(filters.endDate)) &&
+        (!filters.trainingCenter ||
+          group.trainingCenter.trainingCentreName === filters.trainingCenter)
       );
     });
 
     const report = {
       totalGroups: filteredGroups.length,
-      totalUsers: filteredGroups.reduce((acc, group) => acc + group.users.length, 0),
+      totalUsers: filteredGroups.reduce(
+        (acc, group) => acc + group.users.length,
+        0
+      ),
       statusBreakdown: filteredGroups.reduce((acc, group) => {
         acc[group.status] = (acc[group.status] || 0) + 1;
         return acc;
       }, {}),
-      groups: filteredGroups
+      groups: filteredGroups,
     };
 
     setReport(report);
@@ -58,7 +65,9 @@ const ReportGenerator = () => {
       <h2 className="text-2xl font-bold mb-4">Report Generator</h2>
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
-          <label htmlFor="trainingPeriod" className="block mb-1">Training Period</label>
+          <label htmlFor="trainingPeriod" className="block mb-1">
+            Training Period
+          </label>
           <input
             type="text"
             id="trainingPeriod"
@@ -69,14 +78,15 @@ const ReportGenerator = () => {
           />
         </div>
         <div>
-          <label htmlFor="status" className="block mb-1">Status</label>
+          <label htmlFor="status" className="block mb-1">
+            Status
+          </label>
           <select
             id="status"
             name="status"
             value={filters.status}
             onChange={handleFilterChange}
-            className="w-full px-3 py-2 border rounded"
-          >
+            className="w-full px-3 py-2 border rounded">
             <option value="">All</option>
             <option value="not_started">Not Started</option>
             <option value="in_progress">In Progress</option>
@@ -84,7 +94,9 @@ const ReportGenerator = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="startDate" className="block mb-1">Start Date</label>
+          <label htmlFor="startDate" className="block mb-1">
+            Start Date
+          </label>
           <input
             type="date"
             id="startDate"
@@ -95,7 +107,9 @@ const ReportGenerator = () => {
           />
         </div>
         <div>
-          <label htmlFor="endDate" className="block mb-1">End Date</label>
+          <label htmlFor="endDate" className="block mb-1">
+            End Date
+          </label>
           <input
             type="date"
             id="endDate"
@@ -106,7 +120,9 @@ const ReportGenerator = () => {
           />
         </div>
         <div>
-          <label htmlFor="trainingCenter" className="block mb-1">Training Center</label>
+          <label htmlFor="trainingCenter" className="block mb-1">
+            Training Center
+          </label>
           <input
             type="text"
             id="trainingCenter"
@@ -119,8 +135,7 @@ const ReportGenerator = () => {
       </div>
       <button
         onClick={generateReport}
-        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-      >
+        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
         Generate Report
       </button>
       {report && (
@@ -131,14 +146,17 @@ const ReportGenerator = () => {
           <h4 className="text-lg font-semibold mt-4 mb-2">Status Breakdown</h4>
           <ul>
             {Object.entries(report.statusBreakdown).map(([status, count]) => (
-              <li key={status}>{status}: {count}</li>
+              <li key={status}>
+                {status}: {count}
+              </li>
             ))}
           </ul>
           <h4 className="text-lg font-semibold mt-4 mb-2">Groups</h4>
           <ul>
-            {report.groups.map(group => (
+            {report.groups.map((group) => (
               <li key={group._id} className="mb-2">
-                <strong>{group.name}</strong> - {group.trainingPeriod}, Status: {group.status}, Users: {group.users.length}
+                <strong>{group.name}</strong> - {group.trainingPeriod}, Status:{" "}
+                {group.status}, Users: {group.users.length}
               </li>
             ))}
           </ul>
@@ -149,4 +167,3 @@ const ReportGenerator = () => {
 };
 
 export default ReportGenerator;
-

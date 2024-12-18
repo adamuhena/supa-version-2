@@ -1,4 +1,4 @@
-ß
+ß;
 import {
   Card,
   CardContent,
@@ -6,22 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ChartContainer,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  Tooltip,
-  XAxis,
-} from "recharts";
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis } from "recharts";
+import { API_BASE_URL } from "@/config/env";
 
 export function ArtisanDistributionChart() {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const accessToken = localStorage.getItem("accessToken");
   const [chartData, setChartData] = useState([]);
   const [activeChart, setActiveChart] = useState("artisan_user");
@@ -35,9 +26,12 @@ export function ArtisanDistributionChart() {
 
     async function fetchDistributionData() {
       try {
-        const response = await axios.get(`${API_BASE_URL}/artisan-distribution`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
+        const response = await axios.get(
+          `${API_BASE_URL}/artisan-distribution`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
 
         const distributionData = response.data.data;
 
@@ -50,7 +44,10 @@ export function ArtisanDistributionChart() {
 
           setChartData(formattedData);
         } else {
-          console.error("Expected response data to be an array, but received:", distributionData);
+          console.error(
+            "Expected response data to be an array, but received:",
+            distributionData
+          );
         }
       } catch (error) {
         console.error("Error fetching distribution data:", error);
@@ -71,10 +68,19 @@ export function ArtisanDistributionChart() {
     });
   };
 
-  const total = useMemo(() => ({
-    artisan_user: chartData.reduce((acc, curr) => acc + (curr.artisan_user || 0), 0),
-    intending_artisan: chartData.reduce((acc, curr) => acc + (curr.intending_artisan || 0), 0),
-  }), [chartData]);
+  const total = useMemo(
+    () => ({
+      artisan_user: chartData.reduce(
+        (acc, curr) => acc + (curr.artisan_user || 0),
+        0
+      ),
+      intending_artisan: chartData.reduce(
+        (acc, curr) => acc + (curr.intending_artisan || 0),
+        0
+      ),
+    }),
+    [chartData]
+  );
 
   if (loading) {
     return <div>Loading chart data...</div>;
@@ -99,10 +105,11 @@ export function ArtisanDistributionChart() {
               key={key}
               data-active={activeChart === key}
               className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
-              onClick={() => setActiveChart(key)}
-            >
+              onClick={() => setActiveChart(key)}>
               <span className="text-xs text-muted-foreground">
-                {key === "artisan_user" ? "Artisan Users" : "Intending Artisans"}
+                {key === "artisan_user"
+                  ? "Artisan Users"
+                  : "Intending Artisans"}
               </span>
               <span className="text-lg font-bold leading-none sm:text-3xl">
                 {total[key].toLocaleString()}
@@ -124,7 +131,12 @@ export function ArtisanDistributionChart() {
               tickFormatter={formatDate}
             />
             <Tooltip
-              content={<ChartTooltipContent nameKey={activeChart} labelFormatter={formatDate} />}
+              content={
+                <ChartTooltipContent
+                  nameKey={activeChart}
+                  labelFormatter={formatDate}
+                />
+              }
             />
             <Line
               dataKey={activeChart}

@@ -36,7 +36,7 @@
 //               },
 //             }
 //           );
-          
+
 //       const { success, message } = response.data;
 
 //       if (success) {
@@ -117,7 +117,6 @@
 //   );
 // }
 
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -132,13 +131,18 @@ import {
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../components/ui/tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "../../components/ui/tabs";
 import { toast } from "sonner";
 import Spinner from "../../components/Spinner";
 import PageLayout from "../../components/layout/pageLayout";
+import { API_BASE_URL } from "@/config/env";
 
 export default function ForgotPassword() {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [identifier, setIdentifier] = useState("");
   const [loading, setLoading] = useState(false);
   const [userType, setUserType] = useState("user"); // Default to "user"
@@ -168,7 +172,8 @@ export default function ForgotPassword() {
 
       if (success) {
         toast.success("Password reset instructions sent successfully!", {
-          description: "Please check your email or phone for further instructions.",
+          description:
+            "Please check your email or phone for further instructions.",
           position: "top-right",
         });
         navigate("/login");
@@ -180,7 +185,8 @@ export default function ForgotPassword() {
       }
     } catch (error) {
       const description =
-        error?.response?.data?.message || "An error occurred. Please try again.";
+        error?.response?.data?.message ||
+        "An error occurred. Please try again.";
       toast.error("Error!", {
         description,
         position: "top-right",
@@ -200,7 +206,8 @@ export default function ForgotPassword() {
                 Forgot Password
               </CardTitle>
               <CardDescription>
-                Select your account type and enter your email or phone number to reset your password.
+                Select your account type and enter your email or phone number to
+                reset your password.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -208,14 +215,12 @@ export default function ForgotPassword() {
                 <TabsList className="grid w-full grid-cols-2 bg-gray-50">
                   <TabsTrigger
                     value="user"
-                    className="data-[state=active]:bg-emerald-800 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
-                  >
+                    className="data-[state=active]:bg-emerald-800 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600">
                     User
                   </TabsTrigger>
                   <TabsTrigger
                     value="training_center"
-                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
-                  >
+                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600">
                     Training Center
                   </TabsTrigger>
                 </TabsList>
@@ -225,8 +230,7 @@ export default function ForgotPassword() {
                     <div className="space-y-2">
                       <Label
                         htmlFor="identifier"
-                        className="block text-left text-xs text-gray-600"
-                      >
+                        className="block text-left text-xs text-gray-600">
                         Email or Phone Number
                       </Label>
                       <Input
@@ -249,8 +253,7 @@ export default function ForgotPassword() {
                     <div className="space-y-2">
                       <Label
                         htmlFor="identifier"
-                        className="block text-left text-xs text-gray-600"
-                      >
+                        className="block text-left text-xs text-gray-600">
                         Email or Phone Number
                       </Label>
                       <Input
@@ -273,8 +276,7 @@ export default function ForgotPassword() {
               <Button
                 variant="link"
                 onClick={() => navigate("/login")}
-                className="text-sm text-blue-600 hover:underline"
-              >
+                className="text-sm text-blue-600 hover:underline">
                 Back to Login
               </Button>
             </CardFooter>

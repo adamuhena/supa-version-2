@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserCircle, LogOut } from "lucide-react";
 import DashboardPage from "@/components/layout/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import useLogout from "@/pages/loginPage/logout";
-import { Filter } from 'lucide-react';
+import { Filter } from "lucide-react";
 import Spinner from "@/components/layout/spinner";
+import { API_BASE_URL } from "@/config/env";
 
 function TrainingCenterGroupRe() {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [users, setUsers] = useState([]);
   const [trainingCenters, setTrainingCenters] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [selectedTrainingCenter, setSelectedTrainingCenter] = useState('');
-  const [groupName, setGroupName] = useState('');
-  const [selectedRole, setSelectedRole] = useState('');
-  const [selectedState, setSelectedState] = useState('');
-  const [selectedLga, setSelectedLga] = useState('');
+  const [selectedTrainingCenter, setSelectedTrainingCenter] = useState("");
+  const [groupName, setGroupName] = useState("");
+  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedLga, setSelectedLga] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -34,16 +34,20 @@ function TrainingCenterGroupRe() {
     try {
       const [usersRes, trainingCentersRes] = await Promise.all([
         axios.get(`${API_BASE_URL}/users`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
         }),
         axios.get(`${API_BASE_URL}/training-centers`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
         }),
       ]);
       setUsers(usersRes.data.data || []);
       setTrainingCenters(trainingCentersRes.data.data || []);
     } catch (err) {
-      setError('Failed to fetch data');
+      setError("Failed to fetch data");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -52,7 +56,7 @@ function TrainingCenterGroupRe() {
 
   const handleAssignUsers = async () => {
     if (!groupName.trim()) {
-      setError('Group name is required');
+      setError("Group name is required");
       return;
     }
 
@@ -67,15 +71,17 @@ function TrainingCenterGroupRe() {
           userIds: selectedUsers,
         },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
         }
       );
       setSelectedUsers([]);
-      setSelectedTrainingCenter('');
-      setGroupName('');
+      setSelectedTrainingCenter("");
+      setGroupName("");
       fetchData(); // Refresh data
     } catch (err) {
-      setError('Failed to assign users');
+      setError("Failed to assign users");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -91,12 +97,14 @@ function TrainingCenterGroupRe() {
           newGroupId,
         },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
         }
       );
       fetchData(); // Refresh data
     } catch (err) {
-      setError('Failed to reassign user');
+      setError("Failed to reassign user");
       console.error(err);
     }
   };
@@ -121,7 +129,7 @@ function TrainingCenterGroupRe() {
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">User Management</h1>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate('/biodata')}>
+              <Button variant="outline" onClick={() => navigate("/biodata")}>
                 <UserCircle className="mr-2 h-4 w-4" /> Update Profile
               </Button>
               <Button variant="destructive" onClick={logout}>
@@ -131,10 +139,10 @@ function TrainingCenterGroupRe() {
           </header>
 
           {error && <p className="text-red-500">{error}</p>}
-         {isLoading ? (
-          <div className="flex justify-center items-center h-screen">
-            <Spinner/>
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-screen">
+              <Spinner />
+            </div>
           ) : (
             <>
               <div className="filters mb-4 grid grid-cols-3 gap-4">
@@ -143,9 +151,9 @@ function TrainingCenterGroupRe() {
                   value={selectedRole}
                   onChange={(value) => setSelectedRole(value)}
                   options={[
-                    { label: 'All Roles', value: '' },
-                    { label: 'Artisan', value: 'artisan_user' },
-                    { label: 'Intending Artisan', value: 'intending_artisan' },
+                    { label: "All Roles", value: "" },
+                    { label: "Artisan", value: "artisan_user" },
+                    { label: "Intending Artisan", value: "intending_artisan" },
                   ]}
                 />
                 <Filter
@@ -153,10 +161,10 @@ function TrainingCenterGroupRe() {
                   value={selectedState}
                   onChange={(value) => setSelectedState(value)}
                   options={[
-                    { label: 'All States', value: '' },
-                    ...Array.from(new Set(users.map((user) => user.stateOfResidence))).map(
-                      (state) => ({ label: state, value: state })
-                    ),
+                    { label: "All States", value: "" },
+                    ...Array.from(
+                      new Set(users.map((user) => user.stateOfResidence))
+                    ).map((state) => ({ label: state, value: state })),
                   ]}
                 />
                 <Filter
@@ -164,11 +172,15 @@ function TrainingCenterGroupRe() {
                   value={selectedLga}
                   onChange={(value) => setSelectedLga(value)}
                   options={[
-                    { label: 'All LGAs', value: '' },
+                    { label: "All LGAs", value: "" },
                     ...Array.from(
                       new Set(
                         users
-                          .filter((user) => !selectedState || user.stateOfResidence === selectedState)
+                          .filter(
+                            (user) =>
+                              !selectedState ||
+                              user.stateOfResidence === selectedState
+                          )
                           .map((user) => user.lgaOfResidence)
                       )
                     ).map((lga) => ({ label: lga, value: lga })),
@@ -197,12 +209,18 @@ function TrainingCenterGroupRe() {
                               )
                             }
                           />
-                          <span>{user.firstName} {user.lastName}</span>
-                          <span>{user.trainingGroups[0]?.name || 'No group assigned'}</span>
+                          <span>
+                            {user.firstName} {user.lastName}
+                          </span>
+                          <span>
+                            {user.trainingGroups[0]?.name ||
+                              "No group assigned"}
+                          </span>
                           <Button
                             variant="outline"
-                            onClick={() => handleReassignUser(user._id, 'newGroupId')}
-                          >
+                            onClick={() =>
+                              handleReassignUser(user._id, "newGroupId")
+                            }>
                             Reassign Group
                           </Button>
                         </li>
