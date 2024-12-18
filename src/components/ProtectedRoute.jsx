@@ -22,38 +22,33 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
       try {
         if (isAuthenticated && accessToken) {
           let response;
-          if (loginAs === "training_center") {
-            response = await axios.get(
-              `${API_BASE_URL}/training-center/${isAuthenticated}`,
-              {
-                headers: { Authorization: `Bearer ${accessToken}` },
-              }
-            );
-          } else {
-            response = await axios.get(
-              `${API_BASE_URL}/users/${isAuthenticated}`,
-              {
-                headers: { Authorization: `Bearer ${accessToken}` },
-              }
-            );
-          }
+          const endpoint = loginAs === "training_center"
+            ? `${API_BASE_URL}/training-center/${isAuthenticated}`
+            : `${API_BASE_URL}/users/${isAuthenticated}`;
+  
+          console.log("Fetching from endpoint:", endpoint);  // Log the endpoint being used
+  
+          response = await axios.get(endpoint, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+  
           setUserRole(response.data.data.role);
           setIsFirstTimeUser(response.data.data.agree);
-
           console.log("My role ", response.data.data.role);
           console.log("isFirstTimeUser ", response.data.data.agree);
         }
       } catch (err) {
-        console.error("Error fetching user role:", err);
+        console.error("Error fetching user role:", err.response || err);
         setError("Failed to fetch user role. Please try again.");
         logout();
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchUserRole();
   }, [isAuthenticated, accessToken, loginAs, API_BASE_URL, logout]);
+  
 
   if (loading) {
     return <Spinner />; // Show a spinner while loading

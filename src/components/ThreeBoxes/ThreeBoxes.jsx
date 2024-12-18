@@ -61,7 +61,7 @@ import { Card, CardTitle } from "../ui/card";
 function ThreeBoxes() {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <Card className="w-full max-w-6xl mx-auto overflow-hidden shadow-2xl">
+     <Card className="w-full max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto mt-20 sm:mt-28 p-4 sm:p-6 md:p-8 lg:p-10 overflow-hidden shadow-2xl rounded-lg">
         <div className="px-6 py-8 md:px-12 md:py-12">
           <CardTitle className="text-center text-2xl md:text-4xl text-gray-800 mb-8">
             Register Today

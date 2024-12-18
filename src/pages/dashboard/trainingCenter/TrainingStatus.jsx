@@ -90,7 +90,7 @@ function TrainingStatus() {
       console.log("user role", response.data.data);
       setUserRole(response.data.data.role);
     } catch (error) {
-      console.error("Error fetching user role:", error);
+      console.error("Error fetching user role 4:", error);
     }
   };
 

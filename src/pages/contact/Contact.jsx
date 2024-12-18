@@ -4,43 +4,37 @@ import { DotPattern } from "../../components/ui/dot-pattern";
 import { cn } from "../../lib/utils";
 import { ContactForm } from './components/ContactForm';
 import { ContactInfo } from './components/ContactInfo';
-import {NewContact} from "./components/newContact"
+import { NewContact } from "./components/newContact"
 
 function ContactUs() {
   return (
 
     <PageLayout>
 
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div 
-        className="h-56 bg-cover bg-center"
-        style={{
-          backgroundImage: 'url("https://images.unsplash.com/photo-1596524430615-b46475ddff6e?auto=format&fit=crop&q=80")'
-        }}
-      >
+      <div>
+        <section className="bg-slate-900 pt-32 pb-10">
+          <DotPattern
+            width={10}
+            height={10}
+            cx={1}
+            cy={1}
+            cr={1}
+            className={cn("fill-neutral-400/40 opacity-15")}
+          />
+          <div className="inline-block rounded-lg bg-muted px-6 md:px-16 lg:px-32 xl:px-40 py-5 text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-emerald-600">
+            Contact Us
+          </div>
+        </section>
 
-        <div className="h-full w-full bg-slate-900 bg-opacity-100 flex items-center justify-center pt-16 pl-80">
-        <DotPattern
-                    width={10}
-                    height={10}
-                    cx={1}
-                    cy={1}
-                    cr={1}
-                    className={cn("fill-neutral-400/40 opacity-15")}
-                  />
-          <h1 className="text-4xl font-bold text-emerald-700 text-center">Contact Us</h1>
+
+        {/* Contact Section */}
+        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+          <NewContact />
         </div>
-      </div>
 
-      {/* Contact Section */}
-      <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-      <NewContact/>
-      </div>
 
-        
-      
-    </div>
+
+      </div>
     </PageLayout>
   );
 }

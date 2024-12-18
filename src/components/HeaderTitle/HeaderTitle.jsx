@@ -83,9 +83,13 @@ function HeaderTitle({
           viewport={{ once: true }}
           id="header_text_1"
           style={titleStyle}
-          className="w-full text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 
-          font-bold leading-tight text-white overflow-hidden whitespace-nowrap"
-        >
+        //   className="w-full text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 
+        //   font-bold leading-tight text-white overflow-hidden whitespace-nowrap"
+        // >
+          className="w-full text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 
+          font-bold leading-tight text-white overflow-hidden text-center break-words"
+          >
+
           {title_top}
         </motion.h1>
       )}
@@ -129,7 +133,9 @@ function HeaderTitle({
             visible: { opacity: 1, y: 0 },
           }}
           style={descriptionStyle}
-          className="w-full text-sm sm:text-base md:text-lg text-gray-600 mt-4 sm:mt-6"
+          className="w-full text-sm sm:text-base md:text-l lg:text-l xxl:text-xl text-gray-600 mt-4 sm:mt-6 text-center break-words"
+
+          // className="w-full text-sm sm:text-base md:text-lg text-gray-600 mt-4 sm:mt-6"
         >
           {description}
         </motion.p>

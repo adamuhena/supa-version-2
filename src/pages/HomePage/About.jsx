@@ -26,10 +26,10 @@ export default function About() {
                     className={cn("fill-neutral-400/40 opacity-15")}
                   />
         <section className="bg-slate-900 pt-32 pb-10">
-        
-      
-        <div className="inline-block rounded-lg bg-muted pl-80 pr-5 py-5 text-5xl font-bold text-emerald-600">About SUPA</div>
-    </section>
+  <div className="inline-block rounded-lg bg-muted px-6 md:px-16 lg:px-32 xl:px-40 py-5 text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-emerald-600">
+    About SUPA
+  </div>
+</section>
         <div className="max-w-7xl mx-auto px- sm:px-0 lg:px-0 pt-0 ">
         <div className="flex flex-col min-h-[100dvh] ">
         <div className="flex flex-row  justify-center ">

@@ -99,7 +99,7 @@ const EnhancedTrainingManagement = () => {
       console.log("user Data: ", response);
       setUserRole(response.data.data.users.role);
     } catch (error) {
-      console.error("Error fetching user role:", error);
+      console.error("Error fetching user role 2:", error);
     }
   };
 
