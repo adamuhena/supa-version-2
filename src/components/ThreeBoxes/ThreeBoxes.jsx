@@ -73,7 +73,7 @@ function ThreeBoxes() {
               <div className="p-6 text-center">
                 <div className="mb-4 flex justify-center">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                    <i className="fas fa-hammer text-green-600 text-3xl"></i>
+                    <i className="fas fa-hammer text-green-800 text-3xl"></i>
                   </div>
                 </div>
                 <h2 className="text-xl font-bold mb-3 text-gray-800">Skilled Artisan</h2>
@@ -81,7 +81,7 @@ function ThreeBoxes() {
                 <Link 
                   to="/signup" 
                   state={{ tab: 'artisan_user' }}
-                  className="inline-block bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
+                  className="inline-block bg-green-800 text-white px-6 py-2 rounded-full hover:bg-green-900 transition-colors"
                 >
                   Register
                 </Link>
@@ -93,7 +93,7 @@ function ThreeBoxes() {
               <div className="p-6 text-center">
                 <div className="mb-4 flex justify-center">
                   <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                    <i className="fas fa-graduation-cap text-green-600 text-3xl"></i>
+                    <i className="fas fa-graduation-cap text-red-800 text-3xl"></i>
                   </div>
                 </div>
                 <h2 className="text-xl font-bold mb-3 text-gray-800">Intending Artisan</h2>
@@ -101,7 +101,7 @@ function ThreeBoxes() {
                 <Link 
                   to="/signup" 
                   state={{ tab: 'intending_artisan' }}
-                  className="inline-block bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transition-colors"
+                  className="inline-block bg-red-800 text-white px-6 py-2 rounded-full hover:bg-red-900 transition-colors"
                 >
                   Register
                 </Link>
