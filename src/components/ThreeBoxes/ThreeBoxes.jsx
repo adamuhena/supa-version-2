@@ -1,51 +1,135 @@
+// import React from "react";
+// import "./ThreeBoxes.css";
+// import { Link } from "react-router-dom";
+// import PageLayout from "../layout/pageLayout";
+// import { Card, CardTitle } from "../ui/card";
+
+
+// function ThreeBoxes() {
+//   return (
+//     <div>
+
+//         <section className="relative bg-slate-900 pt-40 pb-10 min-h-screen">
+//         </section>
+//         <div className="flex min-h-screen items-center justify-center absolute top-12 left-0 right-0 bottom-0">
+//           <Card className="w-full max-w-4xl overflow-hidden">
+
+//             <div className="cards">
+//               {/* <h2 className="header">
+             
+//             </h2> */}
+//             <CardTitle className=" text-4xl text-gray-800 py-4" > Register Today</CardTitle>
+//               <div className="services">
+//                 <div className="content content-1 h-[350px]">
+//                   <div className="fab fa-twitter"></div>
+//                   <h2>Skilled Artisan</h2>
+//                   <p>I am an artisan in this trade area</p>
+//                   <Link to="/signup" state={{ tab: 'artisan_user' }}>Register</Link>
+//                 </div>
+
+//                 <div className="content content-2 h-[350px]">
+//                   <div className="fab fa-instagram"></div>
+//                   <h2>Intending Artisan</h2>
+//                   <p>I am looking to learn new skill.</p>
+//                   <Link to="/signup" state={{ tab: 'intending_artisan' }}>Register</Link>
+//                 </div>
+//                 <div className="content content-3 h-[350px] ">
+//                   <div className="fab fa-youtube "></div>
+//                   <h2>Training Center</h2>
+//                   <p>I am a vocational skill training provider.</p>
+//                   <Link to="/signup" state={{ tab: 'training_center' }}>Register</Link>
+//                 </div>
+//               </div>
+//             </div>
+
+//           </Card>
+//         </div>
+
+
+//     </div>
+//   );
+// }
+
+// export default ThreeBoxes;
+
+
 import React from "react";
-import "./ThreeBoxes.css";
 import { Link } from "react-router-dom";
 import PageLayout from "../layout/pageLayout";
 import { Card, CardTitle } from "../ui/card";
 
-
 function ThreeBoxes() {
   return (
-    <div>
-
-        <section className="relative bg-slate-900 pt-40 pb-10 min-h-screen">
-        </section>
-        <div className="flex min-h-screen items-center justify-center absolute top-12 left-0 right-0 bottom-0">
-          <Card className="w-full max-w-4xl overflow-hidden">
-
-            <div className="cards">
-              {/* <h2 className="header">
-             
-            </h2> */}
-            <CardTitle className=" text-4xl text-gray-800 py-4" > Register Today</CardTitle>
-              <div className="services">
-                <div className="content content-1 h-[350px]">
-                  <div className="fab fa-twitter"></div>
-                  <h2>Skilled Artisan</h2>
-                  <p>I am an artisan in this trade area</p>
-                  <Link to="/signup" state={{ tab: 'artisan_user' }}>Register</Link>
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+      <Card className="w-full max-w-6xl mx-auto overflow-hidden shadow-2xl">
+        <div className="px-6 py-8 md:px-12 md:py-12">
+          <CardTitle className="text-center text-2xl md:text-4xl text-gray-800 mb-8">
+            Register Today
+          </CardTitle>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Skilled Artisan Card */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <div className="p-6 text-center">
+                <div className="mb-4 flex justify-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                    <i className="fas fa-hammer text-green-600 text-3xl"></i>
+                  </div>
                 </div>
-
-                <div className="content content-2 h-[350px]">
-                  <div className="fab fa-instagram"></div>
-                  <h2>Intending Artisan</h2>
-                  <p>I am looking to learn new skill.</p>
-                  <Link to="/signup" state={{ tab: 'intending_artisan' }}>Register</Link>
-                </div>
-                <div className="content content-3 h-[350px] ">
-                  <div className="fab fa-youtube "></div>
-                  <h2>Training Center</h2>
-                  <p>I am a vocational skill training provider.</p>
-                  <Link to="/signup" state={{ tab: 'training_center' }}>Register</Link>
-                </div>
+                <h2 className="text-xl font-bold mb-3 text-gray-800">Skilled Artisan</h2>
+                <p className="text-gray-600 mb-6">I am an artisan in this trade area</p>
+                <Link 
+                  to="/signup" 
+                  state={{ tab: 'artisan_user' }}
+                  className="inline-block bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
+                >
+                  Register
+                </Link>
               </div>
             </div>
 
-          </Card>
+            {/* Intending Artisan Card */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <div className="p-6 text-center">
+                <div className="mb-4 flex justify-center">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                    <i className="fas fa-graduation-cap text-green-600 text-3xl"></i>
+                  </div>
+                </div>
+                <h2 className="text-xl font-bold mb-3 text-gray-800">Intending Artisan</h2>
+                <p className="text-gray-600 mb-6">I am looking to learn new skill.</p>
+                <Link 
+                  to="/signup" 
+                  state={{ tab: 'intending_artisan' }}
+                  className="inline-block bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transition-colors"
+                >
+                  Register
+                </Link>
+              </div>
+            </div>
+
+            {/* Training Center Card */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <div className="p-6 text-center">
+                <div className="mb-4 flex justify-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i className="fas fa-building text-blue-800 text-3xl"></i>
+                  </div>
+                </div>
+                <h2 className="text-xl font-bold mb-3 text-gray-800">Training Center</h2>
+                <p className="text-gray-600 mb-6">I am a vocational skill training provider.</p>
+                <Link 
+                  to="/signup" 
+                  state={{ tab: 'training_center' }}
+                  className="inline-block bg-blue-800 text-white px-6 py-2 rounded-full hover:bg-blue-900 transition-colors"
+                >
+                  Register
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
-
-
+      </Card>
     </div>
   );
 }
