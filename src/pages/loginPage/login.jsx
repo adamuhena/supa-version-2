@@ -36,103 +36,174 @@ export default function LoginForm() {
     setRole(newRole);
   };
 
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.post(`${API_BASE_URL}/login`, {
+  //       identifier: email,
+  //       password,
+  //       loginAs,
+  //     });
+
+  //     console.log("Full response:", response.data);
+
+  //     const { success, data } = response.data; // Assuming `tokens` contains `accessToken` and `refreshToken`
+
+  //     if (success) {
+  //       const userData = data[loginAs === "user" ? "user" : "training_center"];
+  //       toast.success(`Login Successfully! Role: ${userData.role}`, {
+  //         position: "top-right",
+  //       });
+
+  //       if (!userData) {
+  //         console.error("No valid user data found:", data);
+  //         toast.error("Login failed: Invalid user data.");
+  //         setLoading(false);
+  //         return;
+  //       }
+
+  //       const userRole = userData.role || "training_center";
+  //       const isFirstTimeUser = userData.agree === false;
+  //       const { _id } = userData;
+  //       const accessToken = response.data?.data?.accessToken?.accessToken;
+  //       const refreshToken = response.data?.data?.accessToken?.refreshToken;
+  //       console.log("accessToken", accessToken);
+  //       console.log("refreshToken", refreshToken);
+
+  //       // Store user information and tokens in localStorage
+  //       localStorage.setItem("userId", _id);
+  //       localStorage.setItem("userRole", userRole);
+  //       localStorage.setItem("accessToken", accessToken);
+  //       localStorage.setItem("refreshToken", refreshToken);
+  //       localStorage.setItem(
+  //         "isFirstTimeUser",
+  //         JSON.stringify(isFirstTimeUser)
+  //       );
+
+  //       console.log('i am in the login page 1')
+  //       // Navigate to appropriate pages
+  //       if (loginAs === "user") {
+  //         console.log('i am in the login page 2')
+  //         if (isFirstTimeUser) {
+  //           console.log('i am in the login page 3')
+  //           if (userRole === "artisan_user") {
+  //             navigate("/register/artisan");
+  //           } else if (userRole === "intending_artisan") {
+  //             navigate("/register/intendingArtisan");
+  //           } else if (userRole === "admin") {
+  //             navigate("/admin/dashboard"); // Default KYC route for other user types
+  //           } else if (userRole === "superadmin") {
+  //             navigate("/admin/dashboard"); // Default KYC route for other user types
+  //           }
+  //         } else if (userRole === "superadmin") {
+  //           navigate("/admin/dashboard");
+  //         } else if (userRole === "admin") {
+  //           navigate("/admin/dashboard");
+  //         } else if (userRole === "artisan_user") {
+  //           navigate("/trainee/dashboard");
+  //         } else if (userRole === "intending_artisan") {
+  //           navigate("/trainee/dashboard");
+  //         }
+  //       } else if (loginAs === "training_center") {
+  //         if (isFirstTimeUser) {
+  //           navigate("/register/trainingcenter");
+  //         } else {
+  //           navigate("/trainingcenter/dashboard");
+  //         }
+  //       } else {
+  //         navigate("/"); // Assuming this for regular users
+  //       }
+  //     } else {
+  //       toast.error(
+  //         `Login failed: Invalid user data. + ${response.data.message})`
+  //       );
+  //     }
+  //   } catch (error) {
+  //     const message = "Error!";
+  //     const description =
+  //       typeof error?.response?.data === "string"
+  //         ? error?.response?.data
+  //         : error?.response?.data?.message ||
+  //           "An error occurred. Please try again.";
+  //     toast.error(message, {
+  //       description,
+  //       position: "top-right",
+  //       style: { textAlign: "left" },
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const redirectToAppropriatePage = (userRole, isFirstTimeUser) => {
+    const rolePaths = isFirstTimeUser
+      ? {
+          artisan_user: "/register/artisan",
+          intending_artisan: "/register/intendingArtisan",
+          training_center: "/register/trainingcenter",
+        }
+      : {
+          admin: "/admin/dashboard",
+          superadmin: "/admin/dashboard",
+          artisan_user: "/trainee/dashboard",
+          intending_artisan: "/trainee/dashboard",
+          training_center: "/trainingcenter/dashboard",
+        };
+  
+    // Redirect to the relevant path
+    navigate(rolePaths[userRole] || "/");
+  };
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+  
     try {
       const response = await axios.post(`${API_BASE_URL}/login`, {
         identifier: email,
         password,
         loginAs,
       });
-
-      console.log("Full response:", response.data);
-
-      const { success, data } = response.data; // Assuming `tokens` contains `accessToken` and `refreshToken`
-
+  
+      const { success, data } = response.data;
+  
       if (success) {
         const userData = data[loginAs === "user" ? "user" : "training_center"];
-        toast.success(`Login Successfully! Role: ${userData.role}`, {
-          position: "top-right",
-        });
 
+        console.log('userdata: ',userData);
+  
         if (!userData) {
-          console.error("No valid user data found:", data);
           toast.error("Login failed: Invalid user data.");
-          setLoading(false);
           return;
         }
-
+  
+        // Save user info to localStorage
         const userRole = userData.role || "training_center";
-        const isFirstTimeUser = userData.agree !== true;
+        const isFirstTimeUser = userData.agree === false;
         const { _id } = userData;
-        const accessToken = response.data?.data?.accessToken?.accessToken;
-        const refreshToken = response.data?.data?.accessToken?.refreshToken;
-        console.log("accessToken", accessToken);
-        console.log("refreshToken", refreshToken);
-
-        // Store user information and tokens in localStorage
+  
         localStorage.setItem("userId", _id);
         localStorage.setItem("userRole", userRole);
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem(
-          "isFirstTimeUser",
-          JSON.stringify(isFirstTimeUser)
-        );
-
-        // Navigate to appropriate pages
-        if (loginAs === "user") {
-          if (isFirstTimeUser) {
-            if (userRole === "artisan_user") {
-              navigate("/register/artisan");
-            } else if (userRole === "intending_artisan") {
-              navigate("/register/intendingArtisan");
-            } else if (userRole === "admin") {
-              navigate("/admin/dashboard"); // Default KYC route for other user types
-            } else if (userRole === "superadmin") {
-              navigate("/admin/dashboard"); // Default KYC route for other user types
-            }
-          } else if (userRole === "superadmin") {
-            navigate("/admin/dashboard");
-          } else if (userRole === "admin") {
-            navigate("/admin/dashboard");
-          } else if (userRole === "artisan_user") {
-            navigate("/trainee/dashboard");
-          } else if (userRole === "intending_artisan") {
-            navigate("/trainee/dashboard");
-          }
-        } else if (loginAs === "training_center") {
-          if (isFirstTimeUser) {
-            navigate("/register/trainingcenter");
-          } else {
-            navigate("/trainingcenter/dashboard");
-          }
-        } else {
-          navigate("/"); // Assuming this for regular users
-        }
+        localStorage.setItem("accessToken", data.accessToken.accessToken);
+        localStorage.setItem("refreshToken", data.accessToken.refreshToken);
+        localStorage.setItem("isFirstTimeUser", JSON.stringify(isFirstTimeUser));
+  
+        toast.success(`Welcome back, ${userData.role}!`);
+  
+        // Redirect based on role and first-time user status
+        redirectToAppropriatePage(userRole, isFirstTimeUser);
       } else {
-        toast.error(
-          `Login failed: Invalid user data. + ${response.data.message})`
-        );
+        toast.error(`Login failed: ${response.data.message}`);
       }
     } catch (error) {
-      const message = "Error!";
-      const description =
-        typeof error?.response?.data === "string"
-          ? error?.response?.data
-          : error?.response?.data?.message ||
-            "An error occurred. Please try again.";
-      toast.error(message, {
-        description,
-        position: "top-right",
-        style: { textAlign: "left" },
-      });
+      toast.error(
+        error?.response?.data?.message || "An error occurred. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <>
       <PageLayout>
@@ -282,7 +353,7 @@ export default function LoginForm() {
                 </CardContent>
                 <CardFooter className="flex justify-center">
                   <Link
-                    to="/forget-password"
+                    to="/forgot-password"
                     className="text-sm text-blue-600 hover:underline">
                     Forgot password?
                   </Link>
