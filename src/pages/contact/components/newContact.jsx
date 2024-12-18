@@ -39,59 +39,45 @@ export function NewContact() {
   const departments = [
     {
       icon: <Palette className="w-6 h-6" />,
-      title: "Custom Orders",
-      email: "custom@artisancraft.com",
-      phone: "+2348133738057",
+      title: "SUPA HOTLINE 1",
+      email: "supasec@itf.gov.ng",
+      phone: "08097772103",
       bgColor: "bg-blue-100",
     },
     {
       icon: <Scissors className="w-6 h-6" />,
-      title: "Workshops & Classes",
-      email: "workshops@artisancraft.com",
-      phone: "+2348133738057",
+      title: "SUPA HOTLINE 2",
+      email: "supasec@itf.gov.ng",
+      phone: "08097772104",
       bgColor: "bg-pink-100",
     },
     {
       icon: <ShoppingBag className="w-6 h-6" />,
-      title: "Online Store",
-      email: "store@artisancraft.com",
-      phone: "+2348133738057",
+      title: "SUPA HOTLINE 3",
+      email: "supasec@itf.gov.ng",
+      phone: "08097772105",
       bgColor: "bg-green-100",
     },
     {
       icon: <Hammer className="w-6 h-6" />,
-      title: "Artisan Collaborations",
-      email: "collaborate@artisancraft.com",
-      phone: "+2348133738057",
+      title: "SUPA HOTLINE 4",
+      email: "supasec@itf.gov.ng",
+      phone: "08097772106",
       bgColor: "bg-yellow-100",
     },
     {
       icon: <Award className="w-6 h-6" />,
-      title: "Artisan Certification",
-      email: "certification@artisancraft.com",
-      phone: "+2348133738057",
+      title: "SUPA HOTLINE 5",
+      email: "supasec@itf.gov.ng",
+      phone: "08097772108",
       bgColor: "bg-orange-100",
     },
     {
       icon: <Users className="w-6 h-6" />,
-      title: "Artisan Community",
-      email: "community@artisancraft.com",
-      phone: "+2348133738057",
+      title: "SUPA HOTLINE 6",
+      email: "supasec@itf.gov.ng",
+      phone: "08097772109",
       bgColor: "bg-green-100",
-    },
-    {
-      icon: <Headset className="w-6 h-6" />,
-      title: "Customer Support",
-      email: "support@artisancraft.com",
-      phone: "+2348133738057",
-      bgColor: "bg-pink-100",
-    },
-    {
-      icon: <UserCircle className="w-6 h-6" />,
-      title: "Become an Artisan",
-      email: "join@artisancraft.com",
-      phone: "+2348133738057",
-      bgColor: "bg-purple-100",
     },
   ];
 
@@ -142,8 +128,8 @@ export function NewContact() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-0 max-w-7xl h-screen flex flex-col">
-      <div className="flex flex-col lg:flex-row flex-grow overflow-hidden space-y-6 lg:space-y-0 lg:space-x-8">
+    <div className="container my-auto mx-auto px-4 py-0 max-w-7xl h-screen flex flex-col overflow-auto">
+      <div className="flex flex-col lg:flex-row flex-grow overflow-auto space-y-6 lg:space-y-0 lg:space-x-8">
         {/* Form Section */}
         <div
           className="w-full lg:w-2/3 bg-amber-50 p-6 rounded-lg py-8 pb-9
@@ -233,7 +219,7 @@ export function NewContact() {
         </div>
 
         {/* Department List Section - 1/3 width on larger screens, scrollable */}
-        <div className="w-full lg:w-1/3 overflow-y-auto">
+        <div className="w-full lg:w-1/3 bg-white overflow-y-auto flex-shrink-0 h-full">
           <div className="grid md:grid-cols-2 lg:grid-cols-1 gap-6">
             {departments.map((dept, index) => (
               <Card key={index}>

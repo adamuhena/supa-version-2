@@ -28,6 +28,7 @@ import ContactUs from "./pages/contact/Contact";
 import UserCert from "./pages/dashboard/Admin/userMgt/UserManagement";
 import ForgotPassword from "./pages/loginPage/ForgetPassword";
 import TestPage from "./pages/testpage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard"
 
@@ -79,24 +80,26 @@ function App() {
         {/* Protected Routes */}
         <Route
           path="/admin/dashboard"
-          element={<AdminDashboard />}
-          allowedRoles={["artisan_user", "admin", "superadmin"]}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>}
         />
         <Route
           path="/admin/certification"
-          element={<UserCert />}
-          allowedRoles={["artisan_user", "admin", "superadmin"]}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+              <UserCert />
+          </ProtectedRoute>}
         />
 
-        <Route
-          path="/intending-artisan/dashboard"
-          element={<ArtisanDashboard />}
-          allowedRoles={["artisan_user", "admin", "superadmin"]}
-        />
+        
         <Route
           path="/admin/training-status"
-          element={<TrainingManagement />}
-          allowedRoles={["artisan_user", "admin", "superadmin"]}
+          element={
+            <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+              <TrainingManagement />
+          </ProtectedRoute>}
         />
         <Route
           path="/register/artisan"
@@ -116,8 +119,10 @@ function App() {
 
         <Route
           path="/trainee/dashboard"
-          element={<ArtisanDashboard />}
-          allowedRoles={["artisan_user", "admin", "superadmin"]}
+          element={
+            <ProtectedRoute allowedRoles={["artisan_user", "intending_artisan"]}>
+            <ArtisanDashboard />
+          </ProtectedRoute>}
         />
 
         <Route
