@@ -1,21 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Button } from "@/components/ui//button"
-import { Input } from "@/components/ui//input"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui//select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui//table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui//card"
-import MultiSelect from "./ui/multi-select"
-import {toast} from 'sonner'
-import ProtectedRoute from '@/components/ProtectedRoute';
-import DashboardPage from '@/components/layout/DashboardLayout';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Button } from "@/components/ui//button";
+import { Input } from "@/components/ui//input";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui//select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui//table";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui//card";
+import MultiSelect from "./ui/multi-select";
+import { toast } from "sonner";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import DashboardPage from "@/components/layout/DashboardLayout";
 import { UserCircle, Settings, LogOut } from "lucide-react";
-import useLogout from '@/pages/loginPage/logout';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
-
+import useLogout from "@/pages/loginPage/logout";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { API_BASE_URL } from "@/config/env";
 
 const EnhancedTrainingManagement = () => {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const logout = useLogout();
   const accessToken = localStorage.getItem("accessToken");
   const userId = localStorage.getItem("userId");
@@ -24,18 +48,18 @@ const EnhancedTrainingManagement = () => {
   const [trainingGroups, setTrainingGroups] = useState([]);
   const [users, setUsers] = useState([]);
   const [trainingCenters, setTrainingCenters] = useState([]);
-  const [newPeriod, setNewPeriod] = useState({ name: '', year: '' });
+  const [newPeriod, setNewPeriod] = useState({ name: "", year: "" });
   const [newGroup, setNewGroup] = useState({
-    name: '',
-    period: '',
-    trainingCenter: '',
-    startTime: '',
-    endTime: '',
+    name: "",
+    period: "",
+    trainingCenter: "",
+    startTime: "",
+    endTime: "",
   });
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState([]);
-  const [evaluation, setEvaluation] = useState({ score: '', comments: '' });
+  const [evaluation, setEvaluation] = useState({ score: "", comments: "" });
   const [usersOptions, setUsersOptions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -55,28 +79,27 @@ const EnhancedTrainingManagement = () => {
       // label: `${user.firstName} ${user.lastName}` + ` - Location: state: ${user.stateOfResidence} - LGA: ${user.lgaOfResidence}`,
       label: (
         <span>
-          {user.firstName} {user.lastName} - 
-          <b>Location: </b>- 
-          <b>State: </b> {user.stateOfResidence}- 
-          <b>LGA: </b>{user.lgaOfResidence}
+          {user.firstName} {user.lastName} -<b>Location: </b>-<b>State: </b>{" "}
+          {user.stateOfResidence}-<b>LGA: </b>
+          {user.lgaOfResidence}
         </span>
       ),
     }));
     setUsersOptions(options);
-    console.log('Updated users options:', options); // Add this line
+    console.log("Updated users options:", options); // Add this line
   }, [users]);
 
-  const fetchUserRole = async (page = 1, limit = 25)  => {
+  const fetchUserRole = async (page = 1, limit = 25) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/userscert`, {
         params: { page, limit },
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      console.log('user Data: ', response)
+      console.log("user Data: ", response);
       setUserRole(response.data.data.users.role);
     } catch (error) {
-      console.error('Error fetching user role:', error);
+      console.error("Error fetching user role:", error);
     }
   };
 
@@ -87,7 +110,7 @@ const EnhancedTrainingManagement = () => {
       });
       setPeriods(response.data);
     } catch (error) {
-      console.error('Error fetching periods:', error);
+      console.error("Error fetching periods:", error);
     }
   };
 
@@ -98,7 +121,7 @@ const EnhancedTrainingManagement = () => {
       });
       setTrainingGroups(response.data);
     } catch (error) {
-      console.error('Error fetching training groups:', error);
+      console.error("Error fetching training groups:", error);
     }
   };
 
@@ -106,28 +129,30 @@ const EnhancedTrainingManagement = () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
         headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
       setCurrentUser(response.data);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error("Error fetching user data:", error);
     }
   };
 
   const fetchUsers = async (page = 1, limit = 25) => {
     try {
-          const response = await axios.get(`${API_BASE_URL}/userscert`, {
-            params: { page, limit },
+      const response = await axios.get(`${API_BASE_URL}/userscert`, {
+        params: { page, limit },
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
       // If data is not an array, fall back to an empty array
-      const usersData = Array.isArray(response.data.data.users) ? response.data.data.users : [];
+      const usersData = Array.isArray(response.data.data.users)
+        ? response.data.data.users
+        : [];
       setUsers(usersData);
-      console.log('Fetched users:', usersData);
+      console.log("Fetched users:", usersData);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
       setUsers([]); // Fallback to empty array if there's an error
     }
   };
@@ -139,7 +164,7 @@ const EnhancedTrainingManagement = () => {
       });
       setTrainingCenters(response.data.data);
     } catch (error) {
-      console.error('Error fetching training centers:', error);
+      console.error("Error fetching training centers:", error);
     }
   };
 
@@ -149,10 +174,10 @@ const EnhancedTrainingManagement = () => {
       await axios.post(`${API_BASE_URL}/periods`, newPeriod, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      setNewPeriod({ name: '', year: '' });
+      setNewPeriod({ name: "", year: "" });
       fetchPeriods();
     } catch (error) {
-      console.error('Error creating period:', error);
+      console.error("Error creating period:", error);
     }
   };
 
@@ -163,24 +188,28 @@ const EnhancedTrainingManagement = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       setNewGroup({
-        name: '',
-        period: '',
-        trainingCenter: '',
-        startTime: '',
-        endTime: '',
+        name: "",
+        period: "",
+        trainingCenter: "",
+        startTime: "",
+        endTime: "",
       });
       fetchTrainingGroups();
     } catch (error) {
-      console.error('Error creating training group:', error);
+      console.error("Error creating training group:", error);
     }
   };
 
   const handleAssignUsers = async () => {
     if (!selectedGroup || selectedUsers.length === 0) return;
     try {
-      await axios.post(`${API_BASE_URL}/training-groups/${selectedGroup}/assign-multiple`, { userIds: selectedUsers }, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      await axios.post(
+        `${API_BASE_URL}/training-groups/${selectedGroup}/assign-multiple`,
+        { userIds: selectedUsers },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
       toast.success(response.data.message);
       fetchTrainingGroups();
       setSelectedUsers([]);
@@ -188,32 +217,39 @@ const EnhancedTrainingManagement = () => {
       if (error.response) {
         toast.error(error.response.data.message); // Display the backend error message
       } else {
-        console.error('Error assigning users to group:', error);
+        console.error("Error assigning users to group:", error);
       }
-      
     }
   };
 
   const handleRemoveUser = async (groupId, userId) => {
     try {
-      await axios.post(`${API_BASE_URL}/training-groups/${groupId}/remove`, { userId }, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      await axios.post(
+        `${API_BASE_URL}/training-groups/${groupId}/remove`,
+        { userId },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
       fetchTrainingGroups();
     } catch (error) {
-      console.error('Error removing user from group:', error);
+      console.error("Error removing user from group:", error);
     }
   };
 
   const handleEvaluateUser = async (groupId, userId) => {
     try {
-      await axios.post(`${API_BASE_URL}/training-groups/${groupId}/evaluate/${userId}`, evaluation, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      setEvaluation({ score: '', comments: '' });
+      await axios.post(
+        `${API_BASE_URL}/training-groups/${groupId}/evaluate/${userId}`,
+        evaluation,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      setEvaluation({ score: "", comments: "" });
       fetchTrainingGroups();
     } catch (error) {
-      console.error('Error evaluating user:', error);
+      console.error("Error evaluating user:", error);
     }
   };
 
@@ -229,7 +265,7 @@ const EnhancedTrainingManagement = () => {
 
   const renderAdminView = () => (
     <div className="space-y-8">
-      <div className='flex flex-row gap-4'>
+      <div className="flex flex-row gap-4">
         <div className="w-1/2 flex flex-col gap-4">
           <Card>
             <CardHeader>
@@ -241,15 +277,21 @@ const EnhancedTrainingManagement = () => {
                   type="text"
                   placeholder="Period Name"
                   value={newPeriod.name}
-                  onChange={(e) => setNewPeriod({ ...newPeriod, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewPeriod({ ...newPeriod, name: e.target.value })
+                  }
                 />
                 <Input
                   type="number"
                   placeholder="Year"
                   value={newPeriod.year}
-                  onChange={(e) => setNewPeriod({ ...newPeriod, year: e.target.value })}
+                  onChange={(e) =>
+                    setNewPeriod({ ...newPeriod, year: e.target.value })
+                  }
                 />
-                <Button className="bg-emerald-700" type="submit">Create Period</Button>
+                <Button className="bg-emerald-700" type="submit">
+                  Create Period
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -260,18 +302,15 @@ const EnhancedTrainingManagement = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-              <Select
-                  value={selectedGroup}
-                  onValueChange={setSelectedGroup}
-                >
+                <Select value={selectedGroup} onValueChange={setSelectedGroup}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Trade Area Group" />
                   </SelectTrigger>
                   <SelectContent>
                     {trainingGroups.map((group) => (
                       <SelectItem key={group._id} value={group._id}>
-                        {group.name} - 
-                        <b>Training Center: </b> {group.trainingCenter.trainingCentreName} - 
+                        {group.name} -<b>Training Center: </b>{" "}
+                        {group.trainingCenter.trainingCentreName} -
                         <b>State: </b> {group.trainingCenter.state} -
                         <b>LGA: </b> {group.trainingCenter.lga}
                       </SelectItem>
@@ -284,13 +323,15 @@ const EnhancedTrainingManagement = () => {
                   onChange={setSelectedUsers}
                   placeholder="Select Trainee"
                 />
-                <Button className="bg-emerald-700" onClick={handleAssignUsers}>Assign to Trade Area</Button>
+                <Button className="bg-emerald-700" onClick={handleAssignUsers}>
+                  Assign to Trade Area
+                </Button>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className='w-1/2'>
+        <div className="w-1/2">
           <Card>
             <CardHeader>
               <CardTitle>Create Trade Area Group</CardTitle>
@@ -301,12 +342,15 @@ const EnhancedTrainingManagement = () => {
                   type="text"
                   placeholder="Trade Area Group Name"
                   value={newGroup.name}
-                  onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewGroup({ ...newGroup, name: e.target.value })
+                  }
                 />
                 <Select
                   value={newGroup.period}
-                  onValueChange={(value) => setNewGroup({ ...newGroup, period: value })}
-                >
+                  onValueChange={(value) =>
+                    setNewGroup({ ...newGroup, period: value })
+                  }>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Period" />
                   </SelectTrigger>
@@ -320,8 +364,9 @@ const EnhancedTrainingManagement = () => {
                 </Select>
                 <Select
                   value={newGroup.trainingCenter}
-                  onValueChange={(value) => setNewGroup({ ...newGroup, trainingCenter: value })}
-                >
+                  onValueChange={(value) =>
+                    setNewGroup({ ...newGroup, trainingCenter: value })
+                  }>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Training Center" />
                   </SelectTrigger>
@@ -336,14 +381,20 @@ const EnhancedTrainingManagement = () => {
                 <Input
                   type="datetime-local"
                   value={newGroup.startTime}
-                  onChange={(e) => setNewGroup({ ...newGroup, startTime: e.target.value })}
+                  onChange={(e) =>
+                    setNewGroup({ ...newGroup, startTime: e.target.value })
+                  }
                 />
                 <Input
                   type="datetime-local"
                   value={newGroup.endTime}
-                  onChange={(e) => setNewGroup({ ...newGroup, endTime: e.target.value })}
+                  onChange={(e) =>
+                    setNewGroup({ ...newGroup, endTime: e.target.value })
+                  }
                 />
-                <Button className="bg-emerald-700" type="submit">Create Trade Area Group</Button>
+                <Button className="bg-emerald-700" type="submit">
+                  Create Trade Area Group
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -400,89 +451,103 @@ const EnhancedTrainingManagement = () => {
 
       </div> */}
 
-<div>
-    <Card>
-      <CardHeader>
-        <CardTitle>All Training Groups</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>S/N</TableHead>
-              <TableHead>Trade Area</TableHead>
-              <TableHead>Training Period</TableHead>
-              <TableHead>Training Center</TableHead>
-              <TableHead>Start Time</TableHead>
-              <TableHead>End Time</TableHead>
-              <TableHead>Users</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentItems.map((group, index) => (
-              <TableRow key={group._id}>
-                <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
-                <TableCell>{group.name}</TableCell>
-                <TableCell>{group.period?.name} - {group.period?.year}</TableCell>
-                <TableCell>{group.trainingCenter?.trainingCentreName}</TableCell>
-                <TableCell>{new Date(group.startTime).toLocaleString()}</TableCell>
-                <TableCell>{new Date(group.endTime).toLocaleString()}</TableCell>
-                <TableCell>
-                  <ul>
-                    {group.users.map((user) => (
-                      <li key={user._id} className="flex items-center justify-between">
-                        <span>{user.firstName} {user.lastName}</span>
-                        <Button
-                        className="bg-emerald-700"
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleRemoveUser(group._id, user._id)}
-                        >
-                          Remove
-                        </Button>
-                      </li>
-                    ))}
-                  </ul>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <div className="mt-4">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                  />
-                </PaginationItem>
-                {[...Array(totalPages)].map((_, index) => (
-                  <PaginationItem key={index}>
-                    <PaginationLink
-                      onClick={() => handlePageChange(index + 1)}
-                      isActive={currentPage === index + 1}
-                    >
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
+      <div>
+        <Card>
+          <CardHeader>
+            <CardTitle>All Training Groups</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>S/N</TableHead>
+                  <TableHead>Trade Area</TableHead>
+                  <TableHead>Training Period</TableHead>
+                  <TableHead>Training Center</TableHead>
+                  <TableHead>Start Time</TableHead>
+                  <TableHead>End Time</TableHead>
+                  <TableHead>Users</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentItems.map((group, index) => (
+                  <TableRow key={group._id}>
+                    <TableCell>
+                      {index + 1 + (currentPage - 1) * itemsPerPage}
+                    </TableCell>
+                    <TableCell>{group.name}</TableCell>
+                    <TableCell>
+                      {group.period?.name} - {group.period?.year}
+                    </TableCell>
+                    <TableCell>
+                      {group.trainingCenter?.trainingCentreName}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(group.startTime).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(group.endTime).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <ul>
+                        {group.users.map((user) => (
+                          <li
+                            key={user._id}
+                            className="flex items-center justify-between">
+                            <span>
+                              {user.firstName} {user.lastName}
+                            </span>
+                            <Button
+                              className="bg-emerald-700"
+                              variant="destructive"
+                              size="sm"
+                              onClick={() =>
+                                handleRemoveUser(group._id, user._id)
+                              }>
+                              Remove
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    </TableCell>
+                  </TableRow>
                 ))}
-                <PaginationItem>
-                  <PaginationNext 
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-      </CardContent>
-    </Card>
-  </div>
-
-      
-
-      
+              </TableBody>
+            </Table>
+            <div className="mt-4">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() =>
+                        handlePageChange(Math.max(1, currentPage - 1))
+                      }
+                      disabled={currentPage === 1}
+                    />
+                  </PaginationItem>
+                  {[...Array(totalPages)].map((_, index) => (
+                    <PaginationItem key={index}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(index + 1)}
+                        isActive={currentPage === index + 1}>
+                        {index + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() =>
+                        handlePageChange(Math.min(totalPages, currentPage + 1))
+                      }
+                      disabled={currentPage === totalPages}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 
@@ -506,16 +571,30 @@ const EnhancedTrainingManagement = () => {
           <TableBody>
             {trainingGroups.map((group, index) => (
               <TableRow key={group._id}>
-                <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
+                <TableCell>
+                  {index + 1 + (currentPage - 1) * itemsPerPage}
+                </TableCell>
                 <TableCell>{group.name}</TableCell>
-                <TableCell>{group.period ? `${group.period.name} - ${group.period.year}` : 'N/A'}</TableCell>
-                <TableCell>{new Date(group.startTime).toLocaleString()}</TableCell>
-                <TableCell>{new Date(group.endTime).toLocaleString()}</TableCell>
+                <TableCell>
+                  {group.period
+                    ? `${group.period.name} - ${group.period.year}`
+                    : "N/A"}
+                </TableCell>
+                <TableCell>
+                  {new Date(group.startTime).toLocaleString()}
+                </TableCell>
+                <TableCell>
+                  {new Date(group.endTime).toLocaleString()}
+                </TableCell>
                 <TableCell>
                   <ul>
                     {group.users.map((user) => (
-                      <li key={user._id} className="flex items-center justify-between mb-2">
-                        <span>{user.firstName} {user.lastName}</span>
+                      <li
+                        key={user._id}
+                        className="flex items-center justify-between mb-2">
+                        <span>
+                          {user.firstName} {user.lastName}
+                        </span>
                         <div className="flex items-center space-x-2">
                           <Input
                             type="number"
@@ -523,20 +602,31 @@ const EnhancedTrainingManagement = () => {
                             min="0"
                             max="100"
                             value={evaluation.score}
-                            onChange={(e) => setEvaluation({ ...evaluation, score: e.target.value })}
+                            onChange={(e) =>
+                              setEvaluation({
+                                ...evaluation,
+                                score: e.target.value,
+                              })
+                            }
                             className="w-20"
                           />
                           <Input
                             type="text"
                             placeholder="Comments"
                             value={evaluation.comments}
-                            onChange={(e) => setEvaluation({ ...evaluation, comments: e.target.value })}
+                            onChange={(e) =>
+                              setEvaluation({
+                                ...evaluation,
+                                comments: e.target.value,
+                              })
+                            }
                             className="w-40"
                           />
                           <Button
-                            onClick={() => handleEvaluateUser(group._id, user._id)}
-                            size="sm"
-                          >
+                            onClick={() =>
+                              handleEvaluateUser(group._id, user._id)
+                            }
+                            size="sm">
                             Evaluate
                           </Button>
                         </div>
@@ -549,39 +639,40 @@ const EnhancedTrainingManagement = () => {
           </TableBody>
         </Table>
         <div className="mt-4">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                  />
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                />
+              </PaginationItem>
+              {[...Array(totalPages)].map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    onClick={() => handlePageChange(index + 1)}
+                    isActive={currentPage === index + 1}>
+                    {index + 1}
+                  </PaginationLink>
                 </PaginationItem>
-                {[...Array(totalPages)].map((_, index) => (
-                  <PaginationItem key={index}>
-                    <PaginationLink
-                      onClick={() => handlePageChange(index + 1)}
-                      isActive={currentPage === index + 1}
-                    >
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationNext 
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+              ))}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    handlePageChange(Math.min(totalPages, currentPage + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       </CardContent>
     </Card>
   );
   const renderArtisanView = () => {
-    const filteredGroups = trainingGroups.filter(group => 
-      group.users.some(user => user._id === currentUser._id)
+    const filteredGroups = trainingGroups.filter((group) =>
+      group.users.some((user) => user._id === currentUser._id)
     );
 
     return (
@@ -604,19 +695,30 @@ const EnhancedTrainingManagement = () => {
             <TableBody>
               {/* {currentItems.map((group, index) => { */}
               {filteredGroups.map((group, index) => {
-                const userEvaluation = group.users.find(user => user._id === currentUser._id); // Assuming you have the current user's ID
+                const userEvaluation = group.users.find(
+                  (user) => user._id === currentUser._id
+                ); // Assuming you have the current user's ID
                 return (
                   <TableRow key={group._id}>
-                    <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
+                    <TableCell>
+                      {index + 1 + (currentPage - 1) * itemsPerPage}
+                    </TableCell>
                     <TableCell>{group.name}</TableCell>
                     <TableCell>
-                      {group.trainingCenter.trainingCentreName}<br />
-                      {group.trainingCenter.address}<br />
-                      {group.trainingCenter.state}, {group.trainingCenter.lga}<br />
+                      {group.trainingCenter.trainingCentreName}
+                      <br />
+                      {group.trainingCenter.address}
+                      <br />
+                      {group.trainingCenter.state}, {group.trainingCenter.lga}
+                      <br />
                       {group.trainingCenter.phoneNumber}
                     </TableCell>
-                    <TableCell>{new Date(group.startTime).toLocaleDateString()}</TableCell>
-                    <TableCell>{new Date(group.endTime).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {new Date(group.startTime).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(group.endTime).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>
                       {userEvaluation ? (
                         <>
@@ -633,12 +735,14 @@ const EnhancedTrainingManagement = () => {
             </TableBody>
           </Table>
           {/* Pagination component */}
-        <div className="mt-4">
+          <div className="mt-4">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                  <PaginationPrevious
+                    onClick={() =>
+                      handlePageChange(Math.max(1, currentPage - 1))
+                    }
                     disabled={currentPage === 1}
                   />
                 </PaginationItem>
@@ -646,15 +750,16 @@ const EnhancedTrainingManagement = () => {
                   <PaginationItem key={index}>
                     <PaginationLink
                       onClick={() => handlePageChange(index + 1)}
-                      isActive={currentPage === index + 1}
-                    >
+                      isActive={currentPage === index + 1}>
                       {index + 1}
                     </PaginationLink>
                   </PaginationItem>
                 ))}
                 <PaginationItem>
-                  <PaginationNext 
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                  <PaginationNext
+                    onClick={() =>
+                      handlePageChange(Math.min(totalPages, currentPage + 1))
+                    }
                     disabled={currentPage === totalPages}
                   />
                 </PaginationItem>
@@ -667,29 +772,34 @@ const EnhancedTrainingManagement = () => {
   };
 
   return (
-    <ProtectedRoute href='/admin/dashboard'>
+    <ProtectedRoute href="/admin/dashboard">
       <DashboardPage title="Training Management">
-      <div className="container mx-auto p-6">
+        <div className="container mx-auto p-6">
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Training Management</h1>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate('/biodata')}>
+              <Button variant="outline" onClick={() => navigate("/biodata")}>
                 <UserCircle className="mr-2 h-4 w-4" /> Update Profile
               </Button>
-              
+
               <Button variant="destructive" onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" /> Logout
               </Button>
             </div>
           </header>
-        <h1 className="text-3xl font-bold mb-8"></h1>
-        {userRole === 'admin' || 'superadmin' ? renderAdminView() : renderTrainingCenterView()}
-        {userRole === 'admin' || 'superadmin' ? renderTrainingCenterView() : renderAdminView()  }
-        {userRole === 'admin' || 'superadmin' ? renderArtisanView() : renderTrainingCenterView() }
-      </div>
+          <h1 className="text-3xl font-bold mb-8"></h1>
+          {userRole === "admin" || "superadmin"
+            ? renderAdminView()
+            : renderTrainingCenterView()}
+          {userRole === "admin" || "superadmin"
+            ? renderTrainingCenterView()
+            : renderAdminView()}
+          {userRole === "admin" || "superadmin"
+            ? renderArtisanView()
+            : renderTrainingCenterView()}
+        </div>
       </DashboardPage>
-      </ProtectedRoute>
-    
+    </ProtectedRoute>
   );
 };
 

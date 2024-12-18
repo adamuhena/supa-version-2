@@ -1,17 +1,31 @@
-import ProtectedRoute from '@/components/ProtectedRoute';
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import useLogout from '@/pages/loginPage/logout';
-import axios from 'axios';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import useLogout from "@/pages/loginPage/logout";
+import axios from "axios";
 import { LogOut, UserCircle } from "lucide-react";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import TrainingDashboardPage from "./TrainingDashboardLayout";
+import { API_BASE_URL } from "@/config/env";
 
 function Trainingtable() {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const accessToken = localStorage.getItem("accessToken");
   const userId = localStorage.getItem("userId");
   const [userRole, setUserRole] = useState([]);
@@ -26,13 +40,16 @@ function Trainingtable() {
 
   const fetchUserRole = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/training-center/${userId}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      const response = await axios.get(
+        `${API_BASE_URL}/training-center/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
       console.log("user role", response.data.data);
       setUserRole(response.data.data.role);
     } catch (error) {
-      console.error('Error fetching user role:', error);
+      console.error("Error fetching user role:", error);
     }
   };
 
@@ -44,17 +61,19 @@ function Trainingtable() {
       console.log("Fetched training groups: ", response.data);
       setTrainingGroups(response.data);
     } catch (error) {
-      console.error('Error fetching training groups:', error);
+      console.error("Error fetching training groups:", error);
     }
   };
 
   // Filter training groups based on the logged-in user's training center
-  const filteredTrainingGroups = trainingGroups.filter(group =>
-    group.trainingCenter._id === userId
+  const filteredTrainingGroups = trainingGroups.filter(
+    (group) => group.trainingCenter._id === userId
   );
 
   // Sort by start time in descending order and take the 5 most recent
-  const sortedGroups = filteredTrainingGroups.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+  const sortedGroups = filteredTrainingGroups.sort(
+    (a, b) => new Date(b.startTime) - new Date(a.startTime)
+  );
   const recentGroups = sortedGroups.slice(0, 5);
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -85,11 +104,21 @@ function Trainingtable() {
           <TableBody>
             {currentItems.map((group, index) => (
               <TableRow key={group._id}>
-                <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
+                <TableCell>
+                  {index + 1 + (currentPage - 1) * itemsPerPage}
+                </TableCell>
                 <TableCell>{group.name}</TableCell>
-                <TableCell>{group.period ? `${group.period.name} - ${group.period.year}` : 'N/A'}</TableCell>
-                <TableCell>{new Date(group.startTime).toLocaleString()}</TableCell>
-                <TableCell>{new Date(group.endTime).toLocaleString()}</TableCell>
+                <TableCell>
+                  {group.period
+                    ? `${group.period.name} - ${group.period.year}`
+                    : "N/A"}
+                </TableCell>
+                <TableCell>
+                  {new Date(group.startTime).toLocaleString()}
+                </TableCell>
+                <TableCell>
+                  {new Date(group.endTime).toLocaleString()}
+                </TableCell>
                 <TableCell>
                   {group.users.length}
                   {/* <ul>
@@ -110,7 +139,7 @@ function Trainingtable() {
 
   return (
     <div className="container mx-auto p-6">
-      {userRole === 'training_center' ? (
+      {userRole === "training_center" ? (
         TrainingCenterView()
       ) : (
         <p>No data available or user role is not training center.</p>

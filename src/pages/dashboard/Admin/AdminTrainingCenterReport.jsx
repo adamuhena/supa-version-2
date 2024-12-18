@@ -172,12 +172,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Cross1Icon, DashboardIcon, SewingPinFilledIcon } from "@radix-ui/react-icons";
-import useLogout from '@/pages/loginPage/logout';
+import {
+  Cross1Icon,
+  DashboardIcon,
+  SewingPinFilledIcon,
+} from "@radix-ui/react-icons";
+import useLogout from "@/pages/loginPage/logout";
 import { LogOut, UserCircle } from "lucide-react";
+import { API_BASE_URL } from "@/config/env";
 
 const TrainingCenterReport = () => {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const logout = useLogout();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -197,11 +201,14 @@ const TrainingCenterReport = () => {
     setLoading(true);
     try {
       const accessToken = localStorage.getItem("accessToken");
-      const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.get(
+        `${API_BASE_URL}/trainingcenter/report`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
       setReports(response?.data?.data || []);
       setFilteredReports(response?.data?.data || []);
     } catch (error) {
@@ -256,19 +263,41 @@ const TrainingCenterReport = () => {
   const applyFilter = () => {
     let filtered = reports;
     if (filter.stateOfResidence) {
-      filtered = filtered.filter(center => center.stateOfResidence && center.stateOfResidence.toLowerCase() === filter.state.toLowerCase());
+      filtered = filtered.filter(
+        (center) =>
+          center.stateOfResidence &&
+          center.stateOfResidence.toLowerCase() === filter.state.toLowerCase()
+      );
     }
     if (filter.localGovernment) {
-      filtered = filtered.filter(center => center.lgaOfResidence && center.lgaOfResidence.toLowerCase() === filter.localGovernment.toLowerCase());
+      filtered = filtered.filter(
+        (center) =>
+          center.lgaOfResidence &&
+          center.lgaOfResidence.toLowerCase() ===
+            filter.localGovernment.toLowerCase()
+      );
     }
     if (filter.senatorialDistrict) {
-      filtered = filtered.filter(center => center.senatorialDistrict && center.senatorialDistrict.toLowerCase() === filter.senatorialDistrict.toLowerCase());
+      filtered = filtered.filter(
+        (center) =>
+          center.senatorialDistrict &&
+          center.senatorialDistrict.toLowerCase() ===
+            filter.senatorialDistrict.toLowerCase()
+      );
     }
     if (filter.sector) {
-      filtered = filtered.filter(center => center.sector && center.sector.toLowerCase() === filter.sector.toLowerCase());
+      filtered = filtered.filter(
+        (center) =>
+          center.sector &&
+          center.sector.toLowerCase() === filter.sector.toLowerCase()
+      );
     }
     if (filter.tradeArea) {
-      filtered = filtered.filter(center => center.tradeArea && center.tradeArea.toLowerCase() === filter.tradeArea.toLowerCase());
+      filtered = filtered.filter(
+        (center) =>
+          center.tradeArea &&
+          center.tradeArea.toLowerCase() === filter.tradeArea.toLowerCase()
+      );
     }
     setFilteredReports(filtered);
   };
@@ -284,25 +313,51 @@ const TrainingCenterReport = () => {
   };
 
   const handleFilterChange = (key, value) => {
-    setFilter(prev => ({ ...prev, [key]: value }));
+    setFilter((prev) => ({ ...prev, [key]: value }));
   };
 
   // Memoized CSV Data
   const csvData = useMemo(() => {
     if (!reports.length) return [];
-    const headers = ["S/N", "Training Center", "Address", "State", "Local Government", "Senatorial District", "Sector", "Trade Area", "Phone", "Email"];
-    const rows = reports.map(({ name, address, stateOfResidence, lgaOfResidence, senatorialDistrict, sector, tradeArea, phoneNumber, email }, index) => [
-      index + 1,
-      name || "",
-      address || "",
-      stateOfResidence || "",
-      lgaOfResidence || "",
-      senatorialDistrict || "",
-      sector || "",
-      tradeArea || "",
-      phoneNumber || "",
-      email || "",
-    ]);
+    const headers = [
+      "S/N",
+      "Training Center",
+      "Address",
+      "State",
+      "Local Government",
+      "Senatorial District",
+      "Sector",
+      "Trade Area",
+      "Phone",
+      "Email",
+    ];
+    const rows = reports.map(
+      (
+        {
+          name,
+          address,
+          stateOfResidence,
+          lgaOfResidence,
+          senatorialDistrict,
+          sector,
+          tradeArea,
+          phoneNumber,
+          email,
+        },
+        index
+      ) => [
+        index + 1,
+        name || "",
+        address || "",
+        stateOfResidence || "",
+        lgaOfResidence || "",
+        senatorialDistrict || "",
+        sector || "",
+        tradeArea || "",
+        phoneNumber || "",
+        email || "",
+      ]
+    );
     return [headers, ...rows];
   }, [reports]);
 
@@ -310,19 +365,45 @@ const TrainingCenterReport = () => {
   const generatePDF = () => {
     if (!reports.length) return;
     const doc = new jsPDF();
-    const headers = ["S/N", "Training Center", "Address", "State", "Local Government", "Senatorial District", "Sector", "Trade Area", "Phone", "Email"];
-    const data = reports.map(({ name, address, stateOfResidence, lgaOfResidence, senatorialDistrict, sector, tradeArea, phoneNumber, email }, index) => [
-      index + 1,
-      name || "",
-      address || "",
-      stateOfResidence || "",
-      lgaOfResidence || "",
-      senatorialDistrict || "",
-      sector || "",
-      tradeArea || "",
-      phoneNumber || "",
-      email || "",
-    ]);
+    const headers = [
+      "S/N",
+      "Training Center",
+      "Address",
+      "State",
+      "Local Government",
+      "Senatorial District",
+      "Sector",
+      "Trade Area",
+      "Phone",
+      "Email",
+    ];
+    const data = reports.map(
+      (
+        {
+          name,
+          address,
+          stateOfResidence,
+          lgaOfResidence,
+          senatorialDistrict,
+          sector,
+          tradeArea,
+          phoneNumber,
+          email,
+        },
+        index
+      ) => [
+        index + 1,
+        name || "",
+        address || "",
+        stateOfResidence || "",
+        lgaOfResidence || "",
+        senatorialDistrict || "",
+        sector || "",
+        tradeArea || "",
+        phoneNumber || "",
+        email || "",
+      ]
+    );
     doc.setFontSize(16);
     doc.text("Training Center Report", 20, 20);
     doc.autoTable({
@@ -358,44 +439,45 @@ const TrainingCenterReport = () => {
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Training Center Reports</h1>
             <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate('/biodata')}>
-            <UserCircle className="mr-2 h-4 w-4" /> Update Profile
-          </Button>
-          
-          <Button variant="destructive" onClick={logout}>
-            <LogOut className="mr-2 h-4 w-4" /> Logout
-          </Button>
-        </div>
-            
+              <Button variant="outline" onClick={() => navigate("/biodata")}>
+                <UserCircle className="mr-2 h-4 w-4" /> Update Profile
+              </Button>
+
+              <Button variant="destructive" onClick={logout}>
+                <LogOut className="mr-2 h-4 w-4" /> Logout
+              </Button>
+            </div>
           </header>
 
           <div className=" gap-2 flex flex-row-reverse pr-40">
-              <CSVLink
-                data={csvData}
-                filename="training_center_report.csv"
-                className={`inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 ${!reports.length ? 'opacity-50 cursor-not-allowed' : ''}`}
-                onClick={(event) => !reports.length && event.preventDefault()}
-              >
-                Download CSV
-              </CSVLink>
-              <Button onClick={generatePDF} disabled={!reports.length}>
-                Download PDF
-              </Button>
-            </div>
+            <CSVLink
+              data={csvData}
+              filename="training_center_report.csv"
+              className={`inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 ${
+                !reports.length ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={(event) => !reports.length && event.preventDefault()}>
+              Download CSV
+            </CSVLink>
+            <Button onClick={generatePDF} disabled={!reports.length}>
+              Download PDF
+            </Button>
+          </div>
 
           <div className="flex gap-[20px] flex-wrap mb-6">
-          
             <div className="w-[200px]">
               <p className="text-left text-[14px] mb-1">State</p>
               <Select
                 value={filter?.stateOfResidence}
-                onValueChange={(value) => handleFilterChange("stateOfResidence", value)}>
+                onValueChange={(value) =>
+                  handleFilterChange("stateOfResidence", value)
+                }>
                 <SelectTrigger>
                   <SelectValue placeholder="Select State" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                  {states.map((item) => {
+                    {states.map((item) => {
                       return (
                         <SelectItem value={item?.value}>
                           {item?.label}
@@ -411,13 +493,15 @@ const TrainingCenterReport = () => {
               <p className="text-left text-[14px] mb-1">Local Government</p>
               <Select
                 value={filter.localGovernment}
-                onValueChange={(value) => handleFilterChange("lgaOfResidence", value)}>
+                onValueChange={(value) =>
+                  handleFilterChange("lgaOfResidence", value)
+                }>
                 <SelectTrigger>
                   <SelectValue placeholder="Select LGA" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                  {selectedStateLGASResidenceFormatted.map((item) => {
+                    {selectedStateLGASResidenceFormatted.map((item) => {
                       return (
                         <SelectItem value={item?.value}>
                           {item?.label}
@@ -433,7 +517,9 @@ const TrainingCenterReport = () => {
               <p className="text-left text-[14px] mb-1">Senatorial District</p>
               <Select
                 value={filter.senatorialDistrict}
-                onValueChange={(value) => handleFilterChange("senatorialDistrict", value)}>
+                onValueChange={(value) =>
+                  handleFilterChange("senatorialDistrict", value)
+                }>
                 <SelectTrigger>
                   <SelectValue placeholder="Select District" />
                 </SelectTrigger>
@@ -471,7 +557,9 @@ const TrainingCenterReport = () => {
               <p className="text-left text-[14px] mb-1">Trade Area</p>
               <Select
                 value={filter.tradeArea}
-                onValueChange={(value) => handleFilterChange("tradeArea", value)}>
+                onValueChange={(value) =>
+                  handleFilterChange("tradeArea", value)
+                }>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Trade Area" />
                 </SelectTrigger>
@@ -487,7 +575,6 @@ const TrainingCenterReport = () => {
             </div>
 
             <Button
-              
               className="bg-emerald-700 mt-auto hover:bg-emerald-400"
               onClick={applyFilter}
               disabled={loading}>
@@ -524,7 +611,9 @@ const TrainingCenterReport = () => {
             <TableBody>
               {currentItems.map((center, index) => (
                 <TableRow key={center._id || index}>
-                  <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
+                  <TableCell>
+                    {index + 1 + (currentPage - 1) * itemsPerPage}
+                  </TableCell>
                   <TableCell>{center.name || ""}</TableCell>
                   <TableCell>{center.address || ""}</TableCell>
                   <TableCell>{center.state || ""}</TableCell>
@@ -540,37 +629,36 @@ const TrainingCenterReport = () => {
           </Table>
 
           <div className="mt-4">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() =>
-                        handlePageChange(Math.max(1, currentPage - 1))
-                      }
-                      disabled={currentPage === 1}
-                    />
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() =>
+                      handlePageChange(Math.max(1, currentPage - 1))
+                    }
+                    disabled={currentPage === 1}
+                  />
+                </PaginationItem>
+                {[...Array(totalPages)].map((_, index) => (
+                  <PaginationItem key={index}>
+                    <PaginationLink
+                      onClick={() => handlePageChange(index + 1)}
+                      isActive={currentPage === index + 1}>
+                      {index + 1}
+                    </PaginationLink>
                   </PaginationItem>
-                  {[...Array(totalPages)].map((_, index) => (
-                    <PaginationItem key={index}>
-                      <PaginationLink
-                        onClick={() => handlePageChange(index + 1)}
-                        isActive={currentPage === index + 1}
-                      >
-                        {index + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() =>
-                        handlePageChange(Math.min(totalPages, currentPage + 1))
-                      }
-                      disabled={currentPage === totalPages}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      handlePageChange(Math.min(totalPages, currentPage + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
         </div>
       </DashboardPage>
     </ProtectedRoute>
@@ -578,4 +666,3 @@ const TrainingCenterReport = () => {
 };
 
 export default TrainingCenterReport;
-

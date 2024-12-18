@@ -17,6 +17,7 @@ import BankDetails from "./BankDetails.jsx";
 import useLogout from "@/pages/loginPage/logout";
 import { LogOutIcon } from "lucide-react";
 // import ProtectedRoute from "@/components/ProtectedRoute";
+import { API_BASE_URL } from "@/config/env";
 
 const checkValidateCompanyInfo = ({ form }) => {
   let erroMsg = "";
@@ -128,7 +129,6 @@ const checkValidateBank = ({ form }) => {
 };
 
 const TrainingCenterForm = () => {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [step, setStep] = useState(0);
 
   const [form, setForm] = useState({

@@ -3,17 +3,17 @@ import { Navigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import useLogout from "@/pages/loginPage/logout";
 import Spinner from "../components/layout/spinner";
+import { API_BASE_URL } from "@/config/env";
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState(null);
   const [error, setError] = useState(null);
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const isAuthenticated = localStorage.getItem("userId");
   const accessToken = localStorage.getItem("accessToken");
   const loginAs = localStorage.getItem("userRole");
-  const [isFirstTimeUser, setIsFirstTimeUser] = useState(null)
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(null);
   const location = useLocation();
   const logout = useLogout();
 
@@ -30,16 +30,18 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
               }
             );
           } else {
-            response = await axios.get(`${API_BASE_URL}/users/${isAuthenticated}`, {
-              headers: { Authorization: `Bearer ${accessToken}` },
-            });
+            response = await axios.get(
+              `${API_BASE_URL}/users/${isAuthenticated}`,
+              {
+                headers: { Authorization: `Bearer ${accessToken}` },
+              }
+            );
           }
           setUserRole(response.data.data.role);
-          setIsFirstTimeUser(response.data.data.agree)
+          setIsFirstTimeUser(response.data.data.agree);
 
-          console.log('My role ', response.data.data.role)
-          console.log('isFirstTimeUser ', response.data.data.agree)
-
+          console.log("My role ", response.data.data.role);
+          console.log("isFirstTimeUser ", response.data.data.agree);
         }
       } catch (err) {
         console.error("Error fetching user role:", err);
@@ -64,7 +66,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
         artisan_user: "/register/artisan",
         intending_artisan: "/register/intendingArtisan",
         training_center: "/register/trainingcenter",
-      }
+      };
       return <Navigate to={rolePaths[userRole] || "/"} replace />;
     } else {
       const rolePaths = {
@@ -73,10 +75,9 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
         artisan_user: "/trainee/dashboard",
         intending_artisan: "/trainee/dashboard",
         training_center: "/trainingcenter/dashboard",
-      }
+      };
       return <Navigate to={rolePaths[userRole] || "/"} replace />;
     }
-
   }
 
   // Redirect unauthenticated users to the login page
@@ -92,7 +93,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 
   // Handle loading state while fetching role
   if (loading) {
-    return
+    return;
   }
 
   // Handle error during the role fetch

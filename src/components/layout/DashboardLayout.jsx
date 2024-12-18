@@ -80,10 +80,9 @@ import axios from "axios"; // Make sure axios is installed or replace with your 
 import { DotPattern } from "../ui/dot-pattern";
 import { toast } from "sonner";
 import Spinner from "./spinner";
+import { API_BASE_URL } from "@/config/env";
 
 export default function DashboardPage({ href, title, children }) {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
   const [userData, setUserData] = useState(null); // Holds the user data
   const navigate = useNavigate();
 
@@ -124,21 +123,20 @@ export default function DashboardPage({ href, title, children }) {
 
   if (!userData) {
     return (
-    <div className="flex justify-center items-center h-screen">
-      <Spinner/>
-    </div>
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
     );
-  }   
-
-// Role-based filtering function
-const isLinkAccessible = (allowedRoles) => {
-  if (!userData || !userData.role) {
-    console.error("User data or role is missing:", userData);
-    return false;
   }
-  return allowedRoles.includes(userData.role);
-};
 
+  // Role-based filtering function
+  const isLinkAccessible = (allowedRoles) => {
+    if (!userData || !userData.role) {
+      console.error("User data or role is missing:", userData);
+      return false;
+    }
+    return allowedRoles.includes(userData.role);
+  };
 
   return (
     <SidebarProvider>
@@ -172,7 +170,7 @@ const isLinkAccessible = (allowedRoles) => {
         </SidebarHeader>
 
         <SidebarContent>
-          {userData && isLinkAccessible([ "superadmin", "admin"]) ? ( // Set default roles or use `allowedRoles` property in data
+          {userData && isLinkAccessible(["superadmin", "admin"]) ? ( // Set default roles or use `allowedRoles` property in data
             <SidebarGroup>
               <SidebarGroupLabel>User Setup</SidebarGroupLabel>
               {/* <SidebarMenu>
@@ -247,28 +245,27 @@ const isLinkAccessible = (allowedRoles) => {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-                
+
                 {isLinkAccessible(["training_center"]) && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/training/groups">
+                        <BookOpen />
+                        <span>Training Groups</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
+
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link to="/training/groups">
+                    <Link to="/admin/sectors">
                       <BookOpen />
-                      <span>Training Groups</span>
+                      <span>Sector Managment</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-                  )}
-                
-                <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/admin/sectors">
-                    <BookOpen />
-                    <span>Sector Managment</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              
-            
+
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <Link to="/document/verification">
@@ -277,7 +274,7 @@ const isLinkAccessible = (allowedRoles) => {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-                
+
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <Link to="/admin/dashboard/reports">
@@ -291,7 +288,6 @@ const isLinkAccessible = (allowedRoles) => {
                       <span>Training Center Reports</span>
                     </Link>
                   </SidebarMenuButton>
-                  
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroup>
@@ -316,7 +312,7 @@ const isLinkAccessible = (allowedRoles) => {
                 </SidebarMenuItem>
 
                 {/* Only render this SidebarMenuItem if the user is not an intending_artisan */}
-                {isLinkAccessible(["admin","superadmin", "artisan_user"]) && (
+                {isLinkAccessible(["admin", "superadmin", "artisan_user"]) && (
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/certification/upload">
@@ -330,11 +326,7 @@ const isLinkAccessible = (allowedRoles) => {
             </SidebarGroup>
           ) : null}
 
-
-          {isLinkAccessible([
-            "admin",
-            "superadmin",
-          ]) ? (
+          {isLinkAccessible(["admin", "superadmin"]) ? (
             <SidebarGroup className="group-data-[collapsible=icon]:hidden">
               <SidebarGroupLabel>Training Center</SidebarGroupLabel>
               <SidebarMenu>
@@ -445,7 +437,6 @@ const isLinkAccessible = (allowedRoles) => {
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    
                     <DropdownMenuItem
                       variant="outline"
                       onClick={() => navigate("#")}>

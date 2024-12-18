@@ -22,9 +22,9 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import PageLayout from "@/components/layout/pageLayout";
 import { toast } from "sonner";
 import Spinner from "../../components/Spinner";
+import { API_BASE_URL } from "@/config/env";
 
 export default function LoginForm() {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [loginAs, setRole] = useState("user");
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");

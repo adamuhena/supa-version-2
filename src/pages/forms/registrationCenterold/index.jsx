@@ -13,9 +13,9 @@ import "./index.css";
 import { DotPattern } from "../../../components/ui/dot-pattern";
 import { cn } from "../../../lib/utils";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { API_BASE_URL } from "@/config/env";
 
 const TrainingCenterForm = () => {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [step, setStep] = useState(0);
 
   const [form, setForm] = useState({
@@ -91,7 +91,6 @@ const TrainingCenterForm = () => {
     createdAt: null, // Will be set as a Date object
     updatedAt: null, // Will be set as a Date object
   });
-  
 
   const onChangeBankInput = (id, value) => {
     setForm((prevForm) => ({
@@ -102,7 +101,6 @@ const TrainingCenterForm = () => {
       },
     }));
   };
-
 
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -135,18 +133,16 @@ const TrainingCenterForm = () => {
     }));
   };
   const userID = localStorage.getItem("userId"); // Replace 'userID' with your storage key if different
-console.log("userID",userID)
+  console.log("userID", userID);
 
   const submitForm = async () => {
-
-     // Ensure userID exists
-     if (!userID) {
+    // Ensure userID exists
+    if (!userID) {
       toast.error("User ID is missing. Please log in again.", {
         position: "top-right",
       });
       return;
     }
-
 
     setLoading(true);
     try {
@@ -161,41 +157,37 @@ console.log("userID",userID)
   };
 
   const controlButtons = (
-      <div className="flex w-full justify-end">
-        {step > 0 && (
-            <button
-                disabled={loading}
-                onClick={goBack}
-                className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-gray-300 text-[#00524d]"
-            >
-              Back
-            </button>
-        )}
-        {step === 5 ? (
-            form.agree && (
-
-                <button
-                    disabled={loading}
-                    onClick={submitForm}
-                    className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
-                >
-                  {loading ? "Submitting..." : "Submit"}
-                </button>
-            )
-        ) : (
-            <button
-                onClick={goNext}
-                className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
-            >
-              Next
-            </button>
-        )}
-      </div>
+    <div className="flex w-full justify-end">
+      {step > 0 && (
+        <button
+          disabled={loading}
+          onClick={goBack}
+          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-gray-300 text-[#00524d]">
+          Back
+        </button>
+      )}
+      {step === 5 ? (
+        form.agree && (
+          <button
+            disabled={loading}
+            onClick={submitForm}
+            className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white">
+            {loading ? "Submitting..." : "Submit"}
+          </button>
+        )
+      ) : (
+        <button
+          onClick={goNext}
+          className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white">
+          Next
+        </button>
+      )}
+    </div>
   );
 
   return (
-      <div>
-        <ProtectedRoute>
+    <div>
+      <ProtectedRoute>
         <RegisterSuccess show={show} setShow={setShow} />
         <div className="container">
           <div>
@@ -203,43 +195,120 @@ console.log("userID",userID)
               <h1 className="header text-xl text-emerald-600">
                 Training Center KYC
               </h1>
-              <Stepper activeStep={step} className="border-b-gray-300 scale-[0.8]">
-                <Step index={0} label={<span className="text-sm font-semibold text-white">Company Information</span>} />
-                <Step index={1} label={<span className="text-sm font-semibold text-white">Directors</span>} />
-                <Step index={2} label={<span className="text-sm font-semibold text-white">Instructors</span>} />
-                <Step index={3} label={<span className="text-sm font-semibold text-white">Bank Details</span>} />
-                <Step index={4} label={<span className="text-sm font-semibold text-white">Verification Documents</span>} />
-                <Step index={5} label={<span className="text-sm font-semibold text-white">Declaration</span>} />
+              <Stepper
+                activeStep={step}
+                className="border-b-gray-300 scale-[0.8]">
+                <Step
+                  index={0}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Company Information
+                    </span>
+                  }
+                />
+                <Step
+                  index={1}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Directors
+                    </span>
+                  }
+                />
+                <Step
+                  index={2}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Instructors
+                    </span>
+                  }
+                />
+                <Step
+                  index={3}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Bank Details
+                    </span>
+                  }
+                />
+                <Step
+                  index={4}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Verification Documents
+                    </span>
+                  }
+                />
+                <Step
+                  index={5}
+                  label={
+                    <span className="text-sm font-semibold text-white">
+                      Declaration
+                    </span>
+                  }
+                />
               </Stepper>
             </div>
 
             <div>
               <div className="relative py-7">
                 <DotPattern
-                    width={20}
-                    height={20}
-                    cx={1}
-                    cy={1}
-                    cr={1}
-                    className={cn("fill-neutral-400/40")}
+                  width={20}
+                  height={20}
+                  cx={1}
+                  cy={1}
+                  cr={1}
+                  className={cn("fill-neutral-400/40")}
                 />
 
-                {step === 0 && <CompanyInfo form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 1 && <Directors form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 2 && <Instructors form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 3 && <BankDetails form={form} setForm={setForm} controlButtons={controlButtons} 
+                {step === 0 && (
+                  <CompanyInfo
+                    form={form}
+                    setForm={setForm}
+                    controlButtons={controlButtons}
+                  />
+                )}
+                {step === 1 && (
+                  <Directors
+                    form={form}
+                    setForm={setForm}
+                    controlButtons={controlButtons}
+                  />
+                )}
+                {step === 2 && (
+                  <Instructors
+                    form={form}
+                    setForm={setForm}
+                    controlButtons={controlButtons}
+                  />
+                )}
+                {step === 3 && (
+                  <BankDetails
+                    form={form}
+                    setForm={setForm}
+                    controlButtons={controlButtons}
                     onChangeBankInput={onChangeBankInput}
-                    />}
-                {step === 4 && <VerificationDocuments form={form} setForm={setForm} controlButtons={controlButtons} />}
-                {step === 5 && <Declaration   form={form}
+                  />
+                )}
+                {step === 4 && (
+                  <VerificationDocuments
+                    form={form}
+                    setForm={setForm}
+                    controlButtons={controlButtons}
+                  />
+                )}
+                {step === 5 && (
+                  <Declaration
+                    form={form}
                     onchangeInput={onchangeInput}
-                    controlButtons={controlButtons} />}
+                    controlButtons={controlButtons}
+                  />
+                )}
               </div>
             </div>
           </div>
         </div>
-        </ProtectedRoute>
-      </div>
+      </ProtectedRoute>
+    </div>
   );
 };
 

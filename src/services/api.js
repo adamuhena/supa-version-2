@@ -1,15 +1,13 @@
-import React, { useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect } from "react";
+import axios from "axios";
+import { API_BASE_URL } from "@/config/env";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const accessToken = localStorage.getItem("accessToken");
 
 // Create an Axios instance for reuse
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
-
-
 
 // export const fetchUserDist = async () => {
 
@@ -63,11 +61,10 @@ const api = axios.create({
 //   }
 // };
 
-
 export const fetchUserDist = async () => {
   const accessToken = localStorage.getItem("accessToken");
   if (!accessToken) {
-    console.error('Access token is missing');
+    console.error("Access token is missing");
     return {}; // Return empty object if token is not found
   }
 
@@ -79,7 +76,7 @@ export const fetchUserDist = async () => {
       },
     });
 
-    console.log('Full response data:', response.data); // Log full response data for debugging
+    console.log("Full response data:", response.data); // Log full response data for debugging
 
     const dist = {};
 
@@ -87,10 +84,10 @@ export const fetchUserDist = async () => {
     const locationDistributions =
       response.data.data?.[0]?.locationDistributions || [];
 
-    console.log('Location distributions:', locationDistributions);
+    console.log("Location distributions:", locationDistributions);
 
     if (!Array.isArray(locationDistributions)) {
-      console.error('Expected locationDistributions to be an array');
+      console.error("Expected locationDistributions to be an array");
       return {};
     }
 
@@ -104,65 +101,60 @@ export const fetchUserDist = async () => {
         dist[state] = { artisan_users: 0, intending_artisans: 0 };
       }
 
-      if (role === 'artisan_user') {
+      if (role === "artisan_user") {
         dist[state].artisan_users += user.count;
-      } else if (role === 'intending_artisan') {
+      } else if (role === "intending_artisan") {
         dist[state].intending_artisans += user.count;
       }
     });
 
     return dist;
   } catch (error) {
-    console.error('Error fetching user distribution:', error);
+    console.error("Error fetching user distribution:", error);
     throw error; // Rethrow error after logging
   }
 };
 
-
-
-
 export const fetchUserDistribution = async () => {
   try {
+    const response = await axios.get(`${API_BASE_URL}/users`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
 
-    const response = await
-      axios.get(`${API_BASE_URL}/users`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-    
-    console.log ("i got here ",response.data);
-    
+    console.log("i got here ", response.data);
+
     // Process the response to group users by stateOfResidence
     const distribution = {};
-    
+
     // Access the nested data array from the response
     const users = response.data.data;
-    
+
     if (!Array.isArray(users)) {
-      console.error('Expected users data to be an array');
+      console.error("Expected users data to be an array");
       return {};
     }
-    
-    users.forEach(user => {
+
+    users.forEach((user) => {
       if (!user.stateOfResidence) return;
-      
+
       const state = user.stateOfResidence.toLowerCase();
       if (!distribution[state]) {
         distribution[state] = {
           artisan_users: 0,
-          intending_artisans: 0
+          intending_artisans: 0,
         };
       }
-      
-      if (user.role === 'artisan_user') {
+
+      if (user.role === "artisan_user") {
         distribution[state].artisan_users++;
-      } else if (user.role === 'intending_artisan') {
+      } else if (user.role === "intending_artisan") {
         distribution[state].intending_artisans++;
       }
     });
-    
+
     return distribution;
   } catch (error) {
-    console.error('Error fetching user distribution:', error);
+    console.error("Error fetching user distribution:", error);
     throw error;
   }
 };
@@ -198,7 +190,6 @@ export const fetchUserDistribution = async () => {
 
 // export default PeriodicRequest;
 
-
 export const fetchSectors = async (accessToken) => {
   try {
     // Send GET request to fetch sectors
@@ -206,7 +197,7 @@ export const fetchSectors = async (accessToken) => {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    console.log('sectors: ', response)
+    console.log("sectors: ", response);
 
     // Assuming response.data contains the sectors
     if (response.data.success) {
@@ -214,11 +205,11 @@ export const fetchSectors = async (accessToken) => {
       return response.data.data;
     } else {
       // Handle the error case where response doesn't contain the expected structure
-      throw new Error(response.data.message || 'Failed to fetch sectors');
+      throw new Error(response.data.message || "Failed to fetch sectors");
     }
   } catch (error) {
     // Handle the error
-    console.error('Error fetching sectors:', error);
-    throw error;  // Rethrow the error for further handling if necessary
+    console.error("Error fetching sectors:", error);
+    throw error; // Rethrow the error for further handling if necessary
   }
 };

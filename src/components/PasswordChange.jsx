@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toaster } from "./ui/sonner";
+import { API_BASE_URL } from "@/config/env";
 
 const PasswordChange = () => {
   const [passwords, setPasswords] = useState({
@@ -14,7 +15,7 @@ const PasswordChange = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setPasswords(prev => ({ ...prev, [name]: value }));
+    setPasswords((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -29,16 +30,22 @@ const PasswordChange = () => {
     }
 
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-      await axios.put(`${API_BASE_URL}/update-password/${localStorage.getItem('userId')}`, {
-        currentPassword: passwords.currentPassword,
-        newPassword: passwords.newPassword,
-      });
+      await axios.put(
+        `${API_BASE_URL}/update-password/${localStorage.getItem("userId")}`,
+        {
+          currentPassword: passwords.currentPassword,
+          newPassword: passwords.newPassword,
+        }
+      );
       Toaster({
         title: "Success",
         description: "Password updated successfully.",
       });
-      setPasswords({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      setPasswords({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     } catch (error) {
       console.error("Error updating password:", error);
       Toaster({
@@ -91,9 +98,8 @@ const PasswordChange = () => {
 
 export default PasswordChange;
 
-
-
-{/* <Card className="border p-4 rounded-lg shadow-md mb-6">
+{
+  /* <Card className="border p-4 rounded-lg shadow-md mb-6">
           <CardHeader>
             <CardTitle>Additional Information</CardTitle>
           </CardHeader>
@@ -159,4 +165,5 @@ export default PasswordChange;
               </div>
             </div>
           </CardContent>
-        </Card> */}
+        </Card> */
+}

@@ -1,35 +1,38 @@
+import { useParams } from "react-router-dom";
+import DashboardPage from "@/components/layout/DashboardLayout";
+import Spinner from "@/components/layout/spinner";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import useLogout from "@/pages/loginPage/logout";
+import axios from "axios";
+import { LogOut, Star, UserCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Calendar from "../Admin/components/Calendar";
+import {
+  default as ArtisanTrainingManagement,
+  default as UserGroupDetails,
+} from "./userGroupDetail";
+import { API_BASE_URL } from "@/config/env";
 
-import { useParams } from 'react-router-dom';import DashboardPage from '@/components/layout/DashboardLayout'
-import Spinner from '@/components/layout/spinner'
-import ProtectedRoute from "@/components/ProtectedRoute"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import useLogout from '@/pages/loginPage/logout'
-import axios from 'axios'
-import { LogOut, Star, UserCircle } from "lucide-react"
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Calendar from '../Admin/components/Calendar'
-import { default as ArtisanTrainingManagement, default as UserGroupDetails } from './userGroupDetail'
-
-
-const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 } }) => {
+const ArtisanDashboard = ({
+  artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 },
+}) => {
   const logout = useLogout();
-
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const [userData, setUserData] = useState(null); // Holds the user data
   const navigate = useNavigate();
-  const userRole = localStorage.getItem('userRole');
+  const userRole = localStorage.getItem("userRole");
 
   const getUserRole = (userRole) => {
-    if (userRole === 'artisan_user') {
+    if (userRole === "artisan_user") {
       return "ARTISAN";
-    } else if (userRole === 'intending_artisan') {
+    } else if (userRole === "intending_artisan") {
       return "INTENDING ARTISAN";
-    } else if (userRole === 'superadmin') {
+    } else if (userRole === "superadmin") {
       return "SUPER ADMIN";
     }
     return "GUEST"; // Default case
@@ -37,9 +40,6 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
 
   const role = getUserRole(userRole);
   console.log(role); //
-
-
-
 
   // Fetch user data from API
   useEffect(() => {
@@ -71,28 +71,23 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
 
   if (!userData) {
     return (
-    <div className="flex justify-center items-center h-screen">
-    <Spinner/>
-</div>
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
     );
   }
 
-
-
-
   return (
-    <ProtectedRoute href='/trainee/dashboard'>
-
-
+    <ProtectedRoute href="/trainee/dashboard">
       <DashboardPage title="Trainee Dashboard">
         <div className="container mx-auto p-6">
           <header className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold"> Dashboard  </h1>
+            <h1 className="text-3xl font-bold"> Dashboard </h1>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate('/biodata')}>
+              <Button variant="outline" onClick={() => navigate("/biodata")}>
                 <UserCircle className="mr-2 h-4 w-4" /> Update Profile
               </Button>
-              
+
               <Button variant="destructive" onClick={logout}>
                 <LogOut className="mr-2 h-4 w-4" /> Logout
               </Button>
@@ -106,13 +101,18 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
               </CardHeader>
               <CardContent className="flex flex-col items-center">
                 <Avatar className="h-24 w-24 mb-4">
-                  <AvatarImage src="/placeholder.svg?height=96&width=96" alt={artisan.name} />
+                  <AvatarImage
+                    src="/placeholder.svg?height=96&width=96"
+                    alt={artisan.name}
+                  />
                   <AvatarFallback>{userData.firstName}</AvatarFallback>
                   {/* {artisan.name.split(' ').map(n => n[0]).join('')}  */}
                 </Avatar>
                 <h2 className="text-2xl font-semibold">{userData.firstName}</h2>
                 <div className="flex flex-col text-sm gap-4 items-center">
-                  <Badge className="mt-2">{userData.priorSkillsCerts[0]?.sector}</Badge>
+                  <Badge className="mt-2">
+                    {userData.priorSkillsCerts[0]?.sector}
+                  </Badge>
                   <div className="text-md text-emerald-800 mb-2">
                     Trade Area: {userData.priorSkillsCerts[0]?.tradeArea}
                   </div>
@@ -120,71 +120,77 @@ const ArtisanDashboard = ({ artisan = { name: "John Doe", skill: "Carpenter", ra
 
                 <div className="flex flex-row items-center font-semibold mt-2">
                   <Star className="h-5 w-5  text-yellow-400 mr-1" />
-                  <span> {" "+role }</span>
+                  <span> {" " + role}</span>
                 </div>
-
               </CardContent>
             </Card>
-
-
 
             <Card className="border-2 border-yellow-400 p-4 rounded-lg shadow-md">
               <CardHeader>
                 <CardTitle>Licensing | Certification</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-md text-emerald-800 mb-2">Cirtification Status:</div>
+                <div className="text-md text-emerald-800 mb-2">
+                  Cirtification Status:
+                </div>
                 {userData.certifiedStatus === false ? (
                   <Badge variant="destructive">Not Certified</Badge>
                 ) : userData.certifiedStatus === true ? (
-                  <Badge variant="success" className='bg-green-400 text-white'>Certified</Badge>
+                  <Badge variant="success" className="bg-green-400 text-white">
+                    Certified
+                  </Badge>
                 ) : null}
-                <div className="text-md text-red-600 mb-2 mt-5">License Status:</div>
+                <div className="text-md text-red-600 mb-2 mt-5">
+                  License Status:
+                </div>
                 {userData.licenseStatus === false ? (
                   <Badge variant="destructive">Not Licensed</Badge>
                 ) : userData.licenseStatus === true ? (
-                  <Badge variant="success" className='bg-green-400 text-white'>Licensed</Badge>
+                  <Badge variant="success" className="bg-green-400 text-white">
+                    Licensed
+                  </Badge>
                 ) : null}
-                {userData.role !== "artisan_user" || "admin" && (
-                  <div className="mt-4">
-                    {userData.certifiedStatus === false || userData.licenseStatus === false ? (
-                      <Button
-                        className="w-full"
-                        onClick={() => navigate('/certification/upload')}
-                      >
-                        {userData.certifiedStatus === false ? 'Get Certified' : 'Get Licensed'}
-                      </Button>
-                    ) : null}
-                  </div>
-                )}
+                {userData.role !== "artisan_user" ||
+                  ("admin" && (
+                    <div className="mt-4">
+                      {userData.certifiedStatus === false ||
+                      userData.licenseStatus === false ? (
+                        <Button
+                          className="w-full"
+                          onClick={() => navigate("/certification/upload")}>
+                          {userData.certifiedStatus === false
+                            ? "Get Certified"
+                            : "Get Licensed"}
+                        </Button>
+                      ) : null}
+                    </div>
+                  ))}
               </CardContent>
             </Card>
 
-
             <Calendar />
-
-
           </div>
 
           <div className="mt-6">
             <Card className="border-2 border-red-400 p-4 rounded-lg shadow-md">
               <CardHeader>
-              {userRole === "intending_artisan" && (
-                <CardTitle> Assigned Training Center</CardTitle>
-              )} {userRole === "artisan_user" && (<CardTitle> Assigned Skill-UP Training Center</CardTitle>)}
+                {userRole === "intending_artisan" && (
+                  <CardTitle> Assigned Training Center</CardTitle>
+                )}{" "}
+                {userRole === "artisan_user" && (
+                  <CardTitle> Assigned Skill-UP Training Center</CardTitle>
+                )}
               </CardHeader>
               <CardContent>
                 <UserGroupDetails />
-               <ArtisanTrainingManagement/>
+                <ArtisanTrainingManagement />
               </CardContent>
             </Card>
           </div>
         </div>
-
-
       </DashboardPage>
     </ProtectedRoute>
-  )
-}
+  );
+};
 
-export default ArtisanDashboard
+export default ArtisanDashboard;

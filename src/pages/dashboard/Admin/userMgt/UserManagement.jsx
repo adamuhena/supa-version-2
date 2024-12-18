@@ -333,7 +333,6 @@
 
 // export default UserCert;
 
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
@@ -370,9 +369,9 @@ import {
 
 import useLogout from "../../../loginPage/logout";
 import { BioDataDialog } from "./components/BioDataDialog";
+import { API_BASE_URL } from "@/config/env";
 
 // Constants
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const UserCertification = () => {
   const navigate = useNavigate();
@@ -422,7 +421,7 @@ const UserCertification = () => {
       const response = await axios.get(`${API_BASE_URL}/userscert`, {
         params: {
           page: pagination?.currentPage || 1, // Fallback to 1
-          limit: pagination?.pageSize || 50,  // Fallback to 25
+          limit: pagination?.pageSize || 50, // Fallback to 25
           ...Object.fromEntries(
             Object.entries(filters).filter(([_, v]) => v !== null && v !== "")
           ),
@@ -431,9 +430,14 @@ const UserCertification = () => {
       });
 
       // if (response.data && response.data.success && response.data.data && Array.isArray(response.data.data.users)) {
-        
-      if (response.data && response.data.success && response.data.data && Array.isArray(response.data.data.users)) {
-        const {  pagination: apiPagination } = response.data.data;
+
+      if (
+        response.data &&
+        response.data.success &&
+        response.data.data &&
+        Array.isArray(response.data.data.users)
+      ) {
+        const { pagination: apiPagination } = response.data.data;
 
         setUsers(response.data.data.users || []); // Fallback to empty array
         setPagination({
@@ -536,10 +540,9 @@ const UserCertification = () => {
           <div className="bg-white p-6 rounded-lg shadow">
             <div className="mb-4 flex flex-wrap gap-4">
               {/* Role Filter */}
-              <Select 
-                value={filters.role || ""} 
-                onValueChange={(value) => updateFilter('role', value)}
-              >
+              <Select
+                value={filters.role || ""}
+                onValueChange={(value) => updateFilter("role", value)}>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Filter by Role" />
                 </SelectTrigger>
@@ -557,7 +560,7 @@ const UserCertification = () => {
               <Input
                 placeholder="Filter by State"
                 value={filters.state}
-                onChange={(e) => updateFilter('state', e.target.value)}
+                onChange={(e) => updateFilter("state", e.target.value)}
                 className="w-[200px]"
               />
 
@@ -565,15 +568,16 @@ const UserCertification = () => {
               <Input
                 placeholder="Filter by LGA"
                 value={filters.lga}
-                onChange={(e) => updateFilter('lga', e.target.value)}
+                onChange={(e) => updateFilter("lga", e.target.value)}
                 className="w-[200px]"
               />
 
               {/* Senatorial District Filter */}
               <Select
                 value={filters.senatorialDistrict || ""}
-                onValueChange={(value) => updateFilter('senatorialDistrict', value)}
-              >
+                onValueChange={(value) =>
+                  updateFilter("senatorialDistrict", value)
+                }>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Senatorial District" />
                 </SelectTrigger>
@@ -590,8 +594,7 @@ const UserCertification = () => {
               {/* Trade Area Filter */}
               <Select
                 value={filters.tradeArea || ""}
-                onValueChange={(value) => updateFilter('tradeArea', value)}
-              >
+                onValueChange={(value) => updateFilter("tradeArea", value)}>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Trade Area" />
                 </SelectTrigger>
@@ -608,8 +611,7 @@ const UserCertification = () => {
               {/* Sector Filter */}
               <Select
                 value={filters.sector || ""}
-                onValueChange={(value) => updateFilter('sector', value)}
-              >
+                onValueChange={(value) => updateFilter("sector", value)}>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Sector" />
                 </SelectTrigger>
@@ -646,7 +648,9 @@ const UserCertification = () => {
                 {users?.map((user, index) => (
                   <TableRow key={user._id}>
                     <TableCell>
-                      {index + 1 + (pagination.currentPage - 1) * pagination.pageSize}
+                      {index +
+                        1 +
+                        (pagination.currentPage - 1) * pagination.pageSize}
                     </TableCell>
                     <TableCell>{`${user.firstName} ${user.lastName}`}</TableCell>
                     <TableCell>{user.email}</TableCell>
@@ -660,8 +664,7 @@ const UserCertification = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleUserDetails(user._id)}
-                      >
+                        onClick={() => handleUserDetails(user._id)}>
                         <SquareCheckBig className="h-4 w-4" />
                       </Button>
                     </TableCell>
@@ -671,8 +674,8 @@ const UserCertification = () => {
             </Table>
 
             {/* Pagination */}
-          <div className="mt-4 flex justify-center">
-            {/* <Pagination>
+            <div className="mt-4 flex justify-center">
+              {/* <Pagination>
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
@@ -700,97 +703,115 @@ const UserCertification = () => {
                 </PaginationItem>
               </PaginationContent>
             </Pagination> */}
-            <Pagination>
-  <PaginationContent>
-    {/* Previous Button */}
-    <PaginationItem>
-      <PaginationPrevious
-        onClick={() => handlePageChange(Math.max(1, pagination?.currentPage - 1))}
-        disabled={pagination?.currentPage === 1}
-      />
-    </PaginationItem>
+              <Pagination>
+                <PaginationContent>
+                  {/* Previous Button */}
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() =>
+                        handlePageChange(
+                          Math.max(1, pagination?.currentPage - 1)
+                        )
+                      }
+                      disabled={pagination?.currentPage === 1}
+                    />
+                  </PaginationItem>
 
-    {/* First Page */}
-    {pagination?.currentPage > 3 && (
-      <>
-        <PaginationItem>
-          <PaginationLink onClick={() => handlePageChange(1)}>1</PaginationLink>
-        </PaginationItem>
-        {pagination?.currentPage > 4 && (
-          <PaginationItem>
-            <PaginationLink disabled>...</PaginationLink>
-          </PaginationItem>
-        )}
-      </>
-    )}
+                  {/* First Page */}
+                  {pagination?.currentPage > 3 && (
+                    <>
+                      <PaginationItem>
+                        <PaginationLink onClick={() => handlePageChange(1)}>
+                          1
+                        </PaginationLink>
+                      </PaginationItem>
+                      {pagination?.currentPage > 4 && (
+                        <PaginationItem>
+                          <PaginationLink disabled>...</PaginationLink>
+                        </PaginationItem>
+                      )}
+                    </>
+                  )}
 
-    {/* Dynamic Page Range */}
-    {Array.from(
-      { 
-        length: Math.min(5, pagination?.totalPages || 1) 
-      }, 
-      (_, i) => {
-        const pageNumber = Math.max(
-          1, 
-          Math.min(
-            pagination?.totalPages || 1, 
-            (pagination?.currentPage || 1) - 2 + i
-          )
-        );
+                  {/* Dynamic Page Range */}
+                  {Array.from(
+                    {
+                      length: Math.min(5, pagination?.totalPages || 1),
+                    },
+                    (_, i) => {
+                      const pageNumber = Math.max(
+                        1,
+                        Math.min(
+                          pagination?.totalPages || 1,
+                          (pagination?.currentPage || 1) - 2 + i
+                        )
+                      );
 
-        return (
-          pageNumber > 0 && pageNumber <= (pagination?.totalPages || 1) && (
-            <PaginationItem key={pageNumber}>
-              <PaginationLink
-                isActive={pageNumber === pagination?.currentPage}
-                onClick={() => handlePageChange(pageNumber)}
-              >
-                {pageNumber}
-              </PaginationLink>
-            </PaginationItem>
-          )
-        );
-      }
-    )}
+                      return (
+                        pageNumber > 0 &&
+                        pageNumber <= (pagination?.totalPages || 1) && (
+                          <PaginationItem key={pageNumber}>
+                            <PaginationLink
+                              isActive={pageNumber === pagination?.currentPage}
+                              onClick={() => handlePageChange(pageNumber)}>
+                              {pageNumber}
+                            </PaginationLink>
+                          </PaginationItem>
+                        )
+                      );
+                    }
+                  )}
 
-    {/* Last Page */}
-    {pagination?.currentPage < (pagination?.totalPages || 1) - 2 && (
-      <>
-        {pagination?.currentPage < (pagination?.totalPages || 1) - 3 && (
-          <PaginationItem>
-            <PaginationLink disabled>...</PaginationLink>
-          </PaginationItem>
-        )}
-        <PaginationItem>
-          <PaginationLink 
-            onClick={() => handlePageChange(pagination?.totalPages || 1)}
-          >
-            {pagination?.totalPages}
-          </PaginationLink>
-        </PaginationItem>
-      </>
-    )}
+                  {/* Last Page */}
+                  {pagination?.currentPage <
+                    (pagination?.totalPages || 1) - 2 && (
+                    <>
+                      {pagination?.currentPage <
+                        (pagination?.totalPages || 1) - 3 && (
+                        <PaginationItem>
+                          <PaginationLink disabled>...</PaginationLink>
+                        </PaginationItem>
+                      )}
+                      <PaginationItem>
+                        <PaginationLink
+                          onClick={() =>
+                            handlePageChange(pagination?.totalPages || 1)
+                          }>
+                          {pagination?.totalPages}
+                        </PaginationLink>
+                      </PaginationItem>
+                    </>
+                  )}
 
-    {/* Next Button */}
-    <PaginationItem>
-      <PaginationNext
-        onClick={() => handlePageChange(Math.min(pagination?.totalPages || 1, (pagination?.currentPage || 1) + 1))}
-        disabled={pagination?.currentPage === pagination?.totalPages}
-      />
-    </PaginationItem>
-  </PaginationContent>
-</Pagination>
+                  {/* Next Button */}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() =>
+                        handlePageChange(
+                          Math.min(
+                            pagination?.totalPages || 1,
+                            (pagination?.currentPage || 1) + 1
+                          )
+                        )
+                      }
+                      disabled={
+                        pagination?.currentPage === pagination?.totalPages
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
           </div>
-        </div>
 
-        {/* Bio Data Dialog */}
-        {selectedUser && (
-          <BioDataDialog
-            isOpen={isBioDataDialogOpen}
-            onClose={() => setIsBioDataDialogOpen(false)}
-            userData={selectedUser}
-          />
-        )}
+          {/* Bio Data Dialog */}
+          {selectedUser && (
+            <BioDataDialog
+              isOpen={isBioDataDialogOpen}
+              onClose={() => setIsBioDataDialogOpen(false)}
+              userData={selectedUser}
+            />
+          )}
         </div>
       </DashboardPage>
     </ProtectedRoute>
