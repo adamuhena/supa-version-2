@@ -120,8 +120,8 @@ export default function SignupForm() {
       erroMsg = "Phone Number must be a number only!";
     }
 
-    if (`${formData.phoneNumber}`?.trim()?.length !== 11) {
-      erroMsg = "Phone Number must be 11 digits!";
+    if (`${formData.phoneNumber}`?.trim()?.length !== 14) {
+      erroMsg = "Phone Number must be 14 digits!";
     }
 
     if (signupAs === "training_center") {
