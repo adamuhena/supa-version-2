@@ -426,24 +426,24 @@ const Biodata = () => {
                   </div>
                   {(changes["personalInfo.hasDisability"] ??
                     user.hasDisability) && (
-                    <div className="space-y-2">
-                      <Label htmlFor="disabilityType">Disability Type</Label>
-                      <Input
-                        id="disabilityType"
-                        value={
-                          changes["personalInfo.disabilityType"] ??
-                          user.disabilityType ??
-                          ""
-                        }
-                        onChange={(e) =>
-                          handleUpdate(
-                            "personalInfo.disabilityType",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-                  )}
+                      <div className="space-y-2">
+                        <Label htmlFor="disabilityType">Disability Type</Label>
+                        <Input
+                          id="disabilityType"
+                          value={
+                            changes["personalInfo.disabilityType"] ??
+                            user.disabilityType ??
+                            ""
+                          }
+                          onChange={(e) =>
+                            handleUpdate(
+                              "personalInfo.disabilityType",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </div>
+                    )}
                 </div>
                 <Button
                   onClick={() => submitChanges("personalInfo")}
@@ -731,7 +731,7 @@ const Biodata = () => {
           </TabsContent>
         </Tabs>
 
-        <Card className="border p-4 rounded-lg shadow-md mt-6">
+        {/* <Card className="border p-4 rounded-lg shadow-md mt-6">
           <CardHeader>
             <CardTitle>Additional Information</CardTitle>
           </CardHeader>
@@ -805,7 +805,84 @@ const Biodata = () => {
               Update Additional Information
             </Button>
           </CardContent>
-        </Card>
+        </Card> */}
+        {(user.role === "admin" || user.role === "superadmin") && (
+          <Card className="border p-4 rounded-lg shadow-md mt-6">
+            <CardHeader>
+              <CardTitle>Additional Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="role">Role</Label>
+                  <Select
+                    onValueChange={(value) =>
+                      handleUpdate("additionalInfo.role", value)
+                    }
+                    value={changes["additionalInfo.role"] ?? user.role ?? ""}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="superadmin">Superadmin</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="artisan_user">Artisan User</SelectItem>
+                      <SelectItem value="intending_artisan">
+                        Intending Artisan
+                      </SelectItem>
+                      <SelectItem value="regular_user">Regular User</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="certifiedStatus">Certified Status</Label>
+                  <Switch
+                    id="certifiedStatus"
+                    checked={
+                      changes["additionalInfo.certifiedStatus"] ??
+                      user.certifiedStatus ??
+                      false
+                    }
+                    onCheckedChange={(checked) =>
+                      handleUpdate("additionalInfo.certifiedStatus", checked)
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="licenseStatus">License Status</Label>
+                  <Switch
+                    id="licenseStatus"
+                    checked={
+                      changes["additionalInfo.licenseStatus"] ??
+                      user.licenseStatus ??
+                      false
+                    }
+                    onCheckedChange={(checked) =>
+                      handleUpdate("additionalInfo.licenseStatus", checked)
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="agree">Agree to Terms</Label>
+                  <Switch
+                    id="agree"
+                    checked={
+                      changes["additionalInfo.agree"] ?? user.agree ?? false
+                    }
+                    onCheckedChange={(checked) =>
+                      handleUpdate("additionalInfo.agree", checked)
+                    }
+                  />
+                </div>
+              </div>
+              <Button
+                onClick={() => submitChanges("additionalInfo")}
+                className="mt-4">
+                Update Additional Information
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </DashboardPage>
   );
