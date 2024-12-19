@@ -15,7 +15,6 @@ const UserReassignment = () => {
         setGroups(groupsResponse.data);
 
         const usersResponse = await axios.get(`${API_BASE_URL}/users`);
-        console.log("Users Response:", usersResponse.data); // Log the response structure
         if (Array.isArray(usersResponse.data.data)) {
           setUsers(usersResponse.data.data);
         } else {

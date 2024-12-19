@@ -61,7 +61,6 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
       try {
         const accessToken = localStorage.getItem('accessToken');
         const response = await fetchSectors(accessToken);
-        console.log('sectore: ', response)
         setSectors(response);
       } catch (err) {
         setError('Failed to fetch sectors');

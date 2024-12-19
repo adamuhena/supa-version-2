@@ -46,7 +46,6 @@ function Trainingtable() {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      console.log("user role", response.data.data);
       setUserRole(response.data.data.role);
     } catch (error) {
       console.error("Error fetching user role 3:", error);
@@ -58,7 +57,6 @@ function Trainingtable() {
       const response = await axios.get(`${API_BASE_URL}/training-groups`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      console.log("Fetched training groups: ", response.data);
       setTrainingGroups(response.data);
     } catch (error) {
       console.error("Error fetching training groups:", error);

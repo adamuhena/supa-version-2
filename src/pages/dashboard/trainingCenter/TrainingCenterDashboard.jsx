@@ -23,7 +23,6 @@ const TrainingCenterDashboard = ({
   const [userData, setUserData] = useState(null); // Holds the user data
   const navigate = useNavigate();
 
-  console.log(userData);
 
   // Fetch user data from API
   useEffect(() => {
@@ -90,8 +89,8 @@ const TrainingCenterDashboard = ({
               <CardContent className="flex flex-col items-center">
                 <Avatar className="h-24 w-24 mb-4">
                   <AvatarImage
-                    src="/placeholder.svg?height=96&width=96"
-                    alt={artisan.name}
+                    src={userData?.profileImage}
+                    alt={userData?.name}
                   />
                   <AvatarFallback>
                     {userData?.trainingCentreName}

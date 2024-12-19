@@ -170,7 +170,7 @@ export default function LoginForm() {
       if (success) {
         const userData = data[loginAs === "user" ? "user" : "training_center"];
 
-        console.log('userdata: ',userData);
+        
   
         if (!userData) {
           toast.error("Login failed: Invalid user data.");
@@ -247,12 +247,12 @@ export default function LoginForm() {
                           <Label
                             htmlFor="email"
                             className="block text-left text-xs text-gray-600">
-                            Email
+                            Email | PhoneNumber
                           </Label>
                           <Input
                             id="email"
-                            type="email"
-                            placeholder="john@example.com"
+                            type="text"
+                            placeholder="john@example.com | 2348012345678"
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -305,8 +305,8 @@ export default function LoginForm() {
                           </Label>
                           <Input
                             id="center-email"
-                            type="email"
-                            placeholder="center@example.com"
+                            type="text"
+                            placeholder="center@example.com | 2348012345678"
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}

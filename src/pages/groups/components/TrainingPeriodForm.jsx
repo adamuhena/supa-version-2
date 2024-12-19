@@ -143,7 +143,6 @@ const TrainingPeriodForm = () => {
     const fetchTrainingCenters = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/training-centers`);
-        console.log("Training Centers Response:", response.data); // Debugging response
         if (Array.isArray(response.data)) {
           setTrainingCenters(response.data);
         } else {

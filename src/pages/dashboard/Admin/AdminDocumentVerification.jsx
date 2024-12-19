@@ -96,7 +96,6 @@ const AdminDocumentVerification = () => {
       console.error("Error verifying document:", error);
     }
   };
-  console.log("sellected ", selectedDocument);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = documents.slice(indexOfFirstItem, indexOfLastItem);

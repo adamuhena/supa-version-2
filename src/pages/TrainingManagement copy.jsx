@@ -22,7 +22,7 @@ const TrainingManagement = () => {
   const [evaluation, setEvaluation] = useState({ score: "", comments: "" });
   const [userRole2, setUserRole] = useState("");
 
-  console.log(trainingCenters);
+ 
 
   useEffect(() => {
     fetchUserRole();
@@ -40,7 +40,6 @@ const TrainingManagement = () => {
         },
       });
       setUserRole(response.data.role);
-      console.log(response.data.role);
     } catch (error) {
       console.error("Error fetching user role:", error);
     }
@@ -79,7 +78,6 @@ const TrainingManagement = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log(response.data.data); // Check the response data
       setUsers(response.data.data);
     } catch (error) {
       console.error("Error fetching users:", error);

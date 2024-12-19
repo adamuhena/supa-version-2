@@ -86,8 +86,7 @@ const EnhancedTrainingManagement = () => {
       ),
     }));
     setUsersOptions(options);
-    console.log("Updated users options:", options); // Add this line
-  }, [users]);
+    }, [users]);
 
   const fetchUserRole = async (page = 1, limit = 25) => {
     try {
@@ -96,7 +95,6 @@ const EnhancedTrainingManagement = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      console.log("user Data: ", response);
       setUserRole(response.data.data.users.role);
     } catch (error) {
       console.error("Error fetching user role 2:", error);
@@ -150,7 +148,6 @@ const EnhancedTrainingManagement = () => {
         ? response.data.data.users
         : [];
       setUsers(usersData);
-      console.log("Fetched users:", usersData);
     } catch (error) {
       console.error("Error fetching users:", error);
       setUsers([]); // Fallback to empty array if there's an error

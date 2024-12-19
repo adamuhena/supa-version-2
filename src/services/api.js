@@ -76,15 +76,12 @@ export const fetchUserDist = async () => {
       },
     });
 
-    console.log("Full response data:", response.data); // Log full response data for debugging
-
     const dist = {};
 
     // Access locationDistributions correctly from the response structure
     const locationDistributions =
       response.data.data?.[0]?.locationDistributions || [];
 
-    console.log("Location distributions:", locationDistributions);
 
     if (!Array.isArray(locationDistributions)) {
       console.error("Expected locationDistributions to be an array");
@@ -121,7 +118,7 @@ export const fetchUserDistribution = async () => {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    console.log("i got here ", response.data);
+
 
     // Process the response to group users by stateOfResidence
     const distribution = {};
@@ -196,8 +193,6 @@ export const fetchSectors = async (accessToken) => {
     const response = await axios.get(`${API_BASE_URL}/sectors`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-
-    console.log("sectors: ", response);
 
     // Assuming response.data contains the sectors
     if (response.data.success) {

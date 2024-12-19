@@ -239,7 +239,7 @@ export default function BankDetails({
           />
           <button
             onClick={handleAddCustomBank}
-            className="ml-2 p-2 bg-blue-500 text-white rounded"
+            className="ml-5 p-2 bg-emarald-500 text-white rounded"
           >
             Add Bank
           </button>

@@ -4,6 +4,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import "./index.css";
+import UploadButton from "@/components/UploadButton";
+
 
 const LegalInfo = ({ form, setForm, controlButtons }) => {
     const updateField = (field, value) => {
@@ -62,7 +64,7 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
                 />
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* <div className="flex flex-col gap-2">
                 <Label htmlFor="supportingDocuments" className="text-left leading-[1.3]">
                     Attach supporting documents:
                 </Label>
@@ -72,7 +74,25 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
                     onChange={(e) => updateField("supportingDocuments", e.target.files[0])}
                     multiple
                 />
-            </div>
+            </div> */}
+
+            <div className="flex flex-col gap-2">
+      <Label
+        htmlFor="supportingDocuments"
+        className="text-left leading-[1.3]"
+      >
+        Attach supporting documents:
+      </Label>
+      <UploadButton
+        fileUrl={form.supportingDocuments}
+        title="supportingDocuments"
+        handleFileChange={(newFileUrl) =>
+          updateField("supportingDocuments", newFileUrl)
+        }
+        accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
+        removeFile={() => updateField("supportingDocuments", null)}
+      />
+      </div>
 
             <h2 className="text-left font-[600] text-[20px] mt-4">14. Trade Area Profile:</h2>
             <div className="overflow-x-auto">
@@ -149,7 +169,7 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
                 Add Trade Area
             </Button>
 
-            <div className="flex flex-col gap-2">
+            {/* <div className="flex flex-col gap-2">
                 <Label htmlFor="instructorCredentials" className="text-left leading-[1.3]">
                     Attach credentials of each Instructor:
                 </Label>
@@ -159,7 +179,29 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
                     onChange={(e) => updateField("instructorCredentials", e.target.files)}
                     multiple
                 />
-            </div>
+            </div> */}
+            <div className="flex flex-col gap-2">
+      <Label
+        htmlFor="instructorCredentials"
+        className="text-left leading-[1.3]"
+      >
+        Attach credentials of each Instructor:
+      </Label>
+      <UploadButton
+        fileUrl={form.instructorCredentials}
+        title="instructorCredentials"
+        handleFileChange={(newFileUrl) => {
+          // Update form to append new files to the existing array
+          const updatedFiles = form.instructorCredentials
+            ? [...form.instructorCredentials, newFileUrl]
+            : [newFileUrl];
+          updateField("instructorCredentials", updatedFiles);
+        }}
+        accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
+        removeFile={() => updateField("instructorCredentials", null)}
+      />
+    </div>
+
 
             <div className="flex flex-col gap-2">
                 <Label htmlFor="additionalDetails" className="text-left leading-[1.3]">

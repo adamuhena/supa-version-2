@@ -42,7 +42,6 @@ function TrainingCenterGroup() {
         }),
       ]);
 
-      console.log("userResponse: ", usersRes);
 
       setUsers(usersRes.data.data.users || []);
       setTrainingCenters(trainingCentersRes.data.data.trainingCenters || []);

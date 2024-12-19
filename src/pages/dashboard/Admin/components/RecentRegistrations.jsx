@@ -55,8 +55,6 @@ export default function RecentRegistrations() {
         if (response.data.success) {
           const gender = response.data.data?.[0]?.genderDistribution;
 
-          console.log("gender: ", gender);
-
           // Process gender distribution data for Artisan Users
           const artisanUserGenderData = [
             {

@@ -21,7 +21,6 @@ import { API_BASE_URL } from "@/config/env";
 
 const checkValidateCompanyInfo = ({ form }) => {
   let erroMsg = "";
-  console.log("form", form);
 
   if (!form?.itfRegistered) {
     erroMsg = "Centre register status is required!";
@@ -72,7 +71,6 @@ const checkValidateCompanyInfo = ({ form }) => {
 
 const checkAmeanities = ({ form }) => {
   let erroMsg = "";
-  console.log("form", form);
 
   if (!form?.portableWater || !form?.observeBreak) {
     erroMsg = "Please complete form to proceed!";
@@ -83,7 +81,6 @@ const checkAmeanities = ({ form }) => {
 
 const checkAsssessment = ({ form }) => {
   let erroMsg = "";
-  console.log("form", form);
 
   if (
     !form?.traineeInstructorRatio ||
@@ -101,7 +98,6 @@ const checkAsssessment = ({ form }) => {
 
 const checkLegal = ({ form }) => {
   let erroMsg = "";
-  console.log("form", form);
 
   if (!form?.legalRegistration) {
     erroMsg = "Please complete legal registration to proceed!";
@@ -112,7 +108,6 @@ const checkLegal = ({ form }) => {
 
 const checkValidateBank = ({ form }) => {
   let erroMsg = "";
-  console.log("experience", form?.experience);
   if (
     !form?.bankAccount?.accountName ||
     !form?.bankAccount?.accountNumber ||
@@ -131,8 +126,80 @@ const checkValidateBank = ({ form }) => {
 const TrainingCenterForm = () => {
   const [step, setStep] = useState(0);
 
+  // const [form, setForm] = useState({
+  //   state: "",
+  //   lga: "",
+  //   areaOffice: "",
+  //   address: "",
+  //   contactPerson: "",
+  //   establishmentDate: null, // Will be set as a Date object
+  //   ownership: "",
+  //   otherOwnership: "",
+  //   trainingCentreName: "",
+  //   trainingNature: "",
+  //   itfRegistered: "",
+  //   itfRegistrationNumber: "",
+  //   bankAccount: {
+  //     accountName: "",
+  //     accountNumber: "",
+  //     bank: "",
+  //   },
+  //   amenities: {
+  //     portableWater: "",
+  //     observeBreak: "",
+  //     breakTime: "",
+  //     otherComments: "",
+  //   },
+  //   assessment: {
+  //     traineeInstructorRatio: "",
+  //     practicalTheoryRatio: "",
+  //     trainingDurationPerDay: "",
+  //     trainingDurationPerWeek: "",
+  //     weeklyTrainingSchedule: "",
+  //     trainingCurriculum: "",
+  //     curriculumAttachment: "",
+  //     attendanceRegister: "",
+  //     infrastructure: [
+  //       {
+  //         type: "",
+  //         number: 0,
+  //       },
+  //     ],
+  //     utilities: [
+  //       {
+  //         type: "",
+  //         number: 0,
+  //         functional: false,
+  //         notFunctional: false,
+  //         remarks: "",
+  //       },
+  //     ],
+  //     totalFloorArea: 0,
+  //   },
+  //   legalInfo: {
+  //     legalRegistration: "",
+  //     supportingDocuments: [],
+  //     tradeAreas: [
+  //       {
+  //         tradeArea: "",
+  //         instructors: 0,
+  //         trainees: 0,
+  //         facilities: "",
+  //         equipment: "",
+  //         tools: "",
+  //       },
+  //     ],
+  //     instructorCredentials: [],
+  //     additionalDetails: "",
+  //   },
+  //   agree: false,
+  //   regNum: "",
+  //   createdAt: null, // Will be set as a Date object
+  //   updatedAt: null, // Will be set as a Date object
+  // });
   const [form, setForm] = useState({
     state: "",
+    lga: "",
     areaOffice: "",
     address: "",
     contactPerson: "",
@@ -196,12 +263,18 @@ const TrainingCenterForm = () => {
       instructorCredentials: [],
       additionalDetails: "",
     },
+    verificationDocuments: {
+      certificateOfRegistration: "",
+      taxClearanceCertificate: "",
+      proofOfAddress: "",
+      accreditationCertificate: "",
+    },
     agree: false,
     regNum: "",
     createdAt: null, // Will be set as a Date object
     updatedAt: null, // Will be set as a Date object
   });
-
+  
   const onChangeBankInput = (id, value) => {
     setForm((prevForm) => ({
       ...prevForm,
@@ -240,15 +313,20 @@ const TrainingCenterForm = () => {
         return toast.error(erroMsg, { position: "top-right" });
       }
     }
-
-    if (step === 3) {
+    // if (step === 3) {
+    //   const erroMsg = checkDocuments({ form })?.erroMsg;
+    //   if (erroMsg) {
+    //     return toast.error(erroMsg, { position: "top-right" });
+    //   }
+    // }
+    if (step === 4) {
       const erroMsg = checkLegal({ form })?.erroMsg;
       if (erroMsg) {
         return toast.error(erroMsg, { position: "top-right" });
       }
     }
 
-    if (step === 4) {
+    if (step === 5) {
       const erroMsg = checkValidateBank({ form })?.erroMsg;
       if (erroMsg) {
         return toast.error(erroMsg, { position: "top-right" });
@@ -267,7 +345,6 @@ const TrainingCenterForm = () => {
     }));
   };
   const userID = localStorage.getItem("userId"); // Replace 'userID' with your storage key if different
-  console.log("userID", userID);
 
   const submitForm = async () => {
     // Ensure userID exists
@@ -298,7 +375,6 @@ const TrainingCenterForm = () => {
       toast.success("Training Center Registered Successfully!");
       setShow(true); // Show success modal or message
     } catch (error) {
-      console.log("error?.respons", error?.respons);
       toast.error(error?.response?.data?.message || "Submission failed!");
     } finally {
       setLoading(false);
@@ -315,7 +391,7 @@ const TrainingCenterForm = () => {
           Back
         </button>
       )}
-      {step === 5 ? (
+      {step === 6 ? (
         form.agree && (
           <button
             disabled={loading}
@@ -380,7 +456,7 @@ const TrainingCenterForm = () => {
                 index={3}
                 label={
                   <span className="text-sm font-semibold text-white">
-                    Legal and Trade Information
+                    Document Verification
                   </span>
                 }
               />
@@ -388,12 +464,20 @@ const TrainingCenterForm = () => {
                 index={4}
                 label={
                   <span className="text-sm font-semibold text-white">
-                    Bank Details
+                    Legal and Trade Information
                   </span>
                 }
               />
               <Step
                 index={5}
+                label={
+                  <span className="text-sm font-semibold text-white">
+                    Bank Details
+                  </span>
+                }
+              />
+              <Step
+                index={6}
                 label={
                   <span className="text-sm font-semibold text-white">
                     Declaration
@@ -436,14 +520,20 @@ const TrainingCenterForm = () => {
                 />
               )}
               {step === 3 && (
+                <VerificationDocuments
+                  form={form}
+                  setForm={setForm}
+                  controlButtons={controlButtons}
+                />
+              )}
+              {step === 4 && (
                 <LegalInfo
                   form={form}
                   setForm={setForm}
                   controlButtons={controlButtons}
-                  onChangeBankInput={onChangeBankInput}
                 />
               )}
-              {step === 4 && (
+              {step === 5 && (
                 <BankDetails
                   form={form}
                   setForm={setForm}
@@ -451,7 +541,7 @@ const TrainingCenterForm = () => {
                   onChangeBankInput={onChangeBankInput}
                 />
               )}
-              {step === 5 && (
+              {step === 6 && (
                 <Declaration
                   form={form}
                   onchangeInput={onchangeInput}

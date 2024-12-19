@@ -48,10 +48,10 @@ const IntendingArtisanDashboard = ({ artisan = { rating: 4.5 } }) => {
 
   if (!userData) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spinner />
-      </div>
-    );
+          <div className="flex justify-center items-center h-screen">
+            <Spinner />
+          </div>
+        );
   }
 
   return (

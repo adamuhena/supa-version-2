@@ -22,7 +22,6 @@ export default function Education({
   const endYear = new Date().getFullYear();
   const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
 
-  console.log("form", form);
   return (
     <div
       style={{

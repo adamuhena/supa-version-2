@@ -39,7 +39,6 @@ const ArtisanDashboard = ({
   };
 
   const role = getUserRole(userRole);
-  console.log(role); //
 
   // Fetch user data from API
   useEffect(() => {
@@ -102,8 +101,8 @@ const ArtisanDashboard = ({
               <CardContent className="flex flex-col items-center">
                 <Avatar className="h-24 w-24 mb-4">
                   <AvatarImage
-                    src="/placeholder.svg?height=96&width=96"
-                    alt={artisan.name}
+                    src={userData?.profileImage}
+                    alt={userData?.firstName}
                   />
                   <AvatarFallback>{userData.firstName}</AvatarFallback>
                   {/* {artisan.name.split(' ').map(n => n[0]).join('')}  */}

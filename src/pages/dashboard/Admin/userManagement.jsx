@@ -109,8 +109,7 @@ const UserManagement = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      console.log("Full Response: ", response); // Detailed logging
-
+      
       // More robust response checking
       if (
         response.data &&
@@ -138,7 +137,6 @@ const UserManagement = () => {
       setLoading(false);
     }
   };
-  console.log("Users : ", users);
   const handlePageChange = (page) => {
     setCurrentPage(page);
     fetchUsers(page, pagination.pageSize, roleFilter, search);

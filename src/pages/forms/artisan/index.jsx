@@ -170,7 +170,6 @@ import { API_BASE_URL } from "@/config/env";
 
 const checkValidatePersonalInfo = ({ form }) => {
   let erroMsg = "";
-  console.log("form", form);
   if (!form?.hasDisability) {
     erroMsg = "Disability status is required!";
   }
@@ -227,15 +226,6 @@ const checkValidateEducation = ({ form }) => {
   ) {
     erroMsg = "All education fields are required!";
   }
-  console.log("form?.education?.school", form?.education?.school);
-  console.log(
-    "form?.education?.highest_qualification",
-    form?.education?.highest_qualification
-  );
-  console.log(
-    "form?.education?.graduation_year",
-    form?.education?.graduation_year
-  );
   return { erroMsg };
 };
 
@@ -252,7 +242,6 @@ const checkValidatePrior = ({ form }) => {
 
 const checkValidateExp = ({ form }) => {
   let erroMsg = "";
-  console.log("experience", form?.experience);
   if (
     !form?.experience?.[0]?.project_title ||
     !form?.experience?.[0]?.description ||
@@ -266,7 +255,6 @@ const checkValidateExp = ({ form }) => {
 
 const checkValidateBank = ({ form }) => {
   let erroMsg = "";
-  console.log("experience", form?.experience);
   if (
     !form?.bankAccount?.accountName ||
     !form?.bankAccount?.accountNumber ||

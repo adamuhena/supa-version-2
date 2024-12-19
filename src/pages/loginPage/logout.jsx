@@ -11,7 +11,7 @@ const useLogout = () => {
     localStorage.clear();
     toast.success("Logged Out Successfully...");
     navigate("/login");
-    console.log("User logged out");
+    
   };
 };
 

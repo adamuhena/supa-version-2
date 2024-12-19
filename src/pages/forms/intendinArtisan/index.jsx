@@ -226,20 +226,11 @@ const checkValidateEducation = ({ form }) => {
   ) {
     erroMsg = "All education fields are required!";
   }
-  console.log("form?.education?.school", form?.education?.school);
-  console.log(
-    "form?.education?.highest_qualification",
-    form?.education?.highest_qualification
-  );
-  console.log(
-    "form?.education?.graduation_year",
-    form?.education?.graduation_year
-  );
+  
   return { erroMsg };
 };
 
 const checkValidatePrior = ({ form }) => {
-  console.log("form", form);
   let erroMsg = "";
   if (!form?.priorSkillsCerts?.[0]?.id) {
     erroMsg = "At least one intending skill is required!";
@@ -249,7 +240,6 @@ const checkValidatePrior = ({ form }) => {
 
 const checkValidateBank = ({ form }) => {
   let erroMsg = "";
-  console.log("experience", form?.experience);
   if (
     !form?.bankAccount?.accountName ||
     !form?.bankAccount?.accountNumber ||

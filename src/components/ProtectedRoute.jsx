@@ -26,16 +26,12 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
             ? `${API_BASE_URL}/training-center/${isAuthenticated}`
             : `${API_BASE_URL}/users/${isAuthenticated}`;
   
-          console.log("Fetching from endpoint:", endpoint);  // Log the endpoint being used
-  
           response = await axios.get(endpoint, {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
   
           setUserRole(response.data.data.role);
           setIsFirstTimeUser(response.data.data.agree);
-          console.log("My role ", response.data.data.role);
-          console.log("isFirstTimeUser ", response.data.data.agree);
         }
       } catch (err) {
         console.error("Error fetching user role:", err.response || err);
@@ -51,7 +47,12 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   
 
   if (loading) {
-    return <Spinner />; // Show a spinner while loading
+    return (
+    <div className="flex justify-center items-center h-screen">
+      <Spinner />;
+    </div>
+    );
+    
   }
 
   if (error) {
@@ -78,7 +79,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
           training_center: "/register/trainingcenter",
         };
 
-    console.log("Redirecting to:", rolePaths[userRole]);
+    
     return <Navigate to={rolePaths[userRole] || "/"} replace />;
   }
 

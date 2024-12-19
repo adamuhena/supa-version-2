@@ -569,49 +569,19 @@
               "subregion": null,
               "fips": "NI11",
               "postal-code": "FC",
-              "name": "Abuja",
+              "name": "Federal Capital Territory",
               "country": "Nigeria",
               "type-en": "State",
               "region": null,
               "longitude": "7.18889",
-              "woe-name": "Abuja",
+              "woe-name": "Federal Capital Territory",
               "latitude": "8.78852",
-              "woe-label": "Abuja, NG, Nigeria",
+              "woe-label": "Abuja Capital Territory, NG, Nigeria",
               "type": "State",
               "hc-middle-lon": 7.066,
               "hc-middle-lat": 8.821
             }
           },
-          {
-            "type": "Polygon",
-            "arcs": [
-              [-75, 76, 77, 78]
-            ],
-            "id": "NG.NA",
-            "properties": {
-              "hc-group": "admin1",
-              "hc-key": "ng-na",
-              "hc-a2": "NA",
-              "labelrank": "3",
-              "hasc": "NG.NA",
-              "alt-name": "Nasarawa",
-              "woe-id": "2346363",
-              "subregion": null,
-              "fips": "NI56",
-              "postal-code": "NA",
-              "name": "Nasarawa",
-              "country": "Nigeria",
-              "type-en": "State",
-              "region": "North Central",
-              "longitude": "8.1900",
-              "woe-name": "Nasarawa",
-              "latitude": "8.5500",
-              "woe-label": "Nasarawa, NG, Nigeria",
-              "type": "State",
-              "hc-middle-lon": "8.1900",
-              "hc-middle-lat": "8.5500"
-            }
-          },        
           {
             "type": "Polygon",
             "arcs": [
@@ -2910,7 +2880,7 @@
     },
     "title": "Artisan Distribution in Nigeria",
     "version": "2.3.0",
-    "copyright": "Copyright (c) 2024 ITF-Supa",
-    "copyrightShort": "Supa-ITF",
+    "copyright": "Copyright (c) 2024 ITF SUPA",
+    "copyrightShort": "Natural Earth",
     "copyrightUrl": "http://www.itf.gov.ng"
   }

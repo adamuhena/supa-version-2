@@ -10,6 +10,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import "./index.css";
+import UploadButton from "@/components/UploadButton";
+
 
 const Instructors = ({ form, setForm, controlButtons }) => {
     const updateField = (field, value) => {
@@ -160,7 +162,7 @@ const Instructors = ({ form, setForm, controlButtons }) => {
                 </Select>
             </div>
 
-            {form.trainingCurriculum === "yes" && (
+            {/* {form.trainingCurriculum === "yes" && (
                 <div className="flex items-center">
                     <Label htmlFor="curriculumAttachment" className="w-[300px] text-left leading-[1.3]">
                         If Yes, Please attach a copy.
@@ -171,7 +173,24 @@ const Instructors = ({ form, setForm, controlButtons }) => {
                         onChange={(e) => updateField("curriculumAttachment", e.target.files[0])}
                     />
                 </div>
-            )}
+            )} */}
+            {form.trainingCurriculum === "yes" && (
+        <div className="flex items-center">
+          <Label
+            htmlFor="curriculumAttachment"
+            className="w-[300px] text-left leading-[1.3]"
+          >
+            If Yes, Please attach a copy.
+          </Label>
+          <UploadButton
+            fileUrl={form.curriculumAttachment}
+            title="curriculumAttachment"
+            handleFileChange={(fileUrl) => updateField("curriculumAttachment", fileUrl)}
+            accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
+            removeFile={() => updateField("curriculumAttachment", null)}
+          />
+        </div>
+      )}
 
             <div className="flex items-center">
                 <Label htmlFor="attendanceRegister" className="w-[300px] text-left leading-[1.3]">

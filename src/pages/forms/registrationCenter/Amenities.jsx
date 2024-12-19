@@ -96,11 +96,11 @@ const TrainingAmenities = ({ form, setForm, controlButtons }) => {
                 />
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* <div className="flex flex-col gap-2">
                 <p className="text-sm text-gray-500">
                     NOTE: Completed form should be submitted at the nearest ITF Area Office or emailed to supasec@itf.gov.ng
                 </p>
-            </div>
+            </div> */}
 
             {controlButtons}
         </div>

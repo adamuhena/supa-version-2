@@ -413,24 +413,65 @@ const UserCertification = () => {
   };
 
   // Fetch Users Function
+  // const fetchUsers = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const accessToken = localStorage.getItem("accessToken");
+
+  //     const response = await axios.get(`${API_BASE_URL}/userscert`, {
+  //       params: {
+  //         page: pagination?.currentPage || 1, // Fallback to 1
+  //         limit: pagination?.pageSize || 50, // Fallback to 25
+  //         ...Object.fromEntries(
+  //           Object.entries(filters).filter(([_, v]) => v !== null && v !== "")
+  //         ),
+  //       },
+  //       headers: { Authorization: `Bearer ${accessToken}` },
+  //     });
+
+  //     // if (response.data && response.data.success && response.data.data && Array.isArray(response.data.data.users)) {
+
+  //     if (
+  //       response.data &&
+  //       response.data.success &&
+  //       response.data.data &&
+  //       Array.isArray(response.data.data.users)
+  //     ) {
+  //       const { pagination: apiPagination } = response.data.data;
+
+  //       setUsers(response.data.data.users || []); // Fallback to empty array
+  //       setPagination({
+  //         currentPage: apiPagination?.currentPage || 1,
+  //         totalPages: apiPagination?.totalPages || 1,
+  //         totalUsers: apiPagination?.totalUsers || 0,
+  //         pageSize: apiPagination?.pageSize || 50,
+  //       });
+  //       toast.success("Users fetched successfully");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Error fetching users");
+  //     console.error("Error fetching users:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const fetchUsers = async () => {
     try {
       setLoading(true);
       const accessToken = localStorage.getItem("accessToken");
-
+  
       const response = await axios.get(`${API_BASE_URL}/userscert`, {
         params: {
           page: pagination?.currentPage || 1, // Fallback to 1
-          limit: pagination?.pageSize || 50, // Fallback to 25
+          limit: pagination?.pageSize || 50, // Fallback to 50
+          userType: ["artisan_user", "intending_artisan"], // Filter for specific user types
           ...Object.fromEntries(
             Object.entries(filters).filter(([_, v]) => v !== null && v !== "")
           ),
         },
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-
-      // if (response.data && response.data.success && response.data.data && Array.isArray(response.data.data.users)) {
-
+  
       if (
         response.data &&
         response.data.success &&
@@ -438,7 +479,7 @@ const UserCertification = () => {
         Array.isArray(response.data.data.users)
       ) {
         const { pagination: apiPagination } = response.data.data;
-
+  
         setUsers(response.data.data.users || []); // Fallback to empty array
         setPagination({
           currentPage: apiPagination?.currentPage || 1,
@@ -455,7 +496,6 @@ const UserCertification = () => {
       setLoading(false);
     }
   };
-
   // User Details Fetch
   const handleUserDetails = async (userId) => {
     try {

@@ -175,10 +175,10 @@ export default function AdminSectors() {
 
   if (loading)
     return (
-      <div className="text-center p-4">
-        <Spinner />
-      </div>
-    );
+          <div className="flex justify-center items-center h-screen">
+            <Spinner />
+          </div>
+        );
   if (error) return <div className="text-center text-red-500 p-4">{error}</div>;
 
   return (

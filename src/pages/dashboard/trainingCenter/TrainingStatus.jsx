@@ -76,7 +76,6 @@ function TrainingStatus() {
       ),
     }));
     setUsersOptions(options);
-    console.log("Updated users options:", options); // Add this line
   }, [users]);
 
   const fetchUserRole = async () => {
@@ -87,25 +86,21 @@ function TrainingStatus() {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      console.log("user role", response.data.data);
       setUserRole(response.data.data.role);
     } catch (error) {
       console.error("Error fetching user role 4:", error);
     }
   };
 
-  console.log("user role u", userRole);
 
   const fetchTrainingGroups = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/training-groups`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      console.log("igot here: ", response.data);
       const filteredTrainingGroups = trainingGroups.filter(
         (group) => group.trainingCenter._id === userId
       );
-      console.log("logged user group data ", filteredTrainingGroups, userId);
       setTrainingGroups(response.data);
     } catch (error) {
       console.error("Error fetching training groups:", error);
@@ -139,7 +134,6 @@ function TrainingStatus() {
         ? response.data.data
         : [];
       setUsers(usersData);
-      console.log("Fetched users:", usersData);
     } catch (error) {
       console.error("Error fetching users:", error);
       setUsers([]); // Fallback to empty array if there's an error
@@ -220,7 +214,6 @@ function TrainingStatus() {
   const filteredTrainingGroups = trainingGroups.filter(
     (group) => group.trainingCenter._id === loggedInTrainingCenterId
   );
-  console.log("filterd center: ", filteredTrainingGroups);
 
   const renderTrainingCenterView = () => (
     <Card>

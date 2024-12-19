@@ -6,6 +6,7 @@ import MapTooltip from './MapTooltip';
 import { fetchUserDist } from '../services/api';
 // import nigeriaTopoData from '../data/nigeriaTopo.json';
 import nigeriaTopoData from '../data/nigeriaTopo.json'; // Import the TopoJSON file
+import nigeriaTopo from '../data/nGTopo.json';
 import { stateData } from '../data/nigerianStates'; // Your state data
 
 const NigerianMap = () => {

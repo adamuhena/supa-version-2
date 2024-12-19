@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import {
@@ -17,6 +17,15 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const [lgas, setLgas] = useState([]);
+
+  const handleStateChange = (stateName) => {
+    updateField("state", stateName); // Update state in the form
+    const selectedState = states.find((state) => state.value === stateName); // Find the selected state
+    setLgas(selectedState ? selectedState.lgas : []); // Update LGAs based on the selected state
+    updateField("lga", ""); // Reset LGA field when state changes
+  };
+
   return (
     <div
       style={{
@@ -29,7 +38,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
         Training Centre Profile
       </h1>
 
-      <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
+      {/* <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label htmlFor="state" className="w-[300px] text-left leading-[1.3]">
           State
         </Label>
@@ -50,6 +59,74 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
           </SelectContent>
         </Select>
       </div>
+
+      <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
+        <Label htmlFor="lga" className="w-[300px] text-left leading-[1.3]">
+          LGA
+        </Label>
+        <Select
+          value={form.lga}
+          onValueChange={(value) => updateField("lga", value)}>
+          <SelectTrigger className="">
+            <SelectValue placeholder="Select LGA" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {states.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div> */}
+{/* State Dropdown */}
+<div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
+        <Label htmlFor="state" className="w-[300px] text-left leading-[1.3]">
+          State
+        </Label>
+        <Select value={form.state} onValueChange={handleStateChange}>
+          <SelectTrigger className="">
+            <SelectValue placeholder="Select state" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {states.map((state) => (
+                <SelectItem key={state.value} value={state.value}>
+                  {state.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* LGA Dropdown */}
+      <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
+  <Label htmlFor="lga" className="w-[300px] text-left leading-[1.3]">
+    LGA
+  </Label>
+  <Select
+    value={form.lga}
+    onValueChange={(value) => updateField("lga", value)}
+    disabled={!lgas.length} // Disable dropdown if no LGAs are available
+  >
+    <SelectTrigger className="">
+      <SelectValue placeholder="Select LGA" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        {lgas.map((lga) => (
+          <SelectItem key={lga} value={lga}>
+            {lga}
+          </SelectItem>
+        ))}
+      </SelectGroup>
+    </SelectContent>
+  </Select>
+</div>
+
 
       <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label

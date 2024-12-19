@@ -133,7 +133,7 @@ const TrainingCenterForm = () => {
     }));
   };
   const userID = localStorage.getItem("userId"); // Replace 'userID' with your storage key if different
-  console.log("userID", userID);
+  
 
   const submitForm = async () => {
     // Ensure userID exists

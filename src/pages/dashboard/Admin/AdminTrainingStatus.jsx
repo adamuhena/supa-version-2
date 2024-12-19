@@ -33,7 +33,6 @@ function AdminTrainingStatus() {
         const response = await axios.get(`${API_BASE_URL}/training-groups`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
-        console.log("Training Groups response:", response.data);
         setTrainingGroups(response.data.data || []);
       } catch (error) {
         console.error("Error fetching training groups:", error);
@@ -45,7 +44,6 @@ function AdminTrainingStatus() {
   }, [API_BASE_URL]);
 
   useEffect(() => {
-    console.log("Selected Group:", selectedGroup);
     if (selectedGroup) {
       setStartDate(selectedGroup.startDate || "");
       setEndDate(selectedGroup.endDate || "");
@@ -65,7 +63,6 @@ function AdminTrainingStatus() {
             },
           }
         );
-        console.log("Update response:", response.data);
         setTrainingGroups((prevGroups) =>
           prevGroups.map((group) =>
             group._id === selectedGroup._id
@@ -83,10 +80,9 @@ function AdminTrainingStatus() {
 
   const handleGroupSelect = (e) => {
     const groupId = e.target.value;
-    console.log("Selected Group Value:", groupId);
 
     const group = trainingGroups.find((g) => g._id === groupId) || null;
-    console.log("Found Group:", group);
+    
 
     setSelectedGroup(group);
   };

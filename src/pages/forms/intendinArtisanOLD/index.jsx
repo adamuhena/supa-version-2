@@ -353,7 +353,6 @@ const IntendingArtisanForm = () => {
         _id: userID, // Include userID in the payload
       };
 
-      console.log("userID", userID);
       // POST request to submit KYC
       const response = await axios.post(
         `${API_BASE_URL}/kyc/${userID}`,

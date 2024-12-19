@@ -90,7 +90,6 @@ const TrainingCenterBiodata = () => {
           }
         );
 
-        console.log("Tbiodata: ", response.data.data);
         setCenter(response.data.data);
       } catch (error) {
         console.error("Error fetching center data:", error);
@@ -122,7 +121,7 @@ const TrainingCenterBiodata = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`${API_BASE_URL}/training-center/${userId}`, center, {
+      await axios.put(`${API_BASE_URL}/training-centers/${userId}`, center, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       toast.success("Center information updated successfully");
@@ -133,6 +132,7 @@ const TrainingCenterBiodata = () => {
   };
 
   const updateProfilePicture = async (url) => {
+  
     try {
       const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
       if (!token) {
@@ -140,17 +140,21 @@ const TrainingCenterBiodata = () => {
       }
 
       const response = await axios.put(
-        `${API_BASE_URL}/training-center/${localStorage.getItem("userId")}`,
+        `${API_BASE_URL}/training-centers/${localStorage.getItem("userId")}`,
         { profileImage: url },
         {
           headers: {
             Authorization: `Bearer ${token}`, // Include the token here
           },
+          
+            
+          
         }
       );
 
       if (response.data.success) {
         setUser((prevUser) => ({ ...prevUser }));
+        
 
         toast({
           title: "Success",
@@ -218,9 +222,9 @@ const TrainingCenterBiodata = () => {
               <UploadButton
                 fileUrl={center?.profileImage}
                 handleFileChange={(url) => {
-                  setUser((old) => {
-                    return { ...old, profileImage: url };
-                  });
+                  // setUser((old) => {
+                  //   return { ...old, profileImage: url };
+                  // });
                   updateProfilePicture(url);
                 }}
                 removeFile={() => {
