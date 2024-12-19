@@ -16,7 +16,7 @@ import TrainingAmenities from "./Amenities";
 import BankDetails from "./BankDetails.jsx";
 import useLogout from "@/pages/loginPage/logout";
 import { LogOutIcon } from "lucide-react";
-// import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { API_BASE_URL } from "@/config/env";
 
 const checkValidateCompanyInfo = ({ form }) => {
@@ -414,7 +414,7 @@ const TrainingCenterForm = () => {
 
   return (
     <div>
-      {/*<ProtectedRoute>*/}
+      <ProtectedRoute>
       <RegisterSuccess show={show} setShow={setShow} />
       <div className="">
         <div>
@@ -552,7 +552,7 @@ const TrainingCenterForm = () => {
           </div>
         </div>
       </div>
-      {/*</ProtectedRoute>*/}
+      </ProtectedRoute>
     </div>
   );
 };
