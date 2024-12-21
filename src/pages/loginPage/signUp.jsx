@@ -35,6 +35,7 @@ export default function SignupForm() {
     regNum: "",
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleRoleChange = (newRole) => {
@@ -102,43 +103,41 @@ export default function SignupForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
-    // START VALIDATION
-    let erroMsg = "";
-
-    if (
-      `${formData.confirmPassword}`?.trim() !== `${formData.password}`?.trim()
-    ) {
-      erroMsg = "Password does not match the first one!";
-    }
-
-    if (`${formData.password}`?.trim()?.length < 6) {
-      erroMsg = "Password must be at least 6 digits!";
-    }
-
-    if (!isOnlyNumbers(formData.phoneNumber)) {
-      erroMsg = "Phone Number must be a number only!";
-    }
-
-    if (`${formData.phoneNumber}`?.trim()?.length !== 14) {
-      erroMsg = "Phone Number must be 14 digits!";
-    }
-
-    if (signupAs === "training_center") {
-    } else {
-      if (!isOnlyNumbers(formData.nin)) {
-        erroMsg = "NIN must be a number only!";
-      }
-
-      if (`${formData.nin}`?.trim()?.length !== 11) {
-        erroMsg = "NIN must be 11 digits!";
-      }
-    }
-
-    if (erroMsg) {
-      return toast.error(erroMsg, { position: "top-right" });
-    }
-    // END VALIDATION
+       // START VALIDATION
+       let errorMsg = "";
+  
+       // Format the phone number to start with "234" if it starts with "0"
+       const formattedPhoneNumber =
+         formData.phoneNumber.startsWith("0")
+           ? "234" + formData.phoneNumber.slice(1)
+           : formData.phoneNumber;
+     
+       // Update the phone number in formData
+       formData.phoneNumber = formattedPhoneNumber;
+     
+       if (formData.password.trim() !== formData.confirmPassword.trim()) {
+         errorMsg = "Passwords do not match!";
+       } else if (formData.password.trim().length < 6) {
+         errorMsg = "Password must be at least 6 characters!";
+       } else if (!isOnlyNumbers(formData.phoneNumber)) {
+         errorMsg = "Phone number must be numeric!";
+       } else if (formData.phoneNumber.trim().length !== 13) {
+         errorMsg = "Phone number must be 13 digits!";
+       } else if (
+         signupAs !== "training_center" &&
+         (!isOnlyNumbers(formData.nin) || formData.nin.trim().length !== 11)
+       ) {
+         errorMsg = "NIN must be 11 numeric digits!";
+       }
+     
+       if (errorMsg) {
+         toast.error(errorMsg, { position: "top-right" });
+         setLoading(false);
+         return;
+       }
+       // END VALIDATION
 
     const endpoint =
       signupAs === "training_center"
@@ -206,7 +205,9 @@ export default function SignupForm() {
           }
         }, 2000);
       } else {
-        toast.error(`Signup failed: ${response.data.message}`);
+        toast.error(`Signup failed: ${response.data.message}`,{
+          duration: 2000,
+        });
       }
     } catch (error) {
       const message = "Error!";
@@ -215,16 +216,125 @@ export default function SignupForm() {
           ? error?.response?.data
           : error?.response?.data?.message ||
             "An error occurred. Please try again.";
-
+      setError('Error signing up. Please try again.');
       toast.error(message, {
         description,
         position: "top-right",
         style: { textAlign: "left" },
       });
+     
+        setLoading(false);
+    
     } finally {
-      setLoading(false);
+    
+        setLoading(false);
+     
     }
   };
+ 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError(null);
+  
+  //   // START VALIDATION
+  //   let errorMsg = "";
+  
+  //   // Format the phone number to start with "234" if it starts with "0"
+  //   const formattedPhoneNumber =
+  //     formData.phoneNumber.startsWith("0")
+  //       ? "234" + formData.phoneNumber.slice(1)
+  //       : formData.phoneNumber;
+  
+  //   // Update the phone number in formData
+  //   formData.phoneNumber = formattedPhoneNumber;
+  
+  //   if (formData.password.trim() !== formData.confirmPassword.trim()) {
+  //     errorMsg = "Passwords do not match!";
+  //   } else if (formData.password.trim().length < 6) {
+  //     errorMsg = "Password must be at least 6 characters!";
+  //   } else if (!isOnlyNumbers(formData.phoneNumber)) {
+  //     errorMsg = "Phone number must be numeric!";
+  //   } else if (formData.phoneNumber.trim().length !== 13) {
+  //     errorMsg = "Phone number must be 13 digits!";
+  //   } else if (
+  //     signupAs !== "training_center" &&
+  //     (!isOnlyNumbers(formData.nin) || formData.nin.trim().length !== 11)
+  //   ) {
+  //     errorMsg = "NIN must be 11 numeric digits!";
+  //   }
+  
+  //   if (errorMsg) {
+  //     toast.error(errorMsg, { position: "top-right" });
+  //     setLoading(false);
+  //     return;
+  //   }
+  //   // END VALIDATION
+  
+  //   const endpoint =
+  //     signupAs === "training_center"
+  //       ? `${API_BASE_URL}/training-centers/register`
+  //       : `${API_BASE_URL}/signup`;
+  
+  //   const payload =
+  //     signupAs === "training_center"
+  //       ? {
+  //           trainingCentreName: formData.trainingCentreName,
+  //           regNum: formData.regNum,
+  //           email: formData.email,
+  //           phoneNumber: formData.phoneNumber,
+  //           password: formData.password,
+  //           confirmPassword: formData.confirmPassword,
+  //           agree: false,
+  //           role: signupAs,
+  //         }
+  //       : {
+  //           nin: formData.nin,
+  //           email: formData.email,
+  //           phoneNumber: formData.phoneNumber,
+  //           password: formData.password,
+  //           confirmPassword: formData.confirmPassword,
+  //           agree: false,
+  //           role: signupAs,
+  //         };
+  
+  //   try {
+  //     const response = await axios.post(endpoint, payload, {
+  //       headers: { "Content-Type": "application/json" },
+  //     });
+  
+  //     if (response.data.success) {
+  //       setAuthState(response.data.data);
+  //       toast.success("Signup successful! 🚀 Redirecting...", {
+  //         position: "top-right",
+  //         duration: 2000,
+  //       });
+  
+  //       const role = response.data.data.trainingCenter
+  //         ? response.data.data.trainingCenter.role
+  //         : response.data.data.user.role;
+  
+  //       const routes = {
+  //         artisan_user: "/register/artisan",
+  //         intending_artisan: "/register/intendingArtisan",
+  //         training_center: "/register/trainingcenter",
+  //       };
+  
+  //       setTimeout(() => navigate(routes[role] || "/dashboard"), 2000);
+  //     } else {
+  //       toast.error(`Signup failed: ${response.data.message}`);
+  //     }
+  //   } catch (error) {
+  //     const description =
+  //       error.response?.data?.message || "An error occurred. Please try again.";
+  //     setError("Error signing up. Please try again.");
+  //     toast.error("Signup failed!", { description, position: "top-right" });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  
+  
   return (
     <section className="relative bg-slate-900 pt-40 pb-10 min-h-screen">
       <div className="flex items-center justify-center absolute top-0 left-0 right-0 bottom-0">
@@ -355,7 +465,7 @@ export default function SignupForm() {
                     <Button
                       type="submit"
                       className="w-full bg-emerald-800"
-                      disabled={loading}>
+                     >
                       {loading ? <Spinner /> : "Sign Up"}
                     </Button>
                   </form>
@@ -399,7 +509,7 @@ export default function SignupForm() {
                     <Button
                       type="submit"
                       className="w-full bg-red-600"
-                      disabled={loading}>
+                      >
                       {loading ? <Spinner /> : "Sign Up"}
                     </Button>
                   </form>
@@ -456,7 +566,7 @@ export default function SignupForm() {
                     <Button
                       type="submit"
                       className="w-full bg-blue-600"
-                      disabled={loading}>
+                      >
                       {loading ? <Spinner /> : "Sign Up"}
                     </Button>
                   </form>
