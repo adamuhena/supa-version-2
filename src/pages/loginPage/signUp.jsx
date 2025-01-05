@@ -59,178 +59,347 @@ export default function SignupForm() {
   function isOnlyNumbers(str) {
     return /^\d+$/.test(str);
   }
+  // const setAuthState = (userData) => {
+  //   // Set is logged in flag
+  //   localStorage.setItem("isLoggedIn", "true");
+
+  //   // Handle different user types
+  //   if (userData.trainingCenter.role === "training_center") {
+  //     // For training center
+  //     localStorage.setItem("userRole", userData.trainingCenter.role);
+  //     localStorage.setItem("userId", userData.trainingCenter._id);
+  //     localStorage.setItem(
+  //       "isFirstTimeUser",
+  //       userData.trainingCenter.agree || false
+  //     );
+  //     localStorage.setItem(
+  //       "trainingCentreName",
+  //       userData.trainingCenter.trainingCentreName
+  //     );
+  //     localStorage.setItem("regNum", userData.trainingCenter.regNum);
+  //   } else {
+  //     // For artisan and intending artisan
+  //     localStorage.setItem("userRole", userData.user.role);
+  //     localStorage.setItem("userId", userData.user._id);
+  //     localStorage.setItem("isFirstTimeUser", userData.user.agree || false);
+  //   }
+
+  //   // Handle tokens
+  //   localStorage.setItem(
+  //     "accessToken",
+  //     typeof userData.accessToken === "object"
+  //       ? userData.accessToken.accessToken
+  //       : userData.accessToken
+  //   );
+
+  //   localStorage.setItem(
+  //     "refreshToken",
+  //     typeof userData.refreshToken === "object"
+  //       ? userData.refreshToken.refreshToken
+  //       : userData.refreshToken
+  //   );
+  // };
+
   const setAuthState = (userData) => {
     // Set is logged in flag
     localStorage.setItem("isLoggedIn", "true");
-
+  
     // Handle different user types
-    if (userData.trainingCenter.role === "training_center") {
+    if (userData.trainingCenter) {
       // For training center
       localStorage.setItem("userRole", userData.trainingCenter.role);
       localStorage.setItem("userId", userData.trainingCenter._id);
-      localStorage.setItem(
-        "isFirstTimeUser",
-        userData.trainingCenter.agree || false
-      );
-      localStorage.setItem(
-        "trainingCentreName",
-        userData.trainingCenter.trainingCentreName
-      );
+      localStorage.setItem("isFirstTimeUser", userData.trainingCenter.agree || false);
+      localStorage.setItem("trainingCentreName", userData.trainingCenter.trainingCentreName);
       localStorage.setItem("regNum", userData.trainingCenter.regNum);
-    } else {
+    } else if (userData.user) {
       // For artisan and intending artisan
       localStorage.setItem("userRole", userData.user.role);
       localStorage.setItem("userId", userData.user._id);
       localStorage.setItem("isFirstTimeUser", userData.user.agree || false);
     }
-
-    // Handle tokens
-    localStorage.setItem(
-      "accessToken",
-      typeof userData.accessToken === "object"
-        ? userData.accessToken.accessToken
-        : userData.accessToken
-    );
-
-    localStorage.setItem(
-      "refreshToken",
-      typeof userData.refreshToken === "object"
-        ? userData.refreshToken.refreshToken
-        : userData.refreshToken
-    );
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-       // START VALIDATION
-       let errorMsg = "";
   
-       // Format the phone number to start with "234" if it starts with "0"
-       const formattedPhoneNumber =
-         formData.phoneNumber.startsWith("0")
-           ? "234" + formData.phoneNumber.slice(1)
-           : formData.phoneNumber;
-     
-       // Update the phone number in formData
-       formData.phoneNumber = formattedPhoneNumber;
-     
-       if (formData.password.trim() !== formData.confirmPassword.trim()) {
-         errorMsg = "Passwords do not match!";
-       } else if (formData.password.trim().length < 6) {
-         errorMsg = "Password must be at least 6 characters!";
-       } else if (!isOnlyNumbers(formData.phoneNumber)) {
-         errorMsg = "Phone number must be numeric!";
-       } else if (formData.phoneNumber.trim().length !== 13) {
-         errorMsg = "Phone number must be 13 digits!";
-       } else if (
-         signupAs !== "training_center" &&
-         (!isOnlyNumbers(formData.nin) || formData.nin.trim().length !== 11)
-       ) {
-         errorMsg = "NIN must be 11 numeric digits!";
-       }
-     
-       if (errorMsg) {
-         toast.error(errorMsg, { position: "top-right" });
-         setLoading(false);
-         return;
-       }
-       // END VALIDATION
-
-    const endpoint =
-      signupAs === "training_center"
-        ? `${API_BASE_URL}/training-centers/register`
-        : `${API_BASE_URL}/signup`;
-
-    const payload =
-      signupAs === "training_center"
-        ? {
-            trainingCentreName: formData.trainingCentreName,
-            regNum: formData.regNum,
-            email: formData.email,
-            phoneNumber: formData.phoneNumber,
-            password: formData.password,
-            confirm_password: formData.confirmPassword,
-            agree: false,
-            role: signupAs,
-          }
-        : {
-            role: signupAs,
-            nin: formData.nin,
-            email: formData.email,
-            phoneNumber: formData.phoneNumber,
-            password: formData.password,
-            confirm_password: formData.confirmPassword,
-            agree: false,
-          };
-
-    try {
-      const response = await axios.post(endpoint, payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.data.success) {
-        // Set authentication state
-        setAuthState(response.data.data);
-
-        // Success toast
-        toast.success("Signup successful 🚀!", {
-          description: "Login Successfully",
-          position: "top-right",
-          duration: 2000,
-        });
-
-        // Redirect based on role
-        setTimeout(() => {
-          const role = response.data.data.trainingCenter
-            ? response.data.data.trainingCenter.role
-            : response.data.data.user.role;
-
-          switch (role) {
-            case "artisan_user":
-              navigate("/register/artisan");
-              break;
-            case "intending_artisan":
-              navigate("/register/intendingArtisan");
-              break;
-            case "training_center":
-              navigate("/register/trainingcenter");
-              break;
-            default:
-              navigate("/dashboard");
-          }
-        }, 2000);
-      } else {
-        toast.error(`Signup failed: ${response.data.message}`,{
-          duration: 2000,
-        });
-      }
-    } catch (error) {
-      const message = "Error!";
-      const description =
-        typeof error?.response?.data === "string"
-          ? error?.response?.data
-          : error?.response?.data?.message ||
-            "An error occurred. Please try again.";
-      setError('Error signing up. Please try again.');
-      toast.error(message, {
-        description,
-        position: "top-right",
-        style: { textAlign: "left" },
-      });
-     
-        setLoading(false);
-    
-    } finally {
-    
-        setLoading(false);
-     
+    // Handle tokens
+    if (userData.accessToken) {
+      localStorage.setItem(
+        "accessToken",
+        typeof userData.accessToken === "object"
+          ? userData.accessToken.accessToken
+          : userData.accessToken
+      );
+    }
+  
+    if (userData.refreshToken) {
+      localStorage.setItem(
+        "refreshToken",
+        typeof userData.refreshToken === "object"
+          ? userData.refreshToken.refreshToken
+          : userData.refreshToken
+      );
     }
   };
+  
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
+
+  // START VALIDATION
+  let errorMsg = "";
+
+  // Format the phone number to start with "234" if it starts with "0"
+  const formattedPhoneNumber =
+    formData.phoneNumber.startsWith("0")
+      ? "234" + formData.phoneNumber.slice(1)
+      : formData.phoneNumber;
+
+  // Update the phone number in formData
+  formData.phoneNumber = formattedPhoneNumber;
+
+  if (formData.password.trim() !== formData.confirmPassword.trim()) {
+    errorMsg = "Passwords do not match!";
+  } else if (formData.password.trim().length < 6) {
+    errorMsg = "Password must be at least 6 characters!";
+  } else if (!isOnlyNumbers(formData.phoneNumber)) {
+    errorMsg = "Phone number must be numeric!";
+  } else if (formData.phoneNumber.trim().length !== 13) {
+    errorMsg = "Phone number must be 13 digits!";
+  } else if (
+    signupAs !== "training_center" &&
+    (!isOnlyNumbers(formData.nin) || formData.nin.trim().length !== 11)
+  ) {
+    errorMsg = "NIN must be 11 numeric digits!";
+  }
+
+  if (errorMsg) {
+    toast.error(errorMsg, { position: "top-right" });
+    setLoading(false);
+    return;
+  }
+  // END VALIDATION
+
+  const endpoint =
+    signupAs === "training_center"
+      ? `${API_BASE_URL}/training-centers/register`
+      : `${API_BASE_URL}/signup`;
+
+  const payload =
+    signupAs === "training_center"
+      ? {
+          trainingCentreName: formData.trainingCentreName,
+          regNum: formData.regNum,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          password: formData.password,
+          confirm_password: formData.confirmPassword,
+          agree: false,
+          role: signupAs,
+        }
+      : {
+          role: signupAs,
+          nin: formData.nin,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          password: formData.password,
+          confirm_password: formData.confirmPassword,
+          agree: false,
+        };
+
+  try {
+    const response = await axios.post(endpoint, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("Response:", response.data); // Debugging log
+
+    if (response.data.success) {
+      // Set authentication state
+      setAuthState(response.data.data);
+
+      // Success toast
+      toast.success("Signup successful 🚀!", {
+        description: "Login Successfully",
+        position: "top-right",
+        duration: 2000,
+      });
+
+      // Redirect based on role
+      setTimeout(() => {
+        const role = response.data.data.trainingCenter
+          ? response.data.data.trainingCenter.role
+          : response.data.data.user.role;
+
+        switch (role) {
+          case "artisan_user":
+            navigate("/register/artisan");
+            break;
+          case "intending_artisan":
+            navigate("/register/intendingArtisan");
+            break;
+          case "training_center":
+            navigate("/register/trainingcenter");
+            break;
+          default:
+            navigate("/dashboard");
+        }
+      }, 2000);
+    } else {
+      toast.error(`Signup failed: ${response.data.message}`, {
+        duration: 2000,
+      });
+    }
+  } catch (error) {
+    console.error("Signup error:", error); // Debugging log
+    const message = "Error!";
+    const description =
+      typeof error?.response?.data === "string"
+        ? error?.response?.data
+        : error?.response?.data?.message ||
+          "An error occurred. Please try again.";
+    setError("Error signing up. Please try again.");
+    toast.error(message, {
+      description,
+      position: "top-right",
+      style: { textAlign: "left" },
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError(null);
+
+  //      // START VALIDATION
+  //      let errorMsg = "";
+  
+  //      // Format the phone number to start with "234" if it starts with "0"
+  //      const formattedPhoneNumber =
+  //        formData.phoneNumber.startsWith("0")
+  //          ? "234" + formData.phoneNumber.slice(1)
+  //          : formData.phoneNumber;
+     
+  //      // Update the phone number in formData
+  //      formData.phoneNumber = formattedPhoneNumber;
+     
+  //      if (formData.password.trim() !== formData.confirmPassword.trim()) {
+  //        errorMsg = "Passwords do not match!";
+  //      } else if (formData.password.trim().length < 6) {
+  //        errorMsg = "Password must be at least 6 characters!";
+  //      } else if (!isOnlyNumbers(formData.phoneNumber)) {
+  //        errorMsg = "Phone number must be numeric!";
+  //      } else if (formData.phoneNumber.trim().length !== 13) {
+  //        errorMsg = "Phone number must be 13 digits!";
+  //      } else if (
+  //        signupAs !== "training_center" &&
+  //        (!isOnlyNumbers(formData.nin) || formData.nin.trim().length !== 11)
+  //      ) {
+  //        errorMsg = "NIN must be 11 numeric digits!";
+  //      }
+     
+  //      if (errorMsg) {
+  //        toast.error(errorMsg, { position: "top-right" });
+  //        setLoading(false);
+  //        return;
+  //      }
+  //      // END VALIDATION
+
+  //   const endpoint =
+  //     signupAs === "training_center"
+  //       ? `${API_BASE_URL}/training-centers/register`
+  //       : `${API_BASE_URL}/signup`;
+
+  //   const payload =
+  //     signupAs === "training_center"
+  //       ? {
+  //           trainingCentreName: formData.trainingCentreName,
+  //           regNum: formData.regNum,
+  //           email: formData.email,
+  //           phoneNumber: formData.phoneNumber,
+  //           password: formData.password,
+  //           confirm_password: formData.confirmPassword,
+  //           agree: false,
+  //           role: signupAs,
+  //         }
+  //       : {
+  //           role: signupAs,
+  //           nin: formData.nin,
+  //           email: formData.email,
+  //           phoneNumber: formData.phoneNumber,
+  //           password: formData.password,
+  //           confirm_password: formData.confirmPassword,
+  //           agree: false,
+  //         };
+
+  //   try {
+  //     const response = await axios.post(endpoint, payload, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+
+  //     if (response.data.success) {
+  //       // Set authentication state
+  //       setAuthState(response.data.data);
+
+  //       // Success toast
+  //       toast.success("Signup successful 🚀!", {
+  //         description: "Login Successfully",
+  //         position: "top-right",
+  //         duration: 2000,
+  //       });
+
+  //       // Redirect based on role
+  //       setTimeout(() => {
+  //         const role = response.data.data.trainingCenter
+  //           ? response.data.data.trainingCenter.role
+  //           : response.data.data.user.role;
+
+  //         switch (role) {
+  //           case "artisan_user":
+  //             navigate("/register/artisan");
+  //             break;
+  //           case "intending_artisan":
+  //             navigate("/register/intendingArtisan");
+  //             break;
+  //           case "training_center":
+  //             navigate("/register/trainingcenter");
+  //             break;
+  //           default:
+  //             navigate("/dashboard");
+  //         }
+  //       }, 2000);
+  //     } else {
+  //       toast.error(`Signup failed: ${response.data.message}`,{
+  //         duration: 2000,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     const message = "Error!";
+  //     const description =
+  //       typeof error?.response?.data === "string"
+  //         ? error?.response?.data
+  //         : error?.response?.data?.message ||
+  //           "An error occurred. Please try again.";
+  //     setError('Error signing up. Please try again.');
+  //     toast.error(message, {
+  //       description,
+  //       position: "top-right",
+  //       style: { textAlign: "left" },
+  //     });
+     
+  //       setLoading(false);
+    
+  //   } finally {
+    
+  //       setLoading(false);
+     
+  //   }
+  // };
  
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
