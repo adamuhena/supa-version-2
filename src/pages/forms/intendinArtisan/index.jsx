@@ -226,7 +226,7 @@ const checkValidateEducation = ({ form }) => {
   ) {
     erroMsg = "All education fields are required!";
   }
-  
+
   return { erroMsg };
 };
 
@@ -330,12 +330,12 @@ const ArtisanForm = () => {
       }
     }
 
-    if (step === 2) {
-      const erroMsg = checkValidatePrior({ form })?.erroMsg;
-      if (erroMsg) {
-        return toast.error(erroMsg, { position: "top-right" });
-      }
-    }
+    // if (step === 2) {
+    //   const erroMsg = checkValidatePrior({ form })?.erroMsg;
+    //   if (erroMsg) {
+    //     return toast.error(erroMsg, { position: "top-right" });
+    //   }
+    // }
 
     if (step === 3) {
       const erroMsg = checkValidateBank({ form })?.erroMsg;
