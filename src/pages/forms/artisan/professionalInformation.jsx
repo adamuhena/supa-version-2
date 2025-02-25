@@ -24,38 +24,6 @@ export default function ProfessionalInformaiton({
   form,
   onchangeInput,
 }) {
-  // const selectedStateLGASOrigin =
-  //   states.find(
-  //     (state) =>
-  //       replaceSymbolsWithSpace(`${state?.value}`) ===
-  //       replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
-  //   )?.lgas || [];
-
-  // const selectedStateLGASOriginFormatted =
-  //   selectedStateLGASOrigin && selectedStateLGASOrigin?.length
-  //     ? selectedStateLGASOrigin.map((x) => ({
-  //         label: x,
-  //         value: x,
-  //       }))
-  //     : [];
-
-
-
-  // const selectedStateLGASResidence =
-  //   states.find(
-  //     (state) =>
-  //       replaceSymbolsWithSpace(`${state?.value}`) ===
-  //       replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
-  //   )?.lgas || [];
-
-  // const selectedStateLGASResidenceFormatted =
-  //   selectedStateLGASResidence && selectedStateLGASResidence?.length
-  //     ? selectedStateLGASResidence.map((x) => ({
-  //         label: x,
-  //         value: x,
-  //       }))
-  //     : [];
-  // Function to find the LGAs and Senatorial Districts for State of Origin
   const selectedStateLGASOrigin =
     states.find(
       (state) =>

@@ -22,6 +22,8 @@ import axios from "axios";
 import { LogOut, Minus, Plus, Upload, UserCircle } from "lucide-react";
 import UploadButton from "@/components/UploadButton";
 import { API_BASE_URL } from "@/config/env";
+import { states } from "../../data/nigeria";
+import { replaceSymbolsWithSpace } from "../../utils/helpers";
 
 //import { url } from "inspector";
 
@@ -113,10 +115,17 @@ const Biodata = () => {
     fetchUserData();
   }, []);
 
-  const handleUpdate = (field, value) => {
-    setChanges((prevChanges) => ({
-      ...prevChanges,
-      [field]: value,
+  // const handleUpdate = (field, value) => {
+  //   setChanges((prevChanges) => ({
+  //     ...prevChanges,
+  //     [field]: value,
+  //   }));
+  // };
+
+  const handleUpdate = (key, value) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      [key]: value,
     }));
   };
 
@@ -249,6 +258,90 @@ const Biodata = () => {
     }));
   };
 
+  const [form, setForm] = useState({
+    stateOfOrigin: "",
+    stateOfResidence: "",
+    hasDisability: false,
+    selectedDisability: "",
+  });
+
+  const onchangeInput = (key, value) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      [key]: value,
+    }));
+  };
+
+  const selectedStateLGASOrigin =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
+    )?.lgas || [];
+
+  const selectedStateLGASOriginFormatted =
+    selectedStateLGASOrigin && selectedStateLGASOrigin?.length
+      ? selectedStateLGASOrigin.map((x) => ({
+          label: x,
+          value: x,
+        }))
+      : [];
+
+  const selectedStateSenatorialDistrictsOrigin =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
+    )?.senatorialDistricts || [];
+
+  const selectedStateSenatorialDistrictsOriginFormatted =
+    selectedStateSenatorialDistrictsOrigin && selectedStateSenatorialDistrictsOrigin?.length
+      ? selectedStateSenatorialDistrictsOrigin.map((x) => ({
+          label: x,
+          value: x,
+        }))
+      : [];
+
+  const selectedStateLGASResidence =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+    )?.lgas || [];
+
+  const selectedStateLGASResidenceFormatted =
+    selectedStateLGASResidence && selectedStateLGASResidence?.length
+      ? selectedStateLGASResidence.map((x) => ({
+          label: x,
+          value: x,
+        }))
+      : [];
+
+  const selectedStateSenatorialDistrictsResidence =
+    states.find(
+      (state) =>
+        replaceSymbolsWithSpace(`${state?.value}`) ===
+        replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
+    )?.senatorialDistricts || [];
+
+  const selectedStateSenatorialDistrictsResidenceFormatted =
+    selectedStateSenatorialDistrictsResidence && selectedStateSenatorialDistrictsResidence?.length
+      ? selectedStateSenatorialDistrictsResidence.map((x) => ({
+          label: x,
+          value: x,
+        }))
+      : [];
+
+  const { hasDisability } = form;
+
+  const handleRadioChange = (e) => {
+    onchangeInput("hasDisability", e.target?.value);
+  };
+
+  const handleChangeSelectedDisability = (value) => {
+    onchangeInput("selectedDisability", value);
+  };
+
   return (
     <DashboardPage title="User Profile" href="/trainee/dashboard">
       <div className="container mx-auto p-6">
@@ -329,7 +422,7 @@ const Biodata = () => {
               <CardHeader>
                 <CardTitle>Personal Information</CardTitle>
               </CardHeader>
-              <CardContent>
+              {/* <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
                     "firstName",
@@ -450,7 +543,198 @@ const Biodata = () => {
                   className="mt-4">
                   Update Personal Information
                 </Button>
-              </CardContent>
+              </CardContent> */}
+              <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            "firstName",
+            "middleName",
+            "lastName",
+            "phoneNumber",
+            "nin",
+            "email",
+            "street",
+          ].map((field) => (
+            <div key={field} className="space-y-2">
+              <Label htmlFor={field}>
+                {field
+                  .split(/(?=[A-Z])/)
+                  .join(" ")
+                  .charAt(0)
+                  .toUpperCase() +
+                  field
+                    .split(/(?=[A-Z])/)
+                    .join(" ")
+                    .slice(1)}
+              </Label>
+              <Input
+                id={field}
+                value={user[field] ?? ""}
+                onChange={(e) => handleUpdate(field, e.target.value)}
+              />
+            </div>
+          ))}
+          {["gender", "maritalStatus"].map((field) => (
+            <div key={field} className="space-y-2">
+              <Label htmlFor={field}>
+                {field
+                  .split(/(?=[A-Z])/)
+                  .join(" ")
+                  .charAt(0)
+                  .toUpperCase() +
+                  field
+                    .split(/(?=[A-Z])/)
+                    .join(" ")
+                    .slice(1)}
+              </Label>
+              <Select
+                onValueChange={(value) => handleUpdate(field, value)}
+                value={user[field] ?? ""}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={`Select ${field}`} />
+                </SelectTrigger>
+                <SelectContent>
+                  {field === "gender" ? (
+                    <>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </>
+                  ) : (
+                    <>
+                      <SelectItem value="single">Single</SelectItem>
+                      <SelectItem value="married">Married</SelectItem>
+                      <SelectItem value="divorced">Divorced</SelectItem>
+                      <SelectItem value="widowed">Widowed</SelectItem>
+                    </>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+          ))}
+          <div className="space-y-2">
+            <Label htmlFor="stateOfOrigin">State of Origin</Label>
+            <Select
+              onValueChange={(value) => handleUpdate("stateOfOrigin", value)}
+              value={user.stateOfOrigin ?? ""}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select State of Origin" />
+              </SelectTrigger>
+              <SelectContent>
+                {states.map((state) => (
+                  <SelectItem key={state.value} value={state.value}>
+                    {state.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="lga">LGA</Label>
+            <Select
+              onValueChange={(value) => handleUpdate("lga", value)}
+              value={user.lga ?? ""}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select LGA" />
+              </SelectTrigger>
+              <SelectContent>
+                {selectedStateLGASOriginFormatted.map((lga) => (
+                  <SelectItem key={lga.value} value={lga.value}>
+                    {lga.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="senatorialDistrict">Senatorial District</Label>
+            <Select
+              onValueChange={(value) =>
+                handleUpdate("senatorialDistrict", value)
+              }
+              value={user.senatorialDistrict ?? ""}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Senatorial District" />
+              </SelectTrigger>
+              <SelectContent>
+                {selectedStateSenatorialDistrictsOriginFormatted.map(
+                  (senatorialDistrict) => (
+                    <SelectItem key={senatorialDistrict.value} value={senatorialDistrict.value}>
+                      {senatorialDistrict.label}
+                    </SelectItem>
+                  )
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="stateOfResidence">State of Residence</Label>
+            <Select
+              onValueChange={(value) => handleUpdate("stateOfResidence", value)}
+              value={user.stateOfResidence ?? ""}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select State of Residence" />
+              </SelectTrigger>
+              <SelectContent>
+                {states.map((state) => (
+                  <SelectItem key={state.value} value={state.value}>
+                    {state.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="lgaOfResidence">LGA of Residence</Label>
+            <Select
+              onValueChange={(value) => handleUpdate("lgaOfResidence", value)}
+              value={user.lgaOfResidence ?? ""}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select LGA of Residence" />
+              </SelectTrigger>
+              <SelectContent>
+                {selectedStateLGASResidenceFormatted.map((lgaOfResidence) => (
+                  <SelectItem key={lgaOfResidence.value} value={lgaOfResidence.value}>
+                    {lgaOfResidence.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="hasDisability">Has Disability</Label>
+            <Switch
+              id="hasDisability"
+              checked={user.hasDisability ?? false}
+              onCheckedChange={(checked) =>
+                handleUpdate("hasDisability", checked)
+              }
+            />
+          </div>
+          {(user.hasDisability) && (
+            <div className="space-y-2">
+              <Label htmlFor="disabilityType">Disability Type</Label>
+              <Input
+                id="disabilityType"
+                value={user.disabilityType ?? ""}
+                onChange={(e) =>
+                  handleUpdate("disabilityType", e.target.value)
+                }
+              />
+            </div>
+          )}
+        </div>
+        <Button onClick={() => submitChanges("personalInfo")} className="mt-4">
+          Update Personal Information
+        </Button>
+      </CardContent>
             </Card>
           </TabsContent>
 
@@ -883,9 +1167,13 @@ const Biodata = () => {
             </CardContent>
           </Card>
         )}
+        
       </div>
     </DashboardPage>
   );
 };
 
 export default Biodata;
+
+
+
