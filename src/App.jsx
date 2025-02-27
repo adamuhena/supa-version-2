@@ -30,7 +30,7 @@ import TestPage from "./pages/testpage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotAuthorized from "./pages/loginPage/NotAuthorized";
 import "./App.css";
-import GalleryPage from "./pages/gallery/gallery";
+import GalleryPage from "./pages/gallery/Gallerys";
 
 import { AlertUsersToResetPassword } from "./components/AlertUsersToResetPassword";
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard"
