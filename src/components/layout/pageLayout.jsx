@@ -189,7 +189,6 @@ export default function PageLayout({ children }) {
     { name: "About", path: "/about" },
     { name: "Market Place", path: "/" },
     { name: "Contact", path: "/contact" },
-    { name: "Media", path: "/gallery" },
   ];
 
   return (

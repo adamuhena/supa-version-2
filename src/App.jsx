@@ -30,7 +30,6 @@ import TestPage from "./pages/testpage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotAuthorized from "./pages/loginPage/NotAuthorized";
 import "./App.css";
-import GalleryPage from "./pages/gallery/gallery";
 
 import { AlertUsersToResetPassword } from "./components/AlertUsersToResetPassword";
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard"
@@ -52,7 +51,6 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactUs />} />
-          <Route path="/gallery" element={<GalleryPage />} />
           {/* <Route path="/biodata2" element={<BiodataPage />} /> */}
           {/* <Route path="/biodata" element={<Biodata />} />
         <Route path="/certification/upload" element={<DocumentUpload />} /> */}
