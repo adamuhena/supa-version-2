@@ -32,6 +32,7 @@ import NotAuthorized from "./pages/loginPage/NotAuthorized";
 import "./App.css";
 
 import { AlertUsersToResetPassword } from "./components/AlertUsersToResetPassword";
+import GalleryPage from "./pages/gallery/Gallery";
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard"
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactUs />} />
+          <Route path="/gallery" element={<GalleryPage />} />
           {/* <Route path="/biodata2" element={<BiodataPage />} /> */}
           {/* <Route path="/biodata" element={<Biodata />} />
         <Route path="/certification/upload" element={<DocumentUpload />} /> */}
