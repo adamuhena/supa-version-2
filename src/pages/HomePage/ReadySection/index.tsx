@@ -8,7 +8,7 @@ function ReadySection() {
           <Globe className="top-[-190px] max-w-[400px]" />
         </div>
 
-        <section className="mx-auto flex h-[auto] w-full max-w-screen-xl flex-wrap items-center justify-between gap-[69px] rounded-[16px] bg-[#00524D] bg-[url('/images/home-ready-background.webp')] bg-cover px-[20px] max-lg:py-[60px] lg:h-[431px] lg:px-[103px]">
+        <section className="mx-auto flex h-[auto] w-full max-w-screen-xl flex-wrap items-center justify-between gap-[69px] rounded-[16px] bg-[#00524D] bg-cover px-[20px] max-lg:py-[60px] lg:h-[431px] lg:px-[103px]">
           <div className="flex max-w-[585.43px] flex-col gap-[16px]">
             <h1 className="font-bricolage_grotesque text-[clamp(36px,calc(50/1216*100vw),50px)] font-[700] leading-[clamp(39px,calc(55/1216*100vw),55px)] text-white max-lg:text-center">
               Transform Community Health Today

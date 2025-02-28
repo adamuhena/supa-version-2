@@ -1,5 +1,5 @@
 // src/pages/NotAuthorized.jsx
-import { Button } from '@/components/ui/Button';  // Using ShadCN Button component
+import { Button } from '../../components/ui/button';  // Using ShadCN Button component
 
 const NotAuthorized = () => {
   return (
