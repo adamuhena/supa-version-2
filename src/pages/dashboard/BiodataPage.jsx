@@ -960,48 +960,46 @@ const Biodata = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="bank">
-            <Card>
-              <CardHeader>
-                <CardTitle>Bank Account</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {["accountName", "accountNumber", "bank"].map((field) => (
-                    <div key={field} className="space-y-2">
-                      <Label htmlFor={`bank-${field}`}>
-                        {field
-                          .split(/(?=[A-Z])/)
-                          .join(" ")
-                          .charAt(0)
-                          .toUpperCase() +
-                          field
-                            .split(/(?=[A-Z])/)
-                            .join(" ")
-                            .slice(1)}
-                      </Label>
-                      <Input
-                        id={`bank-${field}`}
-                        value={
-                          changes[`bankAccount.${field}`] ??
-                          user.bankAccount[field] ??
-                          ""
-                        }
-                        onChange={(e) =>
-                          handleUpdate(`bankAccount.${field}`, e.target.value)
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-                <Button
-                  onClick={() => submitChanges("bankAccount")}
-                  className="mt-4">
-                  Update Bank Account
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
+
+<TabsContent value="bank">
+  <Card>
+    <CardHeader>
+      <CardTitle>Bank Account</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {["accountName", "accountNumber", "bank"].map((field) => (
+          <div key={field} className="space-y-2">
+            <Label htmlFor={`bank-${field}`}>
+              {field
+                .split(/(?=[A-Z])/)
+                .join(" ")
+                .charAt(0)
+                .toUpperCase() +
+                field
+                  .split(/(?=[A-Z])/)
+                  .join(" ")
+                  .slice(1)}
+            </Label>
+            <Input
+              id={`bank-${field}`}
+              value={
+                changes[`bankAccount.${field}`] ?? user.bankAccount[field] ?? ""
+              }
+              onChange={(e) =>
+                handleUpdate(`bankAccount.${field}`, e.target.value)
+              }
+              type={field === "accountNumber" ? "text" : "text"} // Ensure accountNumber is treated as text
+            />
+          </div>
+        ))}
+      </div>
+      <Button onClick={() => submitChanges("bankAccount")} className="mt-4">
+        Update Bank Account
+      </Button>
+    </CardContent>
+  </Card>
+</TabsContent>
 
           <TabsContent value="password">
             <Card>

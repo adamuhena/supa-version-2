@@ -53,10 +53,10 @@ function FAQs() {
             
             <BlurFade delay={0.25} inView>
               <p className="text-base sm:text-lg md:text-xl text-[#040404] mb-2">
-                Some of the things you may have questions about
+                Some Questions you may have about SUPA,
               </p>
               <p className="text-sm sm:text-base text-[#808DB3]">
-                We have answered them so you don't have to ask
+                may have been answered here.
               </p>
             </BlurFade>
           </div>

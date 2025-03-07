@@ -1,47 +1,52 @@
+import React, { useState } from "react";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import axios from 'axios';
-import React, { useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from "sonner";
+import { API_BASE_URL } from "@/config/env";
 
 const PasswordChange = () => {
   const [passwords, setPasswords] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setPasswords(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setPasswords((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (passwords.newPassword !== passwords.confirmPassword) {
-      toast.error('New passwords do not match');
+      toast.error("New passwords do not match.");
       return;
     }
 
     try {
-      const response = await axios.post('/api/change-password', {
-        currentPassword: passwords.currentPassword,
-        newPassword: passwords.newPassword,
-      });
+      const response = await axios.put(
+        `${API_BASE_URL}/update-tc-password/${localStorage.getItem("userId")}`,
+        {
+          currentPassword: passwords.currentPassword,
+          newPassword: passwords.newPassword,
+        }
+      );
 
       if (response.data.success) {
-        toast.success('Password changed successfully');
-        setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        toast.success("Password updated successfully.");
+        setPasswords({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
       } else {
-        toast.error(response.data.message || 'Failed to change password');
+        toast.error(response.data.message);
       }
     } catch (error) {
-      console.error('Error changing password:', error);
-      toast.error(error.response?.data?.message || 'Failed to change password');
+      console.error("Error updating password:", error);
+      toast.error("Failed to update password. Please try again.");
     }
   };
 
@@ -54,7 +59,7 @@ const PasswordChange = () => {
           name="currentPassword"
           type="password"
           value={passwords.currentPassword}
-          onChange={handleInputChange}
+          onChange={handleChange}
           required
         />
       </div>
@@ -65,7 +70,7 @@ const PasswordChange = () => {
           name="newPassword"
           type="password"
           value={passwords.newPassword}
-          onChange={handleInputChange}
+          onChange={handleChange}
           required
         />
       </div>
@@ -76,7 +81,7 @@ const PasswordChange = () => {
           name="confirmPassword"
           type="password"
           value={passwords.confirmPassword}
-          onChange={handleInputChange}
+          onChange={handleChange}
           required
         />
       </div>
@@ -86,4 +91,3 @@ const PasswordChange = () => {
 };
 
 export default PasswordChange;
-
