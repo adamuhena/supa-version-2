@@ -24,7 +24,10 @@ import UploadButton from "@/components/UploadButton";
 import { API_BASE_URL } from "@/config/env";
 import { states } from "../../data/nigeria";
 import { replaceSymbolsWithSpace } from "../../utils/helpers";
-
+import PersonalTab from "./tabs/PersonalTab"
+import EducationTab from "./tabs/EducationTab"
+import SkillsTab from "./tabs/SkillsTab"
+import BankTab from "./tabs/BankTab"
 //import { url } from "inspector";
 
 const Biodata = () => {
@@ -417,133 +420,17 @@ const Biodata = () => {
             <TabsTrigger value="password">Change Password</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="personal">
+          <PersonalTab user={user} handleUpdate={handleUpdate} />
+          <EducationTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
+          <SkillsTab user={user} />
+          <BankTab user={user} handleUpdate={handleUpdate}
+        submitChanges={submitChanges} />
+
+          {/* <TabsContent value="personal">
             <Card>
               <CardHeader>
                 <CardTitle>Personal Information</CardTitle>
               </CardHeader>
-              {/* <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    "firstName",
-                    "middleName",
-                    "lastName",
-                    "phoneNumber",
-                    "nin",
-                    "email",
-                    "street",
-                    "stateOfOrigin",
-                    "senatorialDistrict",
-                    "lga",
-                    "stateOfResidence",
-                    "lgaOfResidence",
-                  ].map((field) => (
-                    <div key={field} className="space-y-2">
-                      <Label htmlFor={field}>
-                        {field
-                          .split(/(?=[A-Z])/)
-                          .join(" ")
-                          .charAt(0)
-                          .toUpperCase() +
-                          field
-                            .split(/(?=[A-Z])/)
-                            .join(" ")
-                            .slice(1)}
-                      </Label>
-                      <Input
-                        id={field}
-                        value={
-                          changes[`personalInfo.${field}`] ?? user[field] ?? ""
-                        }
-                        onChange={(e) =>
-                          handleUpdate(`personalInfo.${field}`, e.target.value)
-                        }
-                      />
-                    </div>
-                  ))}
-                  {["gender", "maritalStatus"].map((field) => (
-                    <div key={field} className="space-y-2">
-                      <Label htmlFor={field}>
-                        {field
-                          .split(/(?=[A-Z])/)
-                          .join(" ")
-                          .charAt(0)
-                          .toUpperCase() +
-                          field
-                            .split(/(?=[A-Z])/)
-                            .join(" ")
-                            .slice(1)}
-                      </Label>
-                      <Select
-                        onValueChange={(value) =>
-                          handleUpdate(`personalInfo.${field}`, value)
-                        }
-                        value={
-                          changes[`personalInfo.${field}`] ?? user[field] ?? ""
-                        }>
-                        <SelectTrigger>
-                          <SelectValue placeholder={`Select ${field}`} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {field === "gender" ? (
-                            <>
-                              <SelectItem value="male">Male</SelectItem>
-                              <SelectItem value="female">Female</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </>
-                          ) : (
-                            <>
-                              <SelectItem value="single">Single</SelectItem>
-                              <SelectItem value="married">Married</SelectItem>
-                              <SelectItem value="divorced">Divorced</SelectItem>
-                              <SelectItem value="widowed">Widowed</SelectItem>
-                            </>
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  ))}
-                  <div className="space-y-2">
-                    <Label htmlFor="hasDisability">Has Disability</Label>
-                    <Switch
-                      id="hasDisability"
-                      checked={
-                        changes["personalInfo.hasDisability"] ??
-                        user.hasDisability ??
-                        false
-                      }
-                      onCheckedChange={(checked) =>
-                        handleUpdate("personalInfo.hasDisability", checked)
-                      }
-                    />
-                  </div>
-                  {(changes["personalInfo.hasDisability"] ??
-                    user.hasDisability) && (
-                      <div className="space-y-2">
-                        <Label htmlFor="disabilityType">Disability Type</Label>
-                        <Input
-                          id="disabilityType"
-                          value={
-                            changes["personalInfo.disabilityType"] ??
-                            user.disabilityType ??
-                            ""
-                          }
-                          onChange={(e) =>
-                            handleUpdate(
-                              "personalInfo.disabilityType",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                    )}
-                </div>
-                <Button
-                  onClick={() => submitChanges("personalInfo")}
-                  className="mt-4">
-                  Update Personal Information
-                </Button>
-              </CardContent> */}
               <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
@@ -736,9 +623,9 @@ const Biodata = () => {
         </Button>
       </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent> */}
 
-          <TabsContent value="education">
+          {/* <TabsContent value="education">
             <Card>
               <CardHeader>
                 <CardTitle>Education</CardTitle>
@@ -794,9 +681,9 @@ const Biodata = () => {
                 </Button>
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent> */}
 
-          <TabsContent value="skills">
+          {/* <TabsContent value="skills">
             <Card>
               <CardHeader>
                 <CardTitle>Skills, Certifications, and Experience</CardTitle>
@@ -958,10 +845,10 @@ const Biodata = () => {
                 </Button>
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent> */}
 
 
-<TabsContent value="bank">
+{/* <TabsContent value="bank">
   <Card>
     <CardHeader>
       <CardTitle>Bank Account</CardTitle>
@@ -999,7 +886,7 @@ const Biodata = () => {
       </Button>
     </CardContent>
   </Card>
-</TabsContent>
+</TabsContent> */}
 
           <TabsContent value="password">
             <Card>

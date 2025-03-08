@@ -1,18 +1,7 @@
-import ProtectedRoute from "@/components/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import useLogout from "@/pages/loginPage/logout";
 import axios from "axios";
 import { LogOut, UserCircle } from "lucide-react";
@@ -23,6 +12,14 @@ import PasswordChange from "./PasswordChange";
 import TrainingDashboardPage from "./TrainingDashboardLayout";
 import UploadButton from "@/components/UploadButton";
 import { API_BASE_URL } from "@/config/env";
+import BasicInfoTab from "./tabs/BasicInfoTab";
+import CenterDetailsTab from "./tabs/CenterDetailsTab"
+import BankAccountTab from "./tabs/BankAccountTab"
+import AmenitiesTab from "./tabs/AmenitiesTab"
+import AssessmentTab from "./tabs/AssessmentTab"
+import LegalInfoTab from "./tabs/LegalInfoTab"
+
+
 
 const TrainingCenterBiodata = () => {
   const navigate = useNavigate();
@@ -262,7 +259,18 @@ const TrainingCenterBiodata = () => {
                 <TabsTrigger value="password">Change Password</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="basic">
+              <BasicInfoTab center={center} handleInputChange={handleInputChange} handleSubmit={handleSubmit} />
+              <CenterDetailsTab center={center} handleInputChange={handleInputChange} handleSubmit={handleSubmit} />
+              <BankAccountTab center={center} handleNestedInputChange={handleNestedInputChange} handleSubmit={handleSubmit} />
+              <AmenitiesTab center={center} handleNestedInputChange={handleNestedInputChange} handleSubmit={handleSubmit} />
+              <AssessmentTab center={center} handleNestedInputChange={handleNestedInputChange} handleSubmit={handleSubmit} />
+              <LegalInfoTab center={center} handleNestedInputChange={handleNestedInputChange} handleSubmit={handleSubmit} />
+              <TabsContent value="password">
+                <PasswordChange />
+              </TabsContent>
+            </Tabs>
+
+              {/* <TabsContent value="basic">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     name="trainingCentreName"
@@ -297,9 +305,14 @@ const TrainingCenterBiodata = () => {
                   />
                   <Button type="submit">Update Basic Info</Button>
                 </form>
-              </TabsContent>
-
-              <TabsContent value="details">
+              </TabsContent> */}
+                {/* <BasicInfoTab 
+                  center={center} 
+                  handleInputChange={handleInputChange} 
+                  handleSubmit={handleSubmit} 
+                /> */}
+                
+              {/* <TabsContent value="details">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     name="state"
@@ -416,9 +429,9 @@ const TrainingCenterBiodata = () => {
                   )}
                   <Button type="submit">Update Center Details</Button>
                 </form>
-              </TabsContent>
+              </TabsContent> */}
 
-              <TabsContent value="bank">
+              {/* <TabsContent value="bank">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     name="accountName"
@@ -458,9 +471,9 @@ const TrainingCenterBiodata = () => {
                   />
                   <Button type="submit">Update Bank Account</Button>
                 </form>
-              </TabsContent>
+              </TabsContent> */}
 
-              <TabsContent value="amenities">
+              {/* <TabsContent value="amenities">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -518,9 +531,9 @@ const TrainingCenterBiodata = () => {
                   />
                   <Button type="submit">Update Amenities</Button>
                 </form>
-              </TabsContent>
+              </TabsContent> */}
 
-              <TabsContent value="assessment">
+              {/* <TabsContent value="assessment">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     name="traineeInstructorRatio"
@@ -648,9 +661,9 @@ const TrainingCenterBiodata = () => {
                   />
                   <Button type="submit">Update Assessment</Button>
                 </form>
-              </TabsContent>
+              </TabsContent> */}
 
-              <TabsContent value="legal">
+              {/* <TabsContent value="legal">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     name="legalRegistration"
@@ -725,12 +738,9 @@ const TrainingCenterBiodata = () => {
                   </div>
                   <Button type="submit">Update Legal Info</Button>
                 </form>
-              </TabsContent>
+              </TabsContent> */}
 
-              <TabsContent value="password">
-                <PasswordChange />
-              </TabsContent>
-            </Tabs>
+              
           </CardContent>
         </Card>
       </div>
