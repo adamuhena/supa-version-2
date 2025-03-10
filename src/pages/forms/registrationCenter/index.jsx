@@ -366,7 +366,7 @@ const TrainingCenterForm = () => {
 
     setLoading(true);
     try {
-      await axios.put(`${API_BASE_URL}/training-centers/${userID}`, form, {
+      await axios.patch(`${API_BASE_URL}/training-centers/${userID}`, form, {
         headers: {
           Authorization: `Bearer ${token}`, // Attach the bearer token
           "Content-Type": "application/json",

@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { TabsContent } from "@/components/ui/tabs";
 import { states } from "../../../data/nigeria";
 
-const PersonalTab = ({ user, handleUpdate }) => {
+const PersonalTab = ({ user, handleUpdate, submitChanges }) => {
   const selectedStateLGASOriginFormatted = useMemo(() => {
     if (!user.stateOfOrigin) return [];
     const selectedState = states.find(state => state.value === user.stateOfOrigin);
@@ -41,6 +41,8 @@ const PersonalTab = ({ user, handleUpdate }) => {
       label: district
     }));
   }, [user.stateOfOrigin]);
+
+  
 
   return (
     <TabsContent value="personal">

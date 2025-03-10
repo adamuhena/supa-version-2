@@ -62,7 +62,7 @@ const EnhancedTrainingManagement = () => {
   const [evaluation, setEvaluation] = useState({ score: "", comments: "" });
   const [usersOptions, setUsersOptions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 25;
 
   useEffect(() => {
     fetchUserRole();
@@ -516,26 +516,65 @@ const EnhancedTrainingManagement = () => {
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() =>
-                        handlePageChange(Math.max(1, currentPage - 1))
-                      }
+                      onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                       disabled={currentPage === 1}
                     />
                   </PaginationItem>
-                  {[...Array(totalPages)].map((_, index) => (
-                    <PaginationItem key={index}>
+
+                  {/* First Page */}
+                  <PaginationItem>
+                    <PaginationLink 
+                      onClick={() => handlePageChange(1)}
+                      isActive={currentPage === 1}
+                    >
+                      1
+                    </PaginationLink>
+                  </PaginationItem>
+
+                  {/* Ellipsis after first */}
+                  {currentPage > 3 && (
+                    <PaginationItem>
+                      <PaginationLink disabled>...</PaginationLink>
+                    </PaginationItem>
+                  )}
+
+                  {/* Middle Pages */}
+                  {Array.from({ length: 3 }, (_, i) => {
+                    const pageNumber = currentPage + i - 1;
+                    return pageNumber > 1 && pageNumber < totalPages ? (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationLink
+                          isActive={pageNumber === currentPage}
+                          onClick={() => handlePageChange(pageNumber)}
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ) : null;
+                  })}
+
+                  {/* Ellipsis before last */}
+                  {currentPage < (totalPages - 2) && (
+                    <PaginationItem>
+                      <PaginationLink disabled>...</PaginationLink>
+                    </PaginationItem>
+                  )}
+
+                  {/* Last Page */}
+                  {totalPages > 1 && (
+                    <PaginationItem>
                       <PaginationLink
-                        onClick={() => handlePageChange(index + 1)}
-                        isActive={currentPage === index + 1}>
-                        {index + 1}
+                        onClick={() => handlePageChange(totalPages)}
+                        isActive={currentPage === totalPages}
+                      >
+                        {totalPages}
                       </PaginationLink>
                     </PaginationItem>
-                  ))}
+                  )}
+
                   <PaginationItem>
                     <PaginationNext
-                      onClick={() =>
-                        handlePageChange(Math.min(totalPages, currentPage + 1))
-                      }
+                      onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                       disabled={currentPage === totalPages}
                     />
                   </PaginationItem>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback  } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,7 +51,18 @@ const ITEMS_PER_PAGE = 25;
 
 const UserManagement = () => {
   const logout = useLogout();
+
+ 
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    totalPages: 1,
+    totalUsers: 0,
+    pageSize: 50,
+  });
   const itemsPerPage = 25;
+
+  const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
     firstName: "",
     lastName: "",
@@ -61,18 +72,12 @@ const UserManagement = () => {
     nin: "",
     role: "",
   });
+
   const [editUser, setEditUser] = useState(null);
   const [newPassword, setNewPassword] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState({
-    totalPages: 1,
-    totalUsers: 0,
-    pageSize: 50,
-  });
+
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -80,7 +85,7 @@ const UserManagement = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setSearchQuery(search);
-    }, 5000);
+    }, 500);
 
     return () => {
       clearTimeout(timeoutId);
@@ -91,11 +96,7 @@ const UserManagement = () => {
     setSearch(e.target.value);
   };
 
-  useEffect(() => {
-    fetchUsers(currentPage, pagination.pageSize, roleFilter, searchQuery);
-  }, [currentPage, roleFilter, searchQuery]);
-
-  const fetchUsers = async (
+  const fetchUsers = useCallback(async (
     page = 1,
     limit = 50,
     role = "",
@@ -105,12 +106,17 @@ const UserManagement = () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       const response = await axios.get(`${API_BASE_URL}/usersmgt`, {
-        params: { page, limit, role, search: searchQuery },
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: {
+          page,
+          limit,
+          role: role || undefined,
+          search: searchQuery || undefined,
+        },
       });
-
-      
-      // More robust response checking
+  
       if (
         response.data &&
         response.data.success &&
@@ -118,14 +124,13 @@ const UserManagement = () => {
         Array.isArray(response.data.data.users)
       ) {
         setUsers(response.data.data.users);
-
-        // Ensure pagination is set correctly
+  
         setPagination({
           totalPages: response.data.data.pagination?.totalPages || 1,
           totalUsers: response.data.data.pagination?.totalUsers || 0,
           pageSize: response.data.data.pagination?.pageSize || limit,
         });
-
+  
         toast.success("Users fetched successfully");
       } else {
         toast.error("No users found or invalid response structure");
@@ -136,7 +141,19 @@ const UserManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+  
+
+  // Update effect to use proper dependencies
+  useEffect(() => {
+    fetchUsers(currentPage, pagination.pageSize, roleFilter, searchQuery);
+  }, [currentPage, pagination.pageSize, roleFilter, searchQuery]);
+
+
+  // useEffect(() => {
+  //   fetchUsers(currentPage, pagination.pageSize, roleFilter, searchQuery);
+  // }, [currentPage, roleFilter, searchQuery]);
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
     fetchUsers(page, pagination.pageSize, roleFilter, search);
@@ -323,13 +340,6 @@ const UserManagement = () => {
     doc.save("User_Management_Report.pdf");
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-screen">
-  //       <Spinner />
-  //     </div>
-  //   );
-  // }
 
   return (
     <ProtectedRoute>
@@ -559,7 +569,9 @@ const UserManagement = () => {
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleDelete(user.id)}>
+                            onClick={() => handleDelete(user.id)}
+                            disabled={user.role === "superadmin" || user.role === "admin"} // Disable for admin roles
+                            >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -575,71 +587,68 @@ const UserManagement = () => {
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious
-                      onClick={() =>
-                        handlePageChange(Math.max(1, currentPage - 1))
-                      }
+                      onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                       disabled={currentPage === 1}
                     />
                   </PaginationItem>
 
-                  {/* First Page and Ellipsis */}
+                  {/* First Page */}
+                  <PaginationItem>
+                    <PaginationLink 
+                      isActive={currentPage === 1}
+                      onClick={() => handlePageChange(1)}
+                    >
+                      1
+                    </PaginationLink>
+                  </PaginationItem>
+
+                  {/* First Ellipsis */}
                   {currentPage > 3 && (
-                    <>
-                      <PaginationItem>
-                        <PaginationLink onClick={() => handlePageChange(1)}>
-                          1
-                        </PaginationLink>
-                      </PaginationItem>
-                      {currentPage > 4 && (
-                        <PaginationItem>
-                          <PaginationLink disabled>...</PaginationLink>
-                        </PaginationItem>
-                      )}
-                    </>
+                    <PaginationItem>
+                      <PaginationLink disabled>...</PaginationLink>
+                    </PaginationItem>
                   )}
 
-                  {/* Dynamic Page Range */}
-                  {Array.from(
-                    { length: Math.min(5, totalPages - 2) },
-                    (_, i) => {
-                      const pageNumber = Math.max(
-                        1,
-                        Math.min(totalPages, currentPage + i - 2)
-                      );
+                  {/* Page Numbers */}
+                  {Array.from({ length: 3 }, (_, i) => {
+                    const pageNum = currentPage - 1 + i;
+                    if (pageNum > 1 && pageNum < totalPages) {
                       return (
-                        <PaginationItem key={pageNumber}>
+                        <PaginationItem key={pageNum}>
                           <PaginationLink
-                            isActive={pageNumber === currentPage}
-                            onClick={() => handlePageChange(pageNumber)}>
-                            {pageNumber}
+                            isActive={pageNum === currentPage}
+                            onClick={() => handlePageChange(pageNum)}
+                          >
+                            {pageNum}
                           </PaginationLink>
                         </PaginationItem>
                       );
                     }
+                    return null;
+                  })}
+
+                  {/* Last Ellipsis */}
+                  {currentPage < totalPages - 2 && (
+                    <PaginationItem>
+                      <PaginationLink disabled>...</PaginationLink>
+                    </PaginationItem>
                   )}
 
-                  {/* Last Page and Ellipsis */}
-                  {currentPage < totalPages - 2 && (
-                    <>
-                      {currentPage < totalPages - 3 && (
-                        <PaginationItem>
-                          <PaginationLink disabled>...</PaginationLink>
-                        </PaginationItem>
-                      )}
-                      <PaginationItem>
-                        <PaginationLink
-                          onClick={() => handlePageChange(totalPages)}>
-                          {totalPages}
-                        </PaginationLink>
-                      </PaginationItem>
-                    </>
+                  {/* Last Page */}
+                  {totalPages > 1 && (
+                    <PaginationItem>
+                      <PaginationLink
+                        isActive={currentPage === totalPages}
+                        onClick={() => handlePageChange(totalPages)}
+                      >
+                        {totalPages}
+                      </PaginationLink>
+                    </PaginationItem>
                   )}
 
                   <PaginationItem>
                     <PaginationNext
-                      onClick={() =>
-                        handlePageChange(Math.min(currentPage + 1, totalPages))
-                      }
+                      onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
                       disabled={currentPage === totalPages}
                     />
                   </PaginationItem>

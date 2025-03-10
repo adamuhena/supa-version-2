@@ -401,105 +401,77 @@ const UserCertification = () => {
 
             {/* Pagination */}
             <div className="mt-4 flex justify-center">
-              <Pagination>
-                <PaginationContent>
-                  {/* Previous Button */}
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() =>
-                        handlePageChange(
-                          Math.max(1, pagination?.currentPage - 1)
-                        )
-                      }
-                      disabled={pagination?.currentPage === 1}
-                    />
-                  </PaginationItem>
+  <Pagination>
+    <PaginationContent>
+      {/* Previous */}
+      <PaginationItem>
+        <PaginationPrevious
+          onClick={() => handlePageChange(Math.max(1, pagination?.currentPage - 1))}
+          disabled={pagination?.currentPage === 1}
+        />
+      </PaginationItem>
 
-                  {/* First Page */}
-                  {pagination?.currentPage > 3 && (
-                    <>
-                      <PaginationItem>
-                        <PaginationLink onClick={() => handlePageChange(1)}>
-                          1
-                        </PaginationLink>
-                      </PaginationItem>
-                      {pagination?.currentPage > 4 && (
-                        <PaginationItem>
-                          <PaginationLink disabled>...</PaginationLink>
-                        </PaginationItem>
-                      )}
-                    </>
-                  )}
+      {/* First Page */}
+      <PaginationItem>
+        <PaginationLink 
+          onClick={() => handlePageChange(1)}
+          isActive={pagination?.currentPage === 1}
+        >
+          1
+        </PaginationLink>
+      </PaginationItem>
 
-                  {/* Dynamic Page Range */}
-                  {Array.from(
-                    {
-                      length: Math.min(5, pagination?.totalPages || 1),
-                    },
-                    (_, i) => {
-                      const pageNumber = Math.max(
-                        1,
-                        Math.min(
-                          pagination?.totalPages || 1,
-                          (pagination?.currentPage || 1) - 2 + i
-                        )
-                      );
+      {/* Ellipsis after first */}
+      {pagination?.currentPage > 3 && (
+        <PaginationItem>
+          <PaginationLink disabled>...</PaginationLink>
+        </PaginationItem>
+      )}
 
-                      return (
-                        pageNumber > 0 &&
-                        pageNumber <= (pagination?.totalPages || 1) && (
-                          <PaginationItem key={pageNumber}>
-                            <PaginationLink
-                              isActive={pageNumber === pagination?.currentPage}
-                              onClick={() => handlePageChange(pageNumber)}>
-                              {pageNumber}
-                            </PaginationLink>
-                          </PaginationItem>
-                        )
-                      );
-                    }
-                  )}
+      {/* Middle Pages */}
+      {Array.from({ length: 3 }, (_, i) => {
+        const pageNumber = pagination?.currentPage + i - 1;
+        return pageNumber > 1 && pageNumber < pagination?.totalPages ? (
+          <PaginationItem key={pageNumber}>
+            <PaginationLink
+              isActive={pageNumber === pagination?.currentPage}
+              onClick={() => handlePageChange(pageNumber)}
+            >
+              {pageNumber}
+            </PaginationLink>
+          </PaginationItem>
+        ) : null;
+      })}
 
-                  {/* Last Page */}
-                  {pagination?.currentPage <
-                    (pagination?.totalPages || 1) - 2 && (
-                    <>
-                      {pagination?.currentPage <
-                        (pagination?.totalPages || 1) - 3 && (
-                        <PaginationItem>
-                          <PaginationLink disabled>...</PaginationLink>
-                        </PaginationItem>
-                      )}
-                      <PaginationItem>
-                        <PaginationLink
-                          onClick={() =>
-                            handlePageChange(pagination?.totalPages || 1)
-                          }>
-                          {pagination?.totalPages}
-                        </PaginationLink>
-                      </PaginationItem>
-                    </>
-                  )}
+      {/* Ellipsis before last */}
+      {pagination?.currentPage < (pagination?.totalPages - 2) && (
+        <PaginationItem>
+          <PaginationLink disabled>...</PaginationLink>
+        </PaginationItem>
+      )}
 
-                  {/* Next Button */}
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() =>
-                        handlePageChange(
-                          Math.min(
-                            pagination?.totalPages || 1,
-                            (pagination?.currentPage || 1) + 1
-                          )
-                        )
-                      }
-                      disabled={
-                        pagination?.currentPage === pagination?.totalPages
-                      }
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
+      {/* Last Page */}
+      {pagination?.totalPages > 1 && (
+        <PaginationItem>
+          <PaginationLink
+            onClick={() => handlePageChange(pagination?.totalPages)}
+            isActive={pagination?.currentPage === pagination?.totalPages}
+          >
+            {pagination?.totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      )}
+
+      {/* Next */}  
+      <PaginationItem>
+        <PaginationNext
+          onClick={() => handlePageChange(Math.min(pagination?.totalPages, pagination?.currentPage + 1))}
+          disabled={pagination?.currentPage === pagination?.totalPages}
+        />
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+</div>
           </div>
 
           {/* Bio Data Dialog */}

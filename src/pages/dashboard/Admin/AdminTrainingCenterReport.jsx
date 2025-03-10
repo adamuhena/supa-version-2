@@ -1,142 +1,3 @@
-// import React, { useEffect, useMemo, useState } from "react";
-// import axios from "axios";
-// import DashboardPage from "@/components/layout/DashboardLayout";
-// import ProtectedRoute from "@/components/ProtectedRoute";
-// import Spinner from "@/components/layout/spinner";
-// import {
-//   Table,
-//   TableBody,
-//   TableCaption,
-//   TableCell,
-//   TableHead,
-//   TableHeader,
-//   TableRow,
-// } from "@/components/ui/table";
-// import { Button } from "@/components/ui/button";
-// import { CSVLink } from "react-csv";
-// import jsPDF from "jspdf";
-// import "jspdf-autotable";
-
-// const TrainingCenterReport = () => {
-//   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-//   const [loading, setLoading] = useState(false);
-//   const [reports, setReports] = useState([]);
-
-//   // Fetch training center reports
-//   const fetchReports = async () => {
-//     setLoading(true);
-//     try {
-//       const accessToken = localStorage.getItem("accessToken");
-//       const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
-//         headers: {
-//           Authorization: `Bearer ${accessToken}`,
-//         },
-//       });
-//       setReports(response?.data?.data || []);
-//     } catch (error) {
-//       console.error("Error fetching reports:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchReports();
-//   }, []);
-
-//   // Memoized CSV Data
-//   const csvData = useMemo(() => {
-//     if (!reports.length) return [];
-//     const headers = ["Training Center", "Address", "State", "LGA", "Phone", "Email"];
-//     const rows = reports.map(({ name, address, state, lga, phone, email }) => [
-//       name,
-//       address,
-//       state,
-//       lga,
-//       phone,
-//       email,
-//     ]);
-//     return [headers, ...rows];
-//   }, [reports]);
-
-//   // Generate PDF
-//   const generatePDF = () => {
-//     const doc = new jsPDF();
-//     const headers = ["Training Center", "Address", "State", "LGA", "Phone", "Email"];
-//     const data = reports.map(({ name, address, state, lga, phone, email }) => [
-//       name,
-//       address,
-//       state,
-//       lga,
-//       phone,
-//       email,
-//     ]);
-//     doc.setFontSize(16);
-//     doc.text("Training Center Report", 20, 20);
-//     doc.autoTable({
-//       head: [headers],
-//       body: data,
-//       startY: 30,
-//     });
-//     doc.save("Training_Center_Report.pdf");
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="flex justify-center items-center h-screen">
-//         <Spinner />
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <ProtectedRoute>
-//       <DashboardPage title="Training Center Report">
-//         <div className="container mx-auto py-6">
-//           <header className="flex justify-between items-center mb-6">
-//             <h1 className="text-3xl font-bold">Training Center Reports</h1>
-//             <div className="flex gap-2">
-//               {reports.length > 0 && (
-//                 <>
-//                   <CSVLink data={csvData} filename="training_center_report.csv">
-//                     <Button>Download CSV</Button>
-//                   </CSVLink>
-//                   <Button onClick={generatePDF}>Download PDF</Button>
-//                 </>
-//               )}
-//             </div>
-//           </header>
-//           <Table>
-//             <TableHeader>
-//               <TableRow>
-//                 <TableHead>Training Center</TableHead>
-//                 <TableHead>Address</TableHead>
-//                 <TableHead>State</TableHead>
-//                 <TableHead>LGA</TableHead>
-//                 <TableHead>Phone</TableHead>
-//                 <TableHead>Email</TableHead>
-//               </TableRow>
-//             </TableHeader>
-//             <TableBody>
-//               {reports.map((center) => (
-//                 <TableRow key={center.id}>
-//                   <TableCell>{center.name}</TableCell>
-//                   <TableCell>{center.address}</TableCell>
-//                   <TableCell>{center.state}</TableCell>
-//                   <TableCell>{center.lga}</TableCell>
-//                   <TableCell>{center.phone}</TableCell>
-//                   <TableCell>{center.email}</TableCell>
-//                 </TableRow>
-//               ))}
-//             </TableBody>
-//           </Table>
-//         </div>
-//       </DashboardPage>
-//     </ProtectedRoute>
-//   );
-// };
-
-// export default TrainingCenterReport;
 
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
@@ -183,40 +44,133 @@ import { API_BASE_URL } from "@/config/env";
 
 const TrainingCenterReport = () => {
   const logout = useLogout();
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const itemsPerPage = 25;
+  // const [loading, setLoading] = useState(false);
+  // const [reports, setReports] = useState([]);
+  const [filteredReports, setFilteredReports] = useState([]);
+  // const [filter, setFilter] = useState({
+  //   stateOfResidence: "",
+  //   localGovernment: "",
+  //   senatorialDistrict: "",
+  //   sector: "",
+  //   tradeArea: "",
+  // });
+
+  // // Fetch training center reports
+  // const fetchReports = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken");
+  //     const response = await axios.get(
+  //       `${API_BASE_URL}/trainingcenter/report`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     );
+  //     setReports(response?.data?.data || []);
+  //     setFilteredReports(response?.data?.data || []);
+  //   } catch (error) {
+  //     console.error("Error fetching reports:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
-  const [filteredReports, setFilteredReports] = useState([]);
+  const itemsPerPage = 25;
+
   const [filter, setFilter] = useState({
-    stateOfResidence: "",
-    localGovernment: "",
-    senatorialDistrict: "",
+    state: "",
+    lga: "",
+    areaOffice: "",
     sector: "",
-    tradeArea: "",
+    ownership: "",
+    trainingNature: "",
+    itfRegistered: "",
+    amenities: {
+      portableWater: "",
+      observeBreak: ""
+    },
+    establishmentDate: "",
+    contactPerson: "",
+    role: "",
+    email: "",
+    phoneNumber: "",
+    assessment: "",
+    legalInfo: "",
+    verificationDocuments: ""
   });
 
-  // Fetch training center reports
+  // Add pagination state handler
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+    // Update fetch function to use currentPage
+  // const fetchReports = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken");
+  //     const response = await axios.get(
+  //       `${API_BASE_URL}/trainingcenter/report`, {
+  //         params: {
+  //           page: currentPage,
+  //           limit: itemsPerPage,
+  //           filterParams: filter // Send filter as filterParams
+  //         },
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         }
+  //       }
+  //     );
+
+  //     const { data, pagination } = response.data;
+      
+  //     // Update states with response data
+  //     setReports(data);
+  //     setTotalPages(pagination.totalPages);
+  //     setLoading(false);
+
+  //   } catch (error) {
+  //     console.error("Error fetching reports:", error);
+  //     setLoading(false);
+  //   }
+  // };
   const fetchReports = async () => {
     setLoading(true);
     try {
       const accessToken = localStorage.getItem("accessToken");
       const response = await axios.get(
-        `${API_BASE_URL}/trainingcenter/report`,
-        {
+        `${API_BASE_URL}/trainingcenter/report`, {
+          params: {
+            page: currentPage,
+            limit: itemsPerPage,
+            filterParams: filter,
+            sort: '-createdAt' // Add sort parameter
+          },
           headers: {
             Authorization: `Bearer ${accessToken}`,
-          },
+          }
         }
       );
-      setReports(response?.data?.data || []);
-      setFilteredReports(response?.data?.data || []);
+  
+      const { data, pagination } = response.data;
+      setReports(data);
+      setTotalPages(pagination.totalPages);
     } catch (error) {
       console.error("Error fetching reports:", error);
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    fetchReports();
+  }, [currentPage, filter]); // Re-fetch when page or filters change
 
   const emptyForm = {
     stateOfResidence: "",
@@ -228,9 +182,9 @@ const TrainingCenterReport = () => {
     role: "",
   };
 
-  useEffect(() => {
-    fetchReports();
-  }, []);
+  // useEffect(() => {
+  //   fetchReports();
+  // }, []);
 
   useEffect(() => {
     applyFilter();
@@ -265,15 +219,15 @@ const TrainingCenterReport = () => {
     if (filter.stateOfResidence) {
       filtered = filtered.filter(
         (center) =>
-          center.stateOfResidence &&
-          center.stateOfResidence.toLowerCase() === filter.state.toLowerCase()
+          center.state &&
+          center.state.toLowerCase() === filter.state.toLowerCase()
       );
     }
     if (filter.localGovernment) {
       filtered = filtered.filter(
         (center) =>
-          center.lgaOfResidence &&
-          center.lgaOfResidence.toLowerCase() ===
+          center.lga &&
+          center.lga.toLowerCase() ===
             filter.localGovernment.toLowerCase()
       );
     }
@@ -334,10 +288,11 @@ const TrainingCenterReport = () => {
     const rows = reports.map(
       (
         {
-          name,
+          
+          trainingCentreName,
           address,
-          stateOfResidence,
-          lgaOfResidence,
+          state,
+          lga,
           senatorialDistrict,
           sector,
           tradeArea,
@@ -347,10 +302,10 @@ const TrainingCenterReport = () => {
         index
       ) => [
         index + 1,
-        name || "",
+        trainingCentreName || "",
         address || "",
-        stateOfResidence || "",
-        lgaOfResidence || "",
+        state || "",
+        lga || "",
         senatorialDistrict || "",
         sector || "",
         tradeArea || "",
@@ -380,10 +335,10 @@ const TrainingCenterReport = () => {
     const data = reports.map(
       (
         {
-          name,
+          trainingCentreName,
           address,
-          stateOfResidence,
-          lgaOfResidence,
+          state,
+          lga,
           senatorialDistrict,
           sector,
           tradeArea,
@@ -393,10 +348,10 @@ const TrainingCenterReport = () => {
         index
       ) => [
         index + 1,
-        name || "",
+        trainingCentreName || "",
         address || "",
-        stateOfResidence || "",
-        lgaOfResidence || "",
+        state || "",
+        lga || "",
         senatorialDistrict || "",
         sector || "",
         tradeArea || "",
@@ -418,11 +373,11 @@ const TrainingCenterReport = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredReports.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
+  // const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  // const handlePageChange = (page) => {
+  //   setCurrentPage(page);
+  // };
 
   if (loading) {
     return (
@@ -609,19 +564,19 @@ const TrainingCenterReport = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {currentItems.map((center, index) => (
+              {reports.map((center, index) => (
                 <TableRow key={center._id || index}>
                   <TableCell>
                     {index + 1 + (currentPage - 1) * itemsPerPage}
                   </TableCell>
-                  <TableCell>{center.name || ""}</TableCell>
+                  <TableCell>{center.trainingCentreName || ""}</TableCell>
                   <TableCell>{center.address || ""}</TableCell>
                   <TableCell>{center.state || ""}</TableCell>
-                  <TableCell>{center.localGovernment || ""}</TableCell>
+                  <TableCell>{center.lga || ""}</TableCell>
                   <TableCell>{center.senatorialDistrict || ""}</TableCell>
                   <TableCell>{center.sector || ""}</TableCell>
                   <TableCell>{center.tradeArea || ""}</TableCell>
-                  <TableCell>{center.phone || ""}</TableCell>
+                  <TableCell>{center.phoneNumber || ""}</TableCell>
                   <TableCell>{center.email || ""}</TableCell>
                 </TableRow>
               ))}
@@ -629,36 +584,75 @@ const TrainingCenterReport = () => {
           </Table>
 
           <div className="mt-4">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() =>
-                      handlePageChange(Math.max(1, currentPage - 1))
-                    }
-                    disabled={currentPage === 1}
-                  />
-                </PaginationItem>
-                {[...Array(totalPages)].map((_, index) => (
-                  <PaginationItem key={index}>
-                    <PaginationLink
-                      onClick={() => handlePageChange(index + 1)}
-                      isActive={currentPage === index + 1}>
-                      {index + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() =>
-                      handlePageChange(Math.min(totalPages, currentPage + 1))
-                    }
-                    disabled={currentPage === totalPages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+  <Pagination>
+    <PaginationContent>
+      <PaginationItem>
+        <PaginationPrevious
+          onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+        />
+      </PaginationItem>
+
+      {/* First Page */}
+      <PaginationItem>
+        <PaginationLink 
+          onClick={() => handlePageChange(1)}
+          isActive={currentPage === 1}
+        >
+          1
+        </PaginationLink>
+      </PaginationItem>
+
+      {/* Ellipsis after first */}
+      {currentPage > 3 && (
+        <PaginationItem>
+          <PaginationLink disabled>...</PaginationLink>
+        </PaginationItem>
+      )}
+
+      {/* Middle Pages */}
+      {Array.from({ length: 3 }, (_, i) => {
+        const pageNumber = currentPage + i - 1;
+        return pageNumber > 1 && pageNumber < totalPages ? (
+          <PaginationItem key={pageNumber}>
+            <PaginationLink
+              isActive={pageNumber === currentPage}
+              onClick={() => handlePageChange(pageNumber)}
+            >
+              {pageNumber}
+            </PaginationLink>
+          </PaginationItem>
+        ) : null;
+      })}
+
+      {/* Ellipsis before last */}
+      {currentPage < (totalPages - 2) && (
+        <PaginationItem>
+          <PaginationLink disabled>...</PaginationLink>
+        </PaginationItem>
+      )}
+
+      {/* Last Page */}
+      {totalPages > 1 && (
+        <PaginationItem>
+          <PaginationLink
+            onClick={() => handlePageChange(totalPages)}
+            isActive={currentPage === totalPages}
+          >
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      )}
+
+      <PaginationItem>
+        <PaginationNext
+          onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+        />
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+</div>
         </div>
       </DashboardPage>
     </ProtectedRoute>

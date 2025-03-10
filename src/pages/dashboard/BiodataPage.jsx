@@ -420,9 +420,9 @@ const Biodata = () => {
             <TabsTrigger value="password">Change Password</TabsTrigger>
           </TabsList>
 
-          <PersonalTab user={user} handleUpdate={handleUpdate} />
+          <PersonalTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges}  />
           <EducationTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
-          <SkillsTab user={user} />
+          <SkillsTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
           <BankTab user={user} handleUpdate={handleUpdate}
         submitChanges={submitChanges} />
 

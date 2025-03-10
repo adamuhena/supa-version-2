@@ -146,7 +146,7 @@ const TrainingCenterForm = () => {
 
     setLoading(true);
     try {
-      await axios.post(`${API_BASE_URL}/training-center/${userID}`, form);
+      await axios.patch(`${API_BASE_URL}/training-center/${userID}`, form);
       toast.success("Training Center Registered Successfully!");
       setShow(true); // Show success modal or message
     } catch (error) {
