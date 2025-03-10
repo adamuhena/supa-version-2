@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, {useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,9 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -42,7 +44,31 @@ const PersonalTab = ({ user, handleUpdate, submitChanges }) => {
     }));
   }, [user.stateOfOrigin]);
 
-  
+  // Has Disability
+const [hasDisability, setHasDisability] = useState(user.hasDisability ? "yes" : "no");
+
+const handleRadioChange = (e) => {
+  const value = e.target.value;
+  setHasDisability(value);
+  handleUpdate("hasDisability", value === "yes");
+  if (value === "no") {
+    handleUpdate("disabilityType", "");
+  }
+};
+
+const handleChangeSelectedDIsablity = (value) => {
+  handleUpdate("disabilityType", value);
+};
+
+// const handleSubmit = () => {
+//   console.log('Submitting personal info:', user);
+//   submitChanges("personal"); // Changed from "personalInfo" to "personal"
+// };
+
+const handleSubmit = () => {
+  console.log("Submitting personal info:", user);
+  submitChanges("personal");
+};
 
   return (
     <TabsContent value="personal">
@@ -80,6 +106,17 @@ const PersonalTab = ({ user, handleUpdate, submitChanges }) => {
               />
             </div>
           ))}
+
+          {/* Add Date of Birth field separately */}
+          <div className="space-y-2">
+            <Label htmlFor="dob">Date of Birth</Label>
+            <Input
+              id="dob"
+              type="date"
+              value={user.dob ?? ""}
+              onChange={(e) => handleUpdate("dob", e.target.value)}
+            />
+          </div>
           {["gender", "maritalStatus"].map((field) => (
             <div key={field} className="space-y-2">
               <Label htmlFor={field}>
@@ -222,7 +259,7 @@ const PersonalTab = ({ user, handleUpdate, submitChanges }) => {
               </Select>
             </div>
           
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="hasDisability">Has Disability</Label>
             <Switch
               id="hasDisability"
@@ -243,11 +280,144 @@ const PersonalTab = ({ user, handleUpdate, submitChanges }) => {
                 }
               />
             </div>
-          )}
+          )} */}
+
+          {/* <div className="space-y-4">
+            <div className="radioGroup">
+              <div>
+                <span>Are you a person with disability? </span>
+                <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="yes"
+                    name="disability"
+                    value="yes"
+                    onChange={handleRadioChange}
+                    checked={hasDisability === "yes"}
+                  />
+                  <label htmlFor="yes">Yes</label>
+
+                  <input
+                    type="radio"
+                    id="no"
+                    name="disability"
+                    value="no"
+                    onChange={handleRadioChange}
+                    checked={hasDisability === "no"}
+                  />
+                  <label htmlFor="no">No</label>
+                </div>
+
+                {hasDisability === "yes" && (
+                  <div className="flex gap-2">
+                    <label
+                      className="block text-sm font-medium"
+                      htmlFor="disabilityType">
+                      Select your disability:
+                    </label>
+                    <Select 
+                      onValueChange={handleChangeSelectedDIsablity}
+                      value={user.disabilityType ?? ""}
+                    >
+                      <SelectTrigger id="disabilityType" className="w-[200px]">
+                        <SelectValue placeholder="-- Select --" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Disability Types</SelectLabel>
+                          <SelectItem value="visual">Visual Impairment</SelectItem>
+                          <SelectItem value="hearing">Hearing Impairment</SelectItem>
+                          <SelectItem value="mobility">Mobility Impairment</SelectItem>
+                          <SelectItem value="cognitive">Cognitive Impairment</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div> */}
         </div>
-        <Button onClick={() => submitChanges("personalInfo")} className="mt-4">
+
+        <div className="space-y-4 pt-6">
+            <div className="radioGroup">
+              
+
+              <div className="flex items-start gap-4">
+              <div>
+                <span>Are you a person with disability? </span>
+                <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+              </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="yes"
+                    name="disability"
+                    value="yes"
+                    onChange={handleRadioChange}
+                    checked={hasDisability === "yes"}
+                  />
+                  <label htmlFor="yes">Yes</label>
+
+                  <input
+                    type="radio"
+                    id="no"
+                    name="disability"
+                    value="no"
+                    onChange={handleRadioChange}
+                    checked={hasDisability === "no"}
+                  />
+                  <label htmlFor="no">No</label>
+                </div>
+
+                {hasDisability === "yes" && (
+                  <div className="flex gap-2">
+                    <label
+                      className="block text-sm font-medium"
+                      htmlFor="disabilityType">
+                      Select your disability:
+                    </label>
+                    <Select 
+                      onValueChange={handleChangeSelectedDIsablity}
+                      value={user.disabilityType ?? ""}
+                    >
+                      <SelectTrigger id="disabilityType" className="w-[200px]">
+                        <SelectValue placeholder="-- Select --" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Disability Types</SelectLabel>
+                          <SelectItem value="visual">Visual Impairment</SelectItem>
+                          <SelectItem value="hearing">Hearing Impairment</SelectItem>
+                          <SelectItem value="mobility">Mobility Impairment</SelectItem>
+                          <SelectItem value="cognitive">Cognitive Impairment</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+        <Button 
+            onClick={handleSubmit} 
+            className="mt-4"
+          >
+            Update Personal Information
+          </Button>
+        {/* <Button onClick={() => submitChanges("personalInfo")} className="mt-4">
           Update Personal Information
-        </Button>
+        </Button> */}
+        {/* <Button onClick={handleSubmit} className="mt-4">
+      Update Personal Information
+    </Button> */}
       </CardContent>
             </Card>
           </TabsContent>

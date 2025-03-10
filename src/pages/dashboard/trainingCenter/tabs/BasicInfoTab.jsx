@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
 import { TabsContent } from "@/components/ui/tabs";
 
 const BasicInfoTab = ({ center, handleInputChange, handleSubmit }) => {
@@ -32,7 +32,7 @@ const BasicInfoTab = ({ center, handleInputChange, handleSubmit }) => {
         />
       </form>
     </TabsContent>
-  )
-}
+  );
+};
 
-export default BasicInfoTab
+export default BasicInfoTab;

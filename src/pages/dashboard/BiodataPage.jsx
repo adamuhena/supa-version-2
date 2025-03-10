@@ -126,55 +126,100 @@ const Biodata = () => {
   // };
 
   const handleUpdate = (key, value) => {
+    console.log('Updating:', key, value);
     setUser((prevUser) => ({
       ...prevUser,
       [key]: value,
     }));
   };
 
+  // const submitChanges = async (section) => {
+  //   try {
+  //     const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
+  //     if (!token) {
+  //       throw new Error("No token found. Please log in again.");
+  //     }
+
+      // const sectionChanges = Object.keys(changes)
+      //   .filter((key) => key.startsWith(section))
+      //   .reduce((obj, key) => {
+      //     obj[key.replace(`${section}.`, "")] = changes[key];
+      //     return obj;
+      //   }, {});
+
+      // if (Object.keys(sectionChanges).length === 0) {
+      //   toast({
+      //     title: "No changes",
+      //     description: "No changes to update",
+      //     status: "info",
+      //     duration: 3000,
+      //   });
+      //   return;
+      // }
+
+  //     const response = await axios.put(
+  //       `${API_BASE_URL}/update/${localStorage.getItem("userId")}`,
+  //       sectionChanges,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, // Include the token here
+  //         },
+  //       }
+  //     );
+
+  //     if (response.data.success) {
+  //       setUser((prevUser) => ({ ...prevUser, ...sectionChanges }));
+  //       setChanges((prevChanges) => {
+  //         const updatedChanges = { ...prevChanges };
+  //         Object.keys(sectionChanges).forEach(
+  //           (key) => delete updatedChanges[`${section}.${key}`]
+  //         );
+  //         return updatedChanges;
+  //       });
+  //       toast({
+  //         title: "Success",
+  //         description: `${section} updated successfully`,
+  //         status: "success",
+  //         duration: 3000,
+  //       });
+  //     } else {
+  //       throw new Error(response.data.message || "Failed to update");
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error updating ${section}:`, error);
+  //     toast({
+  //       title: "Error",
+  //       description: `Failed to update ${section}`,
+  //       status: "error",
+  //       duration: 3000,
+  //     });
+  //   }
+  // };
+
   const submitChanges = async (section) => {
     try {
-      const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         throw new Error("No token found. Please log in again.");
       }
-
-      const sectionChanges = Object.keys(changes)
-        .filter((key) => key.startsWith(section))
-        .reduce((obj, key) => {
-          obj[key.replace(`${section}.`, "")] = changes[key];
-          return obj;
-        }, {});
-
-      if (Object.keys(sectionChanges).length === 0) {
-        toast({
-          title: "No changes",
-          description: "No changes to update",
-          status: "info",
-          duration: 3000,
-        });
-        return;
-      }
-
+  
+      console.log('Submitting data:', user); // Debug log
+  
       const response = await axios.put(
         `${API_BASE_URL}/update/${localStorage.getItem("userId")}`,
-        sectionChanges,
+        user, // Send the entire user object
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token here
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
-
+  
       if (response.data.success) {
-        setUser((prevUser) => ({ ...prevUser, ...sectionChanges }));
-        setChanges((prevChanges) => {
-          const updatedChanges = { ...prevChanges };
-          Object.keys(sectionChanges).forEach(
-            (key) => delete updatedChanges[`${section}.${key}`]
-          );
-          return updatedChanges;
-        });
+        // Update local state with response data
+        setUser(response.data.data);
+        
         toast({
           title: "Success",
           description: `${section} updated successfully`,
@@ -188,12 +233,99 @@ const Biodata = () => {
       console.error(`Error updating ${section}:`, error);
       toast({
         title: "Error",
-        description: `Failed to update ${section}`,
+        description: error.response?.data?.message || `Failed to update ${section}`,
         status: "error",
         duration: 3000,
       });
     }
   };
+
+  // const submitChanges = async (section) => {
+  //   try {
+  //     const token = localStorage.getItem("accessToken");
+  //     if (!token) {
+  //       throw new Error("No token found. Please log in again.");
+  //     }
+  
+  //     // Create section-specific payload
+  //     let payload = {};
+  //     switch (section) {
+  //       case "personal":
+  //         payload = {
+  //           firstName: user.firstName,
+  //           middleName: user.middleName,
+  //           lastName: user.lastName,
+  //           phoneNumber: user.phoneNumber,
+  //           nin: user.nin,
+  //           email: user.email,
+  //           street: user.street,
+  //           dob: user.dob,
+  //           gender: user.gender,
+  //           maritalStatus: user.maritalStatus,
+  //           stateOfOrigin: user.stateOfOrigin,
+  //           senatorialDistrict: user.senatorialDistrict,
+  //           lga: user.lga,
+  //           stateOfResidence: user.stateOfResidence,
+  //           lgaOfResidence: user.lgaOfResidence,
+  //           hasDisability: user.hasDisability,
+  //           disabilityType: user.disabilityType,
+  //         };
+  //         break;
+  //       case "education":
+  //         payload = {
+  //           education: user.education
+  //         };
+  //         break;
+  //       case "bankAccount":
+  //         payload = {
+  //           bankAccount: user.bankAccount
+  //         };
+  //         break;
+  //       case "additionalInfo":
+  //         payload = {
+  //           role: user.role,
+  //           certifiedStatus: user.certifiedStatus,
+  //           licenseStatus: user.licenseStatus,
+  //           agree: user.agree
+  //         };
+  //         break;
+  //       default:
+  //         payload = user;
+  //     }
+  
+  //     console.log(`Submitting ${section} changes:`, payload);
+  
+  //     const response = await axios.put(
+  //       `${API_BASE_URL}/update/${localStorage.getItem("userId")}`,
+  //       payload,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  
+  //     if (response.data.success) {
+  //       // Update local state with response data
+  //       setUser(prevUser => ({
+  //         ...prevUser,
+  //         ...response.data.data
+  //       }));
+  
+  //       toast.success(`${section} updated successfully`);
+  //     } else {
+  //       throw new Error(response.data.message || "Failed to update");
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error updating ${section}:`, error);
+  //     toast.error(
+  //       error.response?.data?.message || 
+  //       error.message || 
+  //       `Failed to update ${section}`
+  //     );
+  //   }
+  // };
 
   const updateProfilePicture = async (url) => {
     try {
@@ -423,8 +555,7 @@ const Biodata = () => {
           <PersonalTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges}  />
           <EducationTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
           <SkillsTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
-          <BankTab user={user} handleUpdate={handleUpdate}
-        submitChanges={submitChanges} />
+          <BankTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
 
           {/* <TabsContent value="personal">
             <Card>
@@ -1059,6 +1190,4 @@ const Biodata = () => {
 };
 
 export default Biodata;
-
-
 

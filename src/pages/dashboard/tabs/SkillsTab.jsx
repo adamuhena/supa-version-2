@@ -1,7 +1,202 @@
+// import React, { useEffect, useState } from "react";
+// import { Button } from "@/components/ui/button";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Input } from "@/components/ui/input"; 
+// import { Label } from "@/components/ui/label";
+// import { TabsContent } from "@/components/ui/tabs";
+// import { TrashIcon, PlusCircledIcon } from "@radix-ui/react-icons";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectGroup,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import { fetchSectors } from "@/services/api";
+// import UploadButton from "@/components/UploadButton";
+// import { FilePreview } from "@/components/FilePreview";
+
+// const SkillsTab = ({ user, handleArrayUpdate, handleInputChange, handleFileUpload }) => {
+//   const [sectors, setSectors] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   const initialSkills = (user.priorSkillsCerts || []).map(skill => ({
+//     ...skill,
+//     id: skill._id || new Date().getTime().toString() + Math.random()
+//   }));
+
+//   const [skills, setSkills] = useState(initialSkills);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const accessToken = localStorage.getItem('accessToken');
+//         const response = await fetchSectors(accessToken);
+//         setSectors(response);
+//       } catch (err) {
+//         setError('Failed to fetch sectors');
+//         console.error(err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   const handleChange = (id, field, value) => {
+//     setSkills(prev => prev.map(skill => {
+//       if (skill.id === id) {
+//         const updated = { ...skill, [field]: value };
+//         handleArrayUpdate('priorSkillsCerts', skill._id, field, value);
+//         return updated;
+//       }
+//       return skill;
+//     }));
+//   };
+
+//   const addSkill = () => {
+//     const newSkill = {
+//       id: new Date().getTime().toString() + Math.random(),
+//       sector: "",
+//       tradeArea: "",
+//       name: "",
+//       year: "",
+//       priUpload: ""
+//     };
+//     setSkills(prev => [...prev, newSkill]);
+//   };
+
+//   const removeSkill = (id) => {
+//     setSkills(prev => prev.filter(skill => skill.id !== id));
+//   };
+
+//   if (loading) return <div>Loading sectors...</div>;
+//   if (error) return <div>Error: {error}</div>;
+
+//   return (
+//     <TabsContent value="skills">
+//       <Card>
+//         <CardHeader>
+//           <CardTitle>Prior Skill Certificates</CardTitle>
+//         </CardHeader>
+//         <CardContent>
+//           <div className="space-y-4">
+//             {skills.map((skill) => (
+//               <div key={skill.id} className="p-4 border rounded">
+//                 <div className="flex flex-row justify-center gap-4">
+//                   <div className="w-full">
+//                     <Label>Sector</Label>
+//                     <Select
+//                       value={skill.sector}
+//                       onValueChange={(value) => handleChange(skill.id, "sector", value)}
+//                     >
+//                       <SelectTrigger>
+//                         <SelectValue placeholder="Select a Sector" />
+//                       </SelectTrigger>
+//                       <SelectContent>
+//                         <SelectGroup>
+//                           {sectors.map((sector) => (
+//                             <SelectItem key={sector._id} value={sector.name}>
+//                               {sector.name}
+//                             </SelectItem>
+//                           ))}
+//                         </SelectGroup>
+//                       </SelectContent>
+//                     </Select>
+//                   </div>
+
+//                   <div className="w-full">
+//                     <Label>Trade Area</Label>
+//                     <Select
+//                       value={skill.tradeArea}
+//                       onValueChange={(value) => handleChange(skill.id, "tradeArea", value)}
+//                     >
+//                       <SelectTrigger>
+//                         <SelectValue placeholder="Select Trade Area" />
+//                       </SelectTrigger>
+//                       <SelectContent>
+//                         <SelectGroup>
+//                           {sectors
+//                             .find((sector) => sector.name === skill.sector)
+//                             ?.tradeAreas?.map((tradeArea) => (
+//                               <SelectItem key={tradeArea._id} value={tradeArea.name}>
+//                                 {tradeArea.name}
+//                               </SelectItem>
+//                             ))}
+//                         </SelectGroup>
+//                       </SelectContent>
+//                     </Select>
+//                   </div>
+//                 </div>
+
+//                 <div className="mt-4">
+//                   <Label>Certificate Name</Label>
+//                   <Input
+//                     value={skill.name}
+//                     onChange={(e) => handleChange(skill.id, "name", e.target.value)}
+//                     placeholder="Enter certificate name"
+//                   />
+//                 </div>
+
+//                 <div className="mt-4">
+//                   <Label>Year Obtained</Label>
+//                   <Input
+//                     type="date"
+//                     value={skill.year}
+//                     onChange={(e) => handleChange(skill.id, "year", e.target.value)}
+//                   />
+//                 </div>
+
+//                 <div className="mt-4">
+//                   <Label>Supporting Document</Label>
+//                   <div className="flex items-center gap-4">
+//                     <UploadButton
+//                       fileUrl={skill.priUpload}
+//                       handleFileChange={(url) => handleChange(skill.id, "priUpload", url)}
+//                       removeFile={() => handleChange(skill.id, "priUpload", "")}
+//                     />
+//                     {skill.priUpload && <FilePreview fileUrl={skill.priUpload} />}
+//                   </div>
+//                 </div>
+
+//                 {skills.length > 1 && (
+//                   <Button
+//                     onClick={() => removeSkill(skill.id)}
+//                     variant="destructive"
+//                     size="sm"
+//                     className="mt-4"
+//                   >
+//                     <TrashIcon className="w-4 h-4 mr-2" />
+//                     Remove Skill
+//                   </Button>
+//                 )}
+//               </div>
+//             ))}
+
+//             <Button 
+//               onClick={addSkill} 
+//               variant="outline" 
+//               className="w-full"
+//             >
+//               <PlusCircledIcon className="w-4 h-4 mr-2" />
+//               Add Another Skill
+//             </Button>
+//           </div>
+//         </CardContent>
+//       </Card>
+//     </TabsContent>
+//   );
+// };
+
+// export default SkillsTab;
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input"; 
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TabsContent } from "@/components/ui/tabs";
 import { TrashIcon, PlusCircledIcon } from "@radix-ui/react-icons";
@@ -17,84 +212,74 @@ import { fetchSectors } from "@/services/api";
 import UploadButton from "@/components/UploadButton";
 import { FilePreview } from "@/components/FilePreview";
 
-const SkillsTab = ({ user, handleArrayUpdate, handleInputChange, handleFileUpload }) => {
+const SkillsTab = ({ user, handleUpdate, submitChanges }) => {
+  const [skills, setSkills] = useState(user.priorSkillsCerts || []);
   const [sectors, setSectors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const initialSkills = (user.priorSkillsCerts || []).map(skill => ({
-    ...skill,
-    id: skill._id || new Date().getTime().toString() + Math.random()
-  }));
-
-  const [skills, setSkills] = useState(initialSkills);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const loadSectors = async () => {
       try {
-        const accessToken = localStorage.getItem('accessToken');
-        const response = await fetchSectors(accessToken);
-        setSectors(response);
+        const token = localStorage.getItem("accessToken");
+        const res = await fetchSectors(token);
+        setSectors(res);
       } catch (err) {
-        setError('Failed to fetch sectors');
-        console.error(err);
+        console.error("Failed to fetch sectors:", err);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchData();
+    loadSectors();
   }, []);
 
-  const handleChange = (id, field, value) => {
-    setSkills(prev => prev.map(skill => {
-      if (skill.id === id) {
-        const updated = { ...skill, [field]: value };
-        handleArrayUpdate('priorSkillsCerts', skill._id, field, value);
-        return updated;
-      }
-      return skill;
-    }));
+  const handleChange = (index, field, value) => {
+    const updatedSkills = skills.map((skill, i) =>
+      i === index ? { ...skill, [field]: value } : skill
+    );
+    setSkills(updatedSkills);
+    handleUpdate("priorSkillsCerts", updatedSkills);
   };
 
   const addSkill = () => {
     const newSkill = {
-      id: new Date().getTime().toString() + Math.random(),
       sector: "",
       tradeArea: "",
       name: "",
       year: "",
-      priUpload: ""
+      priUpload: "",
     };
-    setSkills(prev => [...prev, newSkill]);
+    const updatedSkills = [...skills, newSkill];
+    setSkills(updatedSkills);
+    handleUpdate("priorSkillsCerts", updatedSkills);
   };
 
-  const removeSkill = (id) => {
-    setSkills(prev => prev.filter(skill => skill.id !== id));
+  const removeSkill = (index) => {
+    const updatedSkills = skills.filter((_, i) => i !== index);
+    setSkills(updatedSkills);
+    handleUpdate("priorSkillsCerts", updatedSkills);
   };
 
   if (loading) return <div>Loading sectors...</div>;
-  if (error) return <div>Error: {error}</div>;
 
   return (
     <TabsContent value="skills">
       <Card>
         <CardHeader>
-          <CardTitle>Prior Skill Certificates</CardTitle>
+          <CardTitle>Prior Skills & Certifications</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {skills.map((skill) => (
-              <div key={skill.id} className="p-4 border rounded">
-                <div className="flex flex-row justify-center gap-4">
+          <div className="space-y-6">
+            {skills.map((skill, index) => (
+              <div key={index} className="p-4 border rounded space-y-4">
+                <div className="flex flex-row gap-4">
                   <div className="w-full">
                     <Label>Sector</Label>
                     <Select
                       value={skill.sector}
-                      onValueChange={(value) => handleChange(skill.id, "sector", value)}
+                      onValueChange={(val) => handleChange(index, "sector", val)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a Sector" />
+                        <SelectValue placeholder="Select Sector" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -112,7 +297,7 @@ const SkillsTab = ({ user, handleArrayUpdate, handleInputChange, handleFileUploa
                     <Label>Trade Area</Label>
                     <Select
                       value={skill.tradeArea}
-                      onValueChange={(value) => handleChange(skill.id, "tradeArea", value)}
+                      onValueChange={(val) => handleChange(index, "tradeArea", val)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Trade Area" />
@@ -121,9 +306,9 @@ const SkillsTab = ({ user, handleArrayUpdate, handleInputChange, handleFileUploa
                         <SelectGroup>
                           {sectors
                             .find((sector) => sector.name === skill.sector)
-                            ?.tradeAreas?.map((tradeArea) => (
-                              <SelectItem key={tradeArea._id} value={tradeArea.name}>
-                                {tradeArea.name}
+                            ?.tradeAreas?.map((area) => (
+                              <SelectItem key={area._id} value={area.name}>
+                                {area.name}
                               </SelectItem>
                             ))}
                         </SelectGroup>
@@ -132,57 +317,51 @@ const SkillsTab = ({ user, handleArrayUpdate, handleInputChange, handleFileUploa
                   </div>
                 </div>
 
-                <div className="mt-4">
+                <div>
                   <Label>Certificate Name</Label>
                   <Input
                     value={skill.name}
-                    onChange={(e) => handleChange(skill.id, "name", e.target.value)}
-                    placeholder="Enter certificate name"
+                    onChange={(e) => handleChange(index, "name", e.target.value)}
                   />
                 </div>
 
-                <div className="mt-4">
+                <div>
                   <Label>Year Obtained</Label>
                   <Input
                     type="date"
                     value={skill.year}
-                    onChange={(e) => handleChange(skill.id, "year", e.target.value)}
+                    onChange={(e) => handleChange(index, "year", e.target.value)}
                   />
                 </div>
 
-                <div className="mt-4">
-                  <Label>Supporting Document</Label>
+                <div>
+                  <Label>Upload Document</Label>
                   <div className="flex items-center gap-4">
                     <UploadButton
                       fileUrl={skill.priUpload}
-                      handleFileChange={(url) => handleChange(skill.id, "priUpload", url)}
-                      removeFile={() => handleChange(skill.id, "priUpload", "")}
+                      handleFileChange={(url) => handleChange(index, "priUpload", url)}
+                      removeFile={() => handleChange(index, "priUpload", "")}
                     />
                     {skill.priUpload && <FilePreview fileUrl={skill.priUpload} />}
                   </div>
                 </div>
 
-                {skills.length > 1 && (
-                  <Button
-                    onClick={() => removeSkill(skill.id)}
-                    variant="destructive"
-                    size="sm"
-                    className="mt-4"
-                  >
-                    <TrashIcon className="w-4 h-4 mr-2" />
-                    Remove Skill
-                  </Button>
-                )}
+                <Button
+                  variant="destructive"
+                  onClick={() => removeSkill(index)}
+                  className="mt-2"
+                >
+                  <TrashIcon className="w-4 h-4 mr-2" /> Remove Skill
+                </Button>
               </div>
             ))}
 
-            <Button 
-              onClick={addSkill} 
-              variant="outline" 
-              className="w-full"
-            >
-              <PlusCircledIcon className="w-4 h-4 mr-2" />
-              Add Another Skill
+            <Button onClick={addSkill} variant="outline" className="w-full">
+              <PlusCircledIcon className="w-4 h-4 mr-2" /> Add New Skill
+            </Button>
+
+            <Button onClick={() => submitChanges("skills")} className="w-full mt-4">
+              Save Skills & Certifications
             </Button>
           </div>
         </CardContent>
@@ -192,6 +371,7 @@ const SkillsTab = ({ user, handleArrayUpdate, handleInputChange, handleFileUploa
 };
 
 export default SkillsTab;
+
 
 // import React, { useEffect, useState } from "react";
 // import { Button } from "@/components/ui/button";
