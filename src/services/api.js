@@ -10,9 +10,9 @@ const api = axios.create({
 });
 
 // export const fetchUserDist = async () => {
-
+//   const accessToken = localStorage.getItem("accessToken");
 //   if (!accessToken) {
-//     console.error('Access token is missing');
+//     console.error("Access token is missing");
 //     return {}; // Return empty object if token is not found
 //   }
 
@@ -24,21 +24,20 @@ const api = axios.create({
 //       },
 //     });
 
-//     console.log('Full response data:', response.data); // Log full response data for debugging
-
 //     const dist = {};
 
-//     // Access locationDistributions directly
-//     const locationDistributions = response.data.locationDistributions || [];
-//     console.log('Location distributions:', locationDistributions);
+//     // Access locationDistributions correctly from the response structure
+//     const locationDistributions =
+//       response.data.data?.[0]?.locationDistributions || [];
 
 //     if (!Array.isArray(locationDistributions)) {
-//       console.error('Expected locationDistributions to be an array');
+//       console.error("Expected locationDistributions to be an array");
 //       return {};
 //     }
 
-//     locationDistributions.forEach((user) => {
-//       const { role, stateOfResidence } = user._id;
+//     locationDistributions.forEach((location) => {
+//       const { _id, count } = location;
+//       const stateOfResidence = _id.stateOfResidence;
 
 //       if (!stateOfResidence) return;
 
@@ -47,19 +46,65 @@ const api = axios.create({
 //         dist[state] = { artisan_users: 0, intending_artisans: 0 };
 //       }
 
-//       if (role === 'artisan_user') {
-//         dist[state].artisan_users += user.count;
-//       } else if (role === 'intending_artisan') {
-//         dist[state].intending_artisans += user.count;
-//       }
+//       // Assuming the count is the total number of users in that state
+//       dist[state].artisan_users += count; // Adjust this if you have separate counts for artisan_users and intending_artisans
 //     });
 
 //     return dist;
 //   } catch (error) {
-//     console.error('Error fetching user distribution:', error);
+//     console.error("Error fetching user distribution:", error);
 //     throw error; // Rethrow error after logging
 //   }
 // };
+
+// export const fetchUserDist = async () => {
+//   const accessToken = localStorage.getItem("accessToken");
+//   if (!accessToken) {
+//     console.error("Access token is missing");
+//     return {}; // Return empty object if token is not found
+//   }
+
+//   try {
+//     // Make sure to pass the access token in the Authorization header
+//     const response = await axios.get(`${API_BASE_URL}/dashboard-analytics`, {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+
+//     const dist = {};
+
+//     // Access locationDistributions correctly from the response structure
+//     const locationDistributions =
+//       response.data.data?.[0]?.locationDistributions || [];
+
+//     if (!Array.isArray(locationDistributions)) {
+//       console.error("Expected locationDistributions to be an array");
+//       return {};
+//     }
+
+//     locationDistributions.forEach((location) => {
+//       const { _id, count } = location;
+//       const stateOfResidence = _id.stateOfResidence;
+
+//       if (!stateOfResidence) return;
+
+//       const state = stateOfResidence.toLowerCase();
+//       if (!dist[state]) {
+//         dist[state] = { artisan_users: 0, intending_artisans: 0 };
+//       }
+
+//       // Assuming the count is the total number of users in that state
+//       dist[state].artisan_users += count; // Adjust this if you have separate counts for artisan_users and intending_artisans
+//     });
+
+//     return dist;
+//   } catch (error) {
+//     console.error("Error fetching user distribution:", error);
+//     throw error; // Rethrow error after logging
+//   }
+// };
+
 
 export const fetchUserDist = async () => {
   const accessToken = localStorage.getItem("accessToken");
@@ -82,16 +127,16 @@ export const fetchUserDist = async () => {
     const locationDistributions =
       response.data.data?.[0]?.locationDistributions || [];
 
-
     if (!Array.isArray(locationDistributions)) {
       console.error("Expected locationDistributions to be an array");
       return {};
     }
 
-    locationDistributions.forEach((user) => {
-      const { role, stateOfResidence } = user._id;
+    locationDistributions.forEach((location) => {
+      const { _id, count } = location;
+      const { stateOfResidence, role } = _id;
 
-      if (!stateOfResidence) return;
+      if (!stateOfResidence || !role) return;
 
       const state = stateOfResidence.toLowerCase();
       if (!dist[state]) {
@@ -99,9 +144,9 @@ export const fetchUserDist = async () => {
       }
 
       if (role === "artisan_user") {
-        dist[state].artisan_users += user.count;
+        dist[state].artisan_users += count;
       } else if (role === "intending_artisan") {
-        dist[state].intending_artisans += user.count;
+        dist[state].intending_artisans += count;
       }
     });
 
@@ -111,6 +156,8 @@ export const fetchUserDist = async () => {
     throw error; // Rethrow error after logging
   }
 };
+
+
 
 export const fetchUserDistribution = async () => {
   try {
@@ -155,37 +202,6 @@ export const fetchUserDistribution = async () => {
     throw error;
   }
 };
-
-// function PeriodicRequest() {
-//   useEffect(() => {
-//     // Function to send a request to the server
-//     const sendRequest = async () => {
-//       try {
-//         const response = await axios.get(`${API_BASE_URL}/sectors`,{
-//           headers: { Authorization: `Bearer ${accessToken}` },
-//         }); // Replace with your endpoint
-//         console.log('Server response:', response.data);
-//       } catch (error) {
-//         console.error('Error making the request:', error);
-//       }
-//     };
-
-//     // Call the function immediately on mount
-//     sendRequest();
-
-//     // Set up an interval to call the function every 5 minutes
-//     const intervalId = setInterval(() => {
-//       sendRequest();
-//     }, 300000); // 300,000 ms = 5 minutes
-
-//     // Cleanup the interval on component unmount
-//     return () => clearInterval(intervalId);
-//   }, []); // Empty dependency array ensures this runs only once
-
-//   return null; // This component does not render anything
-// }
-
-// export default PeriodicRequest;
 
 export const fetchSectors = async (accessToken) => {
   try {
