@@ -125,10 +125,21 @@ const Biodata = () => {
   //   }));
   // };
 
+  // const handleUpdate = (key, value) => {
+  //   console.log('Updating:', key, value);
+  //   setUser((prevUser) => ({
+  //     ...prevUser,
+  //     [key]: value,
+  //   }));
+  // };
+
   const handleUpdate = (key, value) => {
-    console.log('Updating:', key, value);
     setUser((prevUser) => ({
       ...prevUser,
+      [key]: value,
+    }));
+    setChanges((prevChanges) => ({
+      ...prevChanges,
       [key]: value,
     }));
   };
@@ -477,6 +488,8 @@ const Biodata = () => {
     onchangeInput("selectedDisability", value);
   };
 
+  const [selectedTab, setSelectedTab] = useState("personal");
+
   return (
     <DashboardPage title="User Profile" href="/trainee/dashboard">
       <div className="container mx-auto p-6">
@@ -543,8 +556,26 @@ const Biodata = () => {
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="personal" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+        <div className="block md:hidden mb-4">
+          <Select
+            onValueChange={(value) => setSelectedTab(value)}
+            value={selectedTab}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Tab" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="personal">Personal</SelectItem>
+              <SelectItem value="education">Education</SelectItem>
+              <SelectItem value="skills">Skills & Experience</SelectItem>
+              <SelectItem value="bank">Bank Account</SelectItem>
+              <SelectItem value="password">Change Password</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Tabs defaultValue="personal"  value={selectedTab} onValueChange={setSelectedTab}  className="w-full">
+          <TabsList className="hidden md:grid w-full grid-cols-5">
             <TabsTrigger value="personal">Personal</TabsTrigger>
             <TabsTrigger value="education">Education</TabsTrigger>
             <TabsTrigger value="skills">Skills & Experience</TabsTrigger>
@@ -554,7 +585,17 @@ const Biodata = () => {
 
           <PersonalTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges}  />
           <EducationTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
-          <SkillsTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
+          <TabsContent value="skills">
+          <SkillsTab
+            user={user}
+            handleUpdate={handleUpdate}
+            submitChanges={submitChanges}
+            changes={changes}
+            handleArrayUpdate={handleArrayUpdate}
+            addArrayItem={addArrayItem}
+            removeArrayItem={removeArrayItem}
+          />
+         </TabsContent>
           <BankTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
 
           {/* <TabsContent value="personal">
@@ -1106,7 +1147,7 @@ const Biodata = () => {
             </Button>
           </CardContent>
         </Card> */}
-        {(user.role === "admin" || user.role === "superadmin") && (
+        {/* {(user.role === "admin" || user.role === "superadmin") && (
           <Card className="border p-4 rounded-lg shadow-md mt-6">
             <CardHeader>
               <CardTitle>Additional Information</CardTitle>
@@ -1177,13 +1218,79 @@ const Biodata = () => {
               </div>
               <Button
                 onClick={() => submitChanges("additionalInfo")}
-                className="mt-4">
+                className="mt-4 bg-green-500 hover:bg-green-600">
                 Update Additional Information
               </Button>
             </CardContent>
           </Card>
-        )}
-        
+        )} */}
+        {(user.role === "admin" || user.role === "superadmin") && (
+  <Card className="border p-4 rounded-lg shadow-md mt-6">
+    <CardHeader>
+      <CardTitle>Additional Information</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="role">Role</Label>
+          <Select
+            onValueChange={(value) =>
+              handleUpdate("role", value)
+            }
+            value={changes["role"] ?? user.role ?? ""}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="superadmin">Superadmin</SelectItem>
+              <SelectItem value="admin">Admin</SelectItem>
+              <SelectItem value="artisan_user">Artisan User</SelectItem>
+              <SelectItem value="intending_artisan">
+                Intending Artisan
+              </SelectItem>
+              <SelectItem value="regular_user">Regular User</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="certifiedStatus">Certified Status</Label>
+          <Switch
+            id="certifiedStatus"
+            checked={changes["certifiedStatus"] ?? user.certifiedStatus ?? false}
+            onCheckedChange={(checked) =>
+              handleUpdate("certifiedStatus", checked)
+            }
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="licenseStatus">License Status</Label>
+          <Switch
+            id="licenseStatus"
+            checked={changes["licenseStatus"] ?? user.licenseStatus ?? false}
+            onCheckedChange={(checked) =>
+              handleUpdate("licenseStatus", checked)
+            }
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="agree">Agree to Terms</Label>
+          <Switch
+            id="agree"
+            checked={changes["agree"] ?? user.agree ?? false}
+            onCheckedChange={(checked) =>
+              handleUpdate("agree", checked)
+            }
+          />
+        </div>
+      </div>
+      <Button
+        onClick={() => submitChanges("additionalInfo")}
+        className="mt-4 bg-green-500 hover:bg-green-600">
+        Update Additional Information
+      </Button>
+    </CardContent>
+  </Card>
+)}
       </div>
     </DashboardPage>
   );

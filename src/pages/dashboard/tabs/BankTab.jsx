@@ -341,8 +341,8 @@ const BankTab = ({ user, handleUpdate, submitChanges }) => {
 
           <Button
             onClick={() => submitChanges("bankAccount")}
-            className="mt-4"
-            disabled={!validateAccountNumber(user.bankAccount?.accountNumber)}
+            className="mt-4  bg-green-500 hover:bg-green-600"
+            // disabled={!validateAccountNumber(user.bankAccount?.accountNumber)}
           >
             Update Bank Account
           </Button>

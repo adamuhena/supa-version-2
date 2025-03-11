@@ -187,7 +187,7 @@ export default function PageLayout({ children }) {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
-    { name: "Market Place", path: "/" },
+    { name: "Market Place", path: "/marketplace" },
     { name: "Contact", path: "/contact" },
     { name: "Media", path: "/gallery" },
   ];

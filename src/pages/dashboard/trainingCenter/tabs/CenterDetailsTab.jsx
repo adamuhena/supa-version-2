@@ -125,7 +125,7 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
             placeholder="ITF Registration Number"
           />
         )}
-        <Button type="submit">Update Center Details</Button>
+        <Button type="submit" className="mt-4 bg-green-500 hover:bg-green-600">Update Center Details</Button>
       </form>
     </TabsContent>
   );

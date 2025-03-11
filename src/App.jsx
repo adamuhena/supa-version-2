@@ -33,6 +33,7 @@ import "./App.css";
 
 import { AlertUsersToResetPassword } from "./components/AlertUsersToResetPassword";
 import GalleryPage from "./pages/gallery/Gallery";
+import ComingSoon from "./pages/HomePage/Comingsoon";
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard"
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/not-authorized" element={<NotAuthorized />} />
           <Route path="/" element={<HomePage />} />
+          <Route path="/marketplace" element={<ComingSoon />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/gallery" element={<GalleryPage />} />

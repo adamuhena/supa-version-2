@@ -131,7 +131,7 @@ const AssessmentTab = ({
           }
           placeholder="Total Floor Area (sq ft)"
         />
-        <Button type="submit">Update Assessment</Button>
+        <Button type="submit" className="mt-4 bg-green-500 hover:bg-green-600">Update Assessment</Button>
       </form>
     </TabsContent>
   );

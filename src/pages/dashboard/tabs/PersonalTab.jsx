@@ -408,7 +408,7 @@ const handleSubmit = () => {
           
         <Button 
             onClick={handleSubmit} 
-            className="mt-4"
+            className="mt-4 bg-green-500 hover:bg-green-600"
           >
             Update Personal Information
           </Button>

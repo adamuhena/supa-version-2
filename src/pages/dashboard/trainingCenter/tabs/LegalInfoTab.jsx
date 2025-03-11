@@ -77,7 +77,7 @@ const LegalInfoTab = ({
             Add Trade Area
           </Button>
         </div>
-        <Button type="submit">Update Legal Info</Button>
+        <Button type="submit" className="mt-4 bg-green-500 hover:bg-green-600">Update Legal Info</Button>
       </form>
     </TabsContent>
   );

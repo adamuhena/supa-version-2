@@ -44,7 +44,7 @@ const BankAccountTab = ({
           }
           placeholder="Bank Name"
         />
-        <Button type="submit">Update Bank Account</Button>
+        <Button type="submit" className="mt-4 bg-green-500 hover:bg-green-600">Update Bank Account</Button>
       </form>
     </TabsContent>
   );

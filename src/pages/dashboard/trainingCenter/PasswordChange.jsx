@@ -85,7 +85,7 @@ const PasswordChange = () => {
           required
         />
       </div>
-      <Button type="submit">Change Password</Button>
+      <Button type="submit" className="mt-4 bg-green-500 hover:bg-green-600">Change Password</Button>
     </form>
   );
 };

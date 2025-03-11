@@ -2,6 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import useLogout from "@/pages/loginPage/logout";
 import axios from "axios";
 import { LogOut, UserCircle } from "lucide-react";
@@ -172,6 +179,9 @@ const TrainingCenterBiodata = () => {
     }
   };
 
+  const [selectedTab, setSelectedTab] = useState("personal");
+
+
   return (
     <TrainingDashboardPage title="Training Center Dashboard">
       <div className="container mx-auto p-6">
@@ -248,8 +258,27 @@ const TrainingCenterBiodata = () => {
             <CardTitle>Training Center Biodata</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="basic">
-              <TabsList>
+          <div className="block md:hidden mb-4">
+          <Select
+            onValueChange={(value) => setSelectedTab(value)}
+            value={selectedTab}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Tab" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="basic">Basic Info</SelectItem>
+              <SelectItem value="details">Center Details</SelectItem>
+              <SelectItem value="bank">Bank Account</SelectItem>
+              <SelectItem value="amenities">Amenities</SelectItem>
+              <SelectItem value="assessment">Assessment</SelectItem>
+              <SelectItem value="legal">Legal Info</SelectItem>
+              <SelectItem value="password">Change Password</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+            <Tabs defaultValue="basic"  value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+            <TabsList className="hidden md:grid w-full grid-cols-7">
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="details">Center Details</TabsTrigger>
                 <TabsTrigger value="bank">Bank Account</TabsTrigger>
