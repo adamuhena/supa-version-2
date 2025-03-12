@@ -104,10 +104,137 @@
 // export default VerificationDocuments;
 
 
-import React from "react";
-import { Label } from "../../../components/ui/label";
-import UploadButton from "@/components/UploadButton";
-import "./index.css";
+// import React from "react";
+// import { Label } from "../../../components/ui/label";
+// import UploadButton from "@/components/UploadButton";
+// import "./index.css";
+
+// const VerificationDocuments = ({ form = {}, setForm, controlButtons }) => {
+//   // Ensure the form has a verificationDocuments object with default properties
+//   const verificationDocuments = form.verificationDocuments || {
+//     certificateOfRegistration: null,
+//     taxClearanceCertificate: null,
+//     proofOfAddress: null,
+//     accreditationCertificate: null,
+//   };
+
+//   // Function to update the document in the form state
+//   const updateDocument = (field, fileUrl) => {
+//     setForm((prev) => ({
+//       ...prev,
+//       verificationDocuments: {
+//         ...prev.verificationDocuments,
+//         [field]: fileUrl,
+//       },
+//     }));
+//   };
+
+//   return (
+//     <div
+//       style={{
+//         boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+//         marginBottom: "100px",
+//         background: "white",
+//       }}
+//       className="relative w-full max-w-[700px] mx-auto py-[30px] flex flex-col px-5 gap-[30px] bg-white rounded-[16px]"
+//     >
+//       <h1 className="text-left font-[700] text-[24px]">Verification Documents</h1>
+
+//       {/* Certificate of Registration */}
+//       <div className="flex items-start">
+//         <Label
+//           htmlFor="certificateOfRegistration"
+//           className="w-[300px] text-left leading-[1.3]"
+//         >
+//           Certificate of Registration *
+//         </Label>
+//         <div>
+//           <UploadButton
+//             fileUrl={verificationDocuments.certificateOfRegistration}
+//             title="certificateOfRegistration"
+//             handleFileChange={(fileUrl) =>
+//               updateDocument("certificateOfRegistration", fileUrl)
+//             }
+//             accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
+//             removeFile={() => updateDocument("certificateOfRegistration", null)}
+//           />
+//         </div>
+//       </div>
+
+//       {/* Tax Clearance Certificate */}
+//       <div className="flex items-start">
+//         <Label
+//           htmlFor="taxClearanceCertificate"
+//           className="w-[300px] text-left leading-[1.3]"
+//         >
+//           Tax Clearance Certificate *
+//         </Label>
+//         <div>
+//           <UploadButton
+//             fileUrl={verificationDocuments.taxClearanceCertificate}
+//             title="taxClearanceCertificate"
+//             handleFileChange={(fileUrl) =>
+//               updateDocument("taxClearanceCertificate", fileUrl)
+//             }
+//             accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
+//             removeFile={() => updateDocument("taxClearanceCertificate", null)}
+//           />
+//         </div>
+//       </div>
+
+//       {/* Proof of Address */}
+//       <div className="flex items-start">
+//         <Label
+//           htmlFor="proofOfAddress"
+//           className="w-[300px] text-left leading-[1.3]"
+//         >
+//           Proof of Address *
+//         </Label>
+//         <div>
+//           <UploadButton
+//             fileUrl={verificationDocuments.proofOfAddress}
+//             title="proofOfAddress"
+//             handleFileChange={(fileUrl) =>
+//               updateDocument("proofOfAddress", fileUrl)
+//             }
+//             accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
+//             removeFile={() => updateDocument("proofOfAddress", null)}
+//           />
+//         </div>
+//       </div>
+
+//       {/* Accreditation Certificate */}
+//       <div className="flex items-start">
+//         <Label
+//           htmlFor="accreditationCertificate"
+//           className="w-[300px] text-left leading-[1.3]"
+//         >
+//           Accreditation Certificate *
+//         </Label>
+//         <div>
+//           <UploadButton
+//             fileUrl={verificationDocuments.accreditationCertificate}
+//             title="accreditationCertificate"
+//             handleFileChange={(fileUrl) =>
+//               updateDocument("accreditationCertificate", fileUrl)
+//             }
+//             accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
+//             removeFile={() => updateDocument("accreditationCertificate", null)}
+//           />
+//         </div>
+//       </div>
+
+//       {controlButtons}
+//     </div>
+//   );
+// };
+
+// export default VerificationDocuments;
+
+
+import { Label } from "../../../components/ui/label"
+import UploadButton from "@/components/UploadButton"
+import "./index.css"
 
 const VerificationDocuments = ({ form = {}, setForm, controlButtons }) => {
   // Ensure the form has a verificationDocuments object with default properties
@@ -116,18 +243,18 @@ const VerificationDocuments = ({ form = {}, setForm, controlButtons }) => {
     taxClearanceCertificate: null,
     proofOfAddress: null,
     accreditationCertificate: null,
-  };
+  }
 
   // Function to update the document in the form state
   const updateDocument = (field, fileUrl) => {
     setForm((prev) => ({
       ...prev,
       verificationDocuments: {
-        ...prev.verificationDocuments,
+        ...(prev.verificationDocuments || {}),
         [field]: fileUrl,
       },
-    }));
-  };
+    }))
+  }
 
   return (
     <div
@@ -142,19 +269,14 @@ const VerificationDocuments = ({ form = {}, setForm, controlButtons }) => {
 
       {/* Certificate of Registration */}
       <div className="flex items-start">
-        <Label
-          htmlFor="certificateOfRegistration"
-          className="w-[300px] text-left leading-[1.3]"
-        >
+        <Label htmlFor="certificateOfRegistration" className="w-[300px] text-left leading-[1.3]">
           Certificate of Registration *
         </Label>
         <div>
           <UploadButton
             fileUrl={verificationDocuments.certificateOfRegistration}
             title="certificateOfRegistration"
-            handleFileChange={(fileUrl) =>
-              updateDocument("certificateOfRegistration", fileUrl)
-            }
+            handleFileChange={(fileUrl) => updateDocument("certificateOfRegistration", fileUrl)}
             accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
             removeFile={() => updateDocument("certificateOfRegistration", null)}
           />
@@ -163,19 +285,14 @@ const VerificationDocuments = ({ form = {}, setForm, controlButtons }) => {
 
       {/* Tax Clearance Certificate */}
       <div className="flex items-start">
-        <Label
-          htmlFor="taxClearanceCertificate"
-          className="w-[300px] text-left leading-[1.3]"
-        >
+        <Label htmlFor="taxClearanceCertificate" className="w-[300px] text-left leading-[1.3]">
           Tax Clearance Certificate *
         </Label>
         <div>
           <UploadButton
             fileUrl={verificationDocuments.taxClearanceCertificate}
             title="taxClearanceCertificate"
-            handleFileChange={(fileUrl) =>
-              updateDocument("taxClearanceCertificate", fileUrl)
-            }
+            handleFileChange={(fileUrl) => updateDocument("taxClearanceCertificate", fileUrl)}
             accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
             removeFile={() => updateDocument("taxClearanceCertificate", null)}
           />
@@ -184,19 +301,14 @@ const VerificationDocuments = ({ form = {}, setForm, controlButtons }) => {
 
       {/* Proof of Address */}
       <div className="flex items-start">
-        <Label
-          htmlFor="proofOfAddress"
-          className="w-[300px] text-left leading-[1.3]"
-        >
+        <Label htmlFor="proofOfAddress" className="w-[300px] text-left leading-[1.3]">
           Proof of Address *
         </Label>
         <div>
           <UploadButton
             fileUrl={verificationDocuments.proofOfAddress}
             title="proofOfAddress"
-            handleFileChange={(fileUrl) =>
-              updateDocument("proofOfAddress", fileUrl)
-            }
+            handleFileChange={(fileUrl) => updateDocument("proofOfAddress", fileUrl)}
             accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
             removeFile={() => updateDocument("proofOfAddress", null)}
           />
@@ -205,19 +317,14 @@ const VerificationDocuments = ({ form = {}, setForm, controlButtons }) => {
 
       {/* Accreditation Certificate */}
       <div className="flex items-start">
-        <Label
-          htmlFor="accreditationCertificate"
-          className="w-[300px] text-left leading-[1.3]"
-        >
+        <Label htmlFor="accreditationCertificate" className="w-[300px] text-left leading-[1.3]">
           Accreditation Certificate *
         </Label>
         <div>
           <UploadButton
             fileUrl={verificationDocuments.accreditationCertificate}
             title="accreditationCertificate"
-            handleFileChange={(fileUrl) =>
-              updateDocument("accreditationCertificate", fileUrl)
-            }
+            handleFileChange={(fileUrl) => updateDocument("accreditationCertificate", fileUrl)}
             accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
             removeFile={() => updateDocument("accreditationCertificate", null)}
           />
@@ -226,7 +333,8 @@ const VerificationDocuments = ({ form = {}, setForm, controlButtons }) => {
 
       {controlButtons}
     </div>
-  );
-};
+  )
+}
 
-export default VerificationDocuments;
+export default VerificationDocuments
+

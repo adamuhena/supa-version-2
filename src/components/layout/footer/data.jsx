@@ -7,7 +7,7 @@ export const footerLinks = [
     },
     { title: "Home", path: "/" },
     { title: "About Us", path: "/about" },
-    { title: "MarketPlace", path: "/" },
+    { title: "MarketPlace", path: "/marketplace" },
     { title: "Contact ", path: "/contact" },
     { title: "ITF ", path: "https://itf.gov.ng/" },
   ],

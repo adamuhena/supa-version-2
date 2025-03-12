@@ -86,13 +86,16 @@ export default function Banner() {
                   </Link>
                 </BlurFade>
                 <BlurFade delay={0.25} inView>
+                <Link to="/marketplace">
                   <button
                     className="h-12 px-8 text-sm rounded-full 
                     bg-white text-yellow-600 border border-yellow-600 
                     hover:bg-yellow-50 transition-colors duration-300"
+                    onClick={() => navigate("/marketplace")}
                   >
                     View Marketplace
                   </button>
+                  </Link>
                 </BlurFade>
               </div>
             </div>
@@ -100,8 +103,8 @@ export default function Banner() {
             {/* Right Section - Image */}
             <div className="w-full max-w-xl hidden md:flex justify-center text-white">
               <img
-                // src={logo7}
-                src="https://res.cloudinary.com/dwelaq1lp/image/upload/v1741671516/Image_banner_wn6qgo.png"
+                src={logo7}
+                // src="https://res.cloudinary.com/dwelaq1lp/image/upload/v1741671516/Image_banner_wn6qgo.png"
                 alt="Artisan"
                 className="w-full max-w-md h-auto object-contain"
               />

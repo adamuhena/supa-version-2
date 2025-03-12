@@ -142,7 +142,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
         />
       </div>
 
-      <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
+      {/* <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label
           htmlFor="trainingCentreName"
           className="w-[300px] text-left leading-[1.3]">
@@ -154,7 +154,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
           value={form.trainingCentreName}
           onChange={(e) => updateField("trainingCentreName", e.target.value)}
         />
-      </div>
+      </div> */}
 
       <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label htmlFor="address" className="w-[300px] text-left leading-[1.3]">
@@ -196,7 +196,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
         />
       </div>
 
-      <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
+      {/* <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label htmlFor="email" className="w-[300px] text-left leading-[1.3]">
           E-Mail Address
         </Label>
@@ -207,7 +207,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
           value={form.email}
           onChange={(e) => updateField("email", e.target.value)}
         />
-      </div>
+      </div> */}
 
       <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label
