@@ -131,56 +131,9 @@ const TrainingCenterReport = () => {
     setFilter((x) => ({ ...x, currentPage: page }));
   };
 
-  const fetchReports = async () => {
-    setLoading(true);
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      const response = await axios.get(
-        `${API_BASE_URL}/trainingcenter/report`,
-        {
-          params: {
-            limit: itemsPerPage,
-            page: filter?.currentPage,
-            search: filter?.search,
-            state: filter?.state,
-            lga: filter?.lga,
-            sector: filter?.sector,
-            tradeArea: filter?.tradeArea,
-            sort: filter?.sort,
-          },
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      const { data, pagination } = response.data;
-      setReports(data);
-
-      setpagination((x) => {
-        return {
-          ...x,
-          total: pagination.total,
-          totalPages: pagination.totalPages,
-        };
-      });
-    } catch (error) {
-      console.error("Error fetching reports:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchReports();
-  }, [
-    filter?.search,
-    filter?.currentPage,
-    filter?.state,
-    filter?.lga,
-    filter?.sector,
-    filter?.tradeArea,
-  ]);
+  const [loadingCSV, setLoadingCSV] = useState(false);
+  const [csvData, setcsvData] = useState([]);
+  const MAX_CSV_ROWS = 1000000;
 
   function replaceSymbolsWithSpace(str = "") {
     let replacedStr = str.replace(/[-/]/g, " ");
@@ -202,20 +155,12 @@ const TrainingCenterReport = () => {
         }))
       : [];
 
-  const applyFilter = () => {
-    fetchReports();
-  };
-
   const { value: searchv, setValue } = useDebounce({
     debounce: 500,
     onChange: (debouncedValue) => {
       setFilter((x) => ({ ...x, search: debouncedValue }));
     },
   });
-
-  const [loadingCSV, setLoadingCSV] = useState(false);
-  const [csvData, setcsvData] = useState([]);
-  const MAX_CSV_ROWS = 1000000;
 
   function formatTCToCSV(users) {
     if (!Array.isArray(users) || users.length === 0) {
@@ -315,6 +260,58 @@ const TrainingCenterReport = () => {
     setValue("");
     setcsvData([]);
   };
+
+  const fetchReports = async () => {
+    setLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/trainingcenter/report`,
+        {
+          params: {
+            limit: itemsPerPage,
+            page: filter?.currentPage,
+            search: filter?.search,
+            state: filter?.state,
+            lga: filter?.lga,
+            sector: filter?.sector,
+            tradeArea: filter?.tradeArea,
+            sort: filter?.sort,
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const { data, pagination } = response.data;
+      setReports(data);
+
+      setpagination((x) => {
+        return {
+          ...x,
+          total: pagination.total,
+          totalPages: pagination.totalPages,
+        };
+      });
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+    } finally {
+      setLoading(false);
+      setcsvData([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, [
+    filter?.search,
+    filter?.currentPage,
+    filter?.state,
+    filter?.lga,
+    filter?.sector,
+    filter?.tradeArea,
+  ]);
 
   return (
     <ProtectedRoute>
@@ -733,34 +730,3 @@ const TrainingCenterReport = () => {
 };
 
 export default TrainingCenterReport;
-
-// Update fetch function to use currentPage
-// const fetchReports = async () => {
-//   setLoading(true);
-//   try {
-//     const accessToken = localStorage.getItem("accessToken");
-//     const response = await axios.get(
-//       `${API_BASE_URL}/trainingcenter/report`, {
-//         params: {
-//           page: currentPage,
-//           limit: itemsPerPage,
-//           filterParams: filter // Send filter as filterParams
-//         },
-//         headers: {
-//           Authorization: `Bearer ${accessToken}`,
-//         }
-//       }
-//     );
-
-//     const { data, pagination } = response.data;
-
-//     // Update states with response data
-//     setReports(data);
-//     setpagination(pagination.totalPages);
-//     setLoading(false);
-
-//   } catch (error) {
-//     console.error("Error fetching reports:", error);
-//     setLoading(false);
-//   }
-// };
