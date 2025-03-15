@@ -34,7 +34,14 @@ import "./App.css";
 import { AlertUsersToResetPassword } from "./components/AlertUsersToResetPassword";
 import GalleryPage from "./pages/gallery/Gallery";
 import ComingSoon from "./pages/HomePage/Comingsoon";
+import PDFPreviewPage from "./pages/HomePage/PdfPreviewPage";
+import DocPreview from "./pages/dashboard/Admin/page";
 // import AdminDashboard from "./pages/dashboard/Admin/adminDashboard"
+import { DocumentProvider } from "./pages/dashboard/Admin/preview/contexts/DocumentContext";
+import Dashboard from "./pages/dashboard/Admin/preview/pages/Dashboard";
+import CreateDocument from "./pages/dashboard/Admin/preview/pages/CreateDocument";  
+import EditDocument from "./pages/dashboard/Admin//preview/pages/EditDocument";
+import DocumentPreview from "./pages/dashboard/Admin//preview/components/DocumentPreview";
 
 function App() {
   return (
@@ -55,9 +62,50 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/preview" element={<PDFPreviewPage />} />
+          <Route path="/doc" element={<DocPreview />} />
           {/* <Route path="/biodata2" element={<BiodataPage />} /> */}
           {/* <Route path="/biodata" element={<Biodata />} />
         <Route path="/certification/upload" element={<DocumentUpload />} /> */}
+
+      {/* <DocumentProvider> */}
+        
+          <Route
+            path="/documents"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/documents/create"
+            element={
+              <ProtectedRoute>
+                <CreateDocument />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/documents/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditDocument />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/documents/:id"
+            element={
+              <ProtectedRoute>
+                <DocumentPreview />
+              </ProtectedRoute>
+            }
+          />
+          {/* <Route path="/" element={<Navigate to="/documents" replace />} /> */}
+     
+      {/* </DocumentProvider> */}
+
 
           {/* Public route for login */}
           <Route

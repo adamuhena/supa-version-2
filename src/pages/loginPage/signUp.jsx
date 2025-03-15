@@ -211,8 +211,8 @@ export default function SignupForm() {
             agree: false,
           };
 
-    console.log("payload", payload);
-    return alert(4343);
+    // console.log("payload", payload);
+    // return alert(4343);
 
     try {
       const response = await axios.post(endpoint, payload, {
