@@ -54,8 +54,7 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
             handleInputChange({
               target: { name: "ownership", value },
             })
-          }
-        >
+          }>
           <SelectTrigger>
             <SelectValue placeholder="Select ownership" />
           </SelectTrigger>
@@ -87,8 +86,7 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
             handleInputChange({
               target: { name: "trainingNature", value },
             })
-          }
-        >
+          }>
           <SelectTrigger>
             <SelectValue placeholder="Select training nature" />
           </SelectTrigger>
@@ -104,6 +102,7 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
         </Select>
         <div className="flex items-center space-x-2">
           <Switch
+            disabled
             id="itfRegistered"
             checked={center.itfRegistered === "yes"}
             onCheckedChange={(checked) =>
@@ -125,7 +124,12 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
             placeholder="ITF Registration Number"
           />
         )}
-        <Button type="submit" className="mt-4 bg-green-500 hover:bg-green-600">Update Center Details</Button>
+        <Button
+          type="submit"
+          disabled
+          className="mt-4 bg-green-500 hover:bg-green-600">
+          Update Center Details
+        </Button>
       </form>
     </TabsContent>
   );

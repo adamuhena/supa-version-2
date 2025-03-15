@@ -65,7 +65,12 @@ const AmenitiesTab = ({
           }
           placeholder="Other Comments"
         />
-        <Button type="submit" className="mt-4 bg-green-500 hover:bg-green-600">Update Amenities</Button>
+        <Button
+          disabled
+          type="submit"
+          className="mt-4 bg-green-500 hover:bg-green-600">
+          Update Amenities
+        </Button>
       </form>
     </TabsContent>
   );

@@ -20,13 +20,11 @@ import TrainingDashboardPage from "./TrainingDashboardLayout";
 import UploadButton from "@/components/UploadButton";
 import { API_BASE_URL } from "@/config/env";
 import BasicInfoTab from "./tabs/BasicInfoTab";
-import CenterDetailsTab from "./tabs/CenterDetailsTab"
-import BankAccountTab from "./tabs/BankAccountTab"
-import AmenitiesTab from "./tabs/AmenitiesTab"
-import AssessmentTab from "./tabs/AssessmentTab"
-import LegalInfoTab from "./tabs/LegalInfoTab"
-
-
+import CenterDetailsTab from "./tabs/CenterDetailsTab";
+import BankAccountTab from "./tabs/BankAccountTab";
+import AmenitiesTab from "./tabs/AmenitiesTab";
+import AssessmentTab from "./tabs/AssessmentTab";
+import LegalInfoTab from "./tabs/LegalInfoTab";
 
 const TrainingCenterBiodata = () => {
   const navigate = useNavigate();
@@ -136,7 +134,6 @@ const TrainingCenterBiodata = () => {
   };
 
   const updateProfilePicture = async (url) => {
-  
     try {
       const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
       if (!token) {
@@ -150,15 +147,11 @@ const TrainingCenterBiodata = () => {
           headers: {
             Authorization: `Bearer ${token}`, // Include the token here
           },
-          
-            
-          
         }
       );
 
       if (response.data.success) {
         setUser((prevUser) => ({ ...prevUser }));
-        
 
         toast({
           title: "Success",
@@ -180,7 +173,6 @@ const TrainingCenterBiodata = () => {
   };
 
   const [selectedTab, setSelectedTab] = useState("personal");
-
 
   return (
     <TrainingDashboardPage title="Training Center Dashboard">
@@ -258,27 +250,30 @@ const TrainingCenterBiodata = () => {
             <CardTitle>Training Center Biodata</CardTitle>
           </CardHeader>
           <CardContent>
-          <div className="block md:hidden mb-4">
-          <Select
-            onValueChange={(value) => setSelectedTab(value)}
-            value={selectedTab}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select Tab" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="basic">Basic Info</SelectItem>
-              <SelectItem value="details">Center Details</SelectItem>
-              <SelectItem value="bank">Bank Account</SelectItem>
-              <SelectItem value="amenities">Amenities</SelectItem>
-              <SelectItem value="assessment">Assessment</SelectItem>
-              <SelectItem value="legal">Legal Info</SelectItem>
-              <SelectItem value="password">Change Password</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-            <Tabs defaultValue="basic"  value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-            <TabsList className="hidden md:grid w-full grid-cols-7">
+            <div className="block md:hidden mb-4">
+              <Select
+                onValueChange={(value) => setSelectedTab(value)}
+                value={selectedTab}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Tab" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="basic">Basic Info</SelectItem>
+                  <SelectItem value="details">Center Details</SelectItem>
+                  <SelectItem value="bank">Bank Account</SelectItem>
+                  <SelectItem value="amenities">Amenities</SelectItem>
+                  <SelectItem value="assessment">Assessment</SelectItem>
+                  <SelectItem value="legal">Legal Info</SelectItem>
+                  <SelectItem value="password">Change Password</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Tabs
+              defaultValue="basic"
+              value={selectedTab}
+              onValueChange={setSelectedTab}
+              className="w-full">
+              <TabsList className="hidden md:grid w-full grid-cols-7">
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="details">Center Details</TabsTrigger>
                 <TabsTrigger value="bank">Bank Account</TabsTrigger>
@@ -288,18 +283,51 @@ const TrainingCenterBiodata = () => {
                 <TabsTrigger value="password">Change Password</TabsTrigger>
               </TabsList>
 
-              <BasicInfoTab center={center} handleInputChange={handleInputChange} handleSubmit={handleSubmit} />
-              <CenterDetailsTab center={center} handleInputChange={handleInputChange} handleSubmit={handleSubmit} />
-              <BankAccountTab center={center} handleNestedInputChange={handleNestedInputChange} handleSubmit={handleSubmit} />
-              <AmenitiesTab center={center} handleNestedInputChange={handleNestedInputChange} handleSubmit={handleSubmit} />
-              <AssessmentTab center={center} handleNestedInputChange={handleNestedInputChange} handleSubmit={handleSubmit} />
-              <LegalInfoTab center={center} handleNestedInputChange={handleNestedInputChange} handleSubmit={handleSubmit} />
+              <BasicInfoTab
+                center={center}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+              />
+              <CenterDetailsTab
+                center={center}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+              />
+              <BankAccountTab
+                center={center}
+                handleNestedInputChange={handleNestedInputChange}
+                handleSubmit={handleSubmit}
+              />
+              <AmenitiesTab
+                center={center}
+                handleNestedInputChange={handleNestedInputChange}
+                handleSubmit={handleSubmit}
+              />
+              <AssessmentTab
+                center={center}
+                handleNestedInputChange={handleNestedInputChange}
+                handleSubmit={handleSubmit}
+              />
+              <LegalInfoTab
+                center={center}
+                handleNestedInputChange={handleNestedInputChange}
+                handleSubmit={handleSubmit}
+              />
               <TabsContent value="password">
                 <PasswordChange />
               </TabsContent>
             </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    </TrainingDashboardPage>
+  );
+};
 
-              {/* <TabsContent value="basic">
+export default TrainingCenterBiodata;
+
+{
+  /* <TabsContent value="basic">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     name="trainingCentreName"
@@ -334,14 +362,18 @@ const TrainingCenterBiodata = () => {
                   />
                   <Button type="submit">Update Basic Info</Button>
                 </form>
-              </TabsContent> */}
-                {/* <BasicInfoTab 
+              </TabsContent> */
+}
+{
+  /* <BasicInfoTab 
                   center={center} 
                   handleInputChange={handleInputChange} 
                   handleSubmit={handleSubmit} 
-                /> */}
-                
-              {/* <TabsContent value="details">
+                /> */
+}
+
+{
+  /* <TabsContent value="details">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     name="state"
@@ -458,9 +490,11 @@ const TrainingCenterBiodata = () => {
                   )}
                   <Button type="submit">Update Center Details</Button>
                 </form>
-              </TabsContent> */}
+              </TabsContent> */
+}
 
-              {/* <TabsContent value="bank">
+{
+  /* <TabsContent value="bank">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     name="accountName"
@@ -500,9 +534,11 @@ const TrainingCenterBiodata = () => {
                   />
                   <Button type="submit">Update Bank Account</Button>
                 </form>
-              </TabsContent> */}
+              </TabsContent> */
+}
 
-              {/* <TabsContent value="amenities">
+{
+  /* <TabsContent value="amenities">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -560,9 +596,11 @@ const TrainingCenterBiodata = () => {
                   />
                   <Button type="submit">Update Amenities</Button>
                 </form>
-              </TabsContent> */}
+              </TabsContent> */
+}
 
-              {/* <TabsContent value="assessment">
+{
+  /* <TabsContent value="assessment">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     name="traineeInstructorRatio"
@@ -690,9 +728,11 @@ const TrainingCenterBiodata = () => {
                   />
                   <Button type="submit">Update Assessment</Button>
                 </form>
-              </TabsContent> */}
+              </TabsContent> */
+}
 
-              {/* <TabsContent value="legal">
+{
+  /* <TabsContent value="legal">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <Input
                     name="legalRegistration"
@@ -767,14 +807,5 @@ const TrainingCenterBiodata = () => {
                   </div>
                   <Button type="submit">Update Legal Info</Button>
                 </form>
-              </TabsContent> */}
-
-              
-          </CardContent>
-        </Card>
-      </div>
-    </TrainingDashboardPage>
-  );
-};
-
-export default TrainingCenterBiodata;
+              </TabsContent> */
+}

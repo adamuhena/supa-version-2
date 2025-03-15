@@ -9,10 +9,12 @@ const LegalInfoTab = ({
   handleInputChange,
   handleSubmit,
 }) => {
+  console.log(center);
   return (
     //   <TabsContent value="legal">
     <TabsContent value="legal">
       <form onSubmit={handleSubmit} className="space-y-4">
+        <label>Legal Registration</label>
         <Input
           name="legalRegistration"
           value={center.legalInfo?.legalRegistration}
@@ -26,8 +28,40 @@ const LegalInfoTab = ({
           placeholder="Legal Registration"
         />
         <div>
-          <Label>Trade Areas</Label>
-          {center.legalInfo?.tradeAreas.map((area, index) => (
+          <Label>Sectors / Trade Areas</Label>
+
+          {(center.legalInfo?.tradeAreas || []).map((area, index) => {
+            return (
+              <>
+                {(area?.sector || []).map((sector) => {
+                  return (
+                    <div className="mb-[30px]">
+                      <h1 className="text-left font-medium text-[16px] ">
+                        Sector: {sector?.name}
+                      </h1>
+
+                      <div className="flex gap-[15px]">
+                        {(area?.tradeArea || []).map((ta_id) => {
+                          const found = (sector.tradeAreas || []).find(
+                            (x) => x?._id === ta_id
+                          );
+
+                          console.log("found", area?.sector);
+                          return (
+                            <p className="flex items-center gap-1">
+                              <div className="w-2 h-2 bg-black rounded-full" />
+                              <span>{found?.name}</span>
+                            </p>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            );
+          })}
+          {/* {center.legalInfo?.tradeAreas.map((area, index) => (
             <div key={index} className="flex items-center space-x-2 mt-2">
               <Input
                 value={area.tradeArea}
@@ -57,13 +91,13 @@ const LegalInfoTab = ({
                     "tradeAreas",
                     newTradeAreas
                   );
-                }}
-              >
+                }}>
                 Remove
               </Button>
             </div>
-          ))}
+          ))} */}
           <Button
+            disabled
             type="button"
             onClick={() => {
               const newTradeAreas = [
@@ -72,12 +106,16 @@ const LegalInfoTab = ({
               ];
               handleNestedInputChange("legalInfo", "tradeAreas", newTradeAreas);
             }}
-            className="mt-2"
-          >
+            className="mt-2">
             Add Trade Area
           </Button>
         </div>
-        <Button type="submit" className="mt-4 bg-green-500 hover:bg-green-600">Update Legal Info</Button>
+        <Button
+          type="submit"
+          disabled
+          className="mt-4 bg-green-500 hover:bg-green-600">
+          Update Legal Info
+        </Button>
       </form>
     </TabsContent>
   );

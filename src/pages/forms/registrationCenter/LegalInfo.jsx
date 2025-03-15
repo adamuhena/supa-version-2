@@ -6,7 +6,6 @@
 // import "./index.css";
 // import UploadButton from "@/components/UploadButton";
 
-
 // const LegalInfo = ({ form, setForm, controlButtons }) => {
 //     const updateField = (field, value) => {
 //         setForm((prev) => ({ ...prev, [field]: value }));
@@ -200,7 +199,6 @@
 //       />
 //     </div>
 
-
 //             <div className="flex flex-col gap-2">
 //                 <Label htmlFor="additionalDetails" className="text-left leading-[1.3]">
 //                     Additional Details (if necessary):
@@ -220,8 +218,6 @@
 // };
 
 // export default LegalInfo;
-
-
 
 // import React, { useState, useEffect } from "react";
 // import { Input } from "@/components/ui/input";
@@ -528,8 +524,6 @@
 
 // export default LegalInfo;
 
-
-
 // import { useState, useEffect } from "react"
 // import { Input } from "@/components/ui/input"
 // import { Label } from "@/components/ui/label"
@@ -824,42 +818,48 @@
 
 // export default LegalInfo
 
+"use client";
 
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import UploadButton from "@/components/UploadButton";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-"use client"
-
-import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import UploadButton from "@/components/UploadButton"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-import { fetchSectors } from "@/services/api"
+import { fetchSectors } from "@/services/api";
+import { CloudCog } from "lucide-react";
 
 const LegalInfo = ({ form, setForm, controlButtons }) => {
-  const [sectors, setSectors] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [sectors, setSectors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch sectors on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const accessToken = localStorage.getItem("accessToken")
-        const response = await fetchSectors(accessToken)
-        setSectors(response)
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await fetchSectors(accessToken);
+        setSectors(response);
       } catch (err) {
-        setError("Failed to fetch sectors")
-        console.error(err)
+        setError("Failed to fetch sectors");
+        console.error(err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   // Initialize legalInfo if it doesn't exist
   useEffect(() => {
@@ -873,19 +873,14 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
           instructorCredentials: [],
           additionalDetails: "",
         },
-      }))
+      }));
     }
-
-    // If tradeAreas is empty, add one empty trade area
-    if (!form.legalInfo?.tradeAreas || form.legalInfo.tradeAreas.length === 0) {
-      addTradeArea()
-    }
-  }, [])
+  }, []);
 
   const updateField = (field, value) => {
     // Check if the field contains a dot notation for nested properties
     if (field.includes(".")) {
-      const [parent, child] = field.split(".")
+      const [parent, child] = field.split(".");
       setForm((prev) => ({
         ...prev,
         legalInfo: {
@@ -895,7 +890,7 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
             [child]: value,
           },
         },
-      }))
+      }));
     } else {
       // For direct properties of legalInfo
       setForm((prev) => ({
@@ -904,42 +899,61 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
           ...prev.legalInfo,
           [field]: value,
         },
-      }))
+      }));
     }
-  }
+  };
 
   // Update the tradeArea function to properly nest under legalInfo
-  const updateTradeArea = (index, field, value) => {
+  const updateTradeArea = async (sector, field, value) => {
+    if (
+      field === "sector" &&
+      (form?.legalInfo?.tradeAreas || []).find((i) => i?.sector === value)
+    ) {
+      return alert(`You cannot add the same sector twice`);
+    }
+
     setForm((prev) => {
       // Make sure legalInfo and tradeAreas exist
-      const legalInfo = prev.legalInfo || {}
-      const tradeAreas = [...(legalInfo.tradeAreas || [])]
-
-      // Make sure the trade area at this index exists
-      if (!tradeAreas[index]) {
-        tradeAreas[index] = {}
-      }
-
-      // Update the field
-      tradeAreas[index] = {
-        ...tradeAreas[index],
-        [field]: value,
-      }
+      const legalInfo = prev.legalInfo || {};
+      const tradeAreas = legalInfo?.tradeAreas || [];
 
       return {
         ...prev,
         legalInfo: {
           ...legalInfo,
-          tradeAreas: tradeAreas,
+          tradeAreas: tradeAreas.map((z) => {
+            const x = { ...(z || {}) };
+
+            if (x?.sector === sector) {
+              if (field === "tradeArea") {
+                const isArr = typeof x?.tradeArea === "object" ? true : false;
+
+                const found = isArr
+                  ? (x?.tradeArea || []).find((z) => z === value)
+                  : false;
+                console.log("found", found);
+
+                if (found) {
+                  x.tradeArea = (x?.tradeArea || []).filter((z) => z !== value);
+                } else {
+                  x.tradeArea = [...(isArr ? x?.tradeArea : []), value];
+                }
+              } else {
+                x[field] = value;
+              }
+            }
+            console.log("x", x);
+            return x;
+          }),
         },
-      }
-    })
-  }
+      };
+    });
+  };
 
   const addTradeArea = () => {
     setForm((prev) => {
       // Make sure legalInfo exists
-      const legalInfo = prev.legalInfo || {}
+      const legalInfo = prev.legalInfo || {};
 
       return {
         ...prev,
@@ -948,7 +962,7 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
           tradeAreas: [
             ...(legalInfo.tradeAreas || []),
             {
-              sector: "",
+              sector: `${new Date().getTime()}`,
               tradeArea: "",
               instructors: "",
               trainees: "",
@@ -958,10 +972,28 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
             },
           ],
         },
-      }
-    })
-  }
+      };
+    });
+  };
 
+  const removeTradearea = (sector) => {
+    setForm((prev) => {
+      // Make sure legalInfo and tradeAreas exist
+      const legalInfo = prev.legalInfo || {};
+      const tradeAreas = legalInfo?.tradeAreas || [];
+
+      return {
+        ...prev,
+        legalInfo: {
+          ...legalInfo,
+          tradeAreas: tradeAreas.filter((x) => {
+            return x?.sector !== sector;
+          }),
+        },
+      };
+    });
+  };
+  console.log(form?.legalInfo?.tradeAreas);
   return (
     <div
       style={{
@@ -969,15 +1001,17 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
         marginBottom: "100px",
         background: "white",
       }}
-      className="relative w-full max-w-[700px] mx-auto py-[30px] flex flex-col px-5 gap-[30px] bg-white rounded-[16px]"
-    >
-      <h1 className="text-left font-[700] text-[24px]">Legal and Trade Information</h1>
+      className="relative w-full max-w-[1000px] mx-auto py-[30px] flex flex-col px-5 gap-[30px] bg-white rounded-[16px]">
+      <h1 className="text-left font-[700] text-[24px]">
+        Legal and Trade Information
+      </h1>
 
       {/* Legal Registration */}
       <div className="flex flex-col gap-2">
         <Label htmlFor="legalRegistration" className="text-left leading-[1.3]">
-          13. Does the Centre have Legal Registration/Licensing from other authorities? Specify and attach copies of
-          supporting documents if any (e.g. CAC, City & Guilds, etc.):
+          13. Does the Centre have Legal Registration/Licensing from other
+          authorities? Specify and attach copies of supporting documents if any
+          (e.g. CAC, City & Guilds, etc.):
         </Label>
         <Textarea
           id="legalRegistration"
@@ -990,20 +1024,26 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
 
       {/* Supporting Documents */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="supportingDocuments" className="text-left leading-[1.3]">
+        <Label
+          htmlFor="supportingDocuments"
+          className="text-left leading-[1.3]">
           Attach supporting documents:
         </Label>
         <UploadButton
           fileUrl={form.legalInfo?.supportingDocuments}
           title="supportingDocuments"
-          handleFileChange={(newFileUrl) => updateField("supportingDocuments", newFileUrl)}
+          handleFileChange={(newFileUrl) =>
+            updateField("supportingDocuments", newFileUrl)
+          }
           accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
           removeFile={() => updateField("supportingDocuments", null)}
         />
       </div>
 
       {/* Trade Area Profile */}
-      <h2 className="text-left font-[600] text-[20px] mt-4">14. Trade Area Profile:</h2>
+      <h2 className="text-left font-[600] text-[20px] mt-4">
+        14. Trade Area Profile:
+      </h2>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
           <thead>
@@ -1016,6 +1056,7 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
               <th className="border border-gray-300 p-2">Facilities</th>
               <th className="border border-gray-300 p-2">Equipment</th>
               <th className="border border-gray-300 p-2">Tools</th>
+              <th className="border border-gray-300 p-2"></th>
             </tr>
           </thead>
           <tbody>
@@ -1025,37 +1066,75 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
 
                 {/* Sector Dropdown */}
                 <td className="border border-gray-300 p-2">
-                  <Select value={trade.sector} onValueChange={(value) => updateTradeArea(index, "sector", value)}>
+                  <Select
+                    value={trade.sector}
+                    onValueChange={(value) =>
+                      updateTradeArea(trade?.sector, "sector", value)
+                    }>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Sector" />
+                      {!sectors.find(
+                        (sector) => sector._id === trade.sector
+                      ) ? (
+                        <p>Select Sector</p>
+                      ) : (
+                        <SelectValue placeholder="Select Sector" />
+                      )}
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
                         {sectors.map((sector) => (
-                          <SelectItem key={sector._id} value={sector.name}>
+                          <SelectItem key={sector._id} value={sector._id}>
                             {sector.name}
                           </SelectItem>
                         ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
+                  {Array.isArray(trade?.tradeArea) &&
+                  typeof trade?.tradeArea === "object"
+                    ? (trade?.tradeArea || []).map((x) => {
+                        const n = sectors
+                          .find((sector) => sector._id === trade.sector)
+                          ?.tradeAreas?.find((ta) => ta?._id === x);
+                        console.log({ nnnnnnx: n });
+
+                        return (
+                          <button
+                            onClick={() =>
+                              updateTradeArea(trade?.sector, "tradeArea", x)
+                            }
+                            className="mt-1 mr-1 border-[1px] border-blue-200 w-fit text-[11px] text-blue-500 p-1">
+                            {n?.name}{" "}
+                            <span className="font-bold text-red-600">x</span>
+                          </button>
+                        );
+                      })
+                    : null}
                 </td>
 
                 {/* Trade Area Dropdown */}
                 <td className="border border-gray-300 p-2">
-                  <Select value={trade.tradeArea} onValueChange={(value) => updateTradeArea(index, "tradeArea", value)}>
+                  <Select
+                    value={trade.tradeArea}
+                    onValueChange={(value) =>
+                      updateTradeArea(trade?.sector, "tradeArea", value)
+                    }>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Trade Area" />
+                      {/* <SelectValue placeholder="Select Trade Area" /> */}
+                      <p>Select as many trade areas</p>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
                         {sectors
-                          .find((sector) => sector.name === trade.sector)
-                          ?.tradeAreas?.map((ta) => (
-                            <SelectItem key={ta._id} value={ta.name}>
-                              {ta.name}
-                            </SelectItem>
-                          ))}
+                          .find((sector) => sector._id === trade.sector)
+                          ?.tradeAreas?.map((ta) => {
+                            console.log("ta", ta);
+                            return (
+                              <SelectItem key={ta._id} value={ta._id}>
+                                {ta.name}
+                              </SelectItem>
+                            );
+                          })}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -1066,7 +1145,13 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
                   <Input
                     type="number"
                     value={trade.instructors || ""}
-                    onChange={(e) => updateTradeArea(index, "instructors", e.target.value)}
+                    onChange={(e) =>
+                      updateTradeArea(
+                        trade?.sector,
+                        "instructors",
+                        e.target.value
+                      )
+                    }
                     placeholder="Instructors"
                   />
                 </td>
@@ -1076,7 +1161,9 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
                   <Input
                     type="number"
                     value={trade.trainees || ""}
-                    onChange={(e) => updateTradeArea(index, "trainees", e.target.value)}
+                    onChange={(e) =>
+                      updateTradeArea(trade?.sector, "trainees", e.target.value)
+                    }
                     placeholder="Trainees"
                   />
                 </td>
@@ -1085,7 +1172,13 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
                 <td className="border border-gray-300 p-2">
                   <Input
                     value={trade.facilities || ""}
-                    onChange={(e) => updateTradeArea(index, "facilities", e.target.value)}
+                    onChange={(e) =>
+                      updateTradeArea(
+                        trade?.sector,
+                        "facilities",
+                        e.target.value
+                      )
+                    }
                     placeholder="Facilities"
                   />
                 </td>
@@ -1094,7 +1187,13 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
                 <td className="border border-gray-300 p-2">
                   <Input
                     value={trade.equipment || ""}
-                    onChange={(e) => updateTradeArea(index, "equipment", e.target.value)}
+                    onChange={(e) =>
+                      updateTradeArea(
+                        trade?.sector,
+                        "equipment",
+                        e.target.value
+                      )
+                    }
                     placeholder="Equipment"
                   />
                 </td>
@@ -1103,9 +1202,19 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
                 <td className="border border-gray-300 p-2">
                   <Input
                     value={trade.tools || ""}
-                    onChange={(e) => updateTradeArea(index, "tools", e.target.value)}
+                    onChange={(e) =>
+                      updateTradeArea(trade?.sector, "tools", e.target.value)
+                    }
                     placeholder="Tools"
                   />
+                </td>
+
+                <td className="border border-gray-300 p-2">
+                  <button
+                    className="text-red-500 text-[12px]"
+                    onClick={() => removeTradearea(trade?.sector)}>
+                    Remove
+                  </button>
                 </td>
               </tr>
             ))}
@@ -1114,13 +1223,17 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
       </div>
 
       {/* Add Trade Area Button */}
-      <Button onClick={addTradeArea} className="bg-blue-500 text-white px-4 py-2 rounded self-start">
+      <Button
+        onClick={addTradeArea}
+        className="bg-blue-500 text-white px-4 py-2 rounded self-start">
         Add Trade Area
       </Button>
 
       {/* Instructor Credentials */}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="instructorCredentials" className="text-left leading-[1.3]">
+        <Label
+          htmlFor="instructorCredentials"
+          className="text-left leading-[1.3]">
           Attach credentials of each Instructor:
         </Label>
         <UploadButton
@@ -1129,8 +1242,8 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
           handleFileChange={(newFileUrl) => {
             const updatedFiles = form.legalInfo?.instructorCredentials
               ? [...form.legalInfo?.instructorCredentials, newFileUrl]
-              : [newFileUrl]
-            updateField("instructorCredentials", updatedFiles)
+              : [newFileUrl];
+            updateField("instructorCredentials", updatedFiles);
           }}
           accept=".jpg, .png, .jpeg, .pdf, .doc, .docx, .csv, .txt"
           removeFile={() => updateField("instructorCredentials", null)}
@@ -1153,8 +1266,7 @@ const LegalInfo = ({ form, setForm, controlButtons }) => {
 
       {controlButtons}
     </div>
-  )
-}
+  );
+};
 
-export default LegalInfo
-
+export default LegalInfo;
