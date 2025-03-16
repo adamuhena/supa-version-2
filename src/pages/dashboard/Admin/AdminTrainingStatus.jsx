@@ -131,9 +131,9 @@ function AdminTrainingStatus() {
 
   if (!trainingGroups) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spinner />
-      </div>
+      // <div className="flex justify-center items-center h-screen">
+      //   <Spinner />
+      // </div>
     );
   }
   if (error) return <p>{error}</p>;

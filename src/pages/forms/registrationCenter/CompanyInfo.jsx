@@ -84,7 +84,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
 {/* State Dropdown */}
 <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label htmlFor="state" className="w-[300px] text-left leading-[1.3]">
-          State
+          State where the Training Centre is located
         </Label>
         <Select value={form.state} onValueChange={handleStateChange}>
           <SelectTrigger className="">
@@ -105,7 +105,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
       {/* LGA Dropdown */}
       <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
   <Label htmlFor="lga" className="w-[300px] text-left leading-[1.3]">
-    LGA
+    LGA where the Training Centre is located
   </Label>
   <Select
     value={form.lga}

@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDocuments } from "../contexts/DocumentContext"
+import UploadButton from "@/components/UploadButton";
 import { documentService } from "../Api/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -67,40 +68,76 @@ function DocumentForm() {
     title: "",
     year: "",
     state: "",
-    file: null,
-    thumbnail: null,
+    fileUrl: null,
+    thumbnailUrl: null,
   })
 
-  // Fetch document data if in edit mode
-  useEffect(() => {
-    if (isEditMode) {
-      const fetchDocument = async () => {
-        try {
-          setIsLoading(true)
-          const document = await documentService.getById(id)
-          setFormData({
-            title: document.title,
-            year: document.year,
-            state: document.state,
-            file: null, // Can't pre-fill file inputs
-            thumbnail: null,
-          })
-        } catch (error) {
-          console.error("Error fetching document:", error)
-          toast({
-            title: "Error",
-            description: "Failed to load document data",
-            variant: "destructive",
-          })
-          navigate("/documents")
-        } finally {
-          setIsLoading(false)
-        }
-      }
 
-      fetchDocument()
+
+useEffect(() => {
+  // Use useCallback to memoize fetchDocument function and avoid unnecessary re-renders
+  const fetchDocument = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const document = await documentService.getById(id);
+
+      setFormData({
+        title: document.title || "",
+        year: document.year || "",
+        state: document.state || "",
+        fileUrl: document.fileUrl || "", // Pre-fill with URL if available
+        thumbnailUrl: document.thumbnailUrl || "", // Pre-fill with URL if available
+      });
+    } catch (error) {
+      console.error("Error fetching document:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load document data",
+        variant: "destructive",
+      });
+      // Navigate to documents on error
+      navigate("/documents");
+    } finally {
+      // Ensure loading state is always set to false
+      setIsLoading(false);
     }
-  }, [id, isEditMode, navigate, toast])
+  }, [id, navigate, toast]); // Dependencies
+
+  if (isEditMode) {
+    fetchDocument();
+  }
+}, [id, isEditMode, fetchDocument]); // useEffect dependencies
+
+// useEffect(() => {
+//   if (isEditMode) {
+//     const fetchDocument = async () => {
+//       try {
+//         setIsLoading(true)
+//         const document = await documentService.getById(id)
+
+//         setFormData({
+//           title: document.title || "",
+//           year: document.year || "",
+//           state: document.state || "",
+//           fileUrl: document.fileUrl || "", // Pre-fill with URL if available
+//           thumbnailUrl: document.thumbnailUrl || "", // Pre-fill with URL if available
+//         })
+//       } catch (error) {
+//         console.error("Error fetching document:", error)
+//         toast({
+//           title: "Error",
+//           description: "Failed to load document data",
+//           variant: "destructive",
+//         })
+//         navigate("/documents")
+//       } finally {
+//         setIsLoading(false)
+//       }
+//     }
+
+//     fetchDocument()
+//   }
+// }, [id, isEditMode, navigate, toast])
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -137,7 +174,7 @@ function DocumentForm() {
     }
 
     // In edit mode, file is optional. In create mode, file is required
-    if (!isEditMode && !formData.file) {
+    if (!isEditMode && !formData.fileUrl) {
       toast({
         title: "Missing File",
         description: "Please upload a document file",
@@ -164,6 +201,12 @@ function DocumentForm() {
     }
   }
 
+    // Generate years array (10 years in the past and 10 years in the future)
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 21 }, (_, i) =>
+      (currentYear - 10 + i).toString()
+    );
+    
   return (
     <Card>
       <CardHeader>
@@ -226,7 +269,7 @@ function DocumentForm() {
             </div>
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <label htmlFor="file" className="text-sm font-medium">
               PDF Document {isEditMode && "(Leave empty to keep current file)"}
             </label>
@@ -254,9 +297,35 @@ function DocumentForm() {
               </label>
             </div>
             {formData.file && <p className="text-sm text-muted-foreground mt-2">Selected file: {formData.file.name}</p>}
-          </div>
+          </div> */}
 
-          <div className="space-y-2">
+<div className="space-y-2">
+  <label htmlFor="file" className="text-sm font-medium">
+    PDF Document {isEditMode && "(Leave empty to keep current file)"}
+  </label>
+
+  {/* New UploadButton for AWS upload */}
+  <UploadButton
+  fileUrl={formData.fileUrl}
+  title="file"
+  accept=".pdf"
+  handleFileChange={(fileUrl) => {
+    setFormData({ ...formData, fileUrl }); // 🔥 correct key
+  }}
+  removeFile={() => {
+    setFormData({ ...formData, fileUrl: "" });
+  }}
+/>
+
+{formData.fileUrl && (
+  <p className="text-sm text-muted-foreground mt-2">
+    Uploaded file: {formData.fileUrl}
+  </p>
+)}
+</div>
+
+
+          {/* <div className="space-y-2">
             <label htmlFor="thumbnail" className="text-sm font-medium">
               Thumbnail Image (Optional) {isEditMode && "(Leave empty to keep current thumbnail)"}
             </label>
@@ -285,7 +354,33 @@ function DocumentForm() {
             {formData.thumbnail && (
               <p className="text-sm text-muted-foreground mt-2">Selected thumbnail: {formData.thumbnail.name}</p>
             )}
-          </div>
+          </div> */}
+
+<div className="space-y-2">
+  <label htmlFor="thumbnail" className="text-sm font-medium">
+    Thumbnail Image (Optional) {isEditMode && "(Leave empty to keep current thumbnail)"}
+  </label>
+
+  {/* New UploadButton for AWS upload */}
+  <UploadButton
+  fileUrl={formData.thumbnailUrl}
+  title="thumbnail"
+  accept="image/png, image/jpeg, image/webp"
+  handleFileChange={(thumbnailUrl) => {
+    setFormData({ ...formData, thumbnailUrl }); // 🔥 correct key
+  }}
+  removeFile={() => {
+    setFormData({ ...formData, thumbnailUrl: "" });
+  }}
+/>
+
+{formData.thumbnailUrl && (
+  <p className="text-sm text-muted-foreground mt-2">
+    Uploaded thumbnail: {formData.thumbnailUrl}
+  </p>
+)}
+
+</div>
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button type="button" variant="outline" onClick={() => navigate("/documents")}>
@@ -308,4 +403,6 @@ function DocumentForm() {
 }
 
 export default DocumentForm
+
+
 

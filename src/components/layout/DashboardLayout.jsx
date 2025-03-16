@@ -28,6 +28,7 @@ import {
   SquareTerminal,
   Star,
   Trash2,
+  UploadIcon,
   UserCircle,
 } from "lucide-react";
 
@@ -81,6 +82,7 @@ import { DotPattern } from "../ui/dot-pattern";
 import { toast } from "sonner";
 import Spinner from "./spinner";
 import { API_BASE_URL } from "@/config/env";
+import UploadButton from "../UploadButton";
 
 export default function DashboardPage({ href, title, children }) {
   const [userData, setUserData] = useState(null); // Holds the user data
@@ -126,6 +128,10 @@ export default function DashboardPage({ href, title, children }) {
       <div className="flex justify-center items-center h-screen">
         <Spinner />
       </div>
+//       <div className="fixed inset-0 flex justify-center items-center bg-green-200 bg-opacity-50 z-50">
+//   <Spinner />
+// </div>
+
     );
   }
 
@@ -271,6 +277,12 @@ export default function DashboardPage({ href, title, children }) {
                     <Link to="/document/verification">
                       <ShieldQuestion />
                       <span>Document Verification</span>
+                    </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton asChild>
+                    <Link to="/documents">
+                      <UploadIcon />
+                      <span>Artisan List Update</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

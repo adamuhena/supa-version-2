@@ -315,18 +315,19 @@ const AdminDashboardReports = () => {
   // Logout handler
   const logout = useLogout();
 
-  // Render
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Spinner />
-      </div>
-    );
-  }
+  // // Render
+  // if (loading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-screen">
+  //       <Spinner />
+  //     </div>
+  //   );
+  // }
 
   return (
     <ProtectedRoute>
       <DashboardPage title="Artisan Dashboard">
+        
         <div className="container mx-auto py-6">
           <header className="flex justify-between items-center mb-6">
             <div>

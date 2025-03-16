@@ -289,6 +289,7 @@
 
 
 import { useState, useEffect } from "react";
+import PageLayout from "@/components/layout/pageLayout";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -382,23 +383,28 @@ export default function PDFPreviewPage() {
   };
 
   return (
-    <div className="bg-gradient-to-t from-stone-100 to-current-black min-h-screen">
-      <DotPattern width={10} height={10} cx={1} cy={1} cr={1} className={cn("fill-neutral-400/40 opacity-15")} />
-
-      <section className="bg-slate-900 pt-32 pb-10">
-        <div className="container mx-auto px-4">
-          <div className="inline-block rounded-lg bg-muted px-6 md:px-16 lg:px-32 xl:px-40 py-5 text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-emerald-600">
-            Document Library
-          </div>
-        </div>
+          <PageLayout>
+            <div className="bg-gradient-to-t from-stone-100 to-current-black">
+            <DotPattern
+                        width={10}
+                        height={10}
+                        cx={1}
+                        cy={1}
+                        cr={1}
+                        className={cn("fill-neutral-400/40 opacity-15")}
+                      />
+            <section className="bg-slate-900 pt-32 pb-10">
+      <div className="inline-block rounded-lg bg-muted px-6 md:px-16 lg:px-32 xl:px-40 py-5 text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-emerald-600">
+      Artisan Registry
+      </div>
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col gap-8">
           <div className="text-center">
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Nigerian State Documents</h1>
+            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"></h1>
             <p className="mt-4 text-xl text-muted-foreground max-w-3xl mx-auto">
-              Browse our collection of documents organized by year and state. Select a year and state to view available documents.
+              Preview the list of previous SUPA Trainnee's organized by year and state. Select a year and state to view available List.
             </p>
           </div>
 
@@ -542,5 +548,6 @@ export default function PDFPreviewPage() {
         </div>
       </div>
     </div>
+            </PageLayout>
   );
 }

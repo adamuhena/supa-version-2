@@ -95,7 +95,7 @@ function App() {
             }
           />
           <Route
-            path="/documents/:id"
+            path="/documents/preview/:_id"
             element={
               <ProtectedRoute>
                 <DocumentPreview />
