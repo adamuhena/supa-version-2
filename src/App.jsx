@@ -42,6 +42,7 @@ import Dashboard from "./pages/dashboard/Admin/preview/pages/Dashboard";
 import CreateDocument from "./pages/dashboard/Admin/preview/pages/CreateDocument";  
 import EditDocument from "./pages/dashboard/Admin//preview/pages/EditDocument";
 import DocumentPreview from "./pages/dashboard/Admin//preview/components/DocumentPreview";
+import PDFPreviewPage2 from "./pages/dashboard/Admin/newPreview";
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/preview" element={<PDFPreviewPage />} />
           <Route path="/doc" element={<DocPreview />} />
+          <Route path="/beneficiaries" element={<PDFPreviewPage2 />} />
           {/* <Route path="/biodata2" element={<BiodataPage />} /> */}
           {/* <Route path="/biodata" element={<Biodata />} />
         <Route path="/certification/upload" element={<DocumentUpload />} /> */}
