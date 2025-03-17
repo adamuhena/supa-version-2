@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDocuments } from "../contexts/DocumentContext"
+import ProtectedRoute from "@/components/ProtectedRoute"
+import DashboardPage from "@/components/layout/DashboardLayout"
 import UploadButton from "@/components/UploadButton";
 import { documentService } from "../Api/api"
 import { Button } from "@/components/ui/button"
@@ -10,7 +12,9 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, Loader2 } from "lucide-react"
+import {  UserCircle, LogOut } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import useLogout from "@/pages/loginPage/logout"
 
 // Nigerian states array
 const nigerianStates = [
@@ -62,31 +66,28 @@ function DocumentForm() {
   const { createDocument, updateDocument } = useDocuments()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const logout = useLogout()
 
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
     year: "",
     state: "",
-    fileUrl: null,
-    thumbnailUrl: null,
+    file: null,
+    thumbnail: null,
   })
 
-
-
-useEffect(() => {
-  // Use useCallback to memoize fetchDocument function and avoid unnecessary re-renders
   const fetchDocument = useCallback(async () => {
     try {
       setIsLoading(true);
       const document = await documentService.getById(id);
-
+  
       setFormData({
         title: document.title || "",
         year: document.year || "",
         state: document.state || "",
-        fileUrl: document.fileUrl || "", // Pre-fill with URL if available
-        thumbnailUrl: document.thumbnailUrl || "", // Pre-fill with URL if available
+        file: document.fileUrl || "",
+        thumbnail: document.thumbnailUrl || "",
       });
     } catch (error) {
       console.error("Error fetching document:", error);
@@ -95,18 +96,52 @@ useEffect(() => {
         description: "Failed to load document data",
         variant: "destructive",
       });
-      // Navigate to documents on error
       navigate("/documents");
     } finally {
-      // Ensure loading state is always set to false
       setIsLoading(false);
     }
-  }, [id, navigate, toast]); // Dependencies
+  }, [id, navigate, toast]);
+  
+  useEffect(() => {
+    if (isEditMode) {
+      fetchDocument();
+    }
+  }, [isEditMode, fetchDocument]);
+  
 
-  if (isEditMode) {
-    fetchDocument();
-  }
-}, [id, isEditMode, fetchDocument]); // useEffect dependencies
+// useEffect(() => {
+//   // Use useCallback to memoize fetchDocument function and avoid unnecessary re-renders
+//   const fetchDocument = useCallback(async () => {
+//     try {
+//       setIsLoading(true);
+//       const document = await documentService.getById(id);
+
+//       setFormData({
+//         title: document.title || "",
+//         year: document.year || "",
+//         state: document.state || "",
+//         fileUrl: document.fileUrl || "", // Pre-fill with URL if available
+//         thumbnailUrl: document.thumbnailUrl || "", // Pre-fill with URL if available
+//       });
+//     } catch (error) {
+//       console.error("Error fetching document:", error);
+//       toast({
+//         title: "Error",
+//         description: "Failed to load document data",
+//         variant: "destructive",
+//       });
+//       // Navigate to documents on error
+//       navigate("/documents");
+//     } finally {
+//       // Ensure loading state is always set to false
+//       setIsLoading(false);
+//     }
+//   }, [id, navigate, toast]); // Dependencies
+
+//   if (isEditMode) {
+//     fetchDocument();
+//   }
+// }, [id, isEditMode, fetchDocument]); // useEffect dependencies
 
 // useEffect(() => {
 //   if (isEditMode) {
@@ -174,7 +209,7 @@ useEffect(() => {
     }
 
     // In edit mode, file is optional. In create mode, file is required
-    if (!isEditMode && !formData.fileUrl) {
+    if (!isEditMode && !formData.file) {
       toast({
         title: "Missing File",
         description: "Please upload a document file",
@@ -208,124 +243,161 @@ useEffect(() => {
     );
     
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{isEditMode ? "Edit Document" : "Upload New Document"}</CardTitle>
-        <CardDescription>
-          {isEditMode ? "Update document information" : "Add a new document to the system"}
-        </CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="title" className="text-sm font-medium">
-              Document Title
-            </label>
-            <Input
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              placeholder="Enter document title"
-              required
-            />
+    <ProtectedRoute href="/admin/dashboard">
+      <DashboardPage title="Document Dashboard">
+        <div className="bg-gradient-to-t from-stone-100 to-current-black min-h-screen">
+          <div className="container mx-auto p-6">
+            <header className="flex justify-between items-center mb-6">
+              <h1 className="text-3xl font-bold">Dashboard</h1>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => navigate("/biodata")}>
+                  <UserCircle className="mr-2 h-4 w-4" /> Update Profile
+                </Button>
+
+                <Button variant="destructive" onClick={logout}>
+                  <LogOut className="mr-2 h-4 w-4" /> Logout
+                </Button>
+              </div>
+            </header>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="year" className="text-sm font-medium">
-                Year
-              </label>
-              <Select value={formData.year} onValueChange={(value) => setFormData({ ...formData, year: value })}>
-                <SelectTrigger id="year">
-                  <SelectValue placeholder="Select year" />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((year) => (
-                    <SelectItem key={year} value={year}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="state" className="text-sm font-medium">
-                State
-              </label>
-              <Select value={formData.state} onValueChange={(value) => setFormData({ ...formData, state: value })}>
-                <SelectTrigger id="state">
-                  <SelectValue placeholder="Select state" />
-                </SelectTrigger>
-                <SelectContent>
-                  {nigerianStates.map((state) => (
-                    <SelectItem key={state} value={state}>
-                      {state}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* <div className="space-y-2">
-            <label htmlFor="file" className="text-sm font-medium">
-              PDF Document {isEditMode && "(Leave empty to keep current file)"}
-            </label>
-            <div className="flex items-center justify-center w-full">
-              <label
-                htmlFor="file"
-                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <Upload className="w-8 h-8 mb-3 text-gray-500" />
-                  <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
-                  </p>
-                  <p className="text-xs text-gray-500">PDF (MAX. 10MB)</p>
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {isEditMode ? "Edit Document" : "Upload New Document"}
+              </CardTitle>
+              <CardDescription>
+                {isEditMode
+                  ? "Update document information"
+                  : "Add a new document to the system"}
+              </CardDescription>
+            </CardHeader>
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label htmlFor="title" className="text-sm font-medium">
+                    Document Title
+                  </label>
+                  <Input
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    placeholder="Enter document title"
+                    required
+                  />
                 </div>
-                <Input
-                  id="file"
-                  name="file"
-                  type="file"
-                  accept=".pdf"
-                  className="hidden"
-                  onChange={handleFileChange}
-                  required={!isEditMode}
-                />
-              </label>
-            </div>
-            {formData.file && <p className="text-sm text-muted-foreground mt-2">Selected file: {formData.file.name}</p>}
-          </div> */}
 
-<div className="space-y-2">
-  <label htmlFor="file" className="text-sm font-medium">
-    PDF Document {isEditMode && "(Leave empty to keep current file)"}
-  </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="year" className="text-sm font-medium">
+                      Year
+                    </label>
+                    <Select
+                      value={formData.year}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, year: value })
+                      }
+                    >
+                      <SelectTrigger id="year">
+                        <SelectValue placeholder="Select year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {years.map((year) => (
+                          <SelectItem key={year} value={year}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-  {/* New UploadButton for AWS upload */}
-  <UploadButton
-  fileUrl={formData.fileUrl}
-  title="file"
-  accept=".pdf"
-  handleFileChange={(fileUrl) => {
-    setFormData({ ...formData, fileUrl }); // 🔥 correct key
-  }}
-  removeFile={() => {
-    setFormData({ ...formData, fileUrl: "" });
-  }}
-/>
+                  <div className="space-y-2">
+                    <label htmlFor="state" className="text-sm font-medium">
+                      State
+                    </label>
+                    <Select
+                      value={formData.state}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, state: value })
+                      }
+                    >
+                      <SelectTrigger id="state">
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {nigerianStates.map((state) => (
+                          <SelectItem key={state} value={state}>
+                            {state}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-{formData.fileUrl && (
-  <p className="text-sm text-muted-foreground mt-2">
-    Uploaded file: {formData.fileUrl}
-  </p>
-)}
-</div>
+                <div className="space-y-2">
+                  <label htmlFor="file" className="text-sm font-medium">
+                    PDF Document{" "}
+                    {isEditMode && "(Leave empty to keep current file)"}
+                  </label>
+                  <div className="flex items-center justify-center w-full">
+                    <label
+                      htmlFor="file"
+                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <Upload className="w-8 h-8 mb-3 text-gray-500" />
+                        <p className="mb-2 text-sm text-gray-500">
+                          <span className="font-semibold">Click to upload</span>{" "}
+                          or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-500">PDF (MAX. 10MB)</p>
+                      </div>
+                      <Input
+                        id="file"
+                        name="file"
+                        type="file"
+                        accept=".pdf"
+                        className="hidden"
+                        onChange={handleFileChange}
+                        required={!isEditMode}
+                      />
+                    </label>
+                  </div>
+                  {formData.file && (
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Selected file: {formData.file.name}
+                    </p>
+                  )}
+                </div>
 
+                {/* <div className="space-y-2">
+                  <label htmlFor="file" className="text-sm font-medium">
+                    PDF Document{" "}
+                    {isEditMode && "(Leave empty to keep current file)"}
+                  </label>
 
-          {/* <div className="space-y-2">
+                  
+                  <UploadButton
+                    fileUrl={formData.fileUrl}
+                    title="file"
+                    accept=".pdf"
+                    handleFileChange={(fileUrl) => {
+                      setFormData({ ...formData, fileUrl }); // 🔥 correct key
+                    }}
+                    removeFile={() => {
+                      setFormData({ ...formData, fileUrl: "" });
+                    }}
+                  />
+
+                  {formData.fileUrl && (
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Uploaded file: {formData.fileUrl}
+                    </p>
+                  )}
+                </div> */}
+
+                <div className="space-y-2">
             <label htmlFor="thumbnail" className="text-sm font-medium">
               Thumbnail Image (Optional) {isEditMode && "(Leave empty to keep current thumbnail)"}
             </label>
@@ -354,52 +426,60 @@ useEffect(() => {
             {formData.thumbnail && (
               <p className="text-sm text-muted-foreground mt-2">Selected thumbnail: {formData.thumbnail.name}</p>
             )}
-          </div> */}
+          </div>
 
-<div className="space-y-2">
-  <label htmlFor="thumbnail" className="text-sm font-medium">
-    Thumbnail Image (Optional) {isEditMode && "(Leave empty to keep current thumbnail)"}
-  </label>
+                {/* <div className="space-y-2">
+                  <label htmlFor="thumbnail" className="text-sm font-medium">
+                    Thumbnail Image (Optional){" "}
+                    {isEditMode && "(Leave empty to keep current thumbnail)"}
+                  </label>
 
-  {/* New UploadButton for AWS upload */}
-  <UploadButton
-  fileUrl={formData.thumbnailUrl}
-  title="thumbnail"
-  accept="image/png, image/jpeg, image/webp"
-  handleFileChange={(thumbnailUrl) => {
-    setFormData({ ...formData, thumbnailUrl }); // 🔥 correct key
-  }}
-  removeFile={() => {
-    setFormData({ ...formData, thumbnailUrl: "" });
-  }}
-/>
+                  
+                  <UploadButton
+                    fileUrl={formData.thumbnailUrl}
+                    title="thumbnail"
+                    accept="image/png, image/jpeg, image/webp"
+                    handleFileChange={(thumbnailUrl) => {
+                      setFormData({ ...formData, thumbnailUrl }); // 🔥 correct key
+                    }}
+                    removeFile={() => {
+                      setFormData({ ...formData, thumbnailUrl: "" });
+                    }}
+                  />
 
-{formData.thumbnailUrl && (
-  <p className="text-sm text-muted-foreground mt-2">
-    Uploaded thumbnail: {formData.thumbnailUrl}
-  </p>
-)}
+                  {formData.thumbnailUrl && (
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Uploaded thumbnail: {formData.thumbnailUrl}
+                    </p>
+                  )}
+                </div> */}
 
-</div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button type="button" variant="outline" onClick={() => navigate("/documents")}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {isEditMode ? "Updating..." : "Uploading..."}
-              </>
-            ) : (
-              <>{isEditMode ? "Update Document" : "Upload Document"}</>
-            )}
-          </Button>
-        </CardFooter>
-      </form>
-    </Card>
-  )
+              </CardContent>
+              <CardFooter className="flex justify-between">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/documents")}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {isEditMode ? "Updating..." : "Uploading..."}
+                    </>
+                  ) : (
+                    <>{isEditMode ? "Update Document" : "Upload Document"}</>
+                  )}
+                </Button>
+              </CardFooter>
+            </form>
+          </Card>
+        </div>
+      </DashboardPage>
+    </ProtectedRoute>
+  );
 }
 
 export default DocumentForm

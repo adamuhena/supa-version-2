@@ -58,6 +58,7 @@
     "react-form-stepper": "^2.0.3",
     "react-modal": "^3.16.1",
     "react-pagination": "^1.0.0",
+    "react-pdf": "^9.2.1",
     "react-router-dom": "^7.0.2",
     "recharts": "^2.14.1",
     "rollup": "^4.28.0",

@@ -541,6 +541,7 @@ export default function PDFPreviewPage() {
                   src={`${API_BASE_URL.replace("/api", "")}${selectedDocument.fileUrl}`}
                   className="w-full h-full"
                   title={selectedDocument.title}
+                  
                 />
               </div>
             </div>

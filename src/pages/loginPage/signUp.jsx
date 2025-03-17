@@ -1049,6 +1049,7 @@ export default function SignupForm() {
             confirm_password: formData.confirmPassword,
             state: formData.state,
             lga: formData.lga,
+            address: formData.address,
             sector: formData.sector,
             tradeArea: formData.tradeArea,
             legalInfo: formData.legalInfo,
@@ -1281,7 +1282,7 @@ export default function SignupForm() {
                 </TabsContent>
 
                 {/* Training Center Form */}
-                <TabsContent value="training_center">
+                {/* <TabsContent value="training_center">
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="flex flex-row  gap-8 ">
                       <div className="flex-1">
@@ -1327,6 +1328,7 @@ export default function SignupForm() {
                         </Select>
                       </div>
                       <div className="flex-1 space-y-2">
+                        
                         <Label htmlFor="lga" className="text-left text-xs text-gray-600">
                           LGA<span className="text-red-600 ml-[4px] text-[13px]">*</span>
                         </Label>
@@ -1348,6 +1350,19 @@ export default function SignupForm() {
                             </SelectGroup>
                           </SelectContent>
                         </Select>
+                        
+                        
+                      </div>
+
+                      <div className="flex-1">
+                        <LabelInput
+                          name="address"
+                          label="Company Address"
+                          type="text"
+                          value={formData.address}
+                          onChange={handleChange}
+                          placeholder="No 1, Company Street, Company City"
+                        />
                       </div>
                     </div>
                     <div className="flex flex-row gap-8">
@@ -1419,7 +1434,184 @@ export default function SignupForm() {
                       {loading ? <Spinner /> : "Sign Up"}
                     </Button>
                   </form>
-                </TabsContent>
+                </TabsContent> */}
+                <TabsContent value="training_center">
+  <form onSubmit={handleSubmit} className="space-y-4">
+    {/* First Row */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+      <div>
+        <LabelInput
+          name="trainingCentreName"
+          label="Company Name"
+          value={formData.trainingCentreName}
+          onChange={handleChange}
+          placeholder="Company Name here"
+          required
+        />
+      </div>
+      <div>
+        <LabelInput
+          name="regNum"
+          label="Reg Number"
+          type="text"
+          value={formData.regNum}
+          onChange={handleChange}
+          placeholder="RC-123456"
+          required
+        />
+      </div>
+    </div>
+
+    {/* Email */}
+    <div>
+      <LabelInput
+        name="email"
+        label="Company Email"
+        type="email"
+        value={formData.email}
+        onChange={handleChange}
+        placeholder="company@email.com"
+        required
+      />
+    </div>
+
+    {/* Phone */}
+    <div>
+      <LabelInput
+        name="phoneNumber"
+        label="Company Phone"
+        type="tel"
+        value={formData.phoneNumber}
+        onChange={handleChange}
+        placeholder="2347012345643"
+        required
+      />
+    </div>
+
+    {/* Second Row: State and LGA */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+      <div className="space-y-2">
+        <Label htmlFor="state" className="text-left text-xs text-gray-600">
+          State<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+        </Label>
+        <Select value={formData.state} onValueChange={handleStateChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select state" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {states.map((state) => (
+                <SelectItem key={state.value} value={state.value}>
+                  {state.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="lga" className="text-left text-xs text-gray-600">
+          LGA<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+        </Label>
+        <Select
+          value={formData.lga}
+          onValueChange={(value) => setFormData({ ...formData, lga: value })}
+          disabled={!lgas.length}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select LGA" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {lgas.map((lga) => (
+                <SelectItem key={lga} value={lga}>
+                  {lga.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+
+    {/* Address (below State and LGA) */}
+    <div>
+      <LabelInput
+        name="address"
+        label="Company Address"
+        type="text"
+        value={formData.address}
+        onChange={handleChange}
+        placeholder="No 1, Company Street, Company City"
+      />
+    </div>
+
+    {/* Third Row: Sector and Trade Area */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+      <div className="space-y-2">
+        <Label htmlFor="sector" className="text-left text-xs text-gray-600">
+          Sector<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+        </Label>
+        <Select
+          value={formData.sector}
+          onValueChange={handleSectorChange}
+          disabled={sectorLoading}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select sector" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {sectors?.map((sector) => (
+                <SelectItem key={sector._id} value={sector.name}>
+                  {sector.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="tradeArea" className="text-left text-xs text-gray-600">
+          Trade Area<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+        </Label>
+        <Select
+          value={formData.tradeArea}
+          onValueChange={handleTradeAreaChange}
+          disabled={!formData.sector}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select trade area" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {sectors
+                ?.find((sector) => sector.name === formData.sector)
+                ?.tradeAreas?.map((ta) => (
+                  <SelectItem key={ta._id} value={ta.name}>
+                    {ta.name}
+                  </SelectItem>
+                ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+
+  
+
+    {/* Password Fields */}
+    <PasswordFields formData={formData} onChange={handleChange} />
+
+    {/* Submit Button */}
+    <Button type="submit" className="w-full bg-blue-600">
+      {loading ? <Spinner /> : "Sign Up"}
+    </Button>
+  </form>
+</TabsContent>
+
               </Tabs>
               <div className="mt-4 text-center text-sm">
                 Already have an account?-
