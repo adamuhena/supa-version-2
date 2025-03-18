@@ -1,4 +1,3 @@
-"use client"
 
 import PageLayout from "@/components/layout/pageLayout"
 import { useState } from "react"
@@ -11,57 +10,72 @@ import { Button } from "@/components/ui/button"
 import { FileText, Eye, ChevronLeft, Maximize, Minimize } from "lucide-react"
 
 // Sample data structure - in a real app, this would come from an API or database
-const pdfData = {
-  "2024": {
-    Lagos: [
-      {
-        id: 1,
-        title: "Lagos Economic Report 2024",
-        url: "/NEW.pdf",
-        thumbnail: "/placeholder.svg?height=200&width=150",
-      },
-    ],
-  },
-  // "2025": {
-  //   Lagos: [
-  //     {
-  //       id: 6,
-  //       title: "Lagos Projections 2025",
-  //       url: "/NEW.pdf",
-  //       thumbnail: "/placeholder.svg?height=200&width=150",
-  //     },
-  //   ],
-  //   Abuja: [
-  //     {
-  //       id: 7,
-  //       title: "Abuja Development Plan 2025",
-  //       url: "/pdfs/abuja-dev-2025.pdf",
-  //       thumbnail: "/placeholder.svg?height=200&width=150",
-  //     },
-  //   ],
-  //   Rivers: [
-  //     {
-  //       id: 8,
-  //       title: "Rivers State Oil Report 2025",
-  //       url: "/pdfs/rivers-oil-2025.pdf",
-  //       thumbnail: "/placeholder.svg?height=200&width=150",
-  //     },
-  //   ],
-  // },
-}
+// const pdfData = {
+//   "2024": {
+//     Lagos: [
+//       {
+//         id: 1,
+//         title: "Lagos Economic Report 2024",
+//         url: "/NEW.pdf",
+//         thumbnail: "/placeholder.svg?height=200&width=150",
+//       },
+//     ],
+//   },
+// }
 
-// List of Nigerian states
+// // List of Nigerian states
+// const nigerianStates = [
+//   "All_State",
+//   "Abia",
+//   "Adamawa",
+//   "Akwa_Ibom",
+//   "Anambra",
+//   "Bauchi",
+//   "Bayelsa",
+//   "Benue",
+//   "Borno",
+//   "Cross_River",
+//   "Delta",
+//   "Ebonyi",
+//   "Edo",
+//   "Ekiti",
+//   "Enugu",
+//   "Abuja",
+//   "Gombe",
+//   "Imo",
+//   "Jigawa",
+//   "Kaduna",
+//   "Kano",
+//   "Katsina",
+//   "Kebbi",
+//   "Kogi",
+//   "Kwara",
+//   "Lagos",
+//   "Nasarawa",
+//   "Niger",
+//   "Ogun",
+//   "Ondo",
+//   "Osun",
+//   "Oyo",
+//   "Plateau",
+//   "Rivers",
+//   "Sokoto",
+//   "Taraba",
+//   "Yobe",
+//   "Zamfara",
+// ]
+
 const nigerianStates = [
-  "All_State",
+  // "All_State",
   "Abia",
   "Adamawa",
-  "Akwa Ibom",
+  "Uyo",
   "Anambra",
   "Bauchi",
   "Bayelsa",
   "Benue",
   "Borno",
-  "Cross River",
+  "Calabar",
   "Delta",
   "Ebonyi",
   "Edo",
@@ -90,7 +104,28 @@ const nigerianStates = [
   "Taraba",
   "Yobe",
   "Zamfara",
-]
+];
+
+const pdfData = {
+  "2024": {},
+};
+
+nigerianStates.forEach((state, index) => {
+  const formattedStateName = state.replace(/_/g, ' '); // Remove underscores for display
+  // const stateLower = state.toLowerCase(); // Lowercase for URL
+  const stateUpper = state.toUpperCase(); // For the URL
+
+  pdfData["2024"][state] = [
+    {
+      id: index + 1,
+      title: `${formattedStateName} 2024 SUPA Beneficiaries`,
+      url: `SUPA2024/${stateUpper}.pdf`,
+      // thumbnail: "/placeholder.svg?height=200&width=150",
+    },
+  ];
+});
+
+console.log(pdfData);
 
 export default function PDFPreviewPage2() {
   const [selectedState, setSelectedState] = useState({
@@ -159,7 +194,7 @@ export default function PDFPreviewPage2() {
                 {years.map((year) => (
                   <TabsContent key={year} value={year} className="mt-6">
                     <div className="bg-card rounded-lg p-6 shadow-md">
-                      <h2 className="text-2xl font-bold mb-4">{year} Beneficiaries</h2>
+                      {/* <h2 className="text-2xl font-bold mb-4">{year} Beneficiaries</h2> */}
 
                       <div className="mb-8">
                         <label className="block text-sm font-medium mb-2">Select a State:</label>
