@@ -1,18 +1,13 @@
-import axios from "axios";
-import React, { useMemo, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+"use client"
 
-import DashboardPage from "@/components/layout/DashboardLayout";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import axios from "axios"
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+
+import DashboardPage from "@/components/layout/DashboardLayout"
+import ProtectedRoute from "@/components/ProtectedRoute"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Pagination,
   PaginationContent,
@@ -20,43 +15,33 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { states } from "@/data/nigeria";
-import useLogout from "@/pages/loginPage/logout";
-import {
-  Cross1Icon,
-  DashboardIcon,
-  DownloadIcon,
-  SewingPinFilledIcon,
-} from "@radix-ui/react-icons";
-import { LogOut, UserCircle } from "lucide-react";
-import Spinner from "@/components/layout/spinner";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import { CSVLink } from "react-csv";
-import { API_BASE_URL } from "@/config/env";
+} from "@/components/ui/pagination"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { states } from "@/data/nigeria"
+import useLogout from "@/pages/loginPage/logout"
+import { Cross1Icon, DashboardIcon, DownloadIcon, SewingPinFilledIcon } from "@radix-ui/react-icons"
+import { LogOut, UserCircle } from "lucide-react"
+import Spinner from "@/components/layout/spinner"
+import jsPDF from "jspdf"
+import "jspdf-autotable"
+import { CSVLink } from "react-csv"
+import { API_BASE_URL } from "@/config/env"
+import { toast } from "sonner"
 
 // Utility Functions
 function formatString(input) {
+  if (!input) return ""
   // Replace underscores with spaces and capitalize
   return input
     .replace(/_/g, " ")
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
+    .join(" ")
 }
 
 function formatUsersToCSV(users) {
   if (!Array.isArray(users) || users.length === 0) {
-    return [];
+    return []
   }
 
   const headerMapping = {
@@ -68,20 +53,23 @@ function formatUsersToCSV(users) {
     role: "Role",
     gender: "Gender",
     stateOfOrigin: "State of Origin",
+    street: "Address",
     lga: "LGA",
     stateOfResidence: "State of Residence",
     lgaOfResidence: "LGA of Residence",
     nin: "NIN",
-  };
+    sectors: "Sectors",
+    tradeAreas: "Trade Areas",
+  }
 
-  const headers = Object.keys(users[0]).map((key) => headerMapping[key] || key);
-  const rows = users.map((user) => Object.keys(user).map((key) => user[key]));
+  const headers = Object.keys(users[0]).map((key) => headerMapping[key] || key)
+  const rows = users.map((user) => Object.keys(user).map((key) => user[key]))
 
-  return [headers, ...rows];
+  return [headers, ...rows]
 }
 
 function replaceSymbolsWithSpace(str = "") {
-  return str.replace(/[-/]/g, " ").toLowerCase();
+  return str.replace(/[-/]/g, " ").toLowerCase()
 }
 
 // Initial Form State
@@ -93,13 +81,19 @@ const emptyForm = {
   gender: "",
   hasDisability: "",
   role: "",
-};
+  sector: "",
+  tradeArea: "",
+}
 
 const AdminDashboardReports = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false)
+  const [loadingCSV, setLoadingCSV] = useState(false)
+  const [users, setUsers] = useState([])
+  const [sectors, setSectors] = useState([])
+  const [csvData, setCsvData] = useState([])
+  const [allData, setAllData] = useState(false)
 
   // Pagination State
   const [pagination, setPagination] = useState({
@@ -107,38 +101,37 @@ const AdminDashboardReports = () => {
     totalPages: 0,
     totalUsers: 0,
     limit: 50,
-  });
+  })
 
   // Form State
   const [form, setForm] = useState({
     ...emptyForm,
-  });
+  })
 
-  // Memoized CSV data
-  const csvData = useMemo(() => {
-    return formatUsersToCSV(
-      users.map((user) => ({
-        phoneNumber: user?.phoneNumber,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
-        email: user?.email,
-        phone: user?.phone,
-        role: user?.role,
-        gender: user?.gender,
-        stateOfOrigin: user?.stateOfOrigin,
-        lga: user?.lga,
-        stateOfResidence: user?.stateOfResidence,
-        lgaOfResidence: user?.lgaOfResidence,
-        nin: user?.nin,
-      }))
-    );
-  }, [users]);
+  // Fetch sectors on component mount
+  useEffect(() => {
+    const fetchSectors = async () => {
+      try {
+        const accessToken = localStorage.getItem("accessToken")
+        const response = await axios.get(`${API_BASE_URL}/sectors`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        setSectors(Array.isArray(response.data) ? response.data : [])
+      } catch (error) {
+        console.error("Error fetching sectors:", error)
+      }
+    }
+
+    fetchSectors()
+  }, [])
 
   // Fetch Users with Pagination
   const fetchUsers = async (filterParams, page = 1, limit = 50) => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const accessToken = localStorage.getItem("accessToken");
+      const accessToken = localStorage.getItem("accessToken")
 
       const response = await axios.post(
         `${API_BASE_URL}/users-reports`,
@@ -153,77 +146,161 @@ const AdminDashboardReports = () => {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
-      );
+        },
+      )
 
-      const { users, pagination: serverPagination } =
-        response?.data?.data || {};
+      const { users, pagination: serverPagination } = response?.data?.data || {}
 
-      setUsers(users || []);
+      setUsers(users || [])
       setPagination((prevPagination) => ({
         ...prevPagination,
         ...serverPagination,
         currentPage: page,
         limit,
-      }));
+      }))
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching users:", error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  // Download all data for CSV
+  const downloadAllData = async () => {
+    setLoadingCSV(true)
+    try {
+      const accessToken = localStorage.getItem("accessToken")
+
+      const response = await axios.post(
+        `${API_BASE_URL}/users-reports`,
+        {
+          filterParams: {
+            ...form,
+            page: 1,
+            limit: 1000000, // Very large limit to get all data
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      )
+
+      const { users } = response?.data?.data || {}
+
+      if (users && users.length > 0) {
+        // Process users to extract sector and trade area information
+        const processedUsers = users.map((user) => {
+          // Extract sectors and trade areas from priorSkillsCerts
+          let sectors = ""
+          let tradeAreas = ""
+
+          if (user.priorSkillsCerts && user.priorSkillsCerts.length > 0) {
+            user.priorSkillsCerts.forEach((cert) => {
+              if (cert.sector) sectors += cert.sector + ", "
+              if (cert.tradeArea) tradeAreas += cert.tradeArea + ", "
+            })
+
+            // Remove trailing comma and space
+            sectors = sectors.replace(/,\s*$/, "")
+            tradeAreas = tradeAreas.replace(/,\s*$/, "")
+          }
+
+          return {
+            phoneNumber: user?.phoneNumber || "",
+            firstName: user?.firstName || "",
+            lastName: user?.lastName || "",
+            email: user?.email || "",
+            role: formatString(user?.role || ""),
+            gender: user?.gender || "",
+            stateOfOrigin: user?.stateOfOrigin || "",
+            lga: user?.lga || "",
+            stateOfResidence: user?.stateOfResidence || "",
+            lgaOfResidence: user?.lgaOfResidence || "",
+            street: user?.street || "",
+            nin: user?.nin || "",
+            sectors: sectors || "",
+            tradeAreas: tradeAreas || "",
+          }
+        })
+
+        const formattedData = formatUsersToCSV(processedUsers)
+        setCsvData(formattedData)
+        setAllData(true)
+
+        toast.success("CSV data has been generated with all records. Click 'Download CSV' to download.")
+      } else {
+        toast.error("No data available to download")
+      }
+    } catch (error) {
+      console.error("Error fetching all users for CSV:", error)
+      toast.error("Failed to generate CSV data")
+    } finally {
+      setLoadingCSV(false)
+    }
+  }
 
   // Get LGA options for selected state
   const getStateLGAS = (selectedState) => {
     const state = states.find(
-      (state) =>
-        replaceSymbolsWithSpace(`${state?.value}`) ===
-        replaceSymbolsWithSpace(`${selectedState}`)
-    );
+      (state) => replaceSymbolsWithSpace(`${state?.value}`) === replaceSymbolsWithSpace(`${selectedState}`),
+    )
 
     return (state?.lgas || []).map((x) => ({
       label: x,
       value: x,
-    }));
-  };
+    }))
+  }
 
   // Event Handlers
   const onChangeInput = (id, value) => {
     setForm((prevForm) => ({
       ...prevForm,
       [id]: value,
-    }));
-  };
+    }))
+
+    // Reset trade area when sector changes
+    if (id === "sector") {
+      setForm((prevForm) => ({
+        ...prevForm,
+        tradeArea: "",
+      }))
+    }
+  }
 
   const search = () => {
-    fetchUsers(form);
-  };
+    fetchUsers(form)
+    setAllData(false)
+  }
 
   const clear = () => {
-    setForm({ ...emptyForm });
-    setUsers([]);
+    setForm({ ...emptyForm })
+    setUsers([])
+    setCsvData([])
+    setAllData(false)
     setPagination({
       currentPage: 1,
       totalPages: 0,
       totalUsers: 0,
       limit: 50,
-    });
-  };
+    })
+  }
 
   const showAll = () => {
-    setForm({ ...emptyForm });
-    fetchUsers(emptyForm);
-  };
+    setForm({ ...emptyForm })
+    fetchUsers(emptyForm)
+    setAllData(false)
+  }
 
   const handlePageChange = (page) => {
-    fetchUsers(form, page, pagination.limit);
-  };
+    fetchUsers(form, page, pagination.limit)
+  }
+
   const selectedStateLGASOrigin =
     states.find(
-      (state) =>
-        replaceSymbolsWithSpace(`${state?.value}`) ===
-        replaceSymbolsWithSpace(`${form?.stateOfOrigin}`)
-    )?.lgas || [];
+      (state) => replaceSymbolsWithSpace(`${state?.value}`) === replaceSymbolsWithSpace(`${form?.stateOfOrigin}`),
+    )?.lgas || []
 
   const selectedStateLGASOriginFormatted =
     selectedStateLGASOrigin && selectedStateLGASOrigin?.length
@@ -231,14 +308,12 @@ const AdminDashboardReports = () => {
           label: x,
           value: x,
         }))
-      : [];
+      : []
 
   const selectedStateLGASResidence =
     states.find(
-      (state) =>
-        replaceSymbolsWithSpace(`${state?.value}`) ===
-        replaceSymbolsWithSpace(`${form?.stateOfResidence}`)
-    )?.lgas || [];
+      (state) => replaceSymbolsWithSpace(`${state?.value}`) === replaceSymbolsWithSpace(`${form?.stateOfResidence}`),
+    )?.lgas || []
 
   const selectedStateLGASResidenceFormatted =
     selectedStateLGASResidence && selectedStateLGASResidence?.length
@@ -246,42 +321,46 @@ const AdminDashboardReports = () => {
           label: x,
           value: x,
         }))
-      : [];
+      : []
 
-  const onchangeInput = (id, value) => {
-    setForm((prevForm) => ({
-      ...prevForm,
-      [id]: value,
-    }));
-  };
+  // Get trade areas for selected sector
+  const selectedSectorTradeAreas =
+    (Array.isArray(sectors) ? sectors.find((sector) => sector._id === form.sector) : null)?.tradeAreas || []
 
   // PDF Generation
   const generatePDF = () => {
-    const doc = new jsPDF();
-    const name = "Industrial Training Fund - SKILL-UP Artisan";
-    const date = new Date().toLocaleDateString();
+    const doc = new jsPDF()
+    const name = "Industrial Training Fund - SKILL-UP Artisan"
+    const date = new Date().toLocaleDateString()
 
-    doc.setFontSize(16);
-    doc.text("SUPA Report Artisan/Intending Artisan Report", 35, 15);
+    doc.setFontSize(16)
+    doc.text("SUPA Report Artisan/Intending Artisan Report", 35, 15)
 
-    const headers = [
-      "Name",
-      "Role",
-      "NIN",
-      "Phone",
-      "Gender",
-      "Residence",
-      "Origin",
-    ];
-    const data = users.map((user) => [
-      `${user.firstName} ${user.lastName}`,
-      formatString(user.role || ""),
-      user.nin || "---",
-      user.phoneNumber || "---",
-      user.gender || "---",
-      `${user.stateOfResidence || "---"}, ${user.lgaOfResidence || "---"}`,
-      `${user.stateOfOrigin || "---"}, ${user.lga || "---"}`,
-    ]);
+    const headers = ["Name", "Role", "NIN", "Phone", "Gender", "State of Residence", "Address", "State of Origin", "Sectors/Trade Areas"]
+
+    const data = users.map((user) => {
+      // Extract sectors and trade areas
+      let sectorsTradeAreas = ""
+      if (user.priorSkillsCerts && user.priorSkillsCerts.length > 0) {
+        user.priorSkillsCerts.forEach((cert) => {
+          if (cert.sector || cert.tradeArea) {
+            sectorsTradeAreas += `${cert.sector || ""} - ${cert.tradeArea || ""}, `
+          }
+        })
+        sectorsTradeAreas = sectorsTradeAreas.replace(/,\s*$/, "")
+      }
+
+      return [
+        `${user.firstName || ""} ${user.lastName || ""}`,
+        formatString(user.role || ""),
+        user.nin || "---",
+        user.phoneNumber || "---",
+        user.gender || "---",
+        `${user.stateOfResidence || "---"}, ${user.lgaOfResidence || "---"}, ${user.street || "---"}`,
+        `${user.stateOfOrigin || "---"}, ${user.lga || "---"}`,
+        sectorsTradeAreas || "---",
+      ]
+    })
 
     doc.autoTable({
       head: [headers],
@@ -295,46 +374,35 @@ const AdminDashboardReports = () => {
       bodyStyles: {
         textColor: 50,
       },
-    });
+    })
 
-    const pageCount = doc.internal.getNumberOfPages();
+    const pageCount = doc.internal.getNumberOfPages()
     for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      doc.setFontSize(10);
-      doc.text(`Generated by: ${name}`, 10, doc.internal.pageSize.height - 10);
-      doc.text(
-        `Date: ${date}`,
-        doc.internal.pageSize.width - 50,
-        doc.internal.pageSize.height - 10
-      );
+      doc.setPage(i)
+      doc.setFontSize(10)
+      doc.text(`Generated by: ${name}`, 10, doc.internal.pageSize.height - 10)
+      doc.text(`Date: ${date}`, doc.internal.pageSize.width - 50, doc.internal.pageSize.height - 10)
     }
 
-    doc.save("Admin_Reports.pdf");
-  };
+    doc.save("Admin_Reports.pdf")
+  }
 
   // Logout handler
-  const logout = useLogout();
-
-  // // Render
-  // if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-screen">
-  //       <Spinner />
-  //     </div>
-  //   );
-  // }
+  const logout = useLogout()
 
   return (
     <ProtectedRoute>
+      {loading && (
+        <div className="fixed inset-0 bg-black/20 flex justify-center items-center z-50">
+          <Spinner />
+        </div>
+      )}
       <DashboardPage title="Artisan Dashboard">
-        
         <div className="container mx-auto py-6">
           <header className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-bold">ADMIN DASHBOARD REPORTS</h1>
-              <h2 className="text-left font-[700] text-[14px]">
-                (ARTISANS & INTENDING ARTISANS)
-              </h2>
+              <h2 className="text-left font-[700] text-[14px]">(ARTISANS & INTENDING ARTISANS)</h2>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => navigate("/biodata")}>
@@ -352,18 +420,14 @@ const AdminDashboardReports = () => {
               {/* Filter Dropdowns */}
               <div className="w-[200px]">
                 <p className="text-left text-[14px] mb-1">User Type</p>
-                <Select
-                  value={form?.role}
-                  onValueChange={(value) => onChangeInput("role", value)}>
+                <Select value={form?.role} onValueChange={(value) => onChangeInput("role", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Role" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       <SelectItem value="artisan_user">Artisan User</SelectItem>
-                      <SelectItem value="intending_artisan">
-                        Intending Artisan
-                      </SelectItem>
+                      <SelectItem value="intending_artisan">Intending Artisan</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -373,21 +437,18 @@ const AdminDashboardReports = () => {
                 <p className="text-left text-[14px] mb-1">State Of Residence</p>
                 <Select
                   value={form?.stateOfResidence}
-                  onValueChange={(value) =>
-                    onchangeInput("stateOfResidence", value)
-                  }>
+                  onValueChange={(value) => onChangeInput("stateOfResidence", value)}
+                >
                   <SelectTrigger className="">
-                    <SelectValue placeholder="" />
+                    <SelectValue placeholder="Select State" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {states.map((item) => {
-                        return (
-                          <SelectItem value={item?.value}>
-                            {item?.label}
-                          </SelectItem>
-                        );
-                      })}
+                      {states.map((item) => (
+                        <SelectItem key={item.value} value={item?.value}>
+                          {item?.label}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -395,23 +456,17 @@ const AdminDashboardReports = () => {
 
               <div className="w-[200px]">
                 <p className="text-left text-[14px] mb-1">LGA Of Residence</p>
-                <Select
-                  value={form?.lgaOfResidence}
-                  onValueChange={(value) =>
-                    onchangeInput("lgaOfResidence", value)
-                  }>
+                <Select value={form?.lgaOfResidence} onValueChange={(value) => onChangeInput("lgaOfResidence", value)}>
                   <SelectTrigger className="">
-                    <SelectValue placeholder="" />
+                    <SelectValue placeholder="Select LGA" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {selectedStateLGASResidenceFormatted?.map((item) => {
-                        return (
-                          <SelectItem value={item?.value}>
-                            {item?.label}
-                          </SelectItem>
-                        );
-                      })}
+                      {selectedStateLGASResidenceFormatted?.map((item) => (
+                        <SelectItem key={item.value} value={item?.value}>
+                          {item?.label}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -419,23 +474,17 @@ const AdminDashboardReports = () => {
 
               <div className="w-[200px]">
                 <p className="text-left text-[14px] mb-1">State Of Origin</p>
-                <Select
-                  value={form?.stateOfOrigin}
-                  onValueChange={(value) =>
-                    onchangeInput("stateOfOrigin", value)
-                  }>
+                <Select value={form?.stateOfOrigin} onValueChange={(value) => onChangeInput("stateOfOrigin", value)}>
                   <SelectTrigger className="">
-                    <SelectValue placeholder="" />
+                    <SelectValue placeholder="Select State" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {states.map((item) => {
-                        return (
-                          <SelectItem value={item?.value}>
-                            {item?.label}
-                          </SelectItem>
-                        );
-                      })}
+                      {states.map((item) => (
+                        <SelectItem key={item.value} value={item?.value}>
+                          {item?.label}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -443,21 +492,17 @@ const AdminDashboardReports = () => {
 
               <div className="w-[200px]">
                 <p className="text-left text-[14px] mb-1">LGA Of Origin</p>
-                <Select
-                  value={form?.lga}
-                  onValueChange={(value) => onchangeInput("lga", value)}>
+                <Select value={form?.lga} onValueChange={(value) => onChangeInput("lga", value)}>
                   <SelectTrigger className="">
-                    <SelectValue placeholder="" />
+                    <SelectValue placeholder="Select LGA" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {selectedStateLGASOriginFormatted.map((item) => {
-                        return (
-                          <SelectItem value={item?.value}>
-                            {item?.label}
-                          </SelectItem>
-                        );
-                      })}
+                      {selectedStateLGASOriginFormatted.map((item) => (
+                        <SelectItem key={item.value} value={item?.value}>
+                          {item?.label}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -465,11 +510,9 @@ const AdminDashboardReports = () => {
 
               <div className="w-[200px]">
                 <p className="text-left text-[14px] mb-1">Gender</p>
-                <Select
-                  value={form?.gender}
-                  onValueChange={(value) => onchangeInput("gender", value)}>
+                <Select value={form?.gender} onValueChange={(value) => onChangeInput("gender", value)}>
                   <SelectTrigger className="">
-                    <SelectValue placeholder="" />
+                    <SelectValue placeholder="Select Gender" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -482,13 +525,9 @@ const AdminDashboardReports = () => {
 
               <div className="w-[200px]">
                 <p className="text-left text-[14px] mb-1">Has Disability</p>
-                <Select
-                  value={form?.hasDisability}
-                  onValueChange={(value) =>
-                    onchangeInput("hasDisability", value)
-                  }>
+                <Select value={form?.hasDisability} onValueChange={(value) => onChangeInput("hasDisability", value)}>
                   <SelectTrigger className="">
-                    <SelectValue placeholder="" />
+                    <SelectValue placeholder="Select Option" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -499,28 +538,61 @@ const AdminDashboardReports = () => {
                 </Select>
               </div>
 
-              <Button
-                className="bg-emerald-700 mt-auto"
-                onClick={search}
-                disabled={loading}>
-                {loading ? (
-                  <SewingPinFilledIcon className="animate-spin" />
-                ) : (
-                  "Search"
-                )}
+              {/* New Sector Filter */}
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Sector</p>
+                <Select value={form?.sector} onValueChange={(value) => onChangeInput("sector", value)}>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select Sector" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {sectors.map((sector) => (
+                        <SelectItem key={sector._id} value={sector._id}>
+                          {sector.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* New Trade Area Filter */}
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Trade Area</p>
+                <Select
+                  value={form?.tradeArea}
+                  onValueChange={(value) => onChangeInput("tradeArea", value)}
+                  disabled={!form.sector}
+                >
+                  <SelectTrigger className="">
+                    <SelectValue placeholder={form.sector ? "Select Trade Area" : "Select Sector First"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {selectedSectorTradeAreas.map((tradeArea) => (
+                        <SelectItem key={tradeArea._id} value={tradeArea._id}>
+                          {tradeArea.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button className="bg-emerald-700 mt-auto" onClick={search} disabled={loading}>
+                {loading ? <SewingPinFilledIcon className="animate-spin" /> : "Search"}
               </Button>
 
-              <Button
-                className="bg-red-500 text-[white] mt-auto hover:bg-gray-300"
-                onClick={clear}
-                disabled={loading}>
+              <Button className="bg-red-500 text-[white] mt-auto hover:bg-gray-300" onClick={clear} disabled={loading}>
                 Clear <Cross1Icon />
               </Button>
 
               <Button
                 className="bg-slate-500 text-[white] mt-auto hover:bg-gray-300"
                 onClick={showAll}
-                disabled={loading}>
+                disabled={loading}
+              >
                 Show All <DashboardIcon />
               </Button>
             </div>
@@ -531,66 +603,115 @@ const AdminDashboardReports = () => {
             <div className="w-full flex justify-end gap-2 mb-3">
               {users?.length > 0 && (
                 <>
-                  <CSVLink data={csvData}>
-                    <Button className="mt-auto">
-                      Download CSV <DownloadIcon />
+                  {!allData ? (
+                    <Button className="mt-auto" onClick={downloadAllData} disabled={loadingCSV}>
+                      {loadingCSV ? (
+                        <SewingPinFilledIcon className="animate-spin mr-2" />
+                      ) : (
+                        <DownloadIcon className="mr-2" />
+                      )}
+                      Generate CSV
                     </Button>
-                  </CSVLink>
+                  ) : (
+                    <CSVLink
+                      data={csvData}
+                      filename="admin_reports.csv"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                    >
+                      <DownloadIcon className="mr-2" />
+                      Download CSV
+                    </CSVLink>
+                  )}
                   <Button className="mt-auto" onClick={generatePDF}>
-                    Download PDF <DownloadIcon />
+                    <DownloadIcon className="mr-2" />
+                    Download PDF
                   </Button>
                 </>
               )}
             </div>
 
             {/* Users Table */}
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-200">
-                  <TableHead>SN</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>NIN</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Gender</TableHead>
-                  <TableHead>Residence</TableHead>
-                  <TableHead>Origin</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user, index) => (
-                  <TableRow key={user?._id}>
-                    <TableCell>
-                      {index +
-                        1 +
-                        (pagination.currentPage - 1) * pagination.limit}
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        {user.firstName} {user.lastName}
-                      </div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
-                    </TableCell>
-                    <TableCell>{formatString(user.role || "")}</TableCell>
-                    <TableCell>{user.nin}</TableCell>
-                    <TableCell>{user.phoneNumber}</TableCell>
-                    <TableCell className="capitalize">
-                      {user.gender || "---"}
-                    </TableCell>
-                    <TableCell>
-                      <div>{user.stateOfResidence}</div>
-                      <div className="text-sm text-gray-500">
-                        {user.lgaOfResidence}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>{user.stateOfOrigin}</div>
-                      <div className="text-sm text-gray-500">{user.lga}</div>
-                    </TableCell>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-100">
+                    <TableHead className="font-medium">SN</TableHead>
+                    <TableHead className="font-medium">Name</TableHead>
+                    <TableHead className="font-medium">Role</TableHead>
+                    <TableHead className="font-medium">NIN</TableHead>
+                    <TableHead className="font-medium">Phone</TableHead>
+                    <TableHead className="font-medium">Gender</TableHead>
+                    <TableHead className="font-medium"> State of Residence</TableHead>
+                    <TableHead className="font-medium"> Address</TableHead>
+                    <TableHead className="font-medium">State of Origin</TableHead>
+                    <TableHead className="font-medium">Sectors/Trade Areas</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {users.length > 0 ? (
+                    users.map((user, index) => {
+                      // Extract sectors and trade areas
+                      const sectorsTradeAreas = []
+                      if (user.priorSkillsCerts && user.priorSkillsCerts.length > 0) {
+                        user.priorSkillsCerts.forEach((cert) => {
+                          if (cert.sector || cert.tradeArea) {
+                            sectorsTradeAreas.push({
+                              sector: cert.sector,
+                              tradeArea: cert.tradeArea,
+                            })
+                          }
+                        })
+                      }
+
+                      return (
+                        <TableRow key={user?._id || index}>
+                          <TableCell>{index + 1 + (pagination.currentPage - 1) * pagination.limit}</TableCell>
+                          <TableCell>
+                            <div className="font-medium">
+                              {user.firstName} {user.lastName}
+                            </div>
+                            <div className="text-sm text-gray-500">{user.email}</div>
+                          </TableCell>
+                          <TableCell>{formatString(user.role || "")}</TableCell>
+                          <TableCell>{user.nin || "---"}</TableCell>
+                          <TableCell>{user.phoneNumber || "---"}</TableCell>
+                          <TableCell className="capitalize">{user.gender || "---"}</TableCell>
+                          <TableCell>
+                            <div>{user.stateOfResidence || "---"}</div>
+                            <div className="text-sm text-gray-500">{user.lgaOfResidence || "---"}</div>
+                          </TableCell>
+                          <TableCell>{user.street || "---"}</TableCell>
+                          <TableCell>
+                            <div>{user.stateOfOrigin || "---"}</div>
+                            <div className="text-sm text-gray-500">{user.lga || "---"}</div>
+                          </TableCell>
+                          <TableCell>
+                            {sectorsTradeAreas.length > 0 ? (
+                              <div className="space-y-1">
+                                {sectorsTradeAreas.map((item, idx) => (
+                                  <div key={idx} className="text-sm">
+                                    <span className="font-medium">{item.sector || "---"}</span>
+                                    {item.tradeArea && <span className="text-gray-500"> - {item.tradeArea}</span>}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              "---"
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center py-4">
+                        No users found. Try adjusting your filters.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
 
             {/* Pagination */}
             {pagination.totalPages > 0 && (
@@ -599,20 +720,14 @@ const AdminDashboardReports = () => {
                   <PaginationContent>
                     <PaginationItem>
                       <PaginationPrevious
-                        onClick={() =>
-                          handlePageChange(
-                            Math.max(1, pagination.currentPage - 1)
-                          )
-                        }
+                        onClick={() => handlePageChange(Math.max(1, pagination.currentPage - 1))}
                         disabled={pagination.currentPage === 1}
                       />
                     </PaginationItem>
 
                     {/* First page */}
                     <PaginationItem>
-                      <PaginationLink
-                        onClick={() => handlePageChange(1)}
-                        isActive={pagination.currentPage === 1}>
+                      <PaginationLink onClick={() => handlePageChange(1)} isActive={pagination.currentPage === 1}>
                         1
                       </PaginationLink>
                     </PaginationItem>
@@ -626,19 +741,20 @@ const AdminDashboardReports = () => {
 
                     {/* Middle pages */}
                     {Array.from({ length: 3 }, (_, i) => {
-                      const pageNum = pagination.currentPage + i - 1;
+                      const pageNum = pagination.currentPage + i - 1
                       if (pageNum > 1 && pageNum < pagination.totalPages) {
                         return (
                           <PaginationItem key={pageNum}>
                             <PaginationLink
                               onClick={() => handlePageChange(pageNum)}
-                              isActive={pagination.currentPage === pageNum}>
+                              isActive={pagination.currentPage === pageNum}
+                            >
                               {pageNum}
                             </PaginationLink>
                           </PaginationItem>
-                        );
+                        )
                       }
-                      return null;
+                      return null
                     })}
 
                     {/* Ellipsis before last page */}
@@ -652,12 +768,9 @@ const AdminDashboardReports = () => {
                     {pagination.totalPages > 1 && (
                       <PaginationItem>
                         <PaginationLink
-                          onClick={() =>
-                            handlePageChange(pagination.totalPages)
-                          }
-                          isActive={
-                            pagination.currentPage === pagination.totalPages
-                          }>
+                          onClick={() => handlePageChange(pagination.totalPages)}
+                          isActive={pagination.currentPage === pagination.totalPages}
+                        >
                           {pagination.totalPages}
                         </PaginationLink>
                       </PaginationItem>
@@ -665,25 +778,15 @@ const AdminDashboardReports = () => {
 
                     <PaginationItem>
                       <PaginationNext
-                        onClick={() =>
-                          handlePageChange(
-                            Math.min(
-                              pagination.totalPages,
-                              pagination.currentPage + 1
-                            )
-                          )
-                        }
-                        disabled={
-                          pagination.currentPage === pagination.totalPages
-                        }
+                        onClick={() => handlePageChange(Math.min(pagination.totalPages, pagination.currentPage + 1))}
+                        disabled={pagination.currentPage === pagination.totalPages}
                       />
                     </PaginationItem>
                   </PaginationContent>
                 </Pagination>
 
                 <div className="text-sm text-gray-500 mt-2">
-                  Page {pagination.currentPage} of {pagination.totalPages} |
-                  Total {pagination.totalUsers} users
+                  Page {pagination.currentPage} of {pagination.totalPages} | Total {pagination.totalUsers} users
                 </div>
               </div>
             )}
@@ -691,7 +794,8 @@ const AdminDashboardReports = () => {
         </div>
       </DashboardPage>
     </ProtectedRoute>
-  );
-};
+  )
+}
 
-export default AdminDashboardReports;
+export default AdminDashboardReports
+
