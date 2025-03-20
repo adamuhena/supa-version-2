@@ -244,7 +244,7 @@ export default function PDFPreviewPage2() {
                                   <CardFooter className="p-4 pt-0">
                                     <Button className="w-full" onClick={() => viewDocument(doc)}>
                                       <Eye className="mr-2 h-4 w-4" />
-                                      Read Document
+                                      Preview List
                                     </Button>
                                   </CardFooter>
                                 </Card>
@@ -285,7 +285,12 @@ export default function PDFPreviewPage2() {
                   </Button>
                 </div>
                 <div className={cn("w-full bg-gray-100", isFullscreen ? "h-[calc(100vh-64px)]" : "h-[70vh]")}>
-                  <iframe src={selectedDocument.url} className="w-full h-full" title={selectedDocument.title} loading="lazy"/>
+                  <iframe 
+                    src={selectedDocument.url} 
+                    className="w-full h-full" 
+                    //className="w-full h-screen sm:h-[70vh]"
+                    title={selectedDocument.title} 
+                    loading="lazy"/>
                 </div>
               </div>
             )}
