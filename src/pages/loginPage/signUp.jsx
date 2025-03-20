@@ -1514,11 +1514,20 @@ export default function SignupForm() {
         <Label htmlFor="lga" className="text-left text-xs text-gray-600">
           LGA<span className="text-red-600 ml-[4px] text-[13px]">*</span>
         </Label>
-        <Select
+        {/* <Select
           value={formData.lga}
           onValueChange={(value) => setFormData({ ...formData, lga: value })}
           disabled={!lgas.length}
-        >
+        > */}
+        <Select
+            value={formData.lga}
+            onValueChange={(value) => {
+              console.log("Selected LGA:", value) // Debugging step
+              setFormData({ ...formData, lga: value })
+            }}
+            disabled={!lgas.length}
+          >
+
           <SelectTrigger>
             <SelectValue placeholder="Select LGA" />
           </SelectTrigger>
@@ -1526,7 +1535,7 @@ export default function SignupForm() {
             <SelectGroup>
               {lgas.map((lga) => (
                 <SelectItem key={lga} value={lga}>
-                  {lga.label}
+                  {lga}
                 </SelectItem>
               ))}
             </SelectGroup>
