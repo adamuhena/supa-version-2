@@ -387,7 +387,7 @@ const TrainingCenterReport = () => {
           <Spinner />
         </div>
       ) : null}
-      <DashboardPage title="Training Center Report">
+      {/* <DashboardPage title="Training Center Report"> */}
         <div className="container mx-auto py-6">
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Training Center Reports</h1>
@@ -791,7 +791,7 @@ const TrainingCenterReport = () => {
             </Pagination>
           </div>
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 };

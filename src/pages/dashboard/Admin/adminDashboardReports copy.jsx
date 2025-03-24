@@ -326,7 +326,7 @@ const AdminDashboardReports = () => {
 
   return (
     <ProtectedRoute>
-      <DashboardPage title="Artisan Dashboard">
+      {/* <DashboardPage title="Artisan Dashboard"> */}
         
         <div className="container mx-auto py-6">
           <header className="flex justify-between items-center mb-6">
@@ -689,7 +689,7 @@ const AdminDashboardReports = () => {
             )}
           </div>
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 };

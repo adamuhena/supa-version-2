@@ -397,7 +397,7 @@ const AdminDashboardReports = () => {
           <Spinner />
         </div>
       )}
-      <DashboardPage title="Artisan Dashboard">
+      {/* <DashboardPage title="Artisan Dashboard"> */}
         <div className="container mx-auto py-6">
           <header className="flex justify-between items-center mb-6">
             <div>
@@ -792,7 +792,7 @@ const AdminDashboardReports = () => {
             )}
           </div>
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   )
 }

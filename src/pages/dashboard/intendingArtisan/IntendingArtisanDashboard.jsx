@@ -56,9 +56,9 @@ const IntendingArtisanDashboard = ({ artisan = { rating: 4.5 } }) => {
 
   return (
     <ProtectedRoute href="/intending-artisan/dashboard">
-      <DashboardPage
+      {/* <DashboardPage
         href="/intending-artisan/dashboard"
-        title="Intending Artisan Dashboard">
+        title="Intending Artisan Dashboard"> */}
         <div className="container mx-auto p-6">
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold"> Dashboard </h1>
@@ -193,7 +193,7 @@ const IntendingArtisanDashboard = ({ artisan = { rating: 4.5 } }) => {
             </Card>
           </div>
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 };

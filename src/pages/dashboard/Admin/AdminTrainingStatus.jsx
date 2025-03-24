@@ -131,16 +131,16 @@ function AdminTrainingStatus() {
 
   if (!trainingGroups) {
     return (
-      // <div className="flex justify-center items-center h-screen">
-      //   <Spinner />
-      // </div>
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
     );
   }
   if (error) return <p>{error}</p>;
 
   return (
     <ProtectedRoute>
-      <DashboardPage title="Training Center Groups">
+      {/* <DashboardPage title="Training Center Groups"> */}
         <div className="container mx-auto p-6">
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Training Group</h1>
@@ -468,7 +468,7 @@ function AdminTrainingStatus() {
 )} */}
           </div>
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 }

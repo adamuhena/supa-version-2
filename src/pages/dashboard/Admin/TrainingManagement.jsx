@@ -809,7 +809,7 @@ const EnhancedTrainingManagement = () => {
 
   return (
     <ProtectedRoute href="/admin/dashboard">
-      <DashboardPage title="Training Management">
+      {/* <DashboardPage title="Training Management"> */}
         <div className="container mx-auto p-6">
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Training Management</h1>
@@ -834,7 +834,7 @@ const EnhancedTrainingManagement = () => {
             ? renderArtisanView()
             : renderTrainingCenterView()}
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 };

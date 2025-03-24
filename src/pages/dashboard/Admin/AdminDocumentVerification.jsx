@@ -108,7 +108,7 @@ const AdminDocumentVerification = () => {
 
   return (
     <ProtectedRoute>
-      <DashboardPage>
+      {/* <DashboardPage> */}
         <div className="container mx-auto py-6">
           <header className="flex justify-between items-center mb-6">
             <div>
@@ -322,7 +322,7 @@ const AdminDocumentVerification = () => {
             </CardContent>
           </Card>
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 };

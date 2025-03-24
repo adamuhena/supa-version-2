@@ -124,7 +124,7 @@ function TrainingCenterGroupRe() {
 
   return (
     <ProtectedRoute>
-      <DashboardPage title="Artisan Dashboard">
+      {/* <DashboardPage title="Artisan Dashboard"> */}
         <div className="container mx-auto p-6">
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">User Management</h1>
@@ -234,7 +234,7 @@ function TrainingCenterGroupRe() {
             </>
           )}
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 }

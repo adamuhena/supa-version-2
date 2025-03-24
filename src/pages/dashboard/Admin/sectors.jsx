@@ -183,7 +183,7 @@ export default function AdminSectors() {
 
   return (
     <ProtectedRoute>
-      <DashboardPage>
+      {/* <DashboardPage> */}
         <div className="container mx-auto p-4">
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Sector Management</h1>
@@ -418,7 +418,7 @@ export default function AdminSectors() {
             </CardContent>
           </Card>
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 }

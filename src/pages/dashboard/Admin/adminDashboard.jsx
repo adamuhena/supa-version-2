@@ -19,7 +19,7 @@ const AdminDashboard = () => {
 
   return (
     <ProtectedRoute href='/admin/dashboard'>
-      <DashboardPage title="Admin Dashboard">
+      {/* <DashboardPage title="Admin Dashboard"> */}
         <div className="container mx-auto p-6">
           <header className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -35,7 +35,7 @@ const AdminDashboard = () => {
           </header>
           <Dashboard />
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 };

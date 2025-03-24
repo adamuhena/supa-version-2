@@ -343,7 +343,7 @@ const UserManagement = () => {
 
   return (
     <ProtectedRoute>
-      <DashboardPage title="User Management">
+      {/* <DashboardPage title="User Management"> */}
         <div className="container mx-auto p-6">
           <header className="flex justify-between items-center mb-6">
             <div>
@@ -769,7 +769,7 @@ const UserManagement = () => {
             )}
           </DialogContent>
         </Dialog>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 };

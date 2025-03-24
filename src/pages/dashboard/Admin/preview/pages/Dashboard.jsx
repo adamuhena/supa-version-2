@@ -33,7 +33,7 @@ function Dashboard() {
 
   return (
     <ProtectedRoute href='/admin/dashboard'>
-      <DashboardPage title="Document Dashboard">
+      {/* <DashboardPage title="Document Dashboard"> */}
       <div className="bg-gradient-to-t from-stone-100 to-current-black min-h-screen">
         {/* <DotPattern width={10} height={10} cx={1} cy={1} cr={1} className={cn("fill-neutral-400/40 opacity-15")} />
 
@@ -72,7 +72,7 @@ function Dashboard() {
           </DocumentLayout>
         </div>
       </div>
-    </DashboardPage>
+    {/* </DashboardPage> */}
         </ProtectedRoute>
   )
 }

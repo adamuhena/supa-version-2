@@ -90,7 +90,7 @@ const TrainingGroupDetails = () => {
 
   return (
     <ProtectedRoute>
-      <DashboardPage>
+      {/* <DashboardPage> */}
         <div>
           <table className="w-full border-collapse border border-gray-200">
             <thead className="bg-gray-50">
@@ -174,7 +174,7 @@ const TrainingGroupDetails = () => {
             </div>
           )}
         </div>
-      </DashboardPage>
+      {/* </DashboardPage> */}
     </ProtectedRoute>
   );
 };

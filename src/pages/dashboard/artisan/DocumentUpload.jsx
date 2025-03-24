@@ -237,6 +237,7 @@ import { Briefcase, LogOut, UserCircle } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "@/config/env";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const DocumentUpload = () => {
   const logout = useLogout();
@@ -368,7 +369,8 @@ const DocumentUpload = () => {
   };
 
   return (
-    <DashboardPage title="Certification / Licensing" href="/trainee/dashboard">
+    <ProtectedRoute>
+      {/* / <DashboardPage title="Certification / Licensing" href="/trainee/dashboard"> */}
       <div className="container mx-auto p-6">
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Document Upload</h1>
@@ -495,7 +497,10 @@ const DocumentUpload = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardPage>
+    {/* // </DashboardPage> */}
+
+    </ProtectedRoute>
+    
   );
 };
 
