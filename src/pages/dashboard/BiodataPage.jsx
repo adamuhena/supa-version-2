@@ -28,6 +28,7 @@ import PersonalTab from "./tabs/PersonalTab"
 import EducationTab from "./tabs/EducationTab"
 import SkillsTab from "./tabs/SkillsTab"
 import BankTab from "./tabs/BankTab"
+import ProtectedRoute from "@/components/ProtectedRoute";
 //import { url } from "inspector";
 
 const Biodata = () => {
@@ -491,7 +492,8 @@ const Biodata = () => {
   const [selectedTab, setSelectedTab] = useState("personal");
 
   return (
-    <DashboardPage title="User Profile" href="/trainee/dashboard">
+    <ProtectedRoute>
+
       <div className="container mx-auto p-6">
         <header className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">My Profile</h1>
@@ -1292,7 +1294,8 @@ const Biodata = () => {
   </Card>
 )}
       </div>
-    </DashboardPage>
+    </ProtectedRoute>
+    
   );
 };
 

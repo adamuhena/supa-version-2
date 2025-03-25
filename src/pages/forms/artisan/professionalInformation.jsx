@@ -109,7 +109,7 @@ export default function ProfessionalInformaiton({
 
       <div className="ParentDiv">
         <div className="firstDiv">
-          <div className="inputGroup">
+          {/* <div className="inputGroup">
             <p htmlFor="firstName">
               First Name{" "}
               <span className="text-red-600 ml-[4px] text-[13px]">*</span>
@@ -141,7 +141,7 @@ export default function ProfessionalInformaiton({
               value={form?.lastName}
               onChange={(e) => onchangeInput("lastName", e.target?.value)}
             />
-          </div>
+          </div> */}
 
           {/* <div className="inputGroup">
             <Label>Email</Label>
@@ -169,7 +169,7 @@ export default function ProfessionalInformaiton({
           </div> */}
 
 
-          <div className="inputGroup">
+          {/* <div className="inputGroup">
             <p>
               State Of Origin
               <span className="text-red-600 ml-[4px] text-[13px]">*</span>
@@ -298,7 +298,7 @@ export default function ProfessionalInformaiton({
               value={form?.street}
               onChange={(e) => onchangeInput("street", e.target.value)}
             />
-          </div>
+          </div> */}
           <div className="inputGroup">
             <p>
               Marital Status

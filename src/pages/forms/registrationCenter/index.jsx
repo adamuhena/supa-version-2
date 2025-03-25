@@ -1153,25 +1153,25 @@ const checkValidateCompanyInfo = ({ form }) => {
     erroMsg = "Establishment Date is required!";
   }
 
-  if (!form?.phoneNumber) {
-    erroMsg = "Phone is required!";
-  }
+  // if (!form?.phoneNumber) {
+  //   erroMsg = "Phone is required!";
+  // }
 
   if (!form?.contactPerson) {
     erroMsg = "Name of contact person is required!";
   }
 
-  if (!form?.address) {
-    erroMsg = "Training Centre address is required!";
-  }
+  // if (!form?.address) {
+  //   erroMsg = "Training Centre address is required!";
+  // }
 
-  if (!form?.areaOffice) {
-    erroMsg = "Area Office is required!";
-  }
+  // if (!form?.areaOffice) {
+  //   erroMsg = "Area Office is required!";
+  // }
 
-  if (!form?.state) {
-    erroMsg = "State   is required!";
-  }
+  // if (!form?.state) {
+  //   erroMsg = "State   is required!";
+  // }
 
   return { erroMsg };
 };
@@ -1316,10 +1316,10 @@ const TrainingCenterForm = () => {
   const [step, setStep] = useState(0);
 
   const [form, setForm] = useState({
-    state: "",
-    lga: "",
-    areaOffice: "",
-    address: "",
+    // state: "",
+    // lga: "",
+    // areaOffice: "",
+    // address: "",
     contactPerson: "",
     establishmentDate: null,
     ownership: "",

@@ -150,6 +150,7 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
       <div>
         <button
           onClick={add}
+          disabled={true}
           className="flex border border-gray-200 px-2  py-1 text-[12px]  gap-2 rounded-[100px]">
           <PlusCircledIcon />
           <span>Add</span>

@@ -205,7 +205,7 @@ export default function PriorSkills({ controlButtons, form, onchangeInput }) {
                 <Label
                   htmlFor="email"
                   className="w-[300px] text-left leading-[1.3]">
-                  Name *
+                  Certificate Name *
                 </Label>
                 <Input
                   placeholder="Enter name"

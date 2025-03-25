@@ -1,151 +1,3 @@
-// import React, { useEffect, useState } from "react";
-
-// import { Stepper, Step } from "react-form-stepper";
-// import ProfessionalInformation from "./professionalInformation";
-// import Education from "./education";
-// import PriorSkill from "./priorSkillCertificates";
-// import Experience from "./experience";
-// import BankDetails from "./bankDetails";
-// import Declaration from "./declaration";
-// import "./index.css";
-// import { DotPattern } from "../../../components/ui/dot-pattern";
-// import { cn } from "../../../lib/utils";
-// import RegisterSuccess from "../../../components/SuccessRegister/index";
-// import axios from "axios";
-// import { toast } from "sonner";
-// import PageLayout from "../../../components/layout/pageLayout";
-
-// const ArtisanForm = () => {
-//   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-//   const [step, setStep] = useState(0);
-//   const [form, setForm] = useState({
-//     firstName: "",
-//     middleName: "",
-//     lastName: "",
-//     phone: "",
-//     nin: "", // Updated for NIN
-//     password: "",
-//     gender: "",
-//     maritalStatus: "",
-//     stateOfOrigin: "",
-//     lga: "",
-//     stateOfResidence: "",
-//     lgaOfResidence: "",
-//     street: "",
-//     hasDisability: false,
-//     disabilityType: "", // New field for type of disability
-//     email: "",
-//     education: {
-//       school: "",
-//       highestQualification: "",
-//       graduationYear: "",
-//       eduUpload: "", // New field for uploaded education document
-//     },
-//     priorSkillsCerts: [
-//       {
-//         id: `${new Date().getTime()}${Math.random()}`,
-//         sector: "",
-//         tradeArea: "",
-//         name: "",
-//         year: "",
-//         priUpload: "", // New field for uploaded certificate
-//       },
-//     ],
-//     experience: [
-//       {
-//         id: `${new Date().getTime()}${Math.random()}`,
-//         projectTitle: "",
-//         description: "",
-//         dateFrom: "",
-//         dateTo: "",
-//         exUpload: "", // New field for uploaded experience document
-//       },
-//     ],
-//     bankAccount: {
-//       accountName: "",
-//       accountNumber: "",
-//       bank: "",
-//     },
-//     userType: "artisan_user", // Default user type
-//     certifiedStatus: false, // New field for certified status
-//     licenseStatus: false, // New field for license status
-//     agree: false, // New field for user account status
-//     profileImage: "", // New field for profile picture upload
-//   });
-
-//   const [show, setShow] = useState(false);
-//   const [loading, setLoading] = useState(false);
-
-//   const goFront = () => setStep((prevStep) => prevStep + 1);
-//   const goBack = () => setStep((prevStep) => prevStep - 1);
-
-//   useEffect(() => {
-//     window.scrollTo({ top: 0, behavior: "smooth" });
-//   }, [step]);
-
-//   const onchangeInput = (id, value) => {
-//     setForm((prevForm) => ({
-//       ...prevForm,
-//       [id]: value,
-//     }));
-//   };
-
-//   const onchangeEducationInput = (id, value) => {
-//     setForm((prevForm) => ({
-//       ...prevForm,
-//       education: {
-//         ...prevForm.education,
-//         [id]: value,
-//       },
-//     }));
-//   };
-
-//   const submit = async () => {
-//     setLoading(true);
-//     try {
-//       await axios.post(`${API_BASE_URL}/api/kyc`, form);
-//       setShow(true);
-//     } catch (error) {
-//       console.error("Error submitting form:", error);
-//       toast.error(error?.response?.data?.message || "An error occurred!", {
-//         position: "top-right",
-//       });
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const controlButtons = (
-//     <div className="flex w-full justify-end">
-//       {step > 0 && (
-//         <button
-//           disabled={loading}
-//           onClick={goBack}
-//           className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-gray-300 text-[#00524d]"
-//         >
-//           Back
-//         </button>
-//       )}
-//       {step === 5 ? (
-//         form.agree && (
-//           <button
-//             disabled={loading}
-//             onClick={submit}
-//             className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
-//           >
-//             {loading ? "Submitting..." : "Submit"}
-//           </button>
-//         )
-//       ) : (
-//         <button
-//           onClick={goFront}
-//           className="h-[42px] px-[40px] text-[14px] rounded-[40px] bg-[#00524d] text-white"
-//         >
-//           Next
-//         </button>
-//       )}
-//     </div>
-//   );
 
 import React, { useEffect, useState } from "react";
 
@@ -168,54 +20,54 @@ import useLogout from "@/pages/loginPage/logout";
 import { LogOutIcon } from "lucide-react";
 import { API_BASE_URL } from "@/config/env";
 
-const checkValidatePersonalInfo = ({ form }) => {
-  let erroMsg = "";
-  if (!form?.hasDisability) {
-    erroMsg = "Disability status is required!";
-  }
+// const checkValidatePersonalInfo = ({ form }) => {
+//   let erroMsg = "";
+//   if (!form?.hasDisability) {
+//     erroMsg = "Disability status is required!";
+//   }
 
-  if (!form?.maritalStatus) {
-    erroMsg = "Marital Status is required!";
-  }
+//   if (!form?.maritalStatus) {
+//     erroMsg = "Marital Status is required!";
+//   }
 
-  if (!form?.street) {
-    erroMsg = "Residential Address is required!";
-  }
+//   if (!form?.street) {
+//     erroMsg = "Residential Address is required!";
+//   }
 
-  if (!form?.senetorialDistrict) {
-    erroMsg = "Senetorial District is required!";
-  }
+//   if (!form?.senetorialDistrict) {
+//     erroMsg = "Senetorial District is required!";
+//   }
 
-  if (!form?.lgaOfResidence) {
-    erroMsg = "LGA of residence is required!";
-  }
+//   if (!form?.lgaOfResidence) {
+//     erroMsg = "LGA of residence is required!";
+//   }
 
-  if (!form?.stateOfResidence) {
-    erroMsg = "State of residence is required!";
-  }
+//   if (!form?.stateOfResidence) {
+//     erroMsg = "State of residence is required!";
+//   }
 
-  if (!form?.lga) {
-    erroMsg = "LGA of origin is required!";
-  }
+//   if (!form?.lga) {
+//     erroMsg = "LGA of origin is required!";
+//   }
 
-  if (!form?.stateOfOrigin) {
-    erroMsg = "State of origin is required!";
-  }
+//   if (!form?.stateOfOrigin) {
+//     erroMsg = "State of origin is required!";
+//   }
 
-  if (!form?.gender) {
-    erroMsg = "Gender is required!";
-  }
+//   if (!form?.gender) {
+//     erroMsg = "Gender is required!";
+//   }
 
-  if (!form?.lastName?.trim()?.length) {
-    erroMsg = "Last name is required!";
-  }
+//   if (!form?.lastName?.trim()?.length) {
+//     erroMsg = "Last name is required!";
+//   }
 
-  if (!form?.firstName?.trim()?.length) {
-    erroMsg = "First name is required!";
-  }
+//   if (!form?.firstName?.trim()?.length) {
+//     erroMsg = "First name is required!";
+//   }
 
-  return { erroMsg };
-};
+//   return { erroMsg };
+// };
 
 const checkValidateEducation = ({ form }) => {
   let erroMsg = "";
@@ -260,20 +112,20 @@ const ArtisanForm = () => {
 
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    gender: "",
-    dob: "",
-    maritalStatus: "",
-    stateOfOrigin: "",
-    lga: "",
-    stateOfResidence: "",
-    lgaOfResidence: "",
-    senetorialDistrict: "",
-    street: "",
-    hasDisability: "",
-    disabilityType: "",
+    // firstName: "",
+    // middleName: "",
+    // lastName: "",
+    // gender: "",
+    // dob: "",
+    // maritalStatus: "",
+    // stateOfOrigin: "",
+    // lga: "",
+    // stateOfResidence: "",
+    // lgaOfResidence: "",
+    // senetorialDistrict: "",
+    // street: "",
+    // hasDisability: "",
+    // disabilityType: "",
     education: {
       school: "",
       highestQualification: "",
@@ -316,28 +168,28 @@ const ArtisanForm = () => {
   const [loading, setLoading] = useState(false);
 
   const goFront = () => {
-    if (step === 0) {
-      const erroMsg = checkValidatePersonalInfo({ form })?.erroMsg;
-      if (erroMsg) {
-        return toast.error(erroMsg, { position: "top-right" });
-      }
-    }
+    // if (step === 0) {
+    //   const erroMsg = checkValidatePersonalInfo({ form })?.erroMsg;
+    //   if (erroMsg) {
+    //     return toast.error(erroMsg, { position: "top-right" });
+    //   }
+    // }
 
-    if (step === 1) {
+    if (step === 0) {
       const erroMsg = checkValidateEducation({ form })?.erroMsg;
       if (erroMsg) {
         return toast.error(erroMsg, { position: "top-right" });
       }
     }
 
-    // if (step === 2) {
-    //   const erroMsg = checkValidatePrior({ form })?.erroMsg;
-    //   if (erroMsg) {
-    //     return toast.error(erroMsg, { position: "top-right" });
-    //   }
-    // }
+    if (step === 1) {
+      const erroMsg = checkValidatePrior({ form })?.erroMsg;
+      if (erroMsg) {
+        return toast.error(erroMsg, { position: "top-right" });
+      }
+    }
 
-    if (step === 3) {
+    if (step === 2) {
       const erroMsg = checkValidateBank({ form })?.erroMsg;
       if (erroMsg) {
         return toast.error(erroMsg, { position: "top-right" });
@@ -390,12 +242,12 @@ const ArtisanForm = () => {
     }
 
     // Perform basic validation (you can expand this)
-    if (!form.firstName || !form.lastName || !form.gender) {
-      toast.error("Please fill all required fields.", {
-        position: "top-right",
-      });
-      return;
-    }
+    // if (!form.firstName || !form.lastName || !form.gender) {
+    //   toast.error("Please fill all required fields.", {
+    //     position: "top-right",
+    //   });
+    //   return;
+    // }
 
     setLoading(true); // Disable button and show loading state
 
@@ -441,7 +293,7 @@ const ArtisanForm = () => {
           Back
         </button>
       )}
-      {step === 4 ? (
+      {step === 3 ? (
         form.agree && (
           <button
             disabled={loading}
@@ -479,7 +331,7 @@ const ArtisanForm = () => {
                 <Stepper
                   activeStep={step}
                   className="border-b-gray-300 scale-[0.8] ">
-                  <Step
+                  {/* <Step
                     index={0}
                     label={
                       <span className="text-sm font-semibold text-white">
@@ -487,9 +339,9 @@ const ArtisanForm = () => {
                         Personal Information{" "}
                       </span>
                     }
-                  />
+                  /> */}
                   <Step
-                    index={1}
+                    index={0}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -498,7 +350,7 @@ const ArtisanForm = () => {
                     }
                   />
                   <Step
-                    index={2}
+                    index={1}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -508,7 +360,7 @@ const ArtisanForm = () => {
                   />
 
                   <Step
-                    index={3}
+                    index={2}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -517,7 +369,7 @@ const ArtisanForm = () => {
                     }
                   />
                   <Step
-                    index={4}
+                    index={3}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -537,21 +389,21 @@ const ArtisanForm = () => {
                     cr={1}
                     className={cn("fill-neutral-400/40 ")}
                   />
-                  {step === 0 && (
+                  {/* {step === 0 && (
                     <ProfessionalInformation
                       controlButtons={controlButtons}
                       form={form}
                       onchangeInput={onchangeInput}
                     />
-                  )}
-                  {step === 1 && (
+                  )} */}
+                  {step === 0 && (
                     <Education
                       controlButtons={controlButtons}
                       form={form}
                       onchangeEducationInput={onchangeEducationInput}
                     />
                   )}
-                  {step === 2 && (
+                  {step === 1 && (
                     <PriorSkill
                       controlButtons={controlButtons}
                       form={form}
@@ -559,14 +411,14 @@ const ArtisanForm = () => {
                     />
                   )}
 
-                  {step === 3 && (
+                  {step === 2 && (
                     <BankDetails
                       form={form}
                       onChangeBankInput={onChangeBankInput}
                       controlButtons={controlButtons}
                     />
                   )}
-                  {step === 4 && (
+                  {step === 3 && (
                     <Declaration
                       form={form}
                       onchangeInput={onchangeInput}

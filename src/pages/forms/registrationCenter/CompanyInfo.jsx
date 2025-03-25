@@ -82,7 +82,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
         </Select>
       </div> */}
 {/* State Dropdown */}
-<div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
+{/* <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label htmlFor="state" className="w-[300px] text-left leading-[1.3]">
           State where the Training Centre is located
         </Label>
@@ -100,10 +100,10 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
             </SelectGroup>
           </SelectContent>
         </Select>
-      </div>
+      </div> */}
 
       {/* LGA Dropdown */}
-      <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
+      {/* <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
   <Label htmlFor="lga" className="w-[300px] text-left leading-[1.3]">
     LGA where the Training Centre is located
   </Label>
@@ -140,7 +140,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
           value={form.areaOffice}
           onChange={(e) => updateField("areaOffice", e.target.value)}
         />
-      </div>
+      </div> */}
 
       {/* <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label
@@ -156,7 +156,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
         />
       </div> */}
 
-      <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
+      {/* <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label htmlFor="address" className="w-[300px] text-left leading-[1.3]">
           Address of Training Centre
         </Label>
@@ -166,7 +166,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
           value={form.address}
           onChange={(e) => updateField("address", e.target.value)}
         />
-      </div>
+      </div> */}
 
       <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label
@@ -182,7 +182,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
         />
       </div>
 
-      <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
+      {/* <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label
           htmlFor="phoneNumber"
           className="w-[300px] text-left leading-[1.3]">
@@ -194,7 +194,7 @@ const CompanyInfo = ({ form, setForm, controlButtons }) => {
           value={form.phoneNumber}
           onChange={(e) => updateField("phoneNumber", e.target.value)}
         />
-      </div>
+      </div> */}
 
       {/* <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
         <Label htmlFor="email" className="w-[300px] text-left leading-[1.3]">

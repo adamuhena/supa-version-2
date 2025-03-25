@@ -20,54 +20,54 @@ import useLogout from "@/pages/loginPage/logout";
 import { LogOutIcon } from "lucide-react";
 import { API_BASE_URL } from "@/config/env";
 
-const checkValidatePersonalInfo = ({ form }) => {
-  let erroMsg = "";
-  if (!form?.hasDisability) {
-    erroMsg = "Disability status is required!";
-  }
+// const checkValidatePersonalInfo = ({ form }) => {
+//   let erroMsg = "";
+//   if (!form?.hasDisability) {
+//     erroMsg = "Disability status is required!";
+//   }
 
-  if (!form?.maritalStatus) {
-    erroMsg = "Marital Status is required!";
-  }
+//   if (!form?.maritalStatus) {
+//     erroMsg = "Marital Status is required!";
+//   }
 
-  if (!form?.street) {
-    erroMsg = "Residential Address is required!";
-  }
+//   if (!form?.street) {
+//     erroMsg = "Residential Address is required!";
+//   }
 
-  if (!form?.senetorialDistrict) {
-    erroMsg = "Senetorial District is required!";
-  }
+//   if (!form?.senetorialDistrict) {
+//     erroMsg = "Senetorial District is required!";
+//   }
 
-  if (!form?.lgaOfResidence) {
-    erroMsg = "LGA of residence is required!";
-  }
+//   if (!form?.lgaOfResidence) {
+//     erroMsg = "LGA of residence is required!";
+//   }
 
-  if (!form?.stateOfResidence) {
-    erroMsg = "State of residence is required!";
-  }
+//   if (!form?.stateOfResidence) {
+//     erroMsg = "State of residence is required!";
+//   }
 
-  if (!form?.lga) {
-    erroMsg = "LGA of origin is required!";
-  }
+//   if (!form?.lga) {
+//     erroMsg = "LGA of origin is required!";
+//   }
 
-  if (!form?.stateOfOrigin) {
-    erroMsg = "State of origin is required!";
-  }
+//   if (!form?.stateOfOrigin) {
+//     erroMsg = "State of origin is required!";
+//   }
 
-  if (!form?.gender) {
-    erroMsg = "Gender is required!";
-  }
+//   if (!form?.gender) {
+//     erroMsg = "Gender is required!";
+//   }
 
-  if (!form?.lastName?.trim()?.length) {
-    erroMsg = "Last name is required!";
-  }
+//   if (!form?.lastName?.trim()?.length) {
+//     erroMsg = "Last name is required!";
+//   }
 
-  if (!form?.firstName?.trim()?.length) {
-    erroMsg = "First name is required!";
-  }
+//   if (!form?.firstName?.trim()?.length) {
+//     erroMsg = "First name is required!";
+//   }
 
-  return { erroMsg };
-};
+//   return { erroMsg };
+// };
 
 const checkValidateEducation = ({ form }) => {
   let erroMsg = "";
@@ -128,20 +128,20 @@ const ArtisanForm = () => {
 
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    gender: "",
-    dob: "",
-    maritalStatus: "",
-    stateOfOrigin: "",
-    lga: "",
-    stateOfResidence: "",
-    lgaOfResidence: "",
-    senetorialDistrict: "",
-    street: "",
-    hasDisability: false,
-    disabilityType: "",
+    // firstName: "",
+    // middleName: "",
+    // lastName: "",
+    // gender: "",
+    // dob: "",
+    // maritalStatus: "",
+    // stateOfOrigin: "",
+    // lga: "",
+    // stateOfResidence: "",
+    // lgaOfResidence: "",
+    // senetorialDistrict: "",
+    // street: "",
+    // hasDisability: false,
+    // disabilityType: "",
     education: {
       school: "",
       highest_qualification: "",
@@ -184,35 +184,35 @@ const ArtisanForm = () => {
   const [loading, setLoading] = useState(false);
 
   const goFront = () => {
-    if (step === 0) {
-      const erroMsg = checkValidatePersonalInfo({ form })?.erroMsg;
-      if (erroMsg) {
-        return toast.error(erroMsg, { position: "top-right" });
-      }
-    }
+    // if (step === 0) {
+    //   const erroMsg = checkValidatePersonalInfo({ form })?.erroMsg;
+    //   if (erroMsg) {
+    //     return toast.error(erroMsg, { position: "top-right" });
+    //   }
+    // }
 
-    if (step === 1) {
+    if (step === 0) {
       const erroMsg = checkValidateEducation({ form })?.erroMsg;
       if (erroMsg) {
         return toast.error(erroMsg, { position: "top-right" });
       }
     }
 
-    // if (step === 2) {
-    //   const erroMsg = checkValidatePrior({ form })?.erroMsg;
-    //   if (erroMsg) {
-    //     return toast.error(erroMsg, { position: "top-right" });
-    //   }
-    // }
+    if (step === 1) {
+      const erroMsg = checkValidatePrior({ form })?.erroMsg;
+      if (erroMsg) {
+        return toast.error(erroMsg, { position: "top-right" });
+      }
+    }
 
-    if (step === 3) {
+    if (step === 2) {
       const erroMsg = checkValidateExp({ form })?.erroMsg;
       if (erroMsg) {
         return toast.error(erroMsg, { position: "top-right" });
       }
     }
 
-    if (step === 4) {
+    if (step === 3) {
       const erroMsg = checkValidateBank({ form })?.erroMsg;
       if (erroMsg) {
         return toast.error(erroMsg, { position: "top-right" });
@@ -264,12 +264,12 @@ const ArtisanForm = () => {
     }
 
     // Perform basic validation (you can expand this)
-    if (!form.firstName || !form.lastName || !form.gender) {
-      toast.error("Please fill all required fields.", {
-        position: "top-right",
-      });
-      return;
-    }
+    // if (!form.firstName || !form.lastName || !form.gender) {
+    //   toast.error("Please fill all required fields.", {
+    //     position: "top-right",
+    //   });
+    //   return;
+    // }
 
     setLoading(true); // Disable button and show loading state
 
@@ -315,7 +315,7 @@ const ArtisanForm = () => {
           Back
         </button>
       )}
-      {step === 5 ? (
+      {step === 4 ? (
         form.agree && (
           <button
             disabled={loading}
@@ -353,7 +353,7 @@ const ArtisanForm = () => {
                 <Stepper
                   activeStep={step}
                   className="border-b-gray-300 scale-[0.8] ">
-                  <Step
+                  {/* <Step
                     index={0}
                     label={
                       <span className="text-sm font-semibold text-white">
@@ -361,9 +361,9 @@ const ArtisanForm = () => {
                         Personal Information{" "}
                       </span>
                     }
-                  />
+                  /> */}
                   <Step
-                    index={1}
+                    index={0}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -372,7 +372,7 @@ const ArtisanForm = () => {
                     }
                   />
                   <Step
-                    index={2}
+                    index={1}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -381,7 +381,7 @@ const ArtisanForm = () => {
                     }
                   />
                   <Step
-                    index={3}
+                    index={2}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -390,7 +390,7 @@ const ArtisanForm = () => {
                     }
                   />
                   <Step
-                    index={4}
+                    index={3}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -399,7 +399,7 @@ const ArtisanForm = () => {
                     }
                   />
                   <Step
-                    index={5}
+                    index={4}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -419,42 +419,42 @@ const ArtisanForm = () => {
                     cr={1}
                     className={cn("fill-neutral-400/40 ")}
                   />
-                  {step === 0 && (
+                  {/* {step === 0 && (
                     <ProfessionalInformation
                       controlButtons={controlButtons}
                       form={form}
                       onchangeInput={onchangeInput}
                     />
-                  )}
-                  {step === 1 && (
+                  )} */}
+                  {step === 0 && (
                     <Education
                       controlButtons={controlButtons}
                       form={form}
                       onchangeEducationInput={onchangeEducationInput}
                     />
                   )}
-                  {step === 2 && (
+                  {step === 1 && (
                     <PriorSkill
                       controlButtons={controlButtons}
                       form={form}
                       onchangeInput={onchangeInput}
                     />
                   )}
-                  {step === 3 && (
+                  {step === 2 && (
                     <Experience
                       controlButtons={controlButtons}
                       form={form}
                       onchangeInput={onchangeInput}
                     />
                   )}
-                  {step === 4 && (
+                  {step === 3 && (
                     <BankDetails
                       form={form}
                       onChangeBankInput={onChangeBankInput}
                       controlButtons={controlButtons}
                     />
                   )}
-                  {step === 5 && (
+                  {step === 4 && (
                     <Declaration
                       form={form}
                       onchangeInput={onchangeInput}
