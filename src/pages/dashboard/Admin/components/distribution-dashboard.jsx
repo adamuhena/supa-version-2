@@ -167,7 +167,7 @@ export default function DistributionDashboard() {
       </div>
 
       <Tabs defaultValue="main" className="space-y-8">
-        <TabsList className="grid w-full grid-cols-5 gap-2 bg-gray-100 p-1 rounded-lg">
+        <TabsList className="grid w-full h-auto lg:grid-cols-5 gap-2 bg-gray-100 p-1 rounded-lg">
         <TabsTrigger 
             value="main"
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900

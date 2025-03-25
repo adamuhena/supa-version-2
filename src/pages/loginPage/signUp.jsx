@@ -5336,9 +5336,9 @@ export default function SignupForm() {
   }
 
   return (
-    <section className="relative bg-slate-900 pt-40 pb-10 min-h-screen">
+    <section className=" bg-slate-900   min-h-screen">
       <div className="flex items-start justify-center absolute top-8 left-0 right-0 bottom-10">
-        <div className="flex w-full max-w-4xl sm:items-start bg-white shadow-lg rounded-lg overflow-auto">
+        <div className="flex w-full max-w-4xl sm:items-stretch bg-white shadow-lg rounded-lg overflow-auto">
           {/* Left image section */}
           <div className="hidden md:block w-3/5 relative">
             {signupAs === "artisan_user" ? (
