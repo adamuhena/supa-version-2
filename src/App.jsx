@@ -418,7 +418,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/not-authorized" element={<NotAuthorized />} />
 
-
+          {/* Training Centre Routes */}
           <Route path="training-center/biodata" element={<ProtectedRoute allowedRoles={["training_center"]}><TrainingCenterBiodata /></ProtectedRoute>} />
           <Route path="register/artisan" element={<ProtectedRoute allowedRoles={["artisan_user"]}><ArtisanForm /></ProtectedRoute>} />
           <Route path="register/intendingArtisan" element={<ProtectedRoute allowedRoles={["intending_artisan"]}><IntendingArtisanForm /></ProtectedRoute>} />

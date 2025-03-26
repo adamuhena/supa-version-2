@@ -92,6 +92,15 @@ const TrainingCenterReport = () => {
 
   const itemsPerPage = 25
 
+  // const defaultData = {
+  //   currentPage: 1,
+  //   search: "",
+  //   state: "",
+  //   lga: "",
+  //   sector: "",
+  //   tradeArea: "",
+  //   sort: "-createdAt",
+  // }
   const defaultData = {
     currentPage: 1,
     search: "",
@@ -100,7 +109,9 @@ const TrainingCenterReport = () => {
     sector: "",
     tradeArea: "",
     sort: "-createdAt",
-  }
+    dateFrom: "",
+    dateTo: "",
+  };
   const [filter, setFilter] = useState({
     ...defaultData,
   })
@@ -209,6 +220,7 @@ const TrainingCenterReport = () => {
 
     const headerMapping = {
       sn: "S/N",
+      _id: "Ref-Number",
       trainingCentreName: "Training Center",
       contactPersonName: "Contact Person Name",
       contactPersonPhone: "Contact Person Phone",
@@ -218,6 +230,7 @@ const TrainingCenterReport = () => {
       address: "Address",
       sectors: "Sectors",
       tradeAreas: "Trade Areas",
+      createdAt: "Registered Date",
     }
 
     const headers = Object.keys(users[0]).map((key) => headerMapping[key] || key)
@@ -226,69 +239,149 @@ const TrainingCenterReport = () => {
     return [headers, ...rows]
   }
 
+  // const downloadCSV = async () => {
+  //   setLoadingCSV(true)
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken")
+  //     const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
+  //       params: {
+  //         limit: MAX_CSV_ROWS,
+  //         page: 1,
+  //         search: filter?.search,
+  //         state: filter?.state,
+  //         lga: filter?.lga,
+  //         sector: filter?.sector,
+  //         tradeArea: filter?.tradeArea,
+  //         sort: filter?.sort,
+  //         dateFrom: filter.dateFrom,
+  //         dateTo: filter.dateTo,
+  //       },
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     })
+
+  //     const { data } = response.data
+  //     const formatted = formatTCToCSV(
+  //       (data || []).map((x, i) => {
+  //         // Use the new function to extract trade areas
+  //         const tradeAreasData = extractTradeAreas(x)
+
+  //         let sectors = ""
+  //         let tradeAreas = ""
+
+  //         // Format sector and trade area information for CSV
+  //         tradeAreasData.forEach((sectorInfo) => {
+  //           sectors += sectorInfo.sectorName + ", "
+
+  //           sectorInfo.tradeAreas.forEach((ta) => {
+  //             tradeAreas += ta.name + ", "
+  //           })
+  //         })
+
+  //         return {
+  //           sn: i + 1,
+  //           trainingCentreName: x?.trainingCentreName,
+  //           contactPersonName: x?.contactPerson,
+  //           contactPersonPhone: x?.phoneNumber,
+  //           contactPersonEmail: x?.email,
+  //           state: x?.state,
+  //           lga: x?.lga,
+  //           address: x?.address,
+  //           sectors: sectors.replace(/,\s*$/, ""),
+  //           tradeAreas: tradeAreas.replace(/,\s*$/, ""),
+  //         }
+  //       }),
+  //     )
+  //     setcsvData(formatted)
+
+  //     toast.success(
+  //       "CSV data has been generated with the filter options applied. Kindly click the 'Download CSV' button to download!",
+  //     )
+  //   } catch (error) {
+  //     console.error("Error fetching reports:", error)
+  //   } finally {
+  //     setLoadingCSV(false)
+  //   }
+  // }
+
   const downloadCSV = async () => {
-    setLoadingCSV(true)
+    setLoadingCSV(true);
     try {
-      const accessToken = localStorage.getItem("accessToken")
+      const accessToken = localStorage.getItem("accessToken");
+  
+      // Format dates for the query
+      let params = {
+        limit: MAX_CSV_ROWS,
+        page: 1,
+        search: filter?.search,
+        state: filter?.state,
+        lga: filter?.lga,
+        sector: filter?.sector,
+        tradeArea: filter?.tradeArea,
+        sort: filter?.sort,
+      };
+  
+      // Only add date parameters if they exist
+      if (filter.dateFrom) {
+        params.dateFrom = new Date(filter.dateFrom).toISOString();
+      }
+      if (filter.dateTo) {
+        params.dateTo = new Date(filter.dateTo).toISOString();
+      }
+  
       const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
-        params: {
-          limit: MAX_CSV_ROWS,
-          page: 1,
-          search: filter?.search,
-          state: filter?.state,
-          lga: filter?.lga,
-          sector: filter?.sector,
-          tradeArea: filter?.tradeArea,
-          sort: filter?.sort,
-        },
+        params,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      })
-
-      const { data } = response.data
+      });
+  
+      const { data } = response.data;
       const formatted = formatTCToCSV(
         (data || []).map((x, i) => {
           // Use the new function to extract trade areas
-          const tradeAreasData = extractTradeAreas(x)
-
-          let sectors = ""
-          let tradeAreas = ""
-
+          const tradeAreasData = extractTradeAreas(x);
+  
+          let sectors = "";
+          let tradeAreas = "";
+  
           // Format sector and trade area information for CSV
           tradeAreasData.forEach((sectorInfo) => {
-            sectors += sectorInfo.sectorName + ", "
-
+            sectors += sectorInfo.sectorName + ", ";
             sectorInfo.tradeAreas.forEach((ta) => {
-              tradeAreas += ta.name + ", "
-            })
-          })
-
+              tradeAreas += ta.name + ", ";
+            });
+          });
+  
           return {
             sn: i + 1,
-            trainingCentreName: x?.trainingCentreName,
-            contactPersonName: x?.contactPerson,
-            contactPersonPhone: x?.phoneNumber,
-            contactPersonEmail: x?.email,
-            state: x?.state,
-            lga: x?.lga,
-            address: x?.address,
+            _id: x?._id || "",
+            trainingCentreName: x?.trainingCentreName || "",
+            contactPersonName: x?.contactPerson || "",
+            contactPersonPhone: x?.phoneNumber || "",
+            contactPersonEmail: x?.email || "",
+            state: x?.state || "",
+            lga: x?.lga || "",
+            address: x?.address || "",
             sectors: sectors.replace(/,\s*$/, ""),
             tradeAreas: tradeAreas.replace(/,\s*$/, ""),
-          }
-        }),
-      )
-      setcsvData(formatted)
-
+            createdAt: x?.createdAt || "",
+          };
+        })
+      );
+      
+      setcsvData(formatted);
       toast.success(
-        "CSV data has been generated with the filter options applied. Kindly click the 'Download CSV' button to download!",
-      )
+        "CSV data has been generated with all records. Click 'Download CSV' to download."
+      );
     } catch (error) {
-      console.error("Error fetching reports:", error)
+      console.error("Error fetching reports:", error);
+      toast.error("Failed to generate CSV data");
     } finally {
-      setLoadingCSV(false)
+      setLoadingCSV(false);
     }
-  }
+  };
 
   const clearFilter = () => {
     setFilter(defaultData)
@@ -296,47 +389,97 @@ const TrainingCenterReport = () => {
     setcsvData([])
   }
 
+  // const fetchReports = async () => {
+  //   setLoading(true)
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken")
+  //     const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
+  //       params: {
+  //         limit: itemsPerPage,
+  //         page: filter?.currentPage,
+  //         search: filter?.search,
+  //         state: filter?.state,
+  //         lga: filter?.lga,
+  //         sector: filter?.sector,
+  //         tradeArea: filter?.tradeArea,
+  //         sort: filter?.sort,
+  //         dateFrom: filter.dateFrom,
+  //         dateTo: filter.dateTo,
+  //       },
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     })
+
+  //     const { data, pagination } = response.data
+  //     setReports(data)
+
+  //     setpagination((x) => {
+  //       return {
+  //         ...x,
+  //         total: pagination.total,
+  //         totalPages: pagination.totalPages,
+  //       }
+  //     })
+  //   } catch (error) {
+  //     console.error("Error fetching reports:", error)
+  //   } finally {
+  //     setLoading(false)
+  //     setcsvData([])
+  //   }
+  // }
+
   const fetchReports = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const accessToken = localStorage.getItem("accessToken")
+      const accessToken = localStorage.getItem("accessToken");
+  
+      // Format dates for the query
+      let params = {
+        limit: itemsPerPage,
+        page: filter?.currentPage,
+        search: filter?.search,
+        state: filter?.state,
+        lga: filter?.lga,
+        sector: filter?.sector,
+        tradeArea: filter?.tradeArea,
+        sort: filter?.sort,
+      };
+  
+      // Only add date parameters if they exist
+      if (filter.dateFrom) {
+        params.dateFrom = new Date(filter.dateFrom).toISOString();
+      }
+      if (filter.dateTo) {
+        params.dateTo = new Date(filter.dateTo).toISOString();
+      }
+  
       const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
-        params: {
-          limit: itemsPerPage,
-          page: filter?.currentPage,
-          search: filter?.search,
-          state: filter?.state,
-          lga: filter?.lga,
-          sector: filter?.sector,
-          tradeArea: filter?.tradeArea,
-          sort: filter?.sort,
-        },
+        params,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      })
-
-      const { data, pagination } = response.data
-      setReports(data)
-
-      setpagination((x) => {
-        return {
-          ...x,
-          total: pagination.total,
-          totalPages: pagination.totalPages,
-        }
-      })
+      });
+  
+      const { data, pagination } = response.data;
+      setReports(data);
+      setpagination((x) => ({
+        ...x,
+        total: pagination.total,
+        totalPages: pagination.totalPages,
+      }));
     } catch (error) {
-      console.error("Error fetching reports:", error)
+      console.error("Error fetching reports:", error);
     } finally {
-      setLoading(false)
-      setcsvData([])
+      setLoading(false);
+      setcsvData([]);
     }
-  }
+  };
+
 
   useEffect(() => {
     fetchReports()
-  }, [filter?.search, filter?.currentPage, filter?.state, filter?.lga, filter?.sector, filter?.tradeArea])
+  }, [filter?.search, filter?.currentPage, filter?.state, filter?.lga, filter?.sector, filter?.tradeArea, filter?.dateFrom, filter?.dateTo,])
 
   return (
     <ProtectedRoute>
@@ -450,6 +593,27 @@ const TrainingCenterReport = () => {
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="w-[200px]">
+              <p className="text-left text-[14px] mb-1">Date From</p>
+              <Input
+                type="date"
+                className="text-[12px]"
+                value={filter.dateFrom}
+                onChange={(e) => handleFilterChange("dateFrom", e.target.value)}
+              />
+            </div>
+
+            <div className="w-[200px]">
+              <p className="text-left text-[14px] mb-1">Date To</p>
+              <Input
+                type="date"
+                className="text-[12px]"
+                value={filter.dateTo}
+                onChange={(e) => handleFilterChange("dateTo", e.target.value)}
+                min={filter.dateFrom}
+              />
+            </div>
           </div>
 
           <div className=" w-full items-center justify-start flex gap-4">
@@ -474,6 +638,7 @@ const TrainingCenterReport = () => {
               ) : (
                 <CSVLink
                   data={csvData}
+                  filename="Training_Centre_Admin_Reports.csv"
                   className="border-[1px] text-[12px] p-2 font-medium"
                   disabled={loadingCSV || !reports?.length}
                 >
@@ -488,11 +653,13 @@ const TrainingCenterReport = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>S/N</TableHead>
+                <TableHead>Ref-Number</TableHead>
                 <TableHead>Training Center</TableHead>
                 <TableHead>Contact Person</TableHead>
                 <TableHead>State/LGA</TableHead>
                 <TableHead>Address</TableHead>
                 <TableHead>Trade Areas</TableHead>
+                <TableHead>Registered Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -504,6 +671,9 @@ const TrainingCenterReport = () => {
                   <TableRow key={center._id || index}>
                     <TableCell className="text-left text-[12px]">
                       {index + 1 + (currentPage - 1) * itemsPerPage}
+                    </TableCell>
+                    <TableCell className="text-left max-w-[200px] text-[12px]">
+                      {center._id || ""}
                     </TableCell>
                     <TableCell className="text-left max-w-[200px] text-[12px]">
                       {center.trainingCentreName || ""}
@@ -584,6 +754,9 @@ const TrainingCenterReport = () => {
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
+                    </TableCell>
+                    <TableCell className="text-left max-w-[200px] text-[12px]">
+                      {center.createdAt || ""}
                     </TableCell>
                   </TableRow>
                 )

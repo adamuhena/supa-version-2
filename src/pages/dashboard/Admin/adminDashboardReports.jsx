@@ -3,7 +3,7 @@
 import axios from "axios"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-
+import { Input } from "@/components/ui/input";
 import DashboardPage from "@/components/layout/DashboardLayout"
 import ProtectedRoute from "@/components/ProtectedRoute"
 import { Button } from "@/components/ui/button"
@@ -60,6 +60,7 @@ function formatUsersToCSV(users) {
     nin: "NIN",
     sectors: "Sectors",
     tradeAreas: "Trade Areas",
+    createdAt: "Date Registered",
   }
 
   const headers = Object.keys(users[0]).map((key) => headerMapping[key] || key)
@@ -83,6 +84,8 @@ const emptyForm = {
   role: "",
   sector: "",
   tradeArea: "",
+  dateFrom: "",
+  dateTo: ""
 }
 
 const AdminDashboardReports = () => {
@@ -128,86 +131,333 @@ const AdminDashboardReports = () => {
   }, [])
 
   // Fetch Users with Pagination
-  const fetchUsers = async (filterParams, page = 1, limit = 50) => {
-    setLoading(true)
-    try {
-      const accessToken = localStorage.getItem("accessToken")
+  // const fetchUsers = async (filterParams, page = 1, limit = 50) => {
+  //   setLoading(true)
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken")
 
+  //     const response = await axios.post(
+  //       `${API_BASE_URL}/users-reports`,
+  //       {
+  //         filterParams: {
+  //           ...filterParams,
+  //           page,
+  //           limit,
+  //         },
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       },
+  //     )
+
+  //     const { users, pagination: serverPagination } = response?.data?.data || {}
+
+  //     setUsers(users || [])
+  //     setPagination((prevPagination) => ({
+  //       ...prevPagination,
+  //       ...serverPagination,
+  //       currentPage: page,
+  //       limit,
+  //     }))
+  //   } catch (error) {
+  //     console.error("Error fetching users:", error)
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
+
+  const fetchUsers = async (filterParams, page = 1, limit = 50) => {
+    setLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+  
+      // Format date params
+      const formattedParams = {
+        ...filterParams,
+        page,
+        limit,
+      };
+  
+      // Handle date range filtering
+      if (filterParams.dateFrom || filterParams.dateTo) {
+        formattedParams.createdAt = {};
+        
+        if (filterParams.dateFrom) {
+          const startDate = new Date(filterParams.dateFrom);
+          startDate.setHours(0, 0, 0, 0);
+          formattedParams.createdAt.$gte = startDate.toISOString();
+        }
+        
+        if (filterParams.dateTo) {
+          const endDate = new Date(filterParams.dateTo);
+          endDate.setHours(23, 59, 59, 999);
+          formattedParams.createdAt.$lte = endDate.toISOString();
+        }
+      }
+  
       const response = await axios.post(
         `${API_BASE_URL}/users-reports`,
         {
-          filterParams: {
-            ...filterParams,
-            page,
-            limit,
-          },
+          filterParams: formattedParams,
         },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        },
-      )
-
-      const { users, pagination: serverPagination } = response?.data?.data || {}
-
-      setUsers(users || [])
+        }
+      );
+  
+      const { users, pagination: serverPagination } = response?.data?.data || {};
+  
+      setUsers(users || []);
       setPagination((prevPagination) => ({
         ...prevPagination,
         ...serverPagination,
         currentPage: page,
         limit,
-      }))
+      }));
     } catch (error) {
-      console.error("Error fetching users:", error)
+      console.error("Error fetching users:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+
+  // const downloadAllData = async () => {
+
+  //   setLoadingCSV(true)
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken")
+
+  //     const response = await axios.post(
+  //       `${API_BASE_URL}/users-reports`,
+  //       {
+  //         filterParams: {
+  //           ...form,
+  //           page: 1,
+  //           limit: 1000000, // Very large limit to get all data
+  //         },
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       },
+  //     )
+
+  //     const { users } = response?.data?.data || {}
+
+  //     if (users && users.length > 0) {
+  //       // Process users to extract sector and trade area information
+  //       const processedUsers = users.map((user) => {
+  //         // Extract sectors and trade areas from priorSkillsCerts
+  //         let sectors = ""
+  //         let tradeAreas = ""
+
+  //         if (user.priorSkillsCerts && user.priorSkillsCerts.length > 0) {
+  //           user.priorSkillsCerts.forEach((cert) => {
+  //             if (cert.sector) sectors += cert.sector + ", "
+  //             if (cert.tradeArea) tradeAreas += cert.tradeArea + ", "
+  //           })
+
+  //           // Remove trailing comma and space
+  //           sectors = sectors.replace(/,\s*$/, "")
+  //           tradeAreas = tradeAreas.replace(/,\s*$/, "")
+  //         }
+
+  //         return {
+  //           phoneNumber: user?.phoneNumber || "",
+  //           firstName: user?.firstName || "",
+  //           lastName: user?.lastName || "",
+  //           email: user?.email || "",
+  //           role: formatString(user?.role || ""),
+  //           gender: user?.gender || "",
+  //           stateOfOrigin: user?.stateOfOrigin || "",
+  //           lga: user?.lga || "",
+  //           stateOfResidence: user?.stateOfResidence || "",
+  //           lgaOfResidence: user?.lgaOfResidence || "",
+  //           street: user?.street || "",
+  //           nin: user?.nin || "",
+  //           sectors: sectors || "",
+  //           tradeAreas: tradeAreas || "",
+  //         }
+  //       })
+
+  //       const formattedData = formatUsersToCSV(processedUsers)
+  //       setCsvData(formattedData)
+  //       setAllData(true)
+
+  //       toast.success("CSV data has been generated with all records. Click 'Download CSV' to download.")
+  //     } else {
+  //       toast.error("No data available to download")
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching all users for CSV:", error)
+  //     toast.error("Failed to generate CSV data")
+  //   } finally {
+  //     setLoadingCSV(false)
+  //   }
+  // }
+
 
   // Download all data for CSV
-  const downloadAllData = async () => {
-    setLoadingCSV(true)
-    try {
-      const accessToken = localStorage.getItem("accessToken")
+  // const downloadAllData = async () => {
+  //   setLoadingCSV(true);
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken");
 
+  //     // Format date params
+  //     const formattedParams = {
+  //       ...form,
+  //       page: 1,
+  //       limit: 1000000,
+  //     };
+
+  //     if (form.dateFrom) {
+  //       formattedParams.dateFrom = new Date(form.dateFrom).toISOString();
+  //     }
+  //     if (form.dateTo) {
+  //       const endDate = new Date(form.dateTo);
+  //       endDate.setHours(23, 59, 59, 999);
+  //       formattedParams.dateTo = endDate.toISOString();
+  //     }
+
+  //     const response = await axios.post(
+  //       `${API_BASE_URL}/users-reports`,
+  //       {
+  //         filterParams: formattedParams,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     );
+
+  //     const { users } = response?.data?.data || {}
+
+  //     if (users && users.length > 0) {
+  //       // Process users to extract sector and trade area information
+  //       const processedUsers = users.map((user) => {
+  //         // Extract sectors and trade areas from priorSkillsCerts
+  //         let sectors = ""
+  //         let tradeAreas = ""
+
+  //         if (user.priorSkillsCerts && user.priorSkillsCerts.length > 0) {
+  //           user.priorSkillsCerts.forEach((cert) => {
+  //             if (cert.sector) sectors += cert.sector + ", "
+  //             if (cert.tradeArea) tradeAreas += cert.tradeArea + ", "
+  //           })
+
+  //           // Remove trailing comma and space
+  //           sectors = sectors.replace(/,\s*$/, "")
+  //           tradeAreas = tradeAreas.replace(/,\s*$/, "")
+  //         }
+
+  //         return {
+  //           phoneNumber: user?.phoneNumber || "",
+  //           firstName: user?.firstName || "",
+  //           lastName: user?.lastName || "",
+  //           email: user?.email || "",
+  //           role: formatString(user?.role || ""),
+  //           gender: user?.gender || "",
+  //           stateOfOrigin: user?.stateOfOrigin || "",
+  //           lga: user?.lga || "",
+  //           stateOfResidence: user?.stateOfResidence || "",
+  //           lgaOfResidence: user?.lgaOfResidence || "",
+  //           street: user?.street || "",
+  //           nin: user?.nin || "",
+  //           sectors: sectors || "",
+  //           tradeAreas: tradeAreas || "",
+  //         }
+  //       })
+
+  //       const formattedData = formatUsersToCSV(processedUsers)
+  //       setCsvData(formattedData)
+  //       setAllData(true)
+
+  //       toast.success("CSV data has been generated with all records. Click 'Download CSV' to download.")
+  //     } else {
+  //       toast.error("No data available to download")
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching all users for CSV:", error)
+  //     toast.error("Failed to generate CSV data")
+  //   } finally {
+  //     setLoadingCSV(false)
+  //   }
+  // }
+  
+
+  const downloadAllData = async () => {
+    setLoadingCSV(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+  
+      // Format date params
+      const formattedParams = {
+        ...form,
+        page: 1,
+        limit: 1000000,
+      };
+  
+      if (form.dateFrom) {
+        // Set time to start of day for dateFrom
+        const startDate = new Date(form.dateFrom);
+        startDate.setHours(0, 0, 0, 0);
+        formattedParams.createdAt = {
+          ...formattedParams.createdAt,
+          $gte: startDate.toISOString()
+        };
+      }
+      
+      if (form.dateTo) {
+        // Set time to end of day for dateTo
+        const endDate = new Date(form.dateTo);
+        endDate.setHours(23, 59, 59, 999);
+        formattedParams.createdAt = {
+          ...formattedParams.createdAt,
+          $lte: endDate.toISOString()
+        };
+      }
+  
       const response = await axios.post(
         `${API_BASE_URL}/users-reports`,
         {
-          filterParams: {
-            ...form,
-            page: 1,
-            limit: 1000000, // Very large limit to get all data
-          },
+          filterParams: formattedParams,
         },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        },
-      )
-
-      const { users } = response?.data?.data || {}
-
+        }
+      );
+  
+      const { users } = response?.data?.data || {};
+  
       if (users && users.length > 0) {
         // Process users to extract sector and trade area information
         const processedUsers = users.map((user) => {
           // Extract sectors and trade areas from priorSkillsCerts
-          let sectors = ""
-          let tradeAreas = ""
-
+          let sectors = "";
+          let tradeAreas = "";
+  
           if (user.priorSkillsCerts && user.priorSkillsCerts.length > 0) {
             user.priorSkillsCerts.forEach((cert) => {
-              if (cert.sector) sectors += cert.sector + ", "
-              if (cert.tradeArea) tradeAreas += cert.tradeArea + ", "
-            })
-
+              if (cert.sector) sectors += cert.sector + ", ";
+              if (cert.tradeArea) tradeAreas += cert.tradeArea + ", ";
+            });
+  
             // Remove trailing comma and space
-            sectors = sectors.replace(/,\s*$/, "")
-            tradeAreas = tradeAreas.replace(/,\s*$/, "")
+            sectors = sectors.replace(/,\s*$/, "");
+            tradeAreas = tradeAreas.replace(/,\s*$/, "");
           }
-
+  
           return {
+            "Ref-Number": user?._id || "",
             phoneNumber: user?.phoneNumber || "",
             firstName: user?.firstName || "",
             lastName: user?.lastName || "",
@@ -222,26 +472,29 @@ const AdminDashboardReports = () => {
             nin: user?.nin || "",
             sectors: sectors || "",
             tradeAreas: tradeAreas || "",
-          }
-        })
-
-        const formattedData = formatUsersToCSV(processedUsers)
-        setCsvData(formattedData)
-        setAllData(true)
-
-        toast.success("CSV data has been generated with all records. Click 'Download CSV' to download.")
+            createdAt: user?.createdAt || "",
+          };
+        });
+  
+        const formattedData = formatUsersToCSV(processedUsers);
+        setCsvData(formattedData);
+        setAllData(true);
+  
+        toast.success("CSV data has been generated with all records. Click 'Download CSV' to download.", "Registration Date");
       } else {
-        toast.error("No data available to download")
+        toast.error("No data available to download");
       }
     } catch (error) {
-      console.error("Error fetching all users for CSV:", error)
-      toast.error("Failed to generate CSV data")
+      console.error("Error fetching all users for CSV:", error);
+      toast.error("Failed to generate CSV data");
     } finally {
-      setLoadingCSV(false)
+      setLoadingCSV(false);
     }
-  }
+  };
 
   // Get LGA options for selected state
+  
+  
   const getStateLGAS = (selectedState) => {
     const state = states.find(
       (state) => replaceSymbolsWithSpace(`${state?.value}`) === replaceSymbolsWithSpace(`${selectedState}`),
@@ -336,7 +589,7 @@ const AdminDashboardReports = () => {
     doc.setFontSize(16)
     doc.text("SUPA Report Artisan/Intending Artisan Report", 35, 15)
 
-    const headers = ["Name", "Role", "NIN", "Phone", "Gender", "State of Residence", "Address", "State of Origin", "Sectors/Trade Areas"]
+    const headers = ["Ref-Number","Name", "Role", "NIN", "Phone", "Gender", "State of Residence", "Address", "State of Origin", "Sectors/Trade Areas"]
 
     const data = users.map((user) => {
       // Extract sectors and trade areas
@@ -351,6 +604,7 @@ const AdminDashboardReports = () => {
       }
 
       return [
+        `${user._id || ""}`, // Ref-Number
         `${user.firstName || ""} ${user.lastName || ""}`,
         formatString(user.role || ""),
         user.nin || "---",
@@ -359,6 +613,7 @@ const AdminDashboardReports = () => {
         `${user.stateOfResidence || "---"}, ${user.lgaOfResidence || "---"}, ${user.street || "---"}`,
         `${user.stateOfOrigin || "---"}, ${user.lga || "---"}`,
         sectorsTradeAreas || "---",
+        `${user.createdAt || "---"}`, // Date Registered
       ]
     })
 
@@ -384,7 +639,7 @@ const AdminDashboardReports = () => {
       doc.text(`Date: ${date}`, doc.internal.pageSize.width - 50, doc.internal.pageSize.height - 10)
     }
 
-    doc.save("Admin_Reports.pdf")
+    doc.save("Artisan_Admin_Reports.pdf")
   }
 
   // Logout handler
@@ -580,6 +835,30 @@ const AdminDashboardReports = () => {
                 </Select>
               </div>
 
+              {/* Date Range Filters */}
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Date From</p>
+                <Input
+                  type="date"
+                  value={form.dateFrom}
+                  onChange={(e) => onChangeInput("dateFrom", e.target.value)}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="w-[200px]">
+                <p className="text-left text-[14px] mb-1">Date To</p>
+                <Input
+                  type="date"
+                  value={form.dateTo}
+                  onChange={(e) => onChangeInput("dateTo", e.target.value)}
+                  className="w-full"
+                  min={form.dateFrom} // Ensure dateTo is not before dateFrom
+                />
+              </div>
+
+
+
               <Button className="bg-emerald-700 mt-auto" onClick={search} disabled={loading}>
                 {loading ? <SewingPinFilledIcon className="animate-spin" /> : "Search"}
               </Button>
@@ -615,7 +894,7 @@ const AdminDashboardReports = () => {
                   ) : (
                     <CSVLink
                       data={csvData}
-                      filename="admin_reports.csv"
+                      filename="Artisan_Admin_Reports.csv"
                       className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                     >
                       <DownloadIcon className="mr-2" />
@@ -636,15 +915,19 @@ const AdminDashboardReports = () => {
                 <TableHeader>
                   <TableRow className="bg-gray-100">
                     <TableHead className="font-medium">SN</TableHead>
+                    <TableHead clasName="font-medium">Ref-Number</TableHead>
                     <TableHead className="font-medium">Name</TableHead>
                     <TableHead className="font-medium">Role</TableHead>
                     <TableHead className="font-medium">NIN</TableHead>
                     <TableHead className="font-medium">Phone</TableHead>
                     <TableHead className="font-medium">Gender</TableHead>
                     <TableHead className="font-medium"> State of Residence</TableHead>
+                    <TableHead className="font-medium">LGA of Residence</TableHead>
                     <TableHead className="font-medium"> Address</TableHead>
                     <TableHead className="font-medium">State of Origin</TableHead>
+                    <TableHead className="font-medium">LGA of Origin</TableHead>
                     <TableHead className="font-medium">Sectors/Trade Areas</TableHead>
+                    <TableHead className="font-medium">Registered Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -666,6 +949,7 @@ const AdminDashboardReports = () => {
                       return (
                         <TableRow key={user?._id || index}>
                           <TableCell>{index + 1 + (pagination.currentPage - 1) * pagination.limit}</TableCell>
+                          <TableCell>{formatString(user._id || "")}</TableCell>
                           <TableCell>
                             <div className="font-medium">
                               {user.firstName} {user.lastName}
@@ -676,13 +960,29 @@ const AdminDashboardReports = () => {
                           <TableCell>{user.nin || "---"}</TableCell>
                           <TableCell>{user.phoneNumber || "---"}</TableCell>
                           <TableCell className="capitalize">{user.gender || "---"}</TableCell>
+                          {/* <TableCell>
+                            <div>{user.stateOfResidence || "---"}</div>
+                            <div className="text-sm text-gray-500">{user.lgaOfResidence || "---"}</div>
+                          </TableCell> */}
                           <TableCell>
                             <div>{user.stateOfResidence || "---"}</div>
+                            {/* <div className="text-sm text-gray-500">{user.lgaOfResidence || "---"}</div> */}
+                          </TableCell>
+                          <TableCell>
+                            {/* <div>{user.stateOfResidence || "---"}</div> */}
                             <div className="text-sm text-gray-500">{user.lgaOfResidence || "---"}</div>
                           </TableCell>
                           <TableCell>{user.street || "---"}</TableCell>
+                          {/* <TableCell>
+                            <div>{user.stateOfOrigin || "---"}</div>
+                            <div className="text-sm text-gray-500">{user.lga || "---"}</div>
+                          </TableCell> */}
                           <TableCell>
                             <div>{user.stateOfOrigin || "---"}</div>
+                            {/* <div className="text-sm text-gray-500">{user.lga || "---"}</div> */}
+                          </TableCell>
+                          <TableCell>
+                            {/* <div>{user.stateOfOrigin || "---"}</div> */}
                             <div className="text-sm text-gray-500">{user.lga || "---"}</div>
                           </TableCell>
                           <TableCell>
@@ -699,6 +999,7 @@ const AdminDashboardReports = () => {
                               "---"
                             )}
                           </TableCell>
+                          <TableCell>{user.createdAt || "---"}</TableCell>
                         </TableRow>
                       )
                     })
