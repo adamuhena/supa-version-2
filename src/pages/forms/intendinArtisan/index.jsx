@@ -82,13 +82,13 @@ const checkValidateEducation = ({ form }) => {
   return { erroMsg };
 };
 
-const checkValidatePrior = ({ form }) => {
-  let erroMsg = "";
-  if (!form?.priorSkillsCerts?.[0]?.id) {
-    erroMsg = "At least one intending skill is required!";
-  }
-  return { erroMsg };
-};
+// const checkValidatePrior = ({ form }) => {
+//   let erroMsg = "";
+//   if (!form?.priorSkillsCerts?.[0]?.id) {
+//     erroMsg = "At least one intending skill is required!";
+//   }
+//   return { erroMsg };
+// };
 
 const checkValidateBank = ({ form }) => {
   let erroMsg = "";
@@ -132,26 +132,26 @@ const ArtisanForm = () => {
       graduationYear: "",
       eduUpload: "",
     },
-    priorSkillsCerts: [
-      {
-        id: `${new Date().getTime()}${Math.random()}`,
-        sector: "",
-        tradeArea: "",
-        name: "",
-        year: "",
-        priUpload: "",
-      },
-    ],
-    experience: [
-      {
-        id: `${new Date().getTime()}${Math.random()}`,
-        projectTitle: "",
-        description: "",
-        dateFrom: "",
-        dateTo: "",
-        exUpload: "",
-      },
-    ],
+    // priorSkillsCerts: [
+    //   {
+    //     id: `${new Date().getTime()}${Math.random()}`,
+    //     sector: "",
+    //     tradeArea: "",
+    //     name: "",
+    //     year: "",
+    //     priUpload: "",
+    //   },
+    // ],
+    // experience: [
+    //   {
+    //     id: `${new Date().getTime()}${Math.random()}`,
+    //     projectTitle: "",
+    //     description: "",
+    //     dateFrom: "",
+    //     dateTo: "",
+    //     exUpload: "",
+    //   },
+    // ],
     bankAccount: {
       accountName: "",
       accountNumber: "",
@@ -182,14 +182,14 @@ const ArtisanForm = () => {
       }
     }
 
-    if (step === 1) {
-      const erroMsg = checkValidatePrior({ form })?.erroMsg;
-      if (erroMsg) {
-        return toast.error(erroMsg, { position: "top-right" });
-      }
-    }
+    // if (step === 1) {
+    //   const erroMsg = checkValidatePrior({ form })?.erroMsg;
+    //   if (erroMsg) {
+    //     return toast.error(erroMsg, { position: "top-right" });
+    //   }
+    // }
 
-    if (step === 2) {
+    if (step === 1) {
       const erroMsg = checkValidateBank({ form })?.erroMsg;
       if (erroMsg) {
         return toast.error(erroMsg, { position: "top-right" });
@@ -293,7 +293,7 @@ const ArtisanForm = () => {
           Back
         </button>
       )}
-      {step === 3 ? (
+      {step === 2 ? (
         form.agree && (
           <button
             disabled={loading}
@@ -349,7 +349,7 @@ const ArtisanForm = () => {
                       </span>
                     }
                   />
-                  <Step
+                  {/* <Step
                     index={1}
                     label={
                       <span className="text-sm font-semibold text-white ">
@@ -357,10 +357,10 @@ const ArtisanForm = () => {
                         Intendin Skill
                       </span>
                     }
-                  />
+                  /> */}
 
                   <Step
-                    index={2}
+                    index={1}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -369,7 +369,7 @@ const ArtisanForm = () => {
                     }
                   />
                   <Step
-                    index={3}
+                    index={2}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -403,22 +403,22 @@ const ArtisanForm = () => {
                       onchangeEducationInput={onchangeEducationInput}
                     />
                   )}
-                  {step === 1 && (
+                  {/* {step === 1 && (
                     <PriorSkill
                       controlButtons={controlButtons}
                       form={form}
                       onchangeInput={onchangeInput}
                     />
-                  )}
+                  )} */}
 
-                  {step === 2 && (
+                  {step === 1 && (
                     <BankDetails
                       form={form}
                       onChangeBankInput={onChangeBankInput}
                       controlButtons={controlButtons}
                     />
                   )}
-                  {step === 3 && (
+                  {step === 2 && (
                     <Declaration
                       form={form}
                       onchangeInput={onchangeInput}

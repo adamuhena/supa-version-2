@@ -49,9 +49,9 @@ export default function Education({
           Highest qualification obtained *
         </Label>
         <Select
-          value={form?.education?.highest_qualification}
+          value={form?.education?.highestQualification}
           onValueChange={(value) =>
-            onchangeEducationInput("highest_qualification", value)
+            onchangeEducationInput("highestQualification", value)
           }>
           <SelectTrigger className="">
             <SelectValue placeholder="Select a qualification" />
@@ -97,8 +97,8 @@ export default function Education({
             Graduation year *
           </Label>
           <Select
-            value={form?.education?.graduation_year}
-            onValueChange={(value) => onchangeEducationInput("graduation_year", value)}
+            value={form?.education?.graduationYear}
+            onValueChange={(value) => onchangeEducationInput("graduationYear", value)}
           >
             <SelectTrigger className="">
               <SelectValue placeholder="Select graduation year" />

@@ -472,6 +472,8 @@ const AdminDashboardReports = () => {
             nin: user?.nin || "",
             sectors: sectors || "",
             tradeAreas: tradeAreas || "",
+            hasDisability: user?.hasDisability || "",
+            disabilityType: user?.disabilityType || "",
             createdAt: user?.createdAt || "",
           };
         });
@@ -613,6 +615,7 @@ const AdminDashboardReports = () => {
         `${user.stateOfResidence || "---"}, ${user.lgaOfResidence || "---"}, ${user.street || "---"}`,
         `${user.stateOfOrigin || "---"}, ${user.lga || "---"}`,
         sectorsTradeAreas || "---",
+        `${user.hasDisability || "---"} , ${user.disabilityType}`, // Has Disability
         `${user.createdAt || "---"}`, // Date Registered
       ]
     })
@@ -927,6 +930,7 @@ const AdminDashboardReports = () => {
                     <TableHead className="font-medium">State of Origin</TableHead>
                     <TableHead className="font-medium">LGA of Origin</TableHead>
                     <TableHead className="font-medium">Sectors/Trade Areas</TableHead>
+                    <TableHead className="font-medium">Has Disability</TableHead>
                     <TableHead className="font-medium">Registered Date</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -998,6 +1002,10 @@ const AdminDashboardReports = () => {
                             ) : (
                               "---"
                             )}
+                          </TableCell>
+                          <TableCell>
+                            <div>{user.hasDisability || "---"}</div>
+                            <div className="text-sm text-gray-500">{user.disabilityType || "---"}</div>
                           </TableCell>
                           <TableCell>{user.createdAt || "---"}</TableCell>
                         </TableRow>

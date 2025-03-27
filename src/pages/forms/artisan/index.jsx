@@ -73,32 +73,32 @@ const checkValidateEducation = ({ form }) => {
   let erroMsg = "";
   if (
     !form?.education?.school ||
-    !form?.education?.highest_qualification ||
-    !form?.education?.graduation_year
+    !form?.education?.highestQualification ||
+    !form?.education?.graduationYear
   ) {
     erroMsg = "All education fields are required!";
   }
   return { erroMsg };
 };
 
-const checkValidatePrior = ({ form }) => {
-  let erroMsg = "";
-  if (
-    !form?.priorSkillsCerts?.[0]?.name ||
-    !form?.priorSkillsCerts?.[0]?.year
-  ) {
-    erroMsg = "At least one prior skill is required!";
-  }
-  return { erroMsg };
-};
+// const checkValidatePrior = ({ form }) => {
+//   let erroMsg = "";
+//   if (
+//     !form?.priorSkillsCerts?.[0]?.name ||
+//     !form?.priorSkillsCerts?.[0]?.year
+//   ) {
+//     erroMsg = "At least one prior skill is required!";
+//   }
+//   return { erroMsg };
+// };
 
 const checkValidateExp = ({ form }) => {
   let erroMsg = "";
   if (
-    !form?.experience?.[0]?.project_title ||
+    !form?.experience?.[0]?.projectTitle ||
     !form?.experience?.[0]?.description ||
-    !form?.experience?.[0]?.date_from ||
-    !form?.experience?.[0]?.date_to
+    !form?.experience?.[0]?.dateFrom ||
+    !form?.experience?.[0]?.dateTo
   ) {
     erroMsg = "At least one experience is required!";
   }
@@ -148,16 +148,16 @@ const ArtisanForm = () => {
       graduationYear: "",
       eduUpload: "",
     },
-    priorSkillsCerts: [
-      {
-        id: `${new Date().getTime()}${Math.random()}`,
-        sector: "",
-        tradeArea: "",
-        name: "",
-        year: "",
-        priUpload: "",
-      },
-    ],
+    // priorSkillsCerts: [
+    //   {
+    //     id: `${new Date().getTime()}${Math.random()}`,
+    //     sector: "",
+    //     tradeArea: "",
+    //     name: "",
+    //     year: "",
+    //     priUpload: "",
+    //   },
+    // ],
     experience: [
       {
         id: `${new Date().getTime()}${Math.random()}`,
@@ -165,7 +165,7 @@ const ArtisanForm = () => {
         description: "",
         dateFrom: "",
         dateTo: "",
-        exUpload: "",
+        // exUpload: "",
       },
     ],
     bankAccount: {
@@ -173,7 +173,7 @@ const ArtisanForm = () => {
       accountNumber: "",
       bank: "",
     },
-    role: "intending_artisan",
+    role: "artisan_user",
     certifiedStatus: false,
     licenseStatus: false,
     agree: false,
@@ -198,21 +198,21 @@ const ArtisanForm = () => {
       }
     }
 
-    if (step === 1) {
-      const erroMsg = checkValidatePrior({ form })?.erroMsg;
-      if (erroMsg) {
-        return toast.error(erroMsg, { position: "top-right" });
-      }
-    }
+    // if (step === 1) {
+    //   const erroMsg = checkValidatePrior({ form })?.erroMsg;
+    //   if (erroMsg) {
+    //     return toast.error(erroMsg, { position: "top-right" });
+    //   }
+    // }
 
-    if (step === 2) {
+    if (step === 1) {
       const erroMsg = checkValidateExp({ form })?.erroMsg;
       if (erroMsg) {
         return toast.error(erroMsg, { position: "top-right" });
       }
     }
 
-    if (step === 3) {
+    if (step === 2) {
       const erroMsg = checkValidateBank({ form })?.erroMsg;
       if (erroMsg) {
         return toast.error(erroMsg, { position: "top-right" });
@@ -315,7 +315,7 @@ const ArtisanForm = () => {
           Back
         </button>
       )}
-      {step === 4 ? (
+      {step === 3 ? (
         form.agree && (
           <button
             disabled={loading}
@@ -371,7 +371,7 @@ const ArtisanForm = () => {
                       </span>
                     }
                   />
-                  <Step
+                  {/* <Step
                     index={1}
                     label={
                       <span className="text-sm font-semibold text-white ">
@@ -379,9 +379,9 @@ const ArtisanForm = () => {
                         Prior Skill Certificates{" "}
                       </span>
                     }
-                  />
+                  /> */}
                   <Step
-                    index={2}
+                    index={1}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -390,7 +390,7 @@ const ArtisanForm = () => {
                     }
                   />
                   <Step
-                    index={3}
+                    index={2}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -399,7 +399,7 @@ const ArtisanForm = () => {
                     }
                   />
                   <Step
-                    index={4}
+                    index={3}
                     label={
                       <span className="text-sm font-semibold text-white ">
                         {" "}
@@ -433,28 +433,28 @@ const ArtisanForm = () => {
                       onchangeEducationInput={onchangeEducationInput}
                     />
                   )}
-                  {step === 1 && (
+                  {/* {step === 1 && (
                     <PriorSkill
                       controlButtons={controlButtons}
                       form={form}
                       onchangeInput={onchangeInput}
                     />
-                  )}
-                  {step === 2 && (
+                  )} */}
+                  {step === 1 && (
                     <Experience
                       controlButtons={controlButtons}
                       form={form}
                       onchangeInput={onchangeInput}
                     />
                   )}
-                  {step === 3 && (
+                  {step === 2 && (
                     <BankDetails
                       form={form}
                       onChangeBankInput={onChangeBankInput}
                       controlButtons={controlButtons}
                     />
                   )}
-                  {step === 4 && (
+                  {step === 3 && (
                     <Declaration
                       form={form}
                       onchangeInput={onchangeInput}

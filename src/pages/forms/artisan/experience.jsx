@@ -75,9 +75,9 @@ export default function Experience({ controlButtons, form, onchangeInput }) {
                 </Label>
                 <Input
                   placeholder="Enter name"
-                  value={item?.project_title}
+                  value={item?.projectTitle}
                   onChange={(e) =>
-                    onChange(item?.id, "project_title", e.target.value)
+                    onChange(item?.id, "projectTitle", e.target.value)
                   }
                 />
               </div>
@@ -108,10 +108,10 @@ export default function Experience({ controlButtons, form, onchangeInput }) {
                     <p className="text-left"> From</p>
                     <Input
                       placeholder="Start"
-                      value={item?.date_to}
+                      value={item?.dateTo}
                       type="date"
                       onChange={(e) =>
-                        onChange(item?.id, "date_to", e.target.value)
+                        onChange(item?.id, "dateTo", e.target.value)
                       }
                     />
                   </div>
@@ -120,10 +120,10 @@ export default function Experience({ controlButtons, form, onchangeInput }) {
                     <p className="text-left">To</p>
                     <Input
                       placeholder="End"
-                      value={item?.date_from}
+                      value={item?.dateFrom}
                       type="date"
                       onChange={(e) =>
-                        onChange(item?.id, "date_from", e.target.value)
+                        onChange(item?.id, "dateFrom", e.target.value)
                       }
                     />
                   </div>
