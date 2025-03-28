@@ -85,6 +85,7 @@ export default function Metrics() {
     users.find((user) => user._id === "intending_artisan")?.count || 0;
   const training_centerCount = trainingCenters.length;
   const training_groupCount = trainingGroups.length;
+  console.log("trainingCenter count ", training_centerCount);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">

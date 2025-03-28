@@ -73,9 +73,9 @@ export default function Education({
           Graduation year *
         </Label>
         <Select
-          value={form?.education?.graduation_year}
+          value={form?.education?.graduationYear}
           onValueChange={(value) =>
-            onchangeEducationInput("graduation_year", value)
+            onchangeEducationInput("graduationYear", value)
           }>
           <SelectTrigger className="">
             <SelectValue placeholder="Select graduation year" />

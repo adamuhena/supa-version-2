@@ -73,8 +73,8 @@ const checkValidateEducation = ({ form }) => {
   let erroMsg = "";
   if (
     !form?.education?.school ||
-    !form?.education?.highest_qualification ||
-    !form?.education?.graduation_year
+    !form?.education?.highestQualification ||
+    !form?.education?.graduationYear
   ) {
     erroMsg = "All education fields are required!";
   }

@@ -144,7 +144,7 @@ const ArtisanForm = () => {
     // disabilityType: "",
     education: {
       school: "",
-      highest_qualification: "",
+      highestQualification: "",
       graduationYear: "",
       eduUpload: "",
     },
