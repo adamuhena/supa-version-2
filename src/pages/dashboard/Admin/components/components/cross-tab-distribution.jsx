@@ -6,100 +6,108 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Bar, BarChart, Cell, Legend, XAxis, YAxis } from "recharts"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export function CrossTabDistribution({ geoData, filters }) {
-  // Process state residence vs origin cross-tab data
-  const stateResidenceOriginData = useMemo(() => {
-    if (!geoData?.stateResidenceOriginCrossTab) return []
+const COLORS = {
+  geographic: ["#2196F3", "#4CAF50", "#F44336", "#FF9800", "#9C27B0"],
+  skills: ["#00BCD4", "#8BC34A", "#3F51B5", "#FFC107", "#673AB7"],
+  gender: ["#E91E63", "#4A90E2", "#9E9E9E"]
+};
 
-    // Filter and normalize state names
-    return geoData.stateResidenceOriginCrossTab
-      .filter(
-        (item) =>
-          item._id.stateOfResidence &&
-          item._id.stateOfOrigin &&
-          item._id.stateOfResidence.trim() !== "" &&
-          item._id.stateOfOrigin.trim() !== "",
-      )
-      .map((item) => ({
-        name: `${item._id.stateOfResidence.trim()} → ${item._id.stateOfOrigin.trim()}`,
+export function CrossTabDistribution({ crossTabData, filters, isLoading }) {
+  // Process geographic cross-tab data
+  const geographicData = useMemo(() => {
+    if (!crossTabData?.geographicCrossTabs?.length) return [];
+
+    return crossTabData.geographicCrossTabs
+      .filter(item => (
+        item._id.stateOfResidence && 
+        item._id.lgaOfResidence && 
+        item._id.senatorialDistrict
+      ))
+      .map(item => ({
+        name: `${item._id.stateOfResidence} - ${item._id.lgaOfResidence}`,
         value: item.count,
+        senatorial: item._id.senatorialDistrict,
+        origin: `${item._id.stateOfOrigin || 'Unknown'} - ${item._id.lga || 'Unknown'}`
       }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 15) // Get top 15 combinations
-  }, [geoData])
+      .slice(0, 15);
+  }, [crossTabData]);
 
-  // Since the API doesn't provide sector by state data directly,
-  // we'll need to adapt or create a placeholder for now
-  const sectorByStateData = useMemo(() => {
-    // Return sample data for now
-    // You'll need to implement a separate API endpoint for this data
-    return [
-      { state: "Lagos", construction: 350, it: 280, agriculture: 150 },
-      { state: "Abuja", construction: 280, it: 320, agriculture: 120 },
-      { state: "Kano", construction: 220, it: 180, agriculture: 250 },
-      { state: "Rivers", construction: 180, it: 150, agriculture: 120 },
-      { state: "Oyo", construction: 150, it: 120, agriculture: 180 },
-    ]
-  }, [])
+  // Process skills cross-tab data
+  const skillsData = useMemo(() => {
+    if (!crossTabData?.skillsCrossTabs?.length) return [];
 
-  // Since the API doesn't provide trade area by state data directly,
-  // we'll need to adapt or create a placeholder for now
-  const tradeAreaByStateData = useMemo(() => {
-    // Return sample data for now
-    // You'll need to implement a separate API endpoint for this data
-    return [
-      { state: "Lagos", webDev: 150, carpentry: 120, plumbing: 80 },
-      { state: "Abuja", webDev: 120, carpentry: 100, plumbing: 60 },
-      { state: "Kano", webDev: 80, carpentry: 150, plumbing: 100 },
-      { state: "Rivers", webDev: 100, carpentry: 80, plumbing: 60 },
-      { state: "Oyo", webDev: 70, carpentry: 60, plumbing: 50 },
-    ]
-  }, [])
+    return crossTabData.skillsCrossTabs
+      .filter(item => item._id.sector && item._id.tradeArea)
+      .map(item => ({
+        name: `${item._id.stateOfResidence} - ${item._id.lgaOfResidence}`,
+        sector: item._id.sector,
+        tradeArea: item._id.tradeArea,
+        certified: item._id.hasCertificate ? "Yes" : "No",
+        value: item.count
+      }))
+      .slice(0, 15);
+  }, [crossTabData]);
 
-  const COLORS = [
-    "#0088FE",
-    "#00C49F",
-    "#FFBB28",
-    "#FF8042",
-    "#8884d8",
-    "#82ca9d",
-    "#ffc658",
-    "#8dd1e1",
-    "#a4de6c",
-    "#d0ed57",
-  ]
+  // Process gender cross-tab data
+  const genderData = useMemo(() => {
+    if (!crossTabData?.genderCrossTabs?.length) return [];
+
+    return crossTabData.genderCrossTabs
+      .filter(item => item._id.gender && item._id.sector)
+      .map(item => ({
+        name: `${item._id.stateOfResidence} - ${item._id.lgaOfResidence}`,
+        gender: item._id.gender,
+        sector: item._id.sector,
+        tradeArea: item._id.tradeArea,
+        value: item.count
+      }))
+      .slice(0, 15);
+  }, [crossTabData]);
 
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="state-mobility">
+      <Tabs defaultValue="geographic">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="state-mobility">State Mobility</TabsTrigger>
-          <TabsTrigger value="sector-by-state">Sector by State</TabsTrigger>
-          <TabsTrigger value="trade-by-state">Trade Area by State</TabsTrigger>
+          <TabsTrigger value="geographic">Geographic</TabsTrigger>
+          <TabsTrigger value="skills">Skills</TabsTrigger>
+          <TabsTrigger value="gender">Gender</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="state-mobility" className="mt-6">
+        <TabsContent value="geographic" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>State of Residence vs State of Origin</CardTitle>
-              <CardDescription>Top 15 combinations of residence and origin states</CardDescription>
+              <CardTitle>Geographic Distribution</CardTitle>
+              <CardDescription>Cross-tabulation of residence and origin locations</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[400px] w-full">
                 <ChartContainer>
                   <BarChart
-                    data={stateResidenceOriginData}
+                    data={geographicData}
                     layout="vertical"
                     margin={{ top: 5, right: 30, left: 150, bottom: 5 }}
                   >
                     <XAxis type="number" />
                     <YAxis dataKey="name" type="category" tick={{ fontSize: 12 }} width={150} />
-                    <Bar dataKey="value" fill="hsl(var(--chart-1))">
-                      {stateResidenceOriginData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Bar dataKey="value">
+                      {geographicData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS.geographic[index % COLORS.geographic.length]} />
                       ))}
                     </Bar>
-                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartTooltip 
+                      content={({ payload }) => {
+                        if (!payload?.length) return null;
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-white p-2 border rounded shadow">
+                            <p className="font-medium">{data.name}</p>
+                            <p>Senatorial: {data.senatorial}</p>
+                            <p>Origin: {data.origin}</p>
+                            <p>Count: {data.value}</p>
+                          </div>
+                        );
+                      }}
+                    />
                   </BarChart>
                 </ChartContainer>
               </div>
@@ -107,93 +115,10 @@ export function CrossTabDistribution({ geoData, filters }) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="sector-by-state" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sector Distribution by State</CardTitle>
-              <CardDescription>Distribution of sectors across top states</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[400px] w-full">
-                <ChartContainer
-                  config={{
-                    construction: {
-                      label: "Construction",
-                      color: "hsl(var(--chart-1))",
-                    },
-                    it: {
-                      label: "IT",
-                      color: "hsl(var(--chart-2))",
-                    },
-                    agriculture: {
-                      label: "Agriculture",
-                      color: "hsl(var(--chart-3))",
-                    },
-                  }}
-                >
-                  <BarChart
-                    data={sectorByStateData}
-                    layout="vertical"
-                    margin={{ top: 20, right: 30, left: 80, bottom: 5 }}
-                  >
-                    <XAxis type="number" />
-                    <YAxis dataKey="state" type="category" tick={{ fontSize: 12 }} width={80} />
-                    <Legend />
-                    <Bar dataKey="construction" stackId="a" fill="hsl(var(--chart-1))" />
-                    <Bar dataKey="it" stackId="a" fill="hsl(var(--chart-2))" />
-                    <Bar dataKey="agriculture" stackId="a" fill="hsl(var(--chart-3))" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </BarChart>
-                </ChartContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="trade-by-state" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Trade Area Distribution by State</CardTitle>
-              <CardDescription>Distribution of trade areas across top states</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[400px] w-full">
-                <ChartContainer
-                  config={{
-                    webDev: {
-                      label: "Web Development",
-                      color: "hsl(var(--chart-4))",
-                    },
-                    carpentry: {
-                      label: "Carpentry",
-                      color: "hsl(var(--chart-5))",
-                    },
-                    plumbing: {
-                      label: "Plumbing",
-                      color: "hsl(var(--chart-6))",
-                    },
-                  }}
-                >
-                  <BarChart
-                    data={tradeAreaByStateData}
-                    layout="vertical"
-                    margin={{ top: 20, right: 30, left: 80, bottom: 5 }}
-                  >
-                    <XAxis type="number" />
-                    <YAxis dataKey="state" type="category" tick={{ fontSize: 12 }} width={80} />
-                    <Legend />
-                    <Bar dataKey="webDev" stackId="a" fill="hsl(var(--chart-4))" />
-                    <Bar dataKey="carpentry" stackId="a" fill="hsl(var(--chart-5))" />
-                    <Bar dataKey="plumbing" stackId="a" fill="hsl(var(--chart-6))" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </BarChart>
-                </ChartContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {/* Similar structure for Skills and Gender tabs */}
+        {/* ...add TabsContent for "skills" and "gender" values... */}
       </Tabs>
     </div>
-  )
+  );
 }
 

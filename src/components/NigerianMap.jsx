@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapIcon } from 'lucide-react';
 import { geoMercator, geoPath } from 'd3-geo';
 import { feature } from 'topojson-client';
 import MapTooltip from './MapTooltip';
-import { fetchUserDist } from '../services/api';
-import nigeriaTopoData from '../data/nigeriaTopo.json'; 
-import { stateData } from '../data/nigerianStates'; // Your state data
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import nigeriaTopoData from '../data/nigeriaTopo.json';
+import { stateData } from '../data/nigerianStates';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const NigerianMap = () => {
-  const [mapData, setMapData] = useState({});
+const NigerianMap = ({ analyticsData }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [tooltip, setTooltip] = useState({
     show: false,
     state: '',
@@ -17,27 +16,35 @@ const NigerianMap = () => {
     data: null,
   });
 
+  // Add effect to handle loading state
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await fetchUserDist();
-        setMapData(data);
-      } catch (error) {
-        console.error('Error loading map data:', error);
-      }
-    };
-    loadData();
-  }, []);
+    if (analyticsData) {
+      setIsLoading(false);
+    }
+  }, [analyticsData]);
 
-  // Convert TopoJSON to GeoJSON
-  const nigeriaGeoData = feature(nigeriaTopoData, nigeriaTopoData.objects.default);
+  // Transform analytics data for the map
+  const getStateData = (stateId) => {
+    const stateResidence = analyticsData?.stateOfResidenceDistribution?.find(
+      state => state._id?.toLowerCase() === stateId?.toLowerCase()
+    );
+    const stateOrigin = analyticsData?.stateOfOriginDistribution?.find(
+      state => state._id?.toLowerCase() === stateId?.toLowerCase()
+    );
+
+    return {
+      residenceCount: stateResidence?.count || 0,
+      originCount: stateOrigin?.count || 0,
+      total: (stateResidence?.count || 0)
+    };
+  };
 
   // Get color based on the total number of users
   const getColorByDensity = (stateId) => {
-    const data = mapData[stateId.toLowerCase()];
+    const data = getStateData(stateId);
     if (!data) return '#e5e7eb';
 
-    const total = data.artisan_users + data.intending_artisans;
+    const total = data.total;
     if (total > 30000) return '#FF6347';  // Tomato Red for extreme density
     if (total > 25000) return '#FF5733';  // Red-Orange for very high density
     if (total > 20000) return '#C70039';  // Dark Red for high density
@@ -56,6 +63,11 @@ const NigerianMap = () => {
 
   // Handle mouse hover event
   const handleMouseMove = (event, stateName, stateId) => {
+    // Get the relative position within the SVG
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
     setTooltip({
       show: true,
       state: stateName,
@@ -63,7 +75,7 @@ const NigerianMap = () => {
         x: event.clientX,
         y: event.clientY
       },
-      data: mapData[stateId.toLowerCase()]
+      data: getStateData(stateId)
     });
   };
 
@@ -72,9 +84,13 @@ const NigerianMap = () => {
   };
 
   // Calculate total sum of artisans and intending artisans
-  const totalArtisans = Object.values(mapData).reduce((sum, state) => {
-    return sum + (state.artisan_users || 0) + (state.intending_artisans || 0);
+  const totalArtisans = Object.keys(stateData).reduce((sum, stateId) => {
+    const state = getStateData(stateId);
+    return sum + state.total;
   }, 0);
+
+  // Convert TopoJSON to GeoJSON
+  const nigeriaGeoData = feature(nigeriaTopoData, nigeriaTopoData.objects.default);
 
   // Create map projection
   const projection = geoMercator()
@@ -85,13 +101,29 @@ const NigerianMap = () => {
   const pathGenerator = geoPath().projection(projection);
 
   return (
-    <Card className="bg-white shadow-lg">
+    <Card className="bg-white shadow-lg relative">
+      {/* Loading overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-2">
+            <div className="animate-spin h-8 w-8 border-4 border-emerald-500 rounded-full border-t-transparent"></div>
+            <p className="text-sm text-gray-600">Loading map data...</p>
+          </div>
+        </div>
+      )}
+
       <CardHeader className="border-b border-gray-100">
-        <div className="flex items-center space-x-2">
-          <MapIcon className="h-6 w-6 text-emerald-600" />
-          <CardTitle className="text-2xl font-bold text-gray-900">
-            Nigerian Artisan Distribution Map
-          </CardTitle>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <MapIcon className="h-6 w-6 text-emerald-600" />
+            <CardTitle className="text-2xl font-bold text-gray-900">
+              Nigerian Artisan Distribution Map
+            </CardTitle>
+          </div>
+          {/* Add a small loading indicator in the header when refreshing */}
+          {isLoading && (
+            <div className="animate-spin h-4 w-4 border-2 border-emerald-500 rounded-full border-t-transparent" />
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-6">
@@ -127,8 +159,8 @@ const NigerianMap = () => {
               {Object.entries(stateData).map(([stateId, state]) => {
                 const [longitude, latitude] = state.coordinates;
                 const [x, y] = projection([longitude, latitude]);
-                const stateData = mapData[stateId.toLowerCase()];
-                const total = stateData ? stateData.artisan_users + stateData.intending_artisans : 0;
+                const stateData = getStateData(stateId);
+                const total = stateData.total;
 
                 return (
                   <text

@@ -18,7 +18,7 @@ export function GeographicDistribution({ geoData, filters }) {
 
   // Process state of residence data
   const stateOfResidenceData = useMemo(() => {
-    if (!geoData?.stateOfResidenceDistribution?.length) return []
+    if (!geoData?.stateOfResidenceDistribution?.length) return [];
 
     return geoData.stateOfResidenceDistribution
       .filter((item) => item._id && item._id.trim() !== "")
@@ -27,8 +27,8 @@ export function GeographicDistribution({ geoData, filters }) {
         value: item.count || 0,
       }))
       .sort((a, b) => b.value - a.value)
-      .slice(0, 15)
-  }, [geoData])
+      .slice(0, 15);
+  }, [geoData]);
 
   // Process state of origin data
   const stateOfOriginData = useMemo(() => {
@@ -46,49 +46,97 @@ export function GeographicDistribution({ geoData, filters }) {
 
   // Process LGA of residence data
   const lgaOfResidenceData = useMemo(() => {
-    // For now, return empty array as the API doesn't provide this data in the expected format
-    // You'll need to implement a separate API endpoint for LGA data
-    return []
-  }, [geoData])
+    if (!geoData?.lgaOfResidenceDistribution?.length) return [];
 
-  // Process LGA of origin data
-  const lgaOfOriginData = useMemo(() => {
-    // For now, return empty array as the API doesn't provide this data in the expected format
-    // You'll need to implement a separate API endpoint for LGA data
-    return []
-  }, [geoData])
+    return geoData.lgaOfResidenceDistribution
+      .filter(item => item._id?.state && item._id?.lga)
+      .map(item => ({
+        name: `${item._id.lga} (${item._id.state})`,
+        value: item.count || 0,
+        state: item._id.state,
+        lga: item._id.lga
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 15);
+  }, [geoData]);
+
+  // Process LGA distribution data
+  const lgaDistributionData = useMemo(() => {
+    if (!geoData?.lgaDistribution?.length) return [];
+
+    return geoData.lgaDistribution
+      .filter(item => item._id?.state && item._id?.lga)
+      .map(item => ({
+        name: `${item._id.lga} (${item._id.state})`,
+        value: item.count || 0,
+        state: item._id.state,
+        lga: item._id.lga
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 15);
+  }, [geoData]);
 
   // Process senatorial district data
   const senatorialDistrictData = useMemo(() => {
-    // For now, return empty array as the API doesn't provide this data in the expected format
-    // You'll need to implement a separate API endpoint for senatorial district data
-    return []
-  }, [geoData])
+    if (!geoData?.senatorialDistrictDistribution?.length) return [];
 
+    return geoData.senatorialDistrictDistribution
+      .filter(item => item._id?.state && item._id?.district)
+      .map(item => ({
+        name: `${item._id.district} (${item._id.state})`,
+        value: item.count || 0,
+        state: item._id.state,
+        district: item._id.district
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 15);
+  }, [geoData]);
+
+  // Updated colors array with vibrant colors
   const COLORS = [
-    "#0088FE",
-    "#00C49F",
-    "#FFBB28",
-    "#FF8042",
-    "#8884d8",
-    "#82ca9d",
-    "#ffc658",
-    "#8dd1e1",
-    "#a4de6c",
-    "#d0ed57",
-    "#83a6ed",
-    "#8884d8",
-    "#ffc658",
-    "#ff8c00",
-    "#ff0000",
-  ]
+    "#2196F3", // Blue
+    "#4CAF50", // Green
+    "#F44336", // Red
+    "#FF9800", // Orange
+    "#9C27B0", // Purple
+    "#00BCD4", // Cyan
+    "#8BC34A", // Light Green
+    "#3F51B5", // Indigo
+    "#FFC107", // Amber
+    "#673AB7", // Deep Purple
+    "#009688", // Teal
+    "#CDDC39", // Lime
+    "#FF5722", // Deep Orange
+    "#795548", // Brown
+    "#607D8B", // Blue Grey
+  ];
+
+  // Define gradient colors for different chart types
+  const CHART_GRADIENTS = {
+    residence: {
+      start: "#4CAF50",
+      end: "#81C784"
+    },
+    origin: {
+      start: "#2196F3",
+      end: "#64B5F6"
+    },
+    lga: {
+      start: "#F44336",
+      end: "#EF5350"
+    },
+    senatorial: {
+      start: "#FF9800",
+      end: "#FFB74D"
+    }
+  };
 
   const chartStyle = {
     fill: 'currentColor',
     fontSize: '12px',
   };
 
-  const renderBarChart = (data, color) => {
+  const renderBarChart = (data, type) => {
     if (!data || data.length === 0) {
       return (
         <div className="flex items-center justify-center h-full">
@@ -98,8 +146,15 @@ export function GeographicDistribution({ geoData, filters }) {
     }
 
     return (
-      <ResponsiveContainer width="100%" height="100%">
-        <ChartContainer style={chartStyle}>
+      <ChartContainer
+        config={{
+          [type]: {
+            label: type === "residence" ? "Residence" : "Origin",
+            color: CHART_GRADIENTS[type].start,
+          }
+        }}
+      >
+        <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
             layout="vertical"
@@ -107,24 +162,27 @@ export function GeographicDistribution({ geoData, filters }) {
           >
             <XAxis 
               type="number"
-              style={chartStyle}
               tickFormatter={(value) => value.toLocaleString()}
+              style={{ fontSize: '12px' }}
             />
             <YAxis 
               dataKey="name" 
               type="category" 
               width={80}
-              style={chartStyle}
+              style={{ fontSize: '12px' }}
             />
             <Bar 
               dataKey="value" 
-              fill={`hsl(var(--chart-${color}))`}
-              style={chartStyle}
+              radius={[0, 4, 4, 0]}
             >
               {data.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`} 
                   fill={COLORS[index % COLORS.length]}
+                  style={{
+                    cursor: 'pointer',
+                    transition: 'opacity 0.2s',
+                  }}
                 />
               ))}
             </Bar>
@@ -132,7 +190,6 @@ export function GeographicDistribution({ geoData, filters }) {
               cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
               content={
                 <ChartTooltipContent
-                  style={chartStyle}
                   formatValue={(value, name) => 
                     name === "value" ? `${value.toLocaleString()} users` : value
                   }
@@ -140,15 +197,15 @@ export function GeographicDistribution({ geoData, filters }) {
               }
             />
           </BarChart>
-        </ChartContainer>
-      </ResponsiveContainer>
+        </ResponsiveContainer>
+      </ChartContainer>
     );
   };
 
   return (
     <div className="space-y-6">
       <Tabs defaultValue="states">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4 gap-4">
           <TabsTrigger value="states">States</TabsTrigger>
           <TabsTrigger value="lgas">LGAs</TabsTrigger>
           <TabsTrigger value="senatorial">Senatorial Districts</TabsTrigger>
@@ -163,7 +220,7 @@ export function GeographicDistribution({ geoData, filters }) {
               </CardHeader>
               <CardContent>
                 <div className="h-[400px] w-full">
-                  {renderBarChart(stateOfResidenceData, "1")}
+                  {renderBarChart(stateOfResidenceData, "residence")}
                 </div>
               </CardContent>
             </Card>
@@ -175,7 +232,7 @@ export function GeographicDistribution({ geoData, filters }) {
               </CardHeader>
               <CardContent>
                 <div className="h-[400px] w-full">
-                  {renderBarChart(stateOfOriginData, "2")}
+                  {renderBarChart(stateOfOriginData, "origin")}
                 </div>
               </CardContent>
             </Card>
@@ -186,76 +243,24 @@ export function GeographicDistribution({ geoData, filters }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>LGA of Residence Distribution</CardTitle>
-                <CardDescription>Top 15 LGAs by number of users</CardDescription>
+                <CardTitle>LGA of Residence</CardTitle>
+                <CardDescription>Distribution by LGA of residence</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-[400px] w-full">
-                  <ChartContainer>
-                    <BarChart
-                      data={lgaOfResidenceData}
-                      layout="vertical"
-                      margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
-                    >
-                      <XAxis type="number" />
-                      <YAxis dataKey="name" type="category" tick={{ fontSize: 12 }} width={80} />
-                      <Bar dataKey="value" fill="hsl(var(--chart-3))">
-                        {lgaOfResidenceData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Bar>
-                      <ChartTooltip
-                        content={
-                          <ChartTooltipContent
-                            formatValue={(value, name, props) => {
-                              if (name === "value") {
-                                return `${value} users`
-                              }
-                              return value
-                            }}
-                          />
-                        }
-                      />
-                    </BarChart>
-                  </ChartContainer>
+                  {renderBarChart(lgaOfResidenceData, "lga")}
                 </div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>LGA of Origin Distribution</CardTitle>
-                <CardDescription>Top 15 LGAs by number of users</CardDescription>
+                <CardTitle>LGA of Origin</CardTitle>
+                <CardDescription>Distribution by LGA of origin</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-[400px] w-full">
-                  <ChartContainer>
-                    <BarChart
-                      data={lgaOfOriginData}
-                      layout="vertical"
-                      margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
-                    >
-                      <XAxis type="number" />
-                      <YAxis dataKey="name" type="category" tick={{ fontSize: 12 }} width={80} />
-                      <Bar dataKey="value" fill="hsl(var(--chart-4))">
-                        {lgaOfOriginData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Bar>
-                      <ChartTooltip
-                        content={
-                          <ChartTooltipContent
-                            formatValue={(value, name, props) => {
-                              if (name === "value") {
-                                return `${value} users`
-                              }
-                              return value
-                            }}
-                          />
-                        }
-                      />
-                    </BarChart>
-                  </ChartContainer>
+                  {renderBarChart(lgaDistributionData, "lga")}
                 </div>
               </CardContent>
             </Card>
@@ -265,44 +270,18 @@ export function GeographicDistribution({ geoData, filters }) {
         <TabsContent value="senatorial" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Senatorial District Distribution</CardTitle>
-              <CardDescription>Distribution of users by senatorial district</CardDescription>
+              <CardTitle>Senatorial Districts</CardTitle>
+              <CardDescription>Distribution by senatorial districts</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[500px] w-full">
-                <ChartContainer>
-                  <BarChart
-                    data={senatorialDistrictData}
-                    layout="vertical"
-                    margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
-                  >
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" tick={{ fontSize: 12 }} width={120} />
-                    <Bar dataKey="value" fill="hsl(var(--chart-5))">
-                      {senatorialDistrictData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Bar>
-                    <ChartTooltip
-                      content={
-                        <ChartTooltipContent
-                          formatValue={(value, name, props) => {
-                            if (name === "value") {
-                              return `${value} users`
-                            }
-                            return value
-                          }}
-                        />
-                      }
-                    />
-                  </BarChart>
-                </ChartContainer>
+                {renderBarChart(senatorialDistrictData, "senatorial")}
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 

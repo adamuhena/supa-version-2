@@ -1,330 +1,342 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import useLogout from "@/pages/loginPage/logout";
-import axios from "axios";
-import { LogOut, UserCircle } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import PasswordChange from "./PasswordChange";
-import TrainingDashboardPage from "./TrainingDashboardLayout";
-import UploadButton from "@/components/UploadButton";
-import { API_BASE_URL } from "@/config/env";
-import BasicInfoTab from "./tabs/BasicInfoTab";
-import CenterDetailsTab from "./tabs/CenterDetailsTab";
-import BankAccountTab from "./tabs/BankAccountTab";
-import AmenitiesTab from "./tabs/AmenitiesTab";
-import AssessmentTab from "./tabs/AssessmentTab";
-import LegalInfoTab from "./tabs/LegalInfoTab";
+// import { Button } from "@/components/ui/button";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Input } from "@/components/ui/input";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+// import useLogout from "@/pages/loginPage/logout";
+// import axios from "axios";
+// import { LogOut, UserCircle } from "lucide-react";
+// import React, { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { toast } from "sonner";
+// import PasswordChange from "./PasswordChange";
+// import TrainingDashboardPage from "./TrainingDashboardLayout";
+// import UploadButton from "@/components/UploadButton";
+// import { API_BASE_URL } from "@/config/env";
+// import BasicInfoTab from "./tabs/BasicInfoTab";
+// import CenterDetailsTab from "./tabs/CenterDetailsTab";
+// import BankAccountTab from "./tabs/BankAccountTab";
+// import AmenitiesTab from "./tabs/AmenitiesTab";
+// import AssessmentTab from "./tabs/AssessmentTab";
+// import LegalInfoTab from "./tabs/LegalInfoTab";
 
-const TrainingCenterBiodata = () => {
-  const navigate = useNavigate();
-  const logout = useLogout();
-  const accessToken = localStorage.getItem("accessToken");
-  const userId = localStorage.getItem("userId");
+// const TrainingCenterBiodata = () => {
+//   const navigate = useNavigate();
+//   const logout = useLogout();
+//   const accessToken = localStorage.getItem("accessToken");
+//   const userId = localStorage.getItem("userId");
 
-  const [center, setCenter] = useState({
-    state: "",
-    senatorialDistrict: "",
-    lga: "",
-    areaOffice: "",
-    trainingCentreName: "",
-    profileImage: "",
-    address: "",
-    sector: "",
-    contactPerson: "",
-    phoneNumber: "",
-    email: "",
-    establishmentDate: "",
-    ownership: "personal",
-    otherOwnership: "",
-    trainingNature: "institutionTraining",
-    itfRegistered: "no",
-    itfRegistrationNumber: "",
-    bankAccount: {
-      accountName: "",
-      accountNumber: "",
-      bank: "",
-    },
-    amenities: {
-      portableWater: "no",
-      observeBreak: "no",
-      breakTime: "",
-      otherComments: "",
-    },
-    assessment: {
-      traineeInstructorRatio: "",
-      practicalTheoryRatio: "",
-      trainingDurationPerDay: "",
-      trainingDurationPerWeek: "",
-      weeklyTrainingSchedule: "no",
-      trainingCurriculum: "no",
-      curriculumAttachment: "",
-      attendanceRegister: "no",
-      infrastructure: [],
-      utilities: [],
-      totalFloorArea: 0,
-    },
-    legalInfo: {
-      legalRegistration: "",
-      tradeAreas: [],
-    },
-    agree: false,
-    regNum: "",
-  });
+//   const [center, setCenter] = useState({
+//     state: "",
+//     senatorialDistrict: "",
+//     lga: "",
+//     areaOffice: "",
+//     trainingCentreName: "",
+//     profileImage: "",
+//     address: "",
+//     sector: "",
+//     contactPerson: "",
+//     phoneNumber: "",
+//     email: "",
+//     establishmentDate: "",
+//     ownership: "personal",
+//     otherOwnership: "",
+//     trainingNature: "institutionTraining",
+//     itfRegistered: "no",
+//     itfRegistrationNumber: "",
+//     bankAccount: {
+//       accountName: "",
+//       accountNumber: "",
+//       bank: "",
+//     },
+//     amenities: {
+//       portableWater: "no",
+//       observeBreak: "no",
+//       breakTime: "",
+//       otherComments: "",
+//     },
+//     assessment: {
+//       traineeInstructorRatio: "",
+//       practicalTheoryRatio: "",
+//       trainingDurationPerDay: "",
+//       trainingDurationPerWeek: "",
+//       weeklyTrainingSchedule: "no",
+//       trainingCurriculum: "no",
+//       curriculumAttachment: "",
+//       attendanceRegister: "no",
+//       infrastructure: [],
+//       utilities: [],
+//       totalFloorArea: 0,
+//     },
+//     legalInfo: {
+//       legalRegistration: "",
+//       tradeAreas: [],
+//     },
+//     agree: false,
+//     regNum: "",
+//   });
 
-  useEffect(() => {
-    const fetchCenterData = async () => {
-      try {
-        const response = await axios.get(
-          `${API_BASE_URL}/training-center/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
-        );
+//   useEffect(() => {
+//     const fetchCenterData = async () => {
+//       try {
+//         const response = await axios.get(
+//           `${API_BASE_URL}/training-center/${userId}`,
+//           {
+//             headers: { Authorization: `Bearer ${accessToken}` },
+//           }
+//         );
 
-        setCenter(response.data.data);
-      } catch (error) {
-        console.error("Error fetching center data:", error);
-        toast.error("Failed to load center data");
-      }
-    };
+//         setCenter(response.data.data);
+//       } catch (error) {
+//         console.error("Error fetching center data:", error);
+//         toast.error("Failed to load center data");
+//       }
+//     };
 
-    fetchCenterData();
-  }, [API_BASE_URL, userId, accessToken]);
+//     fetchCenterData();
+//   }, [API_BASE_URL, userId, accessToken]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCenter((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setCenter((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
 
-  const handleNestedInputChange = (category, field, value) => {
-    setCenter((prev) => ({
-      ...prev,
-      [category]: {
-        ...(prev[category] || {}),
-        [field]: value,
-      },
-    }));
-  };
+//   const handleNestedInputChange = (category, field, value) => {
+//     setCenter((prev) => ({
+//       ...prev,
+//       [category]: {
+//         ...(prev[category] || {}),
+//         [field]: value,
+//       },
+//     }));
+//   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.put(`${API_BASE_URL}/training-centers/${userId}`, center, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      toast.success("Center information updated successfully");
-    } catch (error) {
-      console.error("Error updating center data:", error);
-      toast.error("Failed to update center information");
-    }
-  };
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     try {
+//       await axios.put(`${API_BASE_URL}/training-centers/${userId}`, center, {
+//         headers: { Authorization: `Bearer ${accessToken}` },
+//       });
+//       toast.success("Center information updated successfully");
+//     } catch (error) {
+//       console.error("Error updating center data:", error);
+//       toast.error("Failed to update center information");
+//     }
+//   };
 
-  const updateProfilePicture = async (url) => {
-    try {
-      const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
-      if (!token) {
-        throw new Error("No token found. Please log in again.");
-      }
+//   const updateProfilePicture = async (url) => {
+//     try {
+//       const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
+//       if (!token) {
+//         throw new Error("No token found. Please log in again.");
+//       }
 
-      const response = await axios.put(
-        `${API_BASE_URL}/training-centers/${localStorage.getItem("userId")}`,
-        { profileImage: url },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token here
-          },
-        }
-      );
+//       const response = await axios.put(
+//         `${API_BASE_URL}/training-centers/${localStorage.getItem("userId")}`,
+//         { profileImage: url },
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`, // Include the token here
+//           },
+//         }
+//       );
 
-      if (response.data.success) {
-        setUser((prevUser) => ({ ...prevUser }));
+//       if (response.data.success) {
+//         setUser((prevUser) => ({ ...prevUser }));
 
-        toast({
-          title: "Success",
-          description: `Picture updated successfully`,
-          status: "success",
-          duration: 3000,
-        });
-      } else {
-        throw new Error(response.data.message || "Failed to update");
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: `Failed to update ${section}`,
-        status: "error",
-        duration: 3000,
-      });
-    }
-  };
+//         toast({
+//           title: "Success",
+//           description: `Picture updated successfully`,
+//           status: "success",
+//           duration: 3000,
+//         });
+//       } else {
+//         throw new Error(response.data.message || "Failed to update");
+//       }
+//     } catch (error) {
+//       toast({
+//         title: "Error",
+//         description: `Failed to update ${section}`,
+//         status: "error",
+//         duration: 3000,
+//       });
+//     }
+//   };
 
-  const [selectedTab, setSelectedTab] = useState("personal");
+//   const [selectedTab, setSelectedTab] = useState("personal");
 
-  return (
-    <TrainingDashboardPage title="Training Center Dashboard">
-      <div className="container mx-auto p-6">
-        <header className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/training-center/biodata")}>
-              <UserCircle className="mr-2 h-4 w-4" /> Update Profile
-            </Button>
-            <Button variant="destructive" onClick={logout}>
-              <LogOut className="mr-2 h-4 w-4" /> Logout
-            </Button>
-          </div>
-        </header>
+//   return (
+//     <TrainingDashboardPage title="Training Center Dashboard">
+//       <div className="container mx-auto p-6">
+//         <header className="flex justify-between items-center mb-6">
+//           <h1 className="text-3xl font-bold">Dashboard</h1>
+//           <div className="flex gap-2">
+//             <Button
+//               variant="outline"
+//               onClick={() => navigate("/training-center/biodata")}>
+//               <UserCircle className="mr-2 h-4 w-4" /> Update Profile
+//             </Button>
+//             <Button variant="destructive" onClick={logout}>
+//               <LogOut className="mr-2 h-4 w-4" /> Logout
+//             </Button>
+//           </div>
+//         </header>
 
-        <Card className="border p-4 rounded-lg shadow-md mb-6">
-          <CardContent className="flex items-center space-x-4">
-            <div className="w-24 h-24 rounded-full overflow-hidden">
-              <img
-                src={
-                  center.profileImage || "/placeholder.svg?height=96&width=96"
-                }
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold">
-                {center.trainingCentreName}
-              </h2>
-              <p className="text-gray-500">{center.email}</p>
-              <p className="text-gray-500">{center.contactPerson}</p>
-            </div>
-            <div>
-              <Input
-                type="file"
-                onChange={(e) =>
-                  handleFileUpload("profileImage", e.target.files[0])
-                }
-                className="hidden"
-                id="profile-image-upload"
-              />
-              <UploadButton
-                fileUrl={center?.profileImage}
-                handleFileChange={(url) => {
-                  // setUser((old) => {
-                  //   return { ...old, profileImage: url };
-                  // });
-                  updateProfilePicture(url);
-                }}
-                removeFile={() => {
-                  const url = "";
-                  setUser((old) => {
-                    return { ...old, profileImage: url };
-                  });
-                  updateProfilePicture(url);
-                }}
-              />
-              {/* <Label htmlFor="profile-image-upload" className="cursor-pointer">
+//         <Card className="border p-4 rounded-lg shadow-md mb-6">
+//           <CardContent className="flex items-center space-x-4">
+//             <div className="w-24 h-24 rounded-full overflow-hidden">
+//               <img
+//                 src={
+//                   center.profileImage || "/placeholder.svg?height=96&width=96"
+//                 }
+//                 alt="Profile"
+//                 className="w-full h-full object-cover"
+//               />
+//             </div>
+//             <div>
+//               <h2 className="text-2xl font-bold">
+//                 {center.trainingCentreName}
+//               </h2>
+//               <p className="text-gray-500">{center.email}</p>
+//               <p className="text-gray-500">{center.contactPerson}</p>
+//             </div>
+//             <div>
+//               <Input
+//                 type="file"
+//                 onChange={(e) =>
+//                   handleFileUpload("profileImage", e.target.files[0])
+//                 }
+//                 className="hidden"
+//                 id="profile-image-upload"
+//               />
+//               <UploadButton
+//                 fileUrl={center?.profileImage}
+//                 handleFileChange={(url) => {
+//                   // setUser((old) => {
+//                   //   return { ...old, profileImage: url };
+//                   // });
+//                   updateProfilePicture(url);
+//                 }}
+//                 removeFile={() => {
+//                   const url = "";
+//                   setUser((old) => {
+//                     return { ...old, profileImage: url };
+//                   });
+//                   updateProfilePicture(url);
+//                 }}
+//               />
+//               {/* <Label htmlFor="profile-image-upload" className="cursor-pointer">
 
               
-                <Button variant="outline" as="span">
-                  <Upload className="mr-2 h-4 w-4" /> Update Profile Picture
-                </Button>
-              </Label> */}
-            </div>
-          </CardContent>
-        </Card>
+//                 <Button variant="outline" as="span">
+//                   <Upload className="mr-2 h-4 w-4" /> Update Profile Picture
+//                 </Button>
+//               </Label> */}
+//             </div>
+//           </CardContent>
+//         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Training Center Biodata</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="block md:hidden mb-4">
-              <Select
-                onValueChange={(value) => setSelectedTab(value)}
-                value={selectedTab}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Tab" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="basic">Basic Info</SelectItem>
-                  <SelectItem value="details">Center Details</SelectItem>
-                  <SelectItem value="bank">Bank Account</SelectItem>
-                  <SelectItem value="amenities">Amenities</SelectItem>
-                  <SelectItem value="assessment">Assessment</SelectItem>
-                  <SelectItem value="legal">Legal Info</SelectItem>
-                  <SelectItem value="password">Change Password</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Tabs
-              defaultValue="basic"
-              value={selectedTab}
-              onValueChange={setSelectedTab}
-              className="w-full">
-              <TabsList className="hidden md:grid w-full grid-cols-7">
-                <TabsTrigger value="basic">Basic Info</TabsTrigger>
-                <TabsTrigger value="details">Center Details</TabsTrigger>
-                <TabsTrigger value="bank">Bank Account</TabsTrigger>
-                <TabsTrigger value="amenities">Amenities</TabsTrigger>
-                <TabsTrigger value="assessment">Assessment</TabsTrigger>
-                <TabsTrigger value="legal">Legal Info</TabsTrigger>
-                <TabsTrigger value="password">Change Password</TabsTrigger>
-              </TabsList>
+//         <Card>
+//           <CardHeader>
+//             <CardTitle>Training Center Biodata</CardTitle>
+//           </CardHeader>
+//           <CardContent>
+//             <div className="block md:hidden mb-4">
+//               <Select
+//                 onValueChange={(value) => setSelectedTab(value)}
+//                 value={selectedTab}>
+//                 <SelectTrigger>
+//                   <SelectValue placeholder="Select Tab" />
+//                 </SelectTrigger>
+//                 <SelectContent>
+//                   <SelectItem value="basic">Basic Info</SelectItem>
+//                   <SelectItem value="details">Center Details</SelectItem>
+//                   <SelectItem value="bank">Bank Account</SelectItem>
+//                   <SelectItem value="amenities">Amenities</SelectItem>
+//                   <SelectItem value="assessment">Assessment</SelectItem>
+//                   <SelectItem value="legal">Legal Info</SelectItem>
+//                   <SelectItem value="password">Change Password</SelectItem>
+//                 </SelectContent>
+//               </Select>
+//             </div>
+//             <Tabs
+//               defaultValue="basic"
+//               value={selectedTab}
+//               onValueChange={setSelectedTab}
+//               className="w-full">
+//               <TabsList className="hidden md:grid w-full grid-cols-7">
+//                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
+//                 <TabsTrigger value="details">Center Details</TabsTrigger>
+//                 <TabsTrigger value="bank">Bank Account</TabsTrigger>
+//                 <TabsTrigger value="amenities">Amenities</TabsTrigger>
+//                 <TabsTrigger value="assessment">Assessment</TabsTrigger>
+//                 <TabsTrigger value="legal">Legal Info</TabsTrigger>
+//                 <TabsTrigger value="password">Change Password</TabsTrigger>
+//               </TabsList>
 
-              <BasicInfoTab
-                center={center}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleSubmit}
-              />
-              <CenterDetailsTab
-                center={center}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleSubmit}
-              />
-              <BankAccountTab
-                center={center}
-                handleNestedInputChange={handleNestedInputChange}
-                handleSubmit={handleSubmit}
-              />
-              <AmenitiesTab
-                center={center}
-                handleNestedInputChange={handleNestedInputChange}
-                handleSubmit={handleSubmit}
-              />
-              <AssessmentTab
-                center={center}
-                handleNestedInputChange={handleNestedInputChange}
-                handleSubmit={handleSubmit}
-              />
-              <LegalInfoTab
-                center={center}
-                handleNestedInputChange={handleNestedInputChange}
-                handleSubmit={handleSubmit}
-              />
-              <TabsContent value="password">
-                <PasswordChange />
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
-    </TrainingDashboardPage>
-  );
-};
+//               <TabsContent value="basic">
+//               <BasicInfoTab
+//                 center={center}
+//                 handleInputChange={handleInputChange}
+//                 handleSubmit={handleSubmit}
+//               />
+//               </TabsContent>
+//               <TabsContent value="details">
+//               <CenterDetailsTab
+//                 center={center}
+//                 handleInputChange={handleInputChange}
+//                 handleSubmit={handleSubmit}
+//               />
+//               </TabsContent>
+//               <TabsContent value="bank">
+//               <BankAccountTab
+//                 center={center}
+//                 handleNestedInputChange={handleNestedInputChange}
+//                 handleSubmit={handleSubmit}
+//               />
+//               </TabsContent>
+//               <TabsContent value="amenities">
+//                 <AmenitiesTab
+//                   center={center}
+//                   handleNestedInputChange={handleNestedInputChange}
+//                   handleSubmit={handleSubmit}
+//                 />
+//               </TabsContent>
+//               <TabsContent value="assessment">
+//               <AssessmentTab
+//                 center={center}
+//                 handleNestedInputChange={handleNestedInputChange}
+//                 handleSubmit={handleSubmit}
+//               />
+//               </TabsContent>
+//               <TabsContent value="legal">
+//               <LegalInfoTab
+//                 center={center}
+//                 handleNestedInputChange={handleNestedInputChange}
+//                 handleSubmit={handleSubmit}
+//               />
+//               </TabsContent>
+//               <TabsContent value="password">
+//                 <PasswordChange />
+//               </TabsContent>
+//             </Tabs>
+//           </CardContent>
+//         </Card>
+//       </div>
+//     </TrainingDashboardPage>
+//   );
+// };
 
-export default TrainingCenterBiodata;
+// export default TrainingCenterBiodata;
 
 {
   /* <TabsContent value="basic">
@@ -809,3 +821,305 @@ export default TrainingCenterBiodata;
                 </form>
               </TabsContent> */
 }
+
+
+
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import useLogout from "@/pages/loginPage/logout"
+import axios from "axios"
+import { LogOut, UserCircle } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { toast } from "sonner";
+import PasswordChange from "./PasswordChange";
+import TrainingDashboardPage from "./TrainingDashboardLayout";
+import UploadButton from "@/components/UploadButton";
+import { API_BASE_URL } from "@/config/env";
+import BasicInfoTab from "./tabs/BasicInfoTab";
+import CenterDetailsTab from "./tabs/CenterDetailsTab";
+import BankAccountTab from "./tabs/BankAccountTab";
+import AmenitiesTab from "./tabs/AmenitiesTab";
+import AssessmentTab from "./tabs/AssessmentTab";
+import LegalInfoTab from "./tabs/LegalInfoTab";
+
+const TrainingCenterBiodata = () => {
+  const navigate = useNavigate()
+  const logout = useLogout()
+  const accessToken = localStorage.getItem("accessToken")
+  const userId = localStorage.getItem("userId")
+
+  const [center, setCenter] = useState({
+    state: "",
+    senatorialDistrict: "",
+    lga: "",
+    areaOffice: "",
+    trainingCentreName: "",
+    profileImage: "",
+    address: "",
+    sector: "",
+    contactPerson: "",
+    phoneNumber: "",
+    email: "",
+    establishmentDate: "",
+    ownership: "personal",
+    otherOwnership: "",
+    trainingNature: "institutionTraining",
+    itfRegistered: "no",
+    itfRegistrationNumber: "",
+    bankAccount: {
+      accountName: "",
+      accountNumber: "",
+      bank: "",
+    },
+    amenities: {
+      portableWater: "no",
+      observeBreak: "no",
+      breakTime: "",
+      otherComments: "",
+    },
+    assessment: {
+      traineeInstructorRatio: "",
+      practicalTheoryRatio: "",
+      trainingDurationPerDay: "",
+      trainingDurationPerWeek: "",
+      weeklyTrainingSchedule: "no",
+      trainingCurriculum: "no",
+      curriculumAttachment: "",
+      attendanceRegister: "no",
+      infrastructure: [],
+      utilities: [],
+      totalFloorArea: 0,
+    },
+    legalInfo: {
+      legalRegistration: "",
+      tradeAreas: [],
+    },
+    agree: false,
+    regNum: "",
+  })
+
+  useEffect(() => {
+    const fetchCenterData = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/training-center/${userId}`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+
+        setCenter(response.data.data)
+      } catch (error) {
+        console.error("Error fetching center data:", error)
+        toast.error("Failed to load center data")
+      }
+    }
+
+    fetchCenterData()
+  }, [API_BASE_URL, userId, accessToken])
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setCenter((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const handleNestedInputChange = (category, field, value) => {
+    setCenter((prev) => ({
+      ...prev,
+      [category]: {
+        ...(prev[category] || {}),
+        [field]: value,
+      },
+    }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      await axios.patch(`${API_BASE_URL}/training-centers/${userId}`, center, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      toast.success("Center information updated successfully")
+    } catch (error) {
+      console.error("Error updating center data:", error)
+      toast.error("Failed to update center information")
+    }
+  }
+
+  const updateProfilePicture = async (url) => {
+    try {
+      const token = localStorage.getItem("accessToken")
+      if (!token) {
+        throw new Error("No token found. Please log in again.")
+      }
+
+      const response = await axios.put(
+        `${API_BASE_URL}/training-centers/${localStorage.getItem("userId")}`,
+        { profileImage: url },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+
+      if (response.data.success) {
+        setCenter((prevCenter) => ({ ...prevCenter, profileImage: url }))
+
+        toast({
+          title: "Success",
+          description: "Profile picture updated successfully",
+          status: "success",
+          duration: 3000,
+        })
+      } else {
+        throw new Error(response.data.message || "Failed to update")
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update profile picture",
+        status: "error",
+        duration: 3000,
+      })
+    }
+  }
+
+  const [selectedTab, setSelectedTab] = useState("basic")
+
+  return (
+    <TrainingDashboardPage title="Training Center Dashboard">
+      <div className="container mx-auto p-6">
+        <header className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => navigate("/training-center/biodata")}>
+              <UserCircle className="mr-2 h-4 w-4" /> Update Profile
+            </Button>
+            <Button variant="destructive" onClick={logout}>
+              <LogOut className="mr-2 h-4 w-4" /> Logout
+            </Button>
+          </div>
+        </header>
+
+        <Card className="border p-4 rounded-lg shadow-md mb-6">
+          <CardContent className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
+            <div className="w-24 h-24 rounded-full overflow-hidden">
+              <img
+                src={center.profileImage || "/placeholder.svg?height=96&width=96"}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold">{center.trainingCentreName || "Training Center"}</h2>
+              <p className="text-gray-500">{center.email || "No email provided"}</p>
+              <p className="text-gray-500">{center.contactPerson || "No contact person"}</p>
+            </div>
+            <div className="ml-auto">
+              <UploadButton
+                fileUrl={center.profileImage}
+                handleFileChange={(url) => {
+                  updateProfilePicture(url)
+                }}
+                removeFile={() => {
+                  updateProfilePicture("")
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Training Center Biodata</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="block md:hidden mb-4">
+              <Select onValueChange={(value) => setSelectedTab(value)} value={selectedTab}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Tab" />
+                </SelectTrigger>
+                <SelectContent>
+                  
+                  <SelectItem value="basic">Center Details</SelectItem>
+                  <SelectItem value="amenities">Amenities</SelectItem>
+                  <SelectItem value="assessment">Assessment</SelectItem>
+                  <SelectItem value="update">Documents</SelectItem>
+                  <SelectItem value="legal">Legal Info</SelectItem>
+                  <SelectItem value="bank">Bank Account</SelectItem>
+                  <SelectItem value="password">Change Password</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Tabs defaultValue="basic" value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+              <TabsList className="hidden md:grid w-full grid-cols-7">
+                <TabsTrigger value="basic">Center Details</TabsTrigger>
+                <TabsTrigger value="amenities">Amenities</TabsTrigger>
+                <TabsTrigger value="assessment">Assessment</TabsTrigger>
+                <TabsTrigger value="update">Documents</TabsTrigger>
+                <TabsTrigger value="legal">Legal Info</TabsTrigger>
+                <TabsTrigger value="bank">Bank Account</TabsTrigger>
+                <TabsTrigger value="password">Change Password</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="update">
+              <BasicInfoTab
+                center={center}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+              />
+              </TabsContent>
+              <TabsContent value="basic">
+              <CenterDetailsTab
+                center={center}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+              />
+              </TabsContent>
+              <TabsContent value="bank">
+              <BankAccountTab
+                center={center}
+                handleNestedInputChange={handleNestedInputChange}
+                handleSubmit={handleSubmit}
+              />
+              </TabsContent>
+              <TabsContent value="amenities">
+                <AmenitiesTab
+                  center={center}
+                  handleNestedInputChange={handleNestedInputChange}
+                  handleSubmit={handleSubmit}
+                />
+              </TabsContent>
+              <TabsContent value="assessment">
+              <AssessmentTab
+                center={center}
+                handleNestedInputChange={handleNestedInputChange}
+                handleSubmit={handleSubmit}
+              />
+              </TabsContent>
+              <TabsContent value="legal">
+              <LegalInfoTab
+                center={center}
+                handleNestedInputChange={handleNestedInputChange}
+                handleSubmit={handleSubmit}
+              />
+              </TabsContent>
+              <TabsContent value="password">
+                <PasswordChange />
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    </TrainingDashboardPage>
+  )
+}
+
+export default TrainingCenterBiodata
+

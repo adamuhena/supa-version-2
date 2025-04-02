@@ -17,6 +17,7 @@ import { states } from "@/data/nigeria.ts"
 import { fetchSectors } from "@/services/api"
 import { Plus, Trash2 } from "lucide-react"
 import clsx from "clsx"
+import UploadButton from "@/components/UploadButton";
 
 export default function SignupForm() {
   // const [signupAs, setSignupAs] = useState("artisan_user");
@@ -276,6 +277,8 @@ export default function SignupForm() {
           tradeAreas: [],
           name: "",
           year: "",
+          priUpload: "",
+          hasCertificate: false
         }
       ],
     });
@@ -475,17 +478,35 @@ export default function SignupForm() {
     } else if (signupAs !== "training_center" && formData.gender === "") {
       errorMsg = "Please select a gender!"
     } 
+    // else if (
+    //   (signupAs === "artisan_user" ) &&
+    //   formData.priorSkillsCerts.length > 0 &&
+    //   (!formData.priorSkillsCerts[0].sector ||
+    //     !formData.priorSkillsCerts[0].tradeAreas ||
+    //     formData.priorSkillsCerts[0].tradeAreas.length === 0 ||
+    //     !formData.priorSkillsCerts[0].name ||
+    //     !formData.priorSkillsCerts[0].year)
+    // )  {
+    //   errorMsg = "Sector and at least one Trade Area are required!"
+    // }
+    // Update the validation check:
+
+else if (
+  (signupAs === "artisan_user") &&
+  formData.priorSkillsCerts.length > 0 &&
+  (!formData.priorSkillsCerts[0].sector ||
+    !formData.priorSkillsCerts[0].tradeAreas ||
+    formData.priorSkillsCerts[0].tradeAreas.length === 0 ||
+    (formData.priorSkillsCerts[0].hasCertificate && 
+      (!formData.priorSkillsCerts[0].name ||
+       !formData.priorSkillsCerts[0].year ||
+       !formData.priorSkillsCerts[0].priUpload))) // Check if hasCertificate is true)
+) {
+  errorMsg = formData.priorSkillsCerts[0].hasCertificate 
+    ? "Please complete all certificate details!"
+    : "Sector and at least one Trade Area are required!"
+}
     else if (
-      (signupAs === "artisan_user" ) &&
-      formData.priorSkillsCerts.length > 0 &&
-      (!formData.priorSkillsCerts[0].sector ||
-        !formData.priorSkillsCerts[0].tradeAreas ||
-        formData.priorSkillsCerts[0].tradeAreas.length === 0 ||
-        !formData.priorSkillsCerts[0].name ||
-        !formData.priorSkillsCerts[0].year)
-    )  {
-      errorMsg = "Sector and at least one Trade Area are required!"
-    }else if (
       signupAs === "intending_artisan" &&
       (!formData.priorSkillsCerts[0].sector || !formData.priorSkillsCerts[0].tradeAreas)
     ) {
@@ -517,6 +538,11 @@ export default function SignupForm() {
     }
 
     console.log("Form data before submission:", JSON.stringify(submissionData, null, 2))
+    // First, log the form data before submission to verify the values
+    console.log("Form data before submission:", {
+      ...formData,
+      senatorialDistrict: formData.senatorialDistrict // verify this exists
+    });
     const payload =
       signupAs === "training_center"
         ? {
@@ -553,8 +579,10 @@ export default function SignupForm() {
             priorSkillsCerts: submissionData.priorSkillsCerts.map((cert) => ({
               sector: cert.sector,
               tradeArea: cert.tradeAreas || [],
-              name: cert.name,
-              year: cert.year,
+              name: cert.name || "",
+              year: cert.year || "",
+              priUpload: cert.priUpload || "",
+              hasCertificate: cert.hasCertificate || false
             })),
             role: signupAs,
             nin: submissionData.nin,
@@ -1273,7 +1301,7 @@ export default function SignupForm() {
                     </div> */}
 
                     {/* Prior Skills Certificates */}
-                    <div className="space-y-4">
+                    {/* <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <Label className="text-left text-xs text-gray-600">
                           Prior Skills/Certificates <span className="text-red-600 ml-[4px] text-[13px]">*</span>
@@ -1327,38 +1355,7 @@ export default function SignupForm() {
                                 </Select>
                               </div>
 
-                              <div className="space-y-2">
-                                <Label htmlFor={`cert-name-${index}`} className="text-left text-xs text-gray-600">
-                                  Certificate Name
-                                </Label>
-                                <Input
-                                  id={`cert-name-${index}`}
-                                  value={cert.name || ""}
-                                  onChange={(e) => handlePriorSkillsCertChange(index, "name", e.target.value)}
-                                  placeholder="Enter certificate name"
-                                  className="w-full"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                              <div className="space-y-2">
-                                <Label htmlFor={`cert-year-${index}`} className="text-left text-xs text-gray-600">
-                                  Year Obtained
-                                </Label>
-                                <Input
-                                  id={`cert-year-${index}`}
-                                  type="number"
-                                  min="1900"
-                                  max={new Date().getFullYear()}
-                                  value={cert.year || ""}
-                                  onChange={(e) => handlePriorSkillsCertChange(index, "year", e.target.value)}
-                                  placeholder="Enter year"
-                                  className="w-full"
-                                />
-                              </div>
-
-                              <div className="space-y-2">
+                              <div className="space-y-4">
                                 <Label htmlFor={`cert-tradeArea-${index}`} className="text-left text-xs text-gray-600">
                                   Trade Areas (Select Multiple)
                                 </Label>
@@ -1411,6 +1408,132 @@ export default function SignupForm() {
                                   </Select>
                                 </div>
                               </div>
+
+                              <div className="space-y-2">
+                                <Label htmlFor={`cert-name-${index}`} className="text-left text-xs text-gray-600">
+                                  Certificate Name
+                                </Label>
+                                <Input
+                                  id={`cert-name-${index}`}
+                                  value={cert.name || ""}
+                                  onChange={(e) => handlePriorSkillsCertChange(index, "name", e.target.value)}
+                                  placeholder="Enter certificate name"
+                                  className="w-full"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                              <div className="space-y-2">
+                                <Label htmlFor={`cert-year-${index}`} className="text-left text-xs text-gray-600">
+                                  Year Obtained
+                                </Label>
+                                <Input
+                                  id={`cert-year-${index}`}
+                                  type="number"
+                                  min="1900"
+                                  max={new Date().getFullYear()}
+                                  value={cert.year || ""}
+                                  onChange={(e) => handlePriorSkillsCertChange(index, "year", e.target.value)}
+                                  placeholder="Enter year"
+                                  className="w-full"
+                                />
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="checkbox"
+                                      id={`has-certificate-${index}`}
+                                      checked={cert.hasCertificate || false}
+                                      onChange={(e) => {
+                                        const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
+                                        updatedPriorSkillsCerts[index] = {
+                                          ...updatedPriorSkillsCerts[index],
+                                          hasCertificate: e.target.checked,
+                                          // Reset certificate fields if unchecked
+                                          name: e.target.checked ? cert.name : "",
+                                          year: e.target.checked ? cert.year : ""
+                                        };
+                                        setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+                                      }}
+                                      className="w-4 h-4"
+                                    />
+                                    <Label htmlFor={`has-certificate-${index}`} className="text-left text-xs text-gray-600">
+                                      I have a certificate for this skill
+                                    </Label>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {cert.hasCertificate && (
+                                <div className="space-y-4">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`cert-name-${index}`} className="text-left text-xs text-gray-600">
+                                        Certificate Name
+                                      </Label>
+                                      <Input
+                                        id={`cert-name-${index}`}
+                                        value={cert.name || ""}
+                                        onChange={(e) => handlePriorSkillsCertChange(index, "name", e.target.value)}
+                                        placeholder="Enter certificate name"
+                                        className="w-full"
+                                      />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`cert-year-${index}`} className="text-left text-xs text-gray-600">
+                                        Year Obtained
+                                      </Label>
+                                      <Input
+                                        id={`cert-year-${index}`}
+                                        type="number"
+                                        min="1900"
+                                        max={new Date().getFullYear()}
+                                        value={cert.year || ""}
+                                        onChange={(e) => handlePriorSkillsCertChange(index, "year", e.target.value)}
+                                        placeholder="Enter year"
+                                        className="w-full"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  
+                                  <div className="space-y-2">
+                                    <Label 
+                                      htmlFor={`cert-upload-${index}`} 
+                                      className="text-left text-xs text-gray-600"
+                                    >
+                                      Upload Certificate
+                                    </Label>
+                                    <UploadButton
+                                      fileUrl={cert.priUpload}
+                                      title={`certificate-${index}`}
+                                      handleFileChange={(newFileUrl) => {
+                                        const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
+                                        updatedPriorSkillsCerts[index] = {
+                                          ...updatedPriorSkillsCerts[index],
+                                          priUpload: newFileUrl
+                                        };
+                                        setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+                                      }}
+                                      accept=".jpg, .png, .jpeg, .pdf"
+                                      removeFile={() => {
+                                        const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
+                                        updatedPriorSkillsCerts[index] = {
+                                          ...updatedPriorSkillsCerts[index],
+                                          priUpload: null
+                                        };
+                                        setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                             
                             </div>
                           </div>
                         ))
@@ -1419,7 +1542,230 @@ export default function SignupForm() {
                           No prior skills added. Click "Add Skill" to add your previous skills or certifications.
                         </div>
                       )}
+                    </div> */}
+
+                    <div className="space-y-4">
+                      {/* Header with Label and Add Button */}
+                      <div className="flex justify-between items-center">
+                        <Label className="text-left text-xs text-gray-600">
+                          Prior Skills/Certificates <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        </Label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={addPriorSkillsCert}
+                          className="flex items-center gap-1"
+                        >
+                          <Plus className="h-4 w-4" /> Add Skill
+                        </Button>
+                      </div>
+
+                      {/* Skills List or Empty State */}
+                      {formData.priorSkillsCerts.length > 0 ? (
+                        formData.priorSkillsCerts.map((cert, index) => (
+                          <div key={index} className="grid grid-cols-1 gap-4 p-4 border rounded-md relative">
+                            {/* Delete Button */}
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => removePriorSkillsCert(index)}
+                              className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+
+                            {/* Sector and Trade Areas */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {/* Sector Selection */}
+                              <div className="space-y-2">
+                                <Label htmlFor={`cert-sector-${index}`} className="text-left text-xs text-gray-600">
+                                  Sector
+                                </Label>
+                                <Select
+                                  value={cert.sector}
+                                  onValueChange={(value) => handlePriorSkillsCertChange(index, "sector", value)}
+                                  disabled={sectorLoading}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select sector" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      {sectors?.map((sector) => (
+                                        <SelectItem key={sector._id} value={sector.name}>
+                                          {sector.name}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              {/* Trade Areas (Multi-Select) */}
+                              <div className="space-y-4">
+                                <Label htmlFor={`cert-tradeArea-${index}`} className="text-left text-xs text-gray-600">
+                                  Trade Areas (Select Multiple)
+                                </Label>
+                                <div className="flex flex-col gap-2">
+                                  {/* Selected Trade Areas */}
+                                  {cert.tradeAreas && cert.tradeAreas.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mb-2">
+                                      {cert.tradeAreas.map((taName, taIndex) => (
+                                        <div key={taIndex} className="flex items-center bg-blue-100 px-2 py-1 rounded-md">
+                                          <span className="text-sm">{taName}</span>
+                                          <button
+                                            type="button"
+                                            className="ml-2 text-red-500"
+                                            onClick={() => {
+                                              const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
+                                              updatedPriorSkillsCerts[index] = {
+                                                ...updatedPriorSkillsCerts[index],
+                                                tradeAreas: updatedPriorSkillsCerts[index].tradeAreas.filter(
+                                                  (name) => name !== taName
+                                                ),
+                                              };
+                                              setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+                                            }}
+                                          >
+                                            ×
+                                          </button>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+
+                                  {/* Trade Area Dropdown */}
+                                  <Select
+                                    onValueChange={(value) => handlePriorSkillsCertChange(index, "tradeArea", value)}
+                                    disabled={!cert.sector}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Add trade area" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        {sectors
+                                          ?.find((sector) => sector.name === cert.sector)
+                                          ?.tradeAreas?.filter((ta) => !cert.tradeAreas?.includes(ta.name))
+                                          .map((ta) => (
+                                            <SelectItem key={ta._id} value={ta.name}>
+                                              {ta.name}
+                                            </SelectItem>
+                                          ))}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Has Certificate Checkbox */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    id={`has-certificate-${index}`}
+                                    checked={cert.hasCertificate || false}
+                                    onChange={(e) => {
+                                      const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
+                                      updatedPriorSkillsCerts[index] = {
+                                        ...updatedPriorSkillsCerts[index],
+                                        hasCertificate: e.target.checked,
+                                        // Reset certificate fields if unchecked
+                                        name: e.target.checked ? cert.name : "",
+                                        year: e.target.checked ? cert.year : ""
+                                      };
+                                      setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+                                    }}
+                                    className="w-4 h-4"
+                                  />
+                                  <Label htmlFor={`has-certificate-${index}`} className="text-left text-xs text-gray-600">
+                                    I have a certificate for this skill
+                                  </Label>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Certificate Details (conditionally shown) */}
+                            {cert.hasCertificate && (
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {/* Certificate Name */}
+                                  <div className="space-y-2">
+                                    <Label htmlFor={`cert-name-${index}`} className="text-left text-xs text-gray-600">
+                                      Certificate Name
+                                    </Label>
+                                    <Input
+                                      id={`cert-name-${index}`}
+                                      value={cert.name || ""}
+                                      onChange={(e) => handlePriorSkillsCertChange(index, "name", e.target.value)}
+                                      placeholder="Enter certificate name"
+                                      className="w-full"
+                                    />
+                                  </div>
+
+                                  {/* Year Obtained */}
+                                  <div className="space-y-2">
+                                    <Label htmlFor={`cert-year-${index}`} className="text-left text-xs text-gray-600">
+                                      Year Obtained
+                                    </Label>
+                                    <Input
+                                      id={`cert-year-${index}`}
+                                      type="number"
+                                      min="1900"
+                                      max={new Date().getFullYear()}
+                                      value={cert.year || ""}
+                                      onChange={(e) => handlePriorSkillsCertChange(index, "year", e.target.value)}
+                                      placeholder="Enter year"
+                                      className="w-full"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Certificate Upload */}
+                                <div className="space-y-2">
+                                  <Label 
+                                    htmlFor={`cert-upload-${index}`} 
+                                    className="text-left text-xs text-gray-600"
+                                  >
+                                    Upload Certificate
+                                  </Label>
+                                  <UploadButton
+                                    fileUrl={cert.priUpload}
+                                    title={`certificate-${index}`}
+                                    handleFileChange={(newFileUrl) => {
+                                      const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
+                                      updatedPriorSkillsCerts[index] = {
+                                        ...updatedPriorSkillsCerts[index],
+                                        priUpload: newFileUrl
+                                      };
+                                      setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+                                    }}
+                                    accept=".jpg, .png, .jpeg, .pdf"
+                                    removeFile={() => {
+                                      const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
+                                      updatedPriorSkillsCerts[index] = {
+                                        ...updatedPriorSkillsCerts[index],
+                                        priUpload: null
+                                      };
+                                      setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-4 text-gray-500 text-sm italic">
+                          No prior skills added. Click "Add Skill" to add your previous skills or certifications.
+                        </div>
+                      )}
                     </div>
+
 
                     <PasswordFields formData={formData} onChange={handleChange} required />
                     <Button type="submit" className="w-full bg-emerald-800">

@@ -6,6 +6,13 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Bar, BarChart, Cell, Legend, Pie, PieChart, XAxis, YAxis } from "recharts"
 
 export function GenderDistribution({ analyticsData, geoData, filters }) {
+  // Define custom colors for gender
+  const GENDER_COLORS = {
+    male: "#4A90E2",    // Blue
+    female: "#E91E63",  // Pink
+    unknown: "#9E9E9E"  // Grey
+  };
+
   // Process gender distribution data
   const genderData = useMemo(() => {
     if (!analyticsData?.genderDistribution) return []
@@ -66,8 +73,6 @@ export function GenderDistribution({ analyticsData, geoData, filters }) {
       .slice(0, 10) // Get top 10 states
   }, [geoData])
 
-  const COLORS = ["#0088FE", "#FF8042", "#FFBB28"]
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card>
@@ -81,15 +86,15 @@ export function GenderDistribution({ analyticsData, geoData, filters }) {
               config={{
                 male: {
                   label: "Male",
-                  color: "hsl(var(--chart-1))",
+                  color: GENDER_COLORS.male,
                 },
                 female: {
                   label: "Female",
-                  color: "hsl(var(--chart-2))",
+                  color: GENDER_COLORS.female,
                 },
                 unknown: {
                   label: "Unknown",
-                  color: "hsl(var(--chart-3))",
+                  color: GENDER_COLORS.unknown,
                 },
               }}
             >
@@ -105,8 +110,11 @@ export function GenderDistribution({ analyticsData, geoData, filters }) {
                   nameKey="name"
                   label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 >
-                  {genderData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  {genderData.map((entry) => (
+                    <Cell 
+                      key={`cell-${entry.name}`} 
+                      fill={GENDER_COLORS[entry.name.toLowerCase()]}
+                    />
                   ))}
                 </Pie>
                 <Legend />
@@ -128,15 +136,15 @@ export function GenderDistribution({ analyticsData, geoData, filters }) {
               config={{
                 male: {
                   label: "Male",
-                  color: "hsl(var(--chart-1))",
+                  color: GENDER_COLORS.male,
                 },
                 female: {
                   label: "Female",
-                  color: "hsl(var(--chart-2))",
+                  color: GENDER_COLORS.female,
                 },
                 unknown: {
                   label: "Unknown",
-                  color: "hsl(var(--chart-3))",
+                  color: GENDER_COLORS.unknown,
                 },
               }}
             >
@@ -144,9 +152,9 @@ export function GenderDistribution({ analyticsData, geoData, filters }) {
                 <XAxis type="number" />
                 <YAxis dataKey="state" type="category" tick={{ fontSize: 12 }} width={70} />
                 <Legend />
-                <Bar dataKey="male" stackId="a" fill="hsl(var(--chart-1))" />
-                <Bar dataKey="female" stackId="a" fill="hsl(var(--chart-2))" />
-                <Bar dataKey="unknown" stackId="a" fill="hsl(var(--chart-3))" />
+                <Bar dataKey="male" stackId="a" fill={GENDER_COLORS.male} />
+                <Bar dataKey="female" stackId="a" fill={GENDER_COLORS.female} />
+                <Bar dataKey="unknown" stackId="a" fill={GENDER_COLORS.unknown} />
                 <ChartTooltip content={<ChartTooltipContent />} />
               </BarChart>
             </ChartContainer>

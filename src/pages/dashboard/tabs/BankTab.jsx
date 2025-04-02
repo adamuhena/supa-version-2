@@ -435,7 +435,7 @@ const BankTab = ({ user, handleUpdate, submitChanges }) => {
 
   // Directly check user.role instead of using a separate prop
   const isEditable = user?.role === "admin" || user?.role === "superadmin";
-
+  // const isEditable = user?.role === "admin" || user?.role === "superadmin" || user?.role === "artisan_user"
   const validateAccountNumber = (value) => /^\d{10}$/.test(value);
 
   return (

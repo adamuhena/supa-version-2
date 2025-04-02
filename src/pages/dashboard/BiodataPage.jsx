@@ -119,20 +119,7 @@ const Biodata = () => {
     fetchUserData();
   }, []);
 
-  // const handleUpdate = (field, value) => {
-  //   setChanges((prevChanges) => ({
-  //     ...prevChanges,
-  //     [field]: value,
-  //   }));
-  // };
 
-  // const handleUpdate = (key, value) => {
-  //   console.log('Updating:', key, value);
-  //   setUser((prevUser) => ({
-  //     ...prevUser,
-  //     [key]: value,
-  //   }));
-  // };
 
   const handleUpdate = (key, value) => {
     setUser((prevUser) => ({
@@ -145,49 +132,31 @@ const Biodata = () => {
     }));
   };
 
+
   // const submitChanges = async (section) => {
   //   try {
-  //     const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
+  //     const token = localStorage.getItem("accessToken");
   //     if (!token) {
   //       throw new Error("No token found. Please log in again.");
   //     }
-
-      // const sectionChanges = Object.keys(changes)
-      //   .filter((key) => key.startsWith(section))
-      //   .reduce((obj, key) => {
-      //     obj[key.replace(`${section}.`, "")] = changes[key];
-      //     return obj;
-      //   }, {});
-
-      // if (Object.keys(sectionChanges).length === 0) {
-      //   toast({
-      //     title: "No changes",
-      //     description: "No changes to update",
-      //     status: "info",
-      //     duration: 3000,
-      //   });
-      //   return;
-      // }
-
+  
+  //     console.log('Submitting data:', user); // Debug log
+  
   //     const response = await axios.put(
   //       `${API_BASE_URL}/update/${localStorage.getItem("userId")}`,
-  //       sectionChanges,
+  //       user, // Send the entire user object
   //       {
   //         headers: {
-  //           Authorization: `Bearer ${token}`, // Include the token here
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "application/json",
   //         },
   //       }
   //     );
-
+  
   //     if (response.data.success) {
-  //       setUser((prevUser) => ({ ...prevUser, ...sectionChanges }));
-  //       setChanges((prevChanges) => {
-  //         const updatedChanges = { ...prevChanges };
-  //         Object.keys(sectionChanges).forEach(
-  //           (key) => delete updatedChanges[`${section}.${key}`]
-  //         );
-  //         return updatedChanges;
-  //       });
+  //       // Update local state with response data
+  //       setUser(response.data.data);
+        
   //       toast({
   //         title: "Success",
   //         description: `${section} updated successfully`,
@@ -201,25 +170,38 @@ const Biodata = () => {
   //     console.error(`Error updating ${section}:`, error);
   //     toast({
   //       title: "Error",
-  //       description: `Failed to update ${section}`,
+  //       description: error.response?.data?.message || `Failed to update ${section}`,
   //       status: "error",
   //       duration: 3000,
   //     });
   //   }
   // };
 
-  const submitChanges = async (section) => {
+
+  const submitChanges = async (section, data) => {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
         throw new Error("No token found. Please log in again.");
       }
   
-      console.log('Submitting data:', user); // Debug log
+      let updateData;
+      
+      // Handle different section updates
+      if (section === "skills") {
+        // For skills section, only send the skills-related data
+        updateData = {
+          priorSkillsCerts: data.priorSkillsCerts,
+          experience: data.experience
+        };
+      } else {
+        // For other sections, use the existing logic
+        updateData = user;
+      }
   
       const response = await axios.put(
         `${API_BASE_URL}/update/${localStorage.getItem("userId")}`,
-        user, // Send the entire user object
+        updateData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -229,9 +211,23 @@ const Biodata = () => {
       );
   
       if (response.data.success) {
-        // Update local state with response data
-        setUser(response.data.data);
-        
+        // Update local state
+        if (section === "skills") {
+          setUser(prev => ({
+            ...prev,
+            priorSkillsCerts: data.priorSkillsCerts,
+            experience: data.experience
+          }));
+          // Clear changes for skills section
+          setChanges(prev => ({
+            ...prev,
+            priorSkillsCerts: undefined,
+            experience: undefined
+          }));
+        } else {
+          setUser(response.data.data);
+        }
+  
         toast({
           title: "Success",
           description: `${section} updated successfully`,
@@ -251,93 +247,6 @@ const Biodata = () => {
       });
     }
   };
-
-  // const submitChanges = async (section) => {
-  //   try {
-  //     const token = localStorage.getItem("accessToken");
-  //     if (!token) {
-  //       throw new Error("No token found. Please log in again.");
-  //     }
-  
-  //     // Create section-specific payload
-  //     let payload = {};
-  //     switch (section) {
-  //       case "personal":
-  //         payload = {
-  //           firstName: user.firstName,
-  //           middleName: user.middleName,
-  //           lastName: user.lastName,
-  //           phoneNumber: user.phoneNumber,
-  //           nin: user.nin,
-  //           email: user.email,
-  //           street: user.street,
-  //           dob: user.dob,
-  //           gender: user.gender,
-  //           maritalStatus: user.maritalStatus,
-  //           stateOfOrigin: user.stateOfOrigin,
-  //           senatorialDistrict: user.senatorialDistrict,
-  //           lga: user.lga,
-  //           stateOfResidence: user.stateOfResidence,
-  //           lgaOfResidence: user.lgaOfResidence,
-  //           hasDisability: user.hasDisability,
-  //           disabilityType: user.disabilityType,
-  //         };
-  //         break;
-  //       case "education":
-  //         payload = {
-  //           education: user.education
-  //         };
-  //         break;
-  //       case "bankAccount":
-  //         payload = {
-  //           bankAccount: user.bankAccount
-  //         };
-  //         break;
-  //       case "additionalInfo":
-  //         payload = {
-  //           role: user.role,
-  //           certifiedStatus: user.certifiedStatus,
-  //           licenseStatus: user.licenseStatus,
-  //           agree: user.agree
-  //         };
-  //         break;
-  //       default:
-  //         payload = user;
-  //     }
-  
-  //     console.log(`Submitting ${section} changes:`, payload);
-  
-  //     const response = await axios.put(
-  //       `${API_BASE_URL}/update/${localStorage.getItem("userId")}`,
-  //       payload,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  
-  //     if (response.data.success) {
-  //       // Update local state with response data
-  //       setUser(prevUser => ({
-  //         ...prevUser,
-  //         ...response.data.data
-  //       }));
-  
-  //       toast.success(`${section} updated successfully`);
-  //     } else {
-  //       throw new Error(response.data.message || "Failed to update");
-  //     }
-  //   } catch (error) {
-  //     console.error(`Error updating ${section}:`, error);
-  //     toast.error(
-  //       error.response?.data?.message || 
-  //       error.message || 
-  //       `Failed to update ${section}`
-  //     );
-  //   }
-  // };
 
   const updateProfilePicture = async (url) => {
     try {
@@ -547,13 +456,7 @@ const Biodata = () => {
                   updateProfilePicture(url);
                 }}
               />
-              {/* <Label htmlFor="profile-image-upload" className="cursor-pointer">
 
-              
-                <Button variant="outline" as="span">
-                  <Upload className="mr-2 h-4 w-4" /> Update Profile Picture
-                </Button>
-              </Label> */}
             </div>
           </CardContent>
         </Card>
@@ -585,9 +488,15 @@ const Biodata = () => {
             <TabsTrigger value="password">Change Password</TabsTrigger>
           </TabsList>
 
-          <PersonalTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges}  />
-          <EducationTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
-          <TabsContent value="skills">
+          <TabsContent value="personal">
+            <PersonalTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges}  />
+          </TabsContent>
+
+          <TabsContent value="education">
+            <EducationTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
+          </TabsContent>
+          
+          {/* <TabsContent value="skills">
           <SkillsTab
             user={user}
             handleUpdate={handleUpdate}
@@ -597,470 +506,22 @@ const Biodata = () => {
             addArrayItem={addArrayItem}
             removeArrayItem={removeArrayItem}
           />
-         </TabsContent>
+         </TabsContent> */}
+
+<TabsContent value="skills">
+  <SkillsTab
+    user={user}
+    handleUpdate={handleUpdate}
+    submitChanges={submitChanges}
+    changes={changes}
+    handleArrayUpdate={handleArrayUpdate}
+    addArrayItem={addArrayItem}
+    removeArrayItem={removeArrayItem}
+  />
+</TabsContent>
+         <TabsContent value="bank">
           <BankTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
-
-          {/* <TabsContent value="personal">
-            <Card>
-              <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
-              </CardHeader>
-              <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            "firstName",
-            "middleName",
-            "lastName",
-            "phoneNumber",
-            "nin",
-            "email",
-            "street",
-          ].map((field) => (
-            <div key={field} className="space-y-2">
-              <Label htmlFor={field}>
-                {field
-                  .split(/(?=[A-Z])/)
-                  .join(" ")
-                  .charAt(0)
-                  .toUpperCase() +
-                  field
-                    .split(/(?=[A-Z])/)
-                    .join(" ")
-                    .slice(1)}
-              </Label>
-              <Input
-                id={field}
-                value={user[field] ?? ""}
-                onChange={(e) => handleUpdate(field, e.target.value)}
-              />
-            </div>
-          ))}
-          {["gender", "maritalStatus"].map((field) => (
-            <div key={field} className="space-y-2">
-              <Label htmlFor={field}>
-                {field
-                  .split(/(?=[A-Z])/)
-                  .join(" ")
-                  .charAt(0)
-                  .toUpperCase() +
-                  field
-                    .split(/(?=[A-Z])/)
-                    .join(" ")
-                    .slice(1)}
-              </Label>
-              <Select
-                onValueChange={(value) => handleUpdate(field, value)}
-                value={user[field] ?? ""}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={`Select ${field}`} />
-                </SelectTrigger>
-                <SelectContent>
-                  {field === "gender" ? (
-                    <>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </>
-                  ) : (
-                    <>
-                      <SelectItem value="single">Single</SelectItem>
-                      <SelectItem value="married">Married</SelectItem>
-                      <SelectItem value="divorced">Divorced</SelectItem>
-                      <SelectItem value="widowed">Widowed</SelectItem>
-                    </>
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-          ))}
-          <div className="space-y-2">
-            <Label htmlFor="stateOfOrigin">State of Origin</Label>
-            <Select
-              onValueChange={(value) => handleUpdate("stateOfOrigin", value)}
-              value={user.stateOfOrigin ?? ""}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select State of Origin" />
-              </SelectTrigger>
-              <SelectContent>
-                {states.map((state) => (
-                  <SelectItem key={state.value} value={state.value}>
-                    {state.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="lga">LGA</Label>
-            <Select
-              onValueChange={(value) => handleUpdate("lga", value)}
-              value={user.lga ?? ""}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select LGA" />
-              </SelectTrigger>
-              <SelectContent>
-                {selectedStateLGASOriginFormatted.map((lga) => (
-                  <SelectItem key={lga.value} value={lga.value}>
-                    {lga.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="senatorialDistrict">Senatorial District</Label>
-            <Select
-              onValueChange={(value) =>
-                handleUpdate("senatorialDistrict", value)
-              }
-              value={user.senatorialDistrict ?? ""}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Senatorial District" />
-              </SelectTrigger>
-              <SelectContent>
-                {selectedStateSenatorialDistrictsOriginFormatted.map(
-                  (senatorialDistrict) => (
-                    <SelectItem key={senatorialDistrict.value} value={senatorialDistrict.value}>
-                      {senatorialDistrict.label}
-                    </SelectItem>
-                  )
-                )}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="stateOfResidence">State of Residence</Label>
-            <Select
-              onValueChange={(value) => handleUpdate("stateOfResidence", value)}
-              value={user.stateOfResidence ?? ""}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select State of Residence" />
-              </SelectTrigger>
-              <SelectContent>
-                {states.map((state) => (
-                  <SelectItem key={state.value} value={state.value}>
-                    {state.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="lgaOfResidence">LGA of Residence</Label>
-            <Select
-              onValueChange={(value) => handleUpdate("lgaOfResidence", value)}
-              value={user.lgaOfResidence ?? ""}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select LGA of Residence" />
-              </SelectTrigger>
-              <SelectContent>
-                {selectedStateLGASResidenceFormatted.map((lgaOfResidence) => (
-                  <SelectItem key={lgaOfResidence.value} value={lgaOfResidence.value}>
-                    {lgaOfResidence.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="hasDisability">Has Disability</Label>
-            <Switch
-              id="hasDisability"
-              checked={user.hasDisability ?? false}
-              onCheckedChange={(checked) =>
-                handleUpdate("hasDisability", checked)
-              }
-            />
-          </div>
-          {(user.hasDisability) && (
-            <div className="space-y-2">
-              <Label htmlFor="disabilityType">Disability Type</Label>
-              <Input
-                id="disabilityType"
-                value={user.disabilityType ?? ""}
-                onChange={(e) =>
-                  handleUpdate("disabilityType", e.target.value)
-                }
-              />
-            </div>
-          )}
-        </div>
-        <Button onClick={() => submitChanges("personalInfo")} className="mt-4">
-          Update Personal Information
-        </Button>
-      </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* <TabsContent value="education">
-            <Card>
-              <CardHeader>
-                <CardTitle>Education</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {["school", "highestQualification", "graduationYear"].map(
-                    (field) => (
-                      <div key={field} className="space-y-2">
-                        <Label htmlFor={`education-${field}`}>
-                          {field
-                            .split(/(?=[A-Z])/)
-                            .join(" ")
-                            .charAt(0)
-                            .toUpperCase() +
-                            field
-                              .split(/(?=[A-Z])/)
-                              .join(" ")
-                              .slice(1)}
-                        </Label>
-                        <Input
-                          id={`education-${field}`}
-                          value={
-                            changes[`education.${field}`] ??
-                            user.education[field] ??
-                            ""
-                          }
-                          onChange={(e) =>
-                            handleUpdate(`education.${field}`, e.target.value)
-                          }
-                        />
-                      </div>
-                    )
-                  )}
-                  <div className="space-y-2">
-                    <Label htmlFor="education-upload">Education Document</Label>
-                    <Input
-                      id="education-upload"
-                      type="file"
-                      onChange={(e) =>
-                        handleFileUpload(
-                          "education.eduUpload",
-                          e.target.files[0]
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-                <Button
-                  onClick={() => submitChanges("education")}
-                  className="mt-4">
-                  Update Education
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          {/* <TabsContent value="skills">
-            <Card>
-              <CardHeader>
-                <CardTitle>Skills, Certifications, and Experience</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <h3 className="text-lg font-semibold mb-4">
-                  Prior Skills and Certifications
-                </h3>
-                {(changes.priorSkillsCerts ?? user.priorSkillsCerts).map(
-                  (cert, index) => (
-                    <div key={index} className="mb-4 p-4 border rounded">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {["sector", "tradeArea", "name", "year"].map(
-                          (field) => (
-                            <div key={field} className="space-y-2">
-                              <Label htmlFor={`cert-${index}-${field}`}>
-                                {field.charAt(0).toUpperCase() + field.slice(1)}
-                              </Label>
-                              <Input
-                                id={`cert-${index}-${field}`}
-                                value={cert[field]}
-                                onChange={(e) =>
-                                  handleArrayUpdate("priorSkillsCerts", index, {
-                                    ...cert,
-                                    [field]: e.target.value,
-                                  })
-                                }
-                              />
-                            </div>
-                          )
-                        )}
-                        <div className="space-y-2">
-                          <Label htmlFor={`cert-${index}-upload`}>
-                            Certificate Upload
-                          </Label>
-                          <Input
-                            id={`cert-${index}-upload`}
-                            type="file"
-                            onChange={(e) =>
-                              handleFileUpload(
-                                `priorSkillsCerts.${index}.priUpload`,
-                                e.target.files[0]
-                              )
-                            }
-                          />
-                        </div>
-                      </div>
-                      <Button
-                        variant="destructive"
-                        onClick={() =>
-                          removeArrayItem("priorSkillsCerts", index)
-                        }
-                        className="mt-2">
-                        <Minus className="mr-2 h-4 w-4" /> Remove
-                      </Button>
-                    </div>
-                  )
-                )}
-                <Button
-                  onClick={() =>
-                    addArrayItem("priorSkillsCerts", {
-                      sector: "",
-                      tradeArea: "",
-                      name: "",
-                      year: "",
-                      priUpload: "",
-                    })
-                  }>
-                  <Plus className="mr-2 h-4 w-4" /> Add Certification
-                </Button>
-
-                <h3 className="text-lg font-semibold mb-4 mt-8">Experience</h3>
-                {(changes.experience ?? user.experience).map((exp, index) => (
-                  <div key={index} className="mb-4 p-4 border rounded">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {[
-                        "projectTitle",
-                        "description",
-                        "dateFrom",
-                        "dateTo",
-                      ].map((field) => (
-                        <div key={field} className="space-y-2">
-                          <Label htmlFor={`exp-${index}-${field}`}>
-                            {field
-                              .split(/(?=[A-Z])/)
-                              .join(" ")
-                              .charAt(0)
-                              .toUpperCase() +
-                              field
-                                .split(/(?=[A-Z])/)
-                                .join(" ")
-                                .slice(1)}
-                          </Label>
-                          {field === "description" ? (
-                            <Textarea
-                              id={`exp-${index}-${field}`}
-                              value={exp[field]}
-                              onChange={(e) =>
-                                handleArrayUpdate("experience", index, {
-                                  ...exp,
-                                  [field]: e.target.value,
-                                })
-                              }
-                            />
-                          ) : (
-                            <Input
-                              id={`exp-${index}-${field}`}
-                              value={exp[field]}
-                              onChange={(e) =>
-                                handleArrayUpdate("experience", index, {
-                                  ...exp,
-                                  [field]: e.target.value,
-                                })
-                              }
-                            />
-                          )}
-                        </div>
-                      ))}
-                      <div className="space-y-2">
-                        <Label htmlFor={`exp-${index}-upload`}>
-                          Experience Document
-                        </Label>
-                        <Input
-                          id={`exp-${index}-upload`}
-                          type="file"
-                          onChange={(e) =>
-                            handleFileUpload(
-                              `experience.${index}.exUpload`,
-                              e.target.files[0]
-                            )
-                          }
-                        />
-                      </div>
-                    </div>
-                    <Button
-                      variant="destructive"
-                      onClick={() => removeArrayItem("experience", index)}
-                      className="mt-2">
-                      <Minus className="mr-2 h-4 w-4" /> Remove
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  onClick={() =>
-                    addArrayItem("experience", {
-                      projectTitle: "",
-                      description: "",
-                      dateFrom: "",
-                      dateTo: "",
-                      exUpload: "",
-                    })
-                  }>
-                  <Plus className="mr-2 h-4 w-4" /> Add Experience
-                </Button>
-                <Button
-                  onClick={() => submitChanges("skills")}
-                  className="mt-4">
-                  Update Skills and Experience
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-
-{/* <TabsContent value="bank">
-  <Card>
-    <CardHeader>
-      <CardTitle>Bank Account</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {["accountName", "accountNumber", "bank"].map((field) => (
-          <div key={field} className="space-y-2">
-            <Label htmlFor={`bank-${field}`}>
-              {field
-                .split(/(?=[A-Z])/)
-                .join(" ")
-                .charAt(0)
-                .toUpperCase() +
-                field
-                  .split(/(?=[A-Z])/)
-                  .join(" ")
-                  .slice(1)}
-            </Label>
-            <Input
-              id={`bank-${field}`}
-              value={
-                changes[`bankAccount.${field}`] ?? user.bankAccount[field] ?? ""
-              }
-              onChange={(e) =>
-                handleUpdate(`bankAccount.${field}`, e.target.value)
-              }
-              type={field === "accountNumber" ? "text" : "text"} // Ensure accountNumber is treated as text
-            />
-          </div>
-        ))}
-      </div>
-      <Button onClick={() => submitChanges("bankAccount")} className="mt-4">
-        Update Bank Account
-      </Button>
-    </CardContent>
-  </Card>
-</TabsContent> */}
+         </TabsContent>
 
           <TabsContent value="password">
             <Card>
@@ -1074,158 +535,6 @@ const Biodata = () => {
           </TabsContent>
         </Tabs>
 
-        {/* <Card className="border p-4 rounded-lg shadow-md mt-6">
-          <CardHeader>
-            <CardTitle>Additional Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Select
-                  onValueChange={(value) =>
-                    handleUpdate("additionalInfo.role", value)
-                  }
-                  value={changes["additionalInfo.role"] ?? user.role ?? ""}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="superadmin">Superadmin</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="artisan_user">Artisan User</SelectItem>
-                    <SelectItem value="intending_artisan">
-                      Intending Artisan
-                    </SelectItem>
-                    <SelectItem value="regular_user">Regular User</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="certifiedStatus">Certified Status</Label>
-                <Switch
-                  id="certifiedStatus"
-                  checked={
-                    changes["additionalInfo.certifiedStatus"] ??
-                    user.certifiedStatus ??
-                    false
-                  }
-                  onCheckedChange={(checked) =>
-                    handleUpdate("additionalInfo.certifiedStatus", checked)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="licenseStatus">License Status</Label>
-                <Switch
-                  id="licenseStatus"
-                  checked={
-                    changes["additionalInfo.licenseStatus"] ??
-                    user.licenseStatus ??
-                    false
-                  }
-                  onCheckedChange={(checked) =>
-                    handleUpdate("additionalInfo.licenseStatus", checked)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="agree">Agree to Terms</Label>
-                <Switch
-                  id="agree"
-                  checked={
-                    changes["additionalInfo.agree"] ?? user.agree ?? false
-                  }
-                  onCheckedChange={(checked) =>
-                    handleUpdate("additionalInfo.agree", checked)
-                  }
-                />
-              </div>
-            </div>
-            <Button
-              onClick={() => submitChanges("additionalInfo")}
-              className="mt-4">
-              Update Additional Information
-            </Button>
-          </CardContent>
-        </Card> */}
-        {/* {(user.role === "admin" || user.role === "superadmin") && (
-          <Card className="border p-4 rounded-lg shadow-md mt-6">
-            <CardHeader>
-              <CardTitle>Additional Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Select
-                    onValueChange={(value) =>
-                      handleUpdate("additionalInfo.role", value)
-                    }
-                    value={changes["additionalInfo.role"] ?? user.role ?? ""}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="superadmin">Superadmin</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="artisan_user">Artisan User</SelectItem>
-                      <SelectItem value="intending_artisan">
-                        Intending Artisan
-                      </SelectItem>
-                      <SelectItem value="regular_user">Regular User</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="certifiedStatus">Certified Status</Label>
-                  <Switch
-                    id="certifiedStatus"
-                    checked={
-                      changes["additionalInfo.certifiedStatus"] ??
-                      user.certifiedStatus ??
-                      false
-                    }
-                    onCheckedChange={(checked) =>
-                      handleUpdate("additionalInfo.certifiedStatus", checked)
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="licenseStatus">License Status</Label>
-                  <Switch
-                    id="licenseStatus"
-                    checked={
-                      changes["additionalInfo.licenseStatus"] ??
-                      user.licenseStatus ??
-                      false
-                    }
-                    onCheckedChange={(checked) =>
-                      handleUpdate("additionalInfo.licenseStatus", checked)
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="agree">Agree to Terms</Label>
-                  <Switch
-                    id="agree"
-                    checked={
-                      changes["additionalInfo.agree"] ?? user.agree ?? false
-                    }
-                    onCheckedChange={(checked) =>
-                      handleUpdate("additionalInfo.agree", checked)
-                    }
-                  />
-                </div>
-              </div>
-              <Button
-                onClick={() => submitChanges("additionalInfo")}
-                className="mt-4 bg-green-500 hover:bg-green-600">
-                Update Additional Information
-              </Button>
-            </CardContent>
-          </Card>
-        )} */}
         {(user.role === "admin" || user.role === "superadmin") && (
   <Card className="border p-4 rounded-lg shadow-md mt-6">
     <CardHeader>

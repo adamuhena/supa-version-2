@@ -149,18 +149,40 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const qualifications = [
-  "Primary School Certificate",
-  "Secondary School Certificate (SSCE)",
-  "National Diploma (ND)",
-  "Higher National Diploma (HND)", 
-  "Bachelor's Degree (B.Sc/B.A/B.Tech)",
-  "Master's Degree (M.Sc/M.A/M.Tech)",
-  "Doctorate Degree (Ph.D)",
-  "Professional Certification",
-  "Others"
-];
+// const qualifications = [
+//   "Primary School Certificate",
+//   "Secondary School Certificate (SSCE)",
+//   "National Diploma (ND)",
+//   "Higher National Diploma (HND)", 
+//   "Bachelor's Degree (B.Sc/B.A/B.Tech)",
+//   "Master's Degree (M.Sc/M.A/M.Tech)",
+//   "Doctorate Degree (Ph.D)",
+//   "Professional Certification",
+//   "Others"
+// ];
 
+const qualifications = [
+  {
+    value: "none",
+    label: "None"
+  },
+  {
+    value: "pslc",
+    label: "Primary School Leaving Certificate (PSLC)"
+  },
+  {
+    value: "ssec",
+    label: "Senior Secondary Education Certificate (SSEC)"
+  },
+  {
+    value: "graduate",
+    label: "Graduate"
+  },
+  {
+    value: "post-graduate",
+    label: "Post-Graduate"
+  }
+];
 const EducationTab = ({ user, handleUpdate, submitChanges }) => {
   // Add validation for graduation year
   const currentYear = new Date().getFullYear();
@@ -197,7 +219,7 @@ const EducationTab = ({ user, handleUpdate, submitChanges }) => {
               />
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="education-highestQualification">Highest Qualification</Label>
               <Select
                 value={user.education?.highestQualification || ""}
@@ -214,7 +236,26 @@ const EducationTab = ({ user, handleUpdate, submitChanges }) => {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
+
+<div className="space-y-2">
+  <Label htmlFor="education-highestQualification">Highest Qualification</Label>
+  <Select
+    value={user.education?.highestQualification || ""}
+    onValueChange={(value) => handleChange("highestQualification", value)}
+  >
+    <SelectTrigger>
+      <SelectValue placeholder="Select highest qualification" />
+    </SelectTrigger>
+    <SelectContent>
+      {qualifications.map((qual) => (
+        <SelectItem key={qual.value} value={qual.value}>
+          {qual.label}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+</div>
 
             <div className="space-y-2">
               <Label htmlFor="education-graduationYear">Graduation Year</Label>
@@ -248,7 +289,8 @@ const EducationTab = ({ user, handleUpdate, submitChanges }) => {
 
             <Button
               onClick={handleSubmit}
-              className="mt-4 bg-green-500 hover:bg-green-600">
+              className="mt-4 bg-green-500 hover:bg-green-600"
+              disabled={true} >
               Update Education
             </Button>
           </div>
