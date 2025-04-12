@@ -5,6 +5,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Bar, BarChart, Cell, Legend, Pie, PieChart, XAxis, YAxis, ResponsiveContainer } from "recharts"
 
+// Add these color constants at the top of your file
+const ROLE_COLORS = {
+  artisan_user: "#4CAF50",     // Green
+  intending_artisan: "#2196F3" // Blue
+};
+
+const SECTOR_COLORS = [
+  "#FF6B6B", // Coral Red
+  "#4ECDC4", // Turquoise
+  "#45B7D1", // Sky Blue
+  "#96CEB4", // Sage Green
+  "#FFA07A", // Light Salmon
+  "#9B59B6", // Purple
+  "#3498DB", // Blue
+  "#2ECC71", // Emerald
+  "#F1C40F", // Yellow
+  "#E74C3C"  // Red
+];
+
 export function SectorDistribution({ analyticsData, geoData, filters }) {
   // Add data validation
   if (!analyticsData || !geoData) {
@@ -12,73 +31,74 @@ export function SectorDistribution({ analyticsData, geoData, filters }) {
       <div className="flex items-center justify-center h-full">
         <p className="text-gray-500">No data available</p>
       </div>
-    );
+    )
   }
 
-  // Update the sectorData processing to handle the new data structure
+  const emptySectorData = []
+  const emptyRoleBySectorData = []
+  const emptyStateBySectorData = []
+
+  // Update the sectorData processing to handle the new data structure with role-based counts
   const sectorData = useMemo(() => {
-    if (!analyticsData?.sectorDistribution) {
-      // If no sector distribution data is available, return empty array
-      return []
+    if (!analyticsData?.sectorByStateOfResidence) {
+      return emptySectorData
     }
 
-    // Map the data from the API response
-    return analyticsData.sectorDistribution
-      .filter((item) => item._id && item._id.trim() !== "")
-      .map((item) => ({
-        name: item._id,
-        value: item.count,
-      }))
+    // Group by sector and sum counts
+    const sectorCounts = {}
+    analyticsData.sectorByStateOfResidence.forEach((item) => {
+      const sector = item._id?.sector || "Unknown"
+      if (!sectorCounts[sector]) {
+        sectorCounts[sector] = {
+          name: sector,
+          value: 0,
+          artisan_user: 0,
+          intending_artisan: 0,
+        }
+      }
+      sectorCounts[sector].value += item.total || 0
+      sectorCounts[sector].artisan_user += item.artisan_user || 0
+      sectorCounts[sector].intending_artisan += item.intending_artisan || 0
+    })
+
+    // Convert to array and sort
+    return Object.values(sectorCounts)
       .sort((a, b) => b.value - a.value)
       .slice(0, 10) // Get top 10 sectors
   }, [analyticsData])
 
-  // Update the genderBySectorData processing
-  const genderBySectorData = useMemo(() => {
-    if (!analyticsData?.genderBySector) {
-      // If no gender by sector data is available, return sample data
-      return [
-        { sector: "Construction", male: 850, female: 400 },
-        { sector: "Information Technology", male: 680, female: 300 },
-        { sector: "Agriculture", male: 450, female: 400 },
-        { sector: "Healthcare", male: 320, female: 400 },
-        { sector: "Education", male: 280, female: 370 },
-      ]
+  // Update the genderBySectorData processing for role-based counts
+  const roleBySectorData = useMemo(() => {
+    if (!analyticsData?.sectorByStateOfResidence) {
+      return emptyRoleBySectorData
     }
 
-    // Process and normalize the data
-    const sectorGenderMap = {}
+    // Group by sector and sum role counts
+    const sectorRoleMap = {}
 
-    analyticsData.genderBySector.forEach((item) => {
-      if (!item._id.sector) return
+    analyticsData.sectorByStateOfResidence.forEach((item) => {
+      if (!item._id?.sector) return
 
       const sectorName = item._id.sector.trim()
       if (!sectorName) return
 
-      if (!sectorGenderMap[sectorName]) {
-        sectorGenderMap[sectorName] = {
+      if (!sectorRoleMap[sectorName]) {
+        sectorRoleMap[sectorName] = {
           sector: sectorName,
-          male: 0,
-          female: 0,
-          unknown: 0,
+          artisan_user: 0,
+          intending_artisan: 0,
         }
       }
 
-      const gender = item._id.gender?.toLowerCase()
-      if (gender === "male") {
-        sectorGenderMap[sectorName].male += item.count
-      } else if (gender === "female") {
-        sectorGenderMap[sectorName].female += item.count
-      } else {
-        sectorGenderMap[sectorName].unknown += item.count
-      }
+      sectorRoleMap[sectorName].artisan_user += item.artisan_user || 0
+      sectorRoleMap[sectorName].intending_artisan += item.intending_artisan || 0
     })
 
     // Convert to array and sort by total
-    return Object.values(sectorGenderMap)
+    return Object.values(sectorRoleMap)
       .map((item) => ({
         ...item,
-        total: item.male + item.female + item.unknown,
+        total: item.artisan_user + item.intending_artisan,
       }))
       .sort((a, b) => b.total - a.total)
       .slice(0, 5) // Get top 5 sectors
@@ -87,57 +107,101 @@ export function SectorDistribution({ analyticsData, geoData, filters }) {
   // Update the stateBySectorData processing
   const stateBySectorData = useMemo(() => {
     if (!analyticsData?.sectorByStateOfResidence) {
-      // If no sector by state data is available, return sample data
-      return [
-        { state: "Lagos", construction: 350, it: 280, agriculture: 150 },
-        { state: "Abuja", construction: 280, it: 320, agriculture: 120 },
-        { state: "Kano", construction: 220, it: 180, agriculture: 250 },
-        { state: "Rivers", construction: 180, it: 150, agriculture: 120 },
-        { state: "Oyo", construction: 150, it: 120, agriculture: 180 },
-      ]
+      return emptyStateBySectorData
     }
 
-    // This would require a more complex transformation of the data
-    // For now, return the sample data
-    return [
-      { state: "Lagos", construction: 350, it: 280, agriculture: 150 },
-      { state: "Abuja", construction: 280, it: 320, agriculture: 120 },
-      { state: "Kano", construction: 220, it: 180, agriculture: 250 },
-      { state: "Rivers", construction: 180, it: 150, agriculture: 120 },
-      { state: "Oyo", construction: 150, it: 120, agriculture: 180 },
-    ]
+    // Group by state and get top sectors for each state
+    const stateMap = {}
+
+    analyticsData.sectorByStateOfResidence.forEach((item) => {
+      if (!item._id?.state || !item._id?.sector) return
+
+      const state = item._id.state.trim()
+      const sector = item._id.sector.trim()
+
+      if (!state || !sector) return
+
+      if (!stateMap[state]) {
+        stateMap[state] = {
+          state: state,
+          sectors: {},
+        }
+      }
+
+      if (!stateMap[state].sectors[sector]) {
+        stateMap[state].sectors[sector] = 0
+      }
+
+      stateMap[state].sectors[sector] += item.total || 0
+    })
+
+    // Get top 5 states with their top 3 sectors
+    return Object.values(stateMap)
+      .map((stateData) => {
+        // Convert sectors object to array and sort
+        const topSectors = Object.entries(stateData.sectors)
+          .sort(([, countA], [, countB]) => countB - countA)
+          .slice(0, 3)
+          .reduce((acc, [sector, count]) => {
+            acc[sector.toLowerCase().replace(/[^a-z0-9]/g, "_")] = count
+            return acc
+          }, {})
+
+        return {
+          state: stateData.state,
+          ...topSectors,
+        }
+      })
+      .sort((a, b) => {
+        // Sort by total sector count
+        const totalA = Object.values(a)
+          .filter((v) => typeof v === "number")
+          .reduce((sum, v) => sum + v, 0)
+        const totalB = Object.values(b)
+          .filter((v) => typeof v === "number")
+          .reduce((sum, v) => sum + v, 0)
+        return totalB - totalA
+      })
+      .slice(0, 5)
   }, [analyticsData])
 
   const COLORS = [
-    "#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8",
-    "#82ca9d", "#ffc658", "#8dd1e1", "#a4de6c", "#d0ed57",
+    "#0088FE",
+    "#00C49F",
+    "#FFBB28",
+    "#FF8042",
+    "#8884d8",
+    "#82ca9d",
+    "#ffc658",
+    "#8dd1e1",
+    "#a4de6c",
+    "#d0ed57",
   ]
 
   return (
     <div className="grid gap-6">
-
       <Card>
         <CardHeader>
-          <CardTitle>Gender by Sector</CardTitle>
-          <CardDescription>Gender distribution across top sectors</CardDescription>
+          <CardTitle>Role by Sector</CardTitle>
+          <CardDescription>Distribution of roles across top sectors</CardDescription>
         </CardHeader>
         <CardContent className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <ChartContainer
               config={{
-                male: {
-                  label: "Male",
-                  color: "hsl(var(--chart-1))",
+                artisan_user: {
+                  label: "Artisan Users",
+                  color: ROLE_COLORS.artisan_user,
                 },
-                female: {
-                  label: "Female",
-                  color: "hsl(var(--chart-2))",
+                intending_artisan: {
+                  label: "Intending Artisans",
+                  color: ROLE_COLORS.intending_artisan,
                 },
               }}
             >
-              <BarChart
-                data={genderBySectorData}
-                layout="vertical"
+              <BarChart 
+                data={roleBySectorData} 
+                layout="vertical" 
                 margin={{ top: 20, right: 30, left: 100, bottom: 5 }}
               >
                 <XAxis type="number" />
@@ -149,16 +213,54 @@ export function SectorDistribution({ analyticsData, geoData, filters }) {
                 />
                 <Legend />
                 <Bar 
-                  dataKey="male" 
+                  dataKey="artisan_user" 
                   stackId="a" 
-                  fill="hsl(var(--chart-1))" 
-                />
+                  fill={ROLE_COLORS.artisan_user}
+                  radius={[4, 4, 0, 0]}
+                >
+                  {roleBySectorData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`}
+                      fill={SECTOR_COLORS[index % SECTOR_COLORS.length]}
+                      opacity={0.8}
+                    />
+                  ))}
+                </Bar>
                 <Bar 
-                  dataKey="female" 
+                  dataKey="intending_artisan" 
                   stackId="a" 
-                  fill="hsl(var(--chart-2))" 
+                  fill={ROLE_COLORS.intending_artisan}
+                  radius={[4, 4, 0, 0]}
+                >
+                  {roleBySectorData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`}
+                      fill={SECTOR_COLORS[index % SECTOR_COLORS.length]}
+                      opacity={0.6}
+                    />
+                  ))}
+                </Bar>
+                <ChartTooltip
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-white/90 backdrop-blur-sm p-2 border rounded-lg shadow-lg">
+                          <p className="font-semibold">{label}</p>
+                          {payload.map((item, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                              <div 
+                                className="w-3 h-3 rounded-full" 
+                                style={{ backgroundColor: item.fill }}
+                              />
+                              <span>{item.name}: {item.value.toLocaleString()}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    }
+                    return null
+                  }}
                 />
-                <ChartTooltip content={<ChartTooltipContent />} />
               </BarChart>
             </ChartContainer>
           </ResponsiveContainer>
@@ -186,14 +288,26 @@ export function SectorDistribution({ analyticsData, geoData, filters }) {
                   label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 >
                   {sectorData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={COLORS[index % COLORS.length]} 
-                    />
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Legend />
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload
+                      return (
+                        <div className="bg-white p-2 border rounded shadow-md">
+                          <p className="font-medium">{data.name}</p>
+                          <p>Total: {data.value.toLocaleString()}</p>
+                          <p>Artisan Users: {data.artisan_user.toLocaleString()}</p>
+                          <p>Intending Artisans: {data.intending_artisan.toLocaleString()}</p>
+                        </div>
+                      )
+                    }
+                    return null
+                  }}
+                />
               </PieChart>
             </ChartContainer>
           </ResponsiveContainer>

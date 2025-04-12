@@ -7,6 +7,9 @@ import path from "path"; // Import path for alias configuration
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  optimizeDeps: {
+    include: ['xlsx'],
+  },
   base: "/",
   plugins: [react()],
   rollupOptions: {

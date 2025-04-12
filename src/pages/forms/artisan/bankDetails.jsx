@@ -23,7 +23,7 @@ const banks = [
   { id: 6, name: "Ecobank Nigeria" },
   { id: 7, name: "Stanbic IBTC Bank" },
   { id: 8, name: "Fidelity Bank" },
-  { id: 9, name: "Diamond Bank" },
+  { id: 9, name: "Polaris Bank" },
   { id: 10, name: "Wema Bank" },
   { id: 11, name: "Union Bank" },
   { id: 12, name: "Citibank Nigeria" },

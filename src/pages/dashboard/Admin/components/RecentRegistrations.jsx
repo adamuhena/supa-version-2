@@ -1,3 +1,194 @@
+import React, { useMemo } from "react";
+import { Label, Pie, PieChart } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+
+const genderColors = {
+  male: "#4A90E2",    // Blue
+  female: "#E91E63",  // Pink
+  unknown: "#9E9E9E", // Grey
+};
+
+export default function RecentRegistrations({ analyticsData }) {
+  const genderData = useMemo(() => {
+    if (!analyticsData?.genderDistribution) {
+      return { artisanUser: [], intendingArtisan: [] };
+    }
+
+    return {
+      artisanUser: analyticsData.genderDistribution
+        .map(item => ({
+          name: item._id === "" ? "Unknown" : 
+               item._id.charAt(0).toUpperCase() + item._id.slice(1),
+          value: item.artisan_user || 0,
+          fill: item._id === "" ? genderColors.unknown :
+                genderColors[item._id.toLowerCase()] || genderColors.unknown
+        }))
+        .filter(item => item.value > 0),
+
+      intendingArtisan: analyticsData.genderDistribution
+        .map(item => ({
+          name: item._id === "" ? "Unknown" : 
+               item._id.charAt(0).toUpperCase() + item._id.slice(1),
+          value: item.intending_artisan || 0,
+          fill: item._id === "" ? genderColors.unknown :
+                genderColors[item._id.toLowerCase()] || genderColors.unknown
+        }))
+        .filter(item => item.value > 0)
+    };
+  }, [analyticsData]);
+
+  // Calculate totals
+  const totals = useMemo(() => {
+    if (!analyticsData?.genderDistribution) {
+      return { artisanUser: 0, intendingArtisan: 0, total: 0 };
+    }
+
+    const artisanTotal = analyticsData.genderDistribution.reduce(
+      (sum, item) => sum + (item.artisan_user || 0), 0
+    );
+    
+    const intendingTotal = analyticsData.genderDistribution.reduce(
+      (sum, item) => sum + (item.intending_artisan || 0), 0
+    );
+
+    return {
+      artisanUser: artisanTotal,
+      intendingArtisan: intendingTotal,
+      total: artisanTotal + intendingTotal
+    };
+  }, [analyticsData]);
+
+  return (
+    <Card className="flex flex-col">
+      <CardHeader className="items-center pb-0">
+        <CardTitle>Gender Distribution</CardTitle>
+        <CardDescription className="text-xs">
+          Gender distribution for Artisan & Intending Artisan
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-row gap-4 justify-between pb-0">
+        {/* Artisan User Chart */}
+        <div className="flex-1">
+          <ChartContainer className="mx-auto aspect-square max-h-[125px]">
+            <PieChart>
+              <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+              <Pie
+                data={genderData.artisanUser}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={30}
+                strokeWidth={3}
+              >
+                <Label
+                  content={({ viewBox }) => {
+                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      return (
+                        <text
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                        >
+                          <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            className="fill-foreground text-sm font-bold"
+                          >
+                            {totals.artisanUser.toLocaleString()}
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 12}
+                            className="fill-muted-foreground text-xs"
+                          >
+                            Artisan
+                          </tspan>
+                        </text>
+                      );
+                    }
+                  }}
+                />
+              </Pie>
+            </PieChart>
+          </ChartContainer>
+        </div>
+
+        {/* Intending Artisan Chart */}
+        <div className="flex-1">
+          <ChartContainer className="mx-auto aspect-square max-h-[125px]">
+            <PieChart>
+              <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+              <Pie
+                data={genderData.intendingArtisan}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={30}
+                strokeWidth={3}
+              >
+                <Label
+                  content={({ viewBox }) => {
+                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      return (
+                        <text
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                        >
+                          <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            className="fill-foreground text-sm font-bold"
+                          >
+                            {totals.intendingArtisan.toLocaleString()}
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 12}
+                            className="fill-muted-foreground text-xs"
+                          >
+                            Intending
+                          </tspan>
+                        </text>
+                      );
+                    }
+                  }}
+                />
+              </Pie>
+            </PieChart>
+          </ChartContainer>
+        </div>
+      </CardContent>
+
+      {/* Legend */}
+      <div className="flex justify-center gap-4 mt-4 text-sm">
+        {Object.entries(genderColors).map(([gender, color]) => (
+          <div key={gender} className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
+            <span className="capitalize">{gender}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Total Count */}
+      <div className="text-center mt-4 text-sm text-gray-500">
+        Total Users: {totals.total.toLocaleString()}
+      </div>
+    </Card>
+  );
+}
+
 // import React, { useEffect, useState, useMemo } from "react";
 // import axios from "axios";
 // import { TrendingUp } from "lucide-react";
@@ -275,196 +466,3 @@
 //     </Card>
 //   );
 // }
-
-
-import React, { useMemo } from "react";
-import { Label, Pie, PieChart } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-
-const genderColors = {
-  male: "#4A90E2", // Blue
-  female: "#E91E63", // Pink
-  unknown: "#9E9E9E", // Grey
-};
-
-export default function RecentRegistrations({ analyticsData }) {
-  // Process gender data using analyticsData
-  const genderData = useMemo(() => {
-    const genderDistribution = analyticsData?.genderDistribution || [];
-    
-    // Get counts for each gender
-    const maleCount = genderDistribution.find(item => item._id === "male")?.count || 0;
-    const femaleCount = genderDistribution.find(item => item._id === "female")?.count || 0;
-    const unknownCount = genderDistribution.find(item => item._id === "unknown")?.count || 0;
-
-    // Get total counts by role
-    const artisanUserTotal = analyticsData?.overallCounts?.find(
-      count => count._id === "artisan_user"
-    )?.count || 0;
-    
-    const intendingArtisanTotal = analyticsData?.overallCounts?.find(
-      count => count._id === "intending_artisan"
-    )?.count || 0;
-
-    // Calculate ratio for distribution
-    const total = artisanUserTotal + intendingArtisanTotal;
-    const artisanRatio = total ? artisanUserTotal / total : 0.5;
-
-    return {
-      artisanUser: [
-        {
-          name: "Male",
-          value: Math.round(maleCount * artisanRatio),
-          fill: genderColors.male,
-        },
-        {
-          name: "Female",
-          value: Math.round(femaleCount * artisanRatio),
-          fill: genderColors.female,
-        },
-        {
-          name: "Unknown",
-          value: Math.round(unknownCount * artisanRatio),
-          fill: genderColors.unknown,
-        },
-      ].filter(item => item.value > 0),
-      
-      intendingArtisan: [
-        {
-          name: "Male",
-          value: Math.round(maleCount * (1 - artisanRatio)),
-          fill: genderColors.male,
-        },
-        {
-          name: "Female",
-          value: Math.round(femaleCount * (1 - artisanRatio)),
-          fill: genderColors.female,
-        },
-        {
-          name: "Unknown",
-          value: Math.round(unknownCount * (1 - artisanRatio)),
-          fill: genderColors.unknown,
-        },
-      ].filter(item => item.value > 0),
-    };
-  }, [analyticsData]);
-
-  return (
-    <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Gender Distribution</CardTitle>
-        <CardDescription className="text-xs">
-          Gender distribution for Artisan & Intending Artisan
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-row gap-4 justify-between pb-0">
-        {/* Artisan User Chart */}
-        <div className="flex-1">
-          <ChartContainer className="mx-auto aspect-square max-h-[125px]">
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Pie
-                data={genderData.artisanUser}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={30}
-                strokeWidth={3}
-              >
-                <Label
-                  content={({ viewBox }) => {
-                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      return (
-                        <text
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          textAnchor="middle"
-                          dominantBaseline="middle">
-                          <tspan
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            className="fill-foreground text-sm font-bold">
-                            {genderData.artisanUser
-                              .reduce((acc, curr) => acc + curr.value, 0)
-                              .toLocaleString()}
-                          </tspan>
-                          <tspan
-                            x={viewBox.cx}
-                            y={(viewBox.cy || 0) + 12}
-                            className="fill-muted-foreground text-xs">
-                            Artisan
-                          </tspan>
-                        </text>
-                      );
-                    }
-                  }}
-                />
-              </Pie>
-            </PieChart>
-          </ChartContainer>
-        </div>
-
-        {/* Intending Artisan Chart */}
-        <div className="flex-1">
-          <ChartContainer className="mx-auto aspect-square max-h-[125px]">
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Pie
-                data={genderData.intendingArtisan}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={30}
-                strokeWidth={3}
-              >
-                <Label
-                  content={({ viewBox }) => {
-                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      return (
-                        <text
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          textAnchor="middle"
-                          dominantBaseline="middle">
-                          <tspan
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            className="fill-foreground text-sm font-bold">
-                            {genderData.intendingArtisan
-                              .reduce((acc, curr) => acc + curr.value, 0)
-                              .toLocaleString()}
-                          </tspan>
-                          <tspan
-                            x={viewBox.cx}
-                            y={(viewBox.cy || 0) + 12}
-                            className="fill-muted-foreground text-xs">
-                            Intending
-                          </tspan>
-                        </text>
-                      );
-                    }
-                  }}
-                />
-              </Pie>
-            </PieChart>
-          </ChartContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}

@@ -5,98 +5,91 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Bar, BarChart, Cell, Legend, Pie, PieChart, XAxis, YAxis } from "recharts"
 
+// Add these color constants at the top of your file
+const ROLE_COLORS = {
+  artisan_user: "#4CAF50",     // Green
+  intending_artisan: "#2196F3", // Blue
+};
+
+const TRADE_AREA_COLORS = [
+  "#FF6B6B", // Coral Red
+  "#4ECDC4", // Turquoise
+  "#45B7D1", // Sky Blue
+  "#96CEB4", // Sage Green
+  "#FFA07A", // Light Salmon
+];
+
 export function TradeAreaDistribution({ analyticsData, geoData, filters }) {
-  // Process trade area distribution data
+  // Process trade area distribution data with role-based counts
   const tradeAreaData = useMemo(() => {
-    if (!analyticsData?.tradeAreaDistribution) {
-      // If no trade area distribution data is available, return empty array
+    if (!analyticsData?.tradeAreaByStateOfResidence) {
       return []
     }
 
-    // Map the data from the API response
-    return analyticsData.tradeAreaDistribution
-      .filter((item) => item._id && item._id.tradeArea && item._id.tradeArea.trim() !== "")
-      .map((item) => ({
-        name: item._id.tradeArea,
-        value: item.count,
-      }))
+    // Group by trade area and sum counts
+    const tradeAreaCounts = {}
+
+    analyticsData.tradeAreaByStateOfResidence.forEach((item) => {
+      if (!item._id?.tradeArea) return
+
+      const tradeArea = item._id.tradeArea.trim()
+      if (!tradeArea) return
+
+      if (!tradeAreaCounts[tradeArea]) {
+        tradeAreaCounts[tradeArea] = {
+          name: tradeArea,
+          value: 0,
+          artisan_user: 0,
+          intending_artisan: 0,
+        }
+      }
+
+      tradeAreaCounts[tradeArea].value += item.total || 0
+      tradeAreaCounts[tradeArea].artisan_user += item.artisan_user || 0
+      tradeAreaCounts[tradeArea].intending_artisan += item.intending_artisan || 0
+    })
+
+    // Convert to array and sort
+    return Object.values(tradeAreaCounts)
       .sort((a, b) => b.value - a.value)
       .slice(0, 10) // Get top 10 trade areas
   }, [analyticsData])
 
-  // Process gender by trade area data
-  const genderByTradeAreaData = useMemo(() => {
-    if (!analyticsData?.genderByTradeArea) {
-      // If no gender by trade area data is available, return sample data
-      return [
-        { tradeArea: "Web Development", male: 350, female: 100 },
-        { tradeArea: "Carpentry", male: 320, female: 60 },
-        { tradeArea: "Plumbing", male: 280, female: 40 },
-        { tradeArea: "Electrical", male: 220, female: 60 },
-        { tradeArea: "Masonry", male: 200, female: 50 },
-      ]
+  // Process role by trade area data
+  const roleByTradeAreaData = useMemo(() => {
+    if (!analyticsData?.tradeAreaByStateOfResidence) {
+      return []
     }
 
-    // Process and normalize the data
-    const tradeAreaGenderMap = {}
+    // Group by trade area and sum role counts
+    const tradeAreaRoleMap = {}
 
-    analyticsData.genderByTradeArea.forEach((item) => {
-      if (!item._id.tradeArea) return
+    analyticsData.tradeAreaByStateOfResidence.forEach((item) => {
+      if (!item._id?.tradeArea) return
 
       const tradeAreaName = item._id.tradeArea.trim()
       if (!tradeAreaName) return
 
-      if (!tradeAreaGenderMap[tradeAreaName]) {
-        tradeAreaGenderMap[tradeAreaName] = {
+      if (!tradeAreaRoleMap[tradeAreaName]) {
+        tradeAreaRoleMap[tradeAreaName] = {
           tradeArea: tradeAreaName,
-          male: 0,
-          female: 0,
-          unknown: 0,
+          artisan_user: 0,
+          intending_artisan: 0,
         }
       }
 
-      const gender = item._id.gender?.toLowerCase()
-      if (gender === "male") {
-        tradeAreaGenderMap[tradeAreaName].male += item.count
-      } else if (gender === "female") {
-        tradeAreaGenderMap[tradeAreaName].female += item.count
-      } else {
-        tradeAreaGenderMap[tradeAreaName].unknown += item.count
-      }
+      tradeAreaRoleMap[tradeAreaName].artisan_user += item.artisan_user || 0
+      tradeAreaRoleMap[tradeAreaName].intending_artisan += item.intending_artisan || 0
     })
 
     // Convert to array and sort by total
-    return Object.values(tradeAreaGenderMap)
+    return Object.values(tradeAreaRoleMap)
       .map((item) => ({
         ...item,
-        total: item.male + item.female + item.unknown,
+        total: item.artisan_user + item.intending_artisan,
       }))
       .sort((a, b) => b.total - a.total)
-      .slice(0, 5) // Get top 5 trade areas
-  }, [analyticsData])
-
-  // Process state by trade area data
-  const stateByTradeAreaData = useMemo(() => {
-    if (!analyticsData?.tradeAreaByStateOfResidence) {
-      // If no trade area by state data is available, return sample data
-      return [
-        { state: "Lagos", webDev: 150, carpentry: 120, plumbing: 80 },
-        { state: "Abuja", webDev: 120, carpentry: 100, plumbing: 60 },
-        { state: "Kano", webDev: 80, carpentry: 150, plumbing: 100 },
-        { state: "Rivers", webDev: 100, carpentry: 80, plumbing: 60 },
-        { state: "Oyo", webDev: 70, carpentry: 60, plumbing: 50 },
-      ]
-    }
-
-    // This would require a more complex transformation of the data
-    // For now, return the sample data
-    return [
-      { state: "Lagos", webDev: 150, carpentry: 120, plumbing: 80 },
-      { state: "Abuja", webDev: 120, carpentry: 100, plumbing: 60 },
-      { state: "Kano", webDev: 80, carpentry: 150, plumbing: 100 },
-      { state: "Rivers", webDev: 100, carpentry: 80, plumbing: 60 },
-      { state: "Oyo", webDev: 70, carpentry: 60, plumbing: 50 },
-    ]
+      .slice(0, 25) // Get top 5 trade areas
   }, [analyticsData])
 
   const COLORS = [
@@ -139,7 +132,22 @@ export function TradeAreaDistribution({ analyticsData, geoData, filters }) {
                   ))}
                 </Pie>
                 <Legend />
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload
+                      return (
+                        <div className="bg-white p-2 border rounded shadow-md">
+                          <p className="font-medium">{data.name}</p>
+                          <p>Total: {data.value.toLocaleString()}</p>
+                          <p>Artisan Users: {data.artisan_user.toLocaleString()}</p>
+                          <p>Intending Artisans: {data.intending_artisan.toLocaleString()}</p>
+                        </div>
+                      )
+                    }
+                    return null
+                  }}
+                />
               </PieChart>
             </ChartContainer>
           </div>
@@ -148,34 +156,80 @@ export function TradeAreaDistribution({ analyticsData, geoData, filters }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Gender by Trade Area</CardTitle>
-          <CardDescription>Gender distribution across top trade areas</CardDescription>
+          <CardTitle>Role by Trade Area</CardTitle>
+          <CardDescription>Role distribution across top trade areas</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[300px] w-full">
-            <ChartContainer
-              config={{
-                male: {
-                  label: "Male",
-                  color: "hsl(var(--chart-1))",
-                },
-                female: {
-                  label: "Female",
-                  color: "hsl(var(--chart-2))",
-                },
-              }}
-            >
+            <ChartContainer>
               <BarChart
-                data={genderByTradeAreaData}
+                data={roleByTradeAreaData}
                 layout="vertical"
                 margin={{ top: 20, right: 30, left: 120, bottom: 5 }}
               >
                 <XAxis type="number" />
-                <YAxis dataKey="tradeArea" type="category" tick={{ fontSize: 12 }} width={120} />
+                <YAxis 
+                  dataKey="tradeArea" 
+                  type="category" 
+                  tick={{ fontSize: 12 }} 
+                  width={120} 
+                />
                 <Legend />
-                <Bar dataKey="male" stackId="a" fill="hsl(var(--chart-1))" />
-                <Bar dataKey="female" stackId="a" fill="hsl(var(--chart-2))" />
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar 
+                  dataKey="artisan_user" 
+                  stackId="a" 
+                  fill={ROLE_COLORS.artisan_user}
+                  radius={[4, 4, 0, 0]}
+                >
+                  {roleByTradeAreaData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`}
+                      fill={TRADE_AREA_COLORS[index % TRADE_AREA_COLORS.length]}
+                      opacity={0.8}
+                    />
+                  ))}
+                </Bar>
+                <Bar 
+                  dataKey="intending_artisan" 
+                  stackId="a" 
+                  fill={ROLE_COLORS.intending_artisan}
+                  radius={[4, 4, 0, 0]}
+                >
+                  {roleByTradeAreaData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`}
+                      fill={TRADE_AREA_COLORS[index % TRADE_AREA_COLORS.length]}
+                      opacity={0.6}
+                    />
+                  ))}
+                </Bar>
+                <ChartTooltip
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-white/90 backdrop-blur-sm p-2 border rounded-lg shadow-lg">
+                          <p className="font-semibold">{label}</p>
+                          {payload.map((item, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                              <div 
+                                className="w-3 h-3 rounded-full" 
+                                style={{ backgroundColor: item.fill }}
+                              />
+                              <span>
+                                {item.name === "artisan_user" ? "Artisan Users" : "Intending Artisans"}: 
+                                {item.value.toLocaleString()}
+                              </span>
+                            </div>
+                          ))}
+                          <p className="text-sm text-gray-500 mt-1">
+                            Total: {payload.reduce((sum, item) => sum + item.value, 0).toLocaleString()}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
               </BarChart>
             </ChartContainer>
           </div>

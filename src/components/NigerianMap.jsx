@@ -23,19 +23,39 @@ const NigerianMap = ({ analyticsData }) => {
     }
   }, [analyticsData]);
 
-  // Transform analytics data for the map
+  // Update the getStateData function
   const getStateData = (stateId) => {
+    const stateInfo = stateData[stateId];
+    if (!stateInfo) return null;
+
     const stateResidence = analyticsData?.stateOfResidenceDistribution?.find(
-      state => state._id?.toLowerCase() === stateId?.toLowerCase()
+      state => state._id?.toLowerCase() === stateInfo.name?.toLowerCase()
     );
+
     const stateOrigin = analyticsData?.stateOfOriginDistribution?.find(
-      state => state._id?.toLowerCase() === stateId?.toLowerCase()
+      state => state._id?.toLowerCase() === stateInfo.name?.toLowerCase()
+    );
+
+    const centers = analyticsData?.trainingCenterStats?.centersByState?.find(
+      state => state._id?.toLowerCase() === stateInfo.name?.toLowerCase()
     );
 
     return {
-      residenceCount: stateResidence?.count || 0,
-      originCount: stateOrigin?.count || 0,
-      total: (stateResidence?.count || 0)
+      name: stateInfo.name,
+      residenceCount: {
+        total: stateResidence?.total || 0,
+        artisan_user: stateResidence?.artisan_user || 0,
+        intending_artisan: stateResidence?.intending_artisan || 0
+      },
+      originCount: {
+        total: stateOrigin?.total || 0,
+        artisan_user: stateOrigin?.artisan_user || 0,
+        intending_artisan: stateOrigin?.intending_artisan || 0
+      },
+      trainingCenters: centers?.count || 0,
+      centersList: centers?.centers || [],
+      total: (stateResidence?.total || 0),
+      stateTotal: (stateOrigin?.total || 0) // Add this line
     };
   };
 
@@ -87,6 +107,16 @@ const NigerianMap = ({ analyticsData }) => {
   const totalArtisans = Object.keys(stateData).reduce((sum, stateId) => {
     const state = getStateData(stateId);
     return sum + state.total;
+  }, 0);
+
+  const totalbyState = Object.keys(stateData).reduce((sum, stateId) => {
+    const state = getStateData(stateId);
+    return sum + state.stateTotal;
+  }, 0);
+
+  const tCenter = Object.keys(stateData).reduce((sum, stateId) => {
+    const state = getStateData(stateId);
+    return sum + state.trainingCenters;
   }, 0);
 
   // Convert TopoJSON to GeoJSON
@@ -253,10 +283,21 @@ const NigerianMap = ({ analyticsData }) => {
 
           {/* Total Sum */}
           <div className="mt-6 text-center">
-            <h4 className="font-semibold text-lg text-gray-900">
-              Total Artisans and Intending Artisans: {' '}
-              <span className="text-emerald-600">{totalArtisans.toLocaleString()}</span>
-            </h4>
+            <div className="flex items-center justify-center gap-4">
+              <p className="text-xs text-gray-900">
+                Total by State of Residence: {' '}
+                <span className="text-emerald-600">{totalArtisans.toLocaleString()}</span>
+              </p>
+              <span className="text-gray-300">|</span>
+              <p className="text-xs text-gray-900">
+                Total by State of Origin: {' '}
+                <span className="text-emerald-600">{totalbyState.toLocaleString()}</span>
+              </p>
+            </div>
+            <p className="text-xs text-gray-900 mt-2">
+              Total Training Centre by State: {' '}
+              <span className="text-emerald-600">{tCenter.toLocaleString()}</span>
+            </p>
           </div>
         </div>
       </CardContent>

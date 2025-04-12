@@ -149,17 +149,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// const qualifications = [
-//   "Primary School Certificate",
-//   "Secondary School Certificate (SSCE)",
-//   "National Diploma (ND)",
-//   "Higher National Diploma (HND)", 
-//   "Bachelor's Degree (B.Sc/B.A/B.Tech)",
-//   "Master's Degree (M.Sc/M.A/M.Tech)",
-//   "Doctorate Degree (Ph.D)",
-//   "Professional Certification",
-//   "Others"
-// ];
 
 const qualifications = [
   {
@@ -219,24 +208,6 @@ const EducationTab = ({ user, handleUpdate, submitChanges }) => {
               />
             </div>
 
-            {/* <div className="space-y-2">
-              <Label htmlFor="education-highestQualification">Highest Qualification</Label>
-              <Select
-                value={user.education?.highestQualification || ""}
-                onValueChange={(value) => handleChange("highestQualification", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select highest qualification" />
-                </SelectTrigger>
-                <SelectContent>
-                  {qualifications.map((qual) => (
-                    <SelectItem key={qual} value={qual}>
-                      {qual}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div> */}
 
 <div className="space-y-2">
   <Label htmlFor="education-highestQualification">Highest Qualification</Label>

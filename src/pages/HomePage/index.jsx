@@ -29,12 +29,12 @@ function HomePage() {
           />
           <Marquee className={"mb-[20px] relative overflow-x-hidden"}>
             {[
-              // "/images/workers/1.jpg",
-              "https://res.cloudinary.com/dwelaq1lp/image/upload/v1741671971/more_images_of_different_nigerian_artisans_using_rgmba4.jpg",
+              "/images/workers/1.jpg",
+              // "https://res.cloudinary.com/dwelaq1lp/image/upload/v1741671971/more_images_of_different_nigerian_artisans_using_rgmba4.jpg",
               "/images/workers/2.jpg",
               "/images/workers/3.jpg",
-              // "/images/workers/4.jpg",
-              "https://res.cloudinary.com/dwelaq1lp/image/upload/v1741671932/more_images_of_different_nigerian_artisans_using_2_nsk8nj.jpg",
+              "/images/workers/4.jpg",
+              // "https://res.cloudinary.com/dwelaq1lp/image/upload/v1741671932/more_images_of_different_nigerian_artisans_using_2_nsk8nj.jpg",
               "/images/workers/5.jpg",
             ].map((item, index) => {
               return (
@@ -53,13 +53,13 @@ function HomePage() {
             direction="right">
             {[
               "/images/workers/1.jpg",
-              // "/images/workers/2.jpg",
-              "https://res.cloudinary.com/dwelaq1lp/image/upload/v1741671912/more_images_of_different_nigerian_artisans_using_3_gm2quz.jpg",
-              // "/images/workers/3.jpg",
-              // "/images/workers/4.jpg",
-              "https://res.cloudinary.com/dwelaq1lp/image/upload/v1741671952/more_images_of_different_nigerian_artisans_using_1_kxtnoh.jpg",
-              // "/images/workers/5.jpg",
-              "https://res.cloudinary.com/dwelaq1lp/image/upload/v1741672424/different_nigerian_artisans_using_digital_equipment_to_dbacyb.jpg",
+              "/images/workers/2.jpg",
+             // "https://res.cloudinary.com/dwelaq1lp/image/upload/v1741671912/more_images_of_different_nigerian_artisans_using_3_gm2quz.jpg",
+              "/images/workers/3.jpg",
+              "/images/workers/4.jpg",
+              // "https://res.cloudinary.com/dwelaq1lp/image/upload/v1741671952/more_images_of_different_nigerian_artisans_using_1_kxtnoh.jpg",
+              "/images/workers/5.jpg",
+              // "https://res.cloudinary.com/dwelaq1lp/image/upload/v1741672424/different_nigerian_artisans_using_digital_equipment_to_dbacyb.jpg",
             ].map((item, index) => {
               return (
                 <div key={index.toString()} className={"translate-x-[-20%]"}>

@@ -7,56 +7,74 @@ import PageLayout from '@/components/layout/pageLayout';
 import {DotPattern} from '@/components/ui/dot-pattern';
 import {cn} from '@/lib/utils';
 
+// Update image imports to match actual filenames
+import sp1 from '@/assets/supa_images/sp1.jpg';
+import sp2 from '@/assets/supa_images/sp2.jpg';
+import sp3 from '@/assets/supa_images/sp3.jpg';
+import sp4 from '@/assets/supa_images/sp4.jpg';
+import sp5 from '@/assets/supa_images/sp5.jpg';
+import sp6 from '@/assets/supa_images/sp6.jpg';
+import sp7 from '@/assets/supa_images/spp7.jpg'; // Fixed filename
+import sp8 from '@/assets/supa_images/sp8.jpg';
+import sp9 from '@/assets/supa_images/sp9.jpg'; // Added missing import
+import sp10 from '@/assets/supa_images/sp10.jpg';
+import sp11 from '@/assets/supa_images/sp11.jpg';
+import sp13 from '@/assets/supa_images/sp13.jpeg'; // Added missing import
+import sp14 from '@/assets/supa_images/sp14.jpeg'; // Added missing import
+import sp15 from '@/assets/supa_images/sp15.jpeg'; // Added missing import
+import sp16 from '@/assets/supa_images/sp16.jpeg'; // Added missing import
+
 function GalleryPage() {
   // Sample data for images and videos
   const imageData = [
     { 
       id: 1, 
-      title: 'Graduation Ceremony',
+      title: 'SUPA Inauguratal Meeting',
       images: [
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740662300/PHOTO-2024-11-12-16-27-35_5_izm8ql.jpg', alt: 'SUPA 1', description: '' },
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740662299/PHOTO-2024-11-12-16-27-35_7_ulukzl.jpg', alt: 'SUPA 2', description: '' },
+        { src: sp13, alt: 'SUPA 1' },
+        { src: sp14, alt: 'SUPA 2', description: '' },
+        { src: sp15, alt: 'SUPA 3', description: '' },
+        { src: sp16, alt: 'SUPA 3', description: '' }
       ]
     },
     { 
       id: 2, 
-      title: 'SUPA Inauguratal Meeting',
+      title: 'SUPA Trainees 2024',
       images: [
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740658005/img1_m4xh0r.jpg', alt: 'SUPA 1' },
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740658005/img4_f8nhmv.jpg', alt: 'SUPA 2', description: '' },
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740658005/img2_abj0rw.jpg', alt: 'SUPA 3', description: '' }
+        { src: sp1, alt: 'SUPA 1', description: '' },
+        { src: sp2, alt: 'SUPA 2', description: '' },
       ]
     },
     { 
       id: 3, 
-      title: 'SUPA Trainees',
+      title: 'SUPA Trainees 2024',
       images: [
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740662300/PHOTO-2024-11-12-16-27-35_2_rsjgdx.jpg', alt: 'Abstract painting 1', description: '' },
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740662300/PHOTO-2024-11-12-16-27-34_syunnr.jpg', alt: 'Abstract painting 2', description: '' }
+        { src: sp3, alt: 'Abstract painting 1', description: '' },
+        { src: sp4, alt: 'Abstract painting 2', description: '' }
       ]
     },
     { 
       id: 4, 
-      title: 'SUPA Trainees',
+      title: 'SUPA Trainees 2024',
       images: [
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740662299/PHOTO-2024-11-12-16-27-35_9_iwkw0i.jpg', alt: 'Portrait 1', description: '' },
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740662299/PHOTO-2024-11-12-16-27-35_3_l5oseo.jpg', alt: 'Portrait 2', description:'' },
+        { src: sp5, alt: 'Portrait 1', description: '' },
+        { src: sp6, alt: 'Portrait 2', description:'' },
       ]
     },
     { 
       id: 5, 
-      title: 'SUPA Trainees',
+      title: 'SUPA Trainees 2024',
       images: [
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740662299/PHOTO-2024-11-12-16-27-35_10_juxcqa.jpg', alt: '', description: '' },
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740662299/PHOTO-2024-11-12-16-27-35_10_juxcqa.jpg', alt: '', description: '' }
+        { src: sp7, alt: '', description: '' },
+        { src: sp8, alt: '', description: '' }
       ]
     },
     { 
       id: 6, 
-      title: 'SUPA Trainees',
+      title: 'SUPA Trainees 2024',
       images: [
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740662300/PHOTO-2024-11-12-16-27-35_8_auacyq.jpg', alt: 'Lion', description: '' },
-        { src: 'https://res.cloudinary.com/dwelaq1lp/image/upload/v1740662299/PHOTO-2024-11-12-16-27-35_10_juxcqa.jpg', alt: 'Dolphin', description: '' }
+        { src: sp10, alt: 'Lion', description: '' },
+        { src: sp11, alt: 'Dolphin', description: '' }
       ]
     },
     // { 
