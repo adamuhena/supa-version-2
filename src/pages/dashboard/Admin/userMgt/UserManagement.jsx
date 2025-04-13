@@ -134,15 +134,15 @@ const UserManagement = () => {
     lgaOfResidence: "",
     senatorialDistrict: "",
     stateOfOrigin: "",
-    lgaOfOrigin: "",
+    lgaOfOrigin: "", // Add this
+    role: "",
     sector: "",
     tradeArea: "",
-    hasDisability: "all", // Set default to "all"
-    disabilityType: "all", // Set default to "all"
-    role: "",
+    hasDisability: "all",
+    disabilityType: "all",
     fromDate: "",
     toDate: "",
-    sort: "-createdAt",
+    sort: "-createdAt"
   }
   const [filter, setFilter] = useState({
     ...defaultData,
@@ -189,35 +189,50 @@ const UserManagement = () => {
   // }
 
   const handleFilterChange = (key, value) => {
-    setFilter((prev) => {
-      // Create the new filter state
-      const newFilter = { 
-        ...prev,
-        [key]: value,
-        // Reset page to 1 when filter changes
-        currentPage: 1
+    setFilter(prev => {
+      const newFilter = { ...prev };
+      
+      // Handle "all" value
+      const filterValue = value === "all" ? "" : value;
+      
+      // Handle special cases
+      switch (key) {
+        case "stateOfResidence":
+          newFilter.stateOfResidence = filterValue;
+          newFilter.lgaOfResidence = ""; // Reset dependent field
+          newFilter.senatorialDistrict = ""; // Reset dependent field
+          break;
+          
+        case "stateOfOrigin":
+          newFilter.stateOfOrigin = filterValue;
+          newFilter.lgaOfOrigin = ""; // Reset dependent field
+          break;
+          
+        case "hasDisability":
+          newFilter.hasDisability = filterValue;
+          if (filterValue !== "true") {
+            newFilter.disabilityType = ""; // Reset dependent field
+          }
+          break;
+          
+        case "sector":
+          newFilter.sector = filterValue;
+          newFilter.tradeArea = ""; // Reset dependent field
+          break;
+          
+        default:
+          newFilter[key] = filterValue;
       }
-  
-      // Handle disability type reset
-      if (key === "hasDisability") {
-        if (value !== "true") {
-          newFilter.disabilityType = "all"
-        }
-      }
-  
-      console.log('New filter state:', newFilter) // For debugging
-      return newFilter
-    })
-  
-    // Handle dependent field resets
-    if (key === "stateOfResidence") {
-      setFilter((x) => ({ ...x, lgaOfResidence: "", senatorialDistrict: "" }))
-    } else if (key === "stateOfOrigin") {
-      setFilter((x) => ({ ...x, lgaOfOrigin: "" }))
-    } else if (key === "sector") {
-      setFilter((x) => ({ ...x, tradeArea: "" }))
-    }
-  }
+      
+      // Reset to first page when filter changes
+      newFilter.currentPage = 1
+      
+      // Debug log
+      console.log('Updated filter:', newFilter)
+      
+      return newFilter;
+    });
+  };
 
   const currentPage = filter?.currentPage
 
@@ -255,112 +270,90 @@ const UserManagement = () => {
     if (!Array.isArray(users) || users.length === 0) {
       return []
     }
-
-    const headerMapping = {
-      sn: "S/N",
-      fullName: "Full Name",
-      email: "Email",
-      phoneNumber: "Phone Number",
-      role: "Role",
-      verificationStatus: "Verification Status",
-      stateOfResidence: "State of Residence",
-      lgaOfResidence: "LGA of Residence",
-      senatorialDistrict: "Senatorial District",
-      sectors: "Sectors",
-      tradeAreas: "Trade Areas",
-      hasDisability: "Has Disability",
-      disabilityType: "Disability Type",
-      createdAt: "Registration Date",
-    }
-
-    const headers = Object.keys(users[0]).map((key) => headerMapping[key] || key)
-    const rows = users.map((user) => Object.keys(user).map((key) => user[key]))
-
-    // const rows = users.map((user) => ({
-    //   ...user,
-    //   verificationStatus: user.currentVerificationStatus || "pending",
-
+  
+    // Define headers first
+    const headers = [
+      "S/N",
+      "Full Name",
+      "Email",
+      "Phone Number",
+      "Role",
+      "Verification Status",
+      "State of Residence",
+      "LGA of Residence",
+      "Senatorial District",
+      "Sectors",
+      "Trade Areas",
+      "Has Disability",
+      "Disability Type",
+      "Registration Date"
+    ]
+  
+    // Map users to rows
+    const rows = users.map((user, index) => {
+      // Extract sector and trade area information
+      const sectors = user.priorSkillsCerts
+        ? user.priorSkillsCerts
+            .map((cert) => cert.sector)
+            .filter(Boolean)
+            .join(", ")
+        : ""
+      
+      const tradeAreas = user.priorSkillsCerts
+        ? user.priorSkillsCerts
+            .map((cert) => cert.tradeArea)
+            .flat()
+            .filter(Boolean)
+            .join(", ")
+        : ""
+  
+      return [
+        index + 1,
+        `${user?.firstName || ""} ${user?.lastName || ""}`,
+        user?.email || "",
+        user?.phoneNumber || "",
+        user?.role || "",
+        user?.currentVerificationStatus || "pending",
+        user?.stateOfResidence || "",
+        user?.lgaOfResidence || "",
+        user?.senatorialDistrict || "",
+        sectors,
+        tradeAreas,
+        user?.hasDisability ? "Yes" : "No",
+        user?.hasDisability ? (user?.disabilityType || "Not specified") : "N/A",
+        user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : ""
+      ]
+    })
+  
     return [headers, ...rows]
   }
-
+  
   const downloadCSV = async () => {
     setLoadingCSV(true)
     try {
       const accessToken = localStorage.getItem("accessToken")
-
-      // Prepare filter parameters
       const params = {
         limit: MAX_CSV_ROWS,
         page: 1,
+        ...filter
       }
-
-      // Add search parameter if it exists
-      if (filter?.search) params.search = filter.search
-
-      // Add other filter parameters if they exist and are not empty
-      if (filter?.stateOfResidence) params.stateOfResidence = filter.stateOfResidence
-      if (filter?.lgaOfResidence) params.lgaOfResidence = filter.lgaOfResidence
-      if (filter?.senatorialDistrict) params.senatorialDistrict = filter.senatorialDistrict
-      if (filter?.stateOfOrigin) params.stateOfOrigin = filter.stateOfOrigin
-      if (filter?.lgaOfOrigin) params.lga = filter.lgaOfOrigin // Note: The backend expects 'lga' for lgaOfOrigin
-      if (filter?.sector) params.sector = filter.sector
-      if (filter?.tradeArea) params.tradeArea = filter.tradeArea
-      if (filter?.hasDisability) params.hasDisability = filter.hasDisability
-      if (filter?.disabilityType) params.disabilityType = filter.disabilityType
-      if (filter?.role) params.role = filter.role
-      if (filter?.fromDate) params.fromDate = filter.fromDate
-      if (filter?.toDate) params.toDate = filter.toDate
-      if (filter?.sort) params.sort = filter.sort
-
+  
       const response = await axios.get(`${API_BASE_URL}/userscert`, {
         params,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-
-      const { data } = response.data
-      const formatted = formatUserToCSV(
-        (data?.users || []).map((x, i) => {
-          // Extract sector and trade area information
-          const sectors = x.priorSkillsCerts
-            ? x.priorSkillsCerts
-                .map((cert) => cert.sector)
-                .filter(Boolean)
-                .join(", ")
-            : ""
-          const tradeAreas = x.priorSkillsCerts
-            ? x.priorSkillsCerts
-                .map((cert) => cert.tradeArea)
-                .filter(Boolean)
-                .join(", ")
-            : ""
-
-          return {
-            sn: i + 1,
-            fullName: `${x?.firstName || ""} ${x?.lastName || ""}`,
-            email: x?.email || "",
-            phoneNumber: x?.phoneNumber || "",
-            role: x?.role || "",
-            verificationStatus: x?.currentVerificationStatus || "pending",
-            stateOfResidence: x?.stateOfResidence || "",
-            lgaOfResidence: x?.lgaOfResidence || "",
-            senatorialDistrict: x?.senatorialDistrict || "",
-            sectors: sectors,
-            tradeAreas: tradeAreas,
-            hasDisability: user.hasDisability ? "Yes" : "No",
-            disabilityType: user.hasDisability ? (user.disabilityType || "Not specified") : "N/A",        
-            createdAt: x?.createdAt ? new Date(x.createdAt).toLocaleDateString() : "",
-          }
-        }),
-      )
-      setcsvData(formatted)
-
-      toast.success(
-        "CSV data has been generated with the filter options applied. Kindly click the 'Download CSV' button to download!",
-      )
+  
+      if (response.data?.success && response.data?.data?.users) {
+        const formatted = formatUserToCSV(response.data.data.users)
+        setcsvData(formatted)
+        toast.success("CSV data generated successfully!")
+      } else {
+        throw new Error("Failed to fetch user data")
+      }
     } catch (error) {
-      console.error("Error fetching users:", error)
+      console.error("Error generating CSV:", error)
       toast.error("Failed to generate CSV data")
     } finally {
       setLoadingCSV(false)
@@ -371,113 +364,69 @@ const UserManagement = () => {
     setLoading(true)
     try {
       const accessToken = localStorage.getItem("accessToken")
-
-      // Prepare filter parameters
       const params = {
-        limit: 1000000, // Limit for PDF to avoid large files
+        limit: 1000000,
         page: 1,
+        ...filter
       }
-
-      // Add search parameter if it exists
-      if (filter?.search) params.search = filter.search
-
-      // Add other filter parameters if they exist and are not empty
-      if (filter?.stateOfResidence) params.stateOfResidence = filter.stateOfResidence
-      if (filter?.lgaOfResidence) params.lgaOfResidence = filter.lgaOfResidence
-      if (filter?.senatorialDistrict) params.senatorialDistrict = filter.senatorialDistrict
-      if (filter?.stateOfOrigin) params.stateOfOrigin = filter.stateOfOrigin
-      if (filter?.lgaOfOrigin) params.lga = filter.lgaOfOrigin // Note: The backend expects 'lga' for lgaOfOrigin
-      if (filter?.sector) params.sector = filter.sector
-      if (filter?.tradeArea) params.tradeArea = filter.tradeArea
-      if (filter?.hasDisability) params.hasDisability = filter.hasDisability
-      if (filter?.disabilityType) params.disabilityType = filter.disabilityType
-      if (filter?.role) params.role = filter.role
-      if (filter?.fromDate) params.fromDate = filter.fromDate
-      if (filter?.toDate) params.toDate = filter.toDate
-      if (filter?.sort) params.sort = filter.sort
-
+  
       const response = await axios.get(`${API_BASE_URL}/userscert`, {
         params,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-
-      const { data } = response.data
-      const users = data?.users || []
-
+  
+      if (!response.data?.success || !response.data?.data?.users) {
+        throw new Error("Failed to fetch user data")
+      }
+  
+      const users = response.data.data.users
+  
       // Create PDF document
       const doc = new jsPDF()
       doc.setFontSize(18)
       doc.text("User Management Report", 14, 22)
       doc.setFontSize(11)
       doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30)
-
+  
       // Define table columns
       const columns = [
-        { header: "S/N", dataKey: "sn" },
-        { header: "Name", dataKey: "name" },
-        { header: "Email", dataKey: "email" },
-        { header: "Phone", dataKey: "phone" },
-        { header: "Role", dataKey: "role" },
-        { header: "Verification Status", dataKey: "verificationStatus" },
-        { header: "State", dataKey: "state" },
-        { header: "LGA", dataKey: "lga" },
-        { header: "Disability Status", dataKey: "disability" },
+        { header: "S/N", dataKey: "sn", width: 20 },
+        { header: "Name", dataKey: "name", width: 40 },
+        { header: "Email", dataKey: "email", width: 50 },
+        { header: "Phone", dataKey: "phone", width: 30 },
+        { header: "Role", dataKey: "role", width: 30 },
+        { header: "Status", dataKey: "status", width: 30 }
       ]
-
+  
       // Prepare data for table
       const tableData = users.map((user, index) => ({
-        sn: index + 1,
+        sn: (index + 1).toString(),
         name: `${user.firstName || ""} ${user.lastName || ""}`,
         email: user.email || "",
         phone: user.phoneNumber || "",
         role: user.role || "",
-        verificationStatus: user.currentVerificationStatus || "pending",
-        state: user.stateOfResidence || "",
-        lga: user.lgaOfResidence || "",
-        disability: user.hasDisability 
-          ? `Yes - ${user.disabilityType || "Not specified"}` 
-          : "No",
+        status: user.currentVerificationStatus || "pending"
       }))
-
+  
       // Add table to PDF
       doc.autoTable({
-        columns,
-        body: tableData,
         startY: 40,
-        styles: { fontSize: 8, cellPadding: 2 },
+        head: [columns.map(col => col.header)],
+        body: tableData.map(row => columns.map(col => row[col.dataKey])),
+        theme: 'grid',
         headStyles: { fillColor: [66, 66, 66] },
+        styles: { fontSize: 8, cellPadding: 2 },
+        columnStyles: columns.reduce((acc, col) => ({
+          ...acc,
+          [col.dataKey]: { cellWidth: col.width }
+        }), {})
       })
-
-      // Add filter information
-      const filterInfo = []
-      if (filter.search) filterInfo.push(`Search: ${filter.search}`)
-      if (filter.stateOfResidence) filterInfo.push(`State: ${filter.stateOfResidence}`)
-      if (filter.lgaOfResidence) filterInfo.push(`LGA: ${filter.lgaOfResidence}`)
-      if (filter.senatorialDistrict) filterInfo.push(`Senatorial District: ${filter.senatorialDistrict}`)
-      if (filter.role) filterInfo.push(`Role: ${filter.role}`)
-      if (filter.verificationStatus) filterInfo.push(`Verification Status: ${filter.verificationStatus}`)
-      if (filter.sector) filterInfo.push(`Sector: ${filter.sector}`)
-      if (filter.tradeArea) filterInfo.push(`Trade Area: ${filter.tradeArea}`)
-      if (filter.hasDisability) filterInfo.push(`Disability Status: ${filter.hasDisability}`)
-      if (filter.stateOfOrigin) filterInfo.push(`State of Origin: ${filter.stateOfOrigin}`)
-      if (filter.fromDate) filterInfo.push(`From: ${filter.fromDate}`)
-      if (filter.toDate) filterInfo.push(`To: ${filter.toDate}`)
-
-      if (filterInfo.length > 0) {
-        const finalY = doc.lastAutoTable.finalY || 40
-        doc.setFontSize(10)
-        doc.text("Filters Applied:", 14, finalY + 10)
-        doc.setFontSize(8)
-        filterInfo.forEach((info, index) => {
-          doc.text(info, 14, finalY + 15 + index * 5)
-        })
-      }
-
+  
       // Save the PDF
       doc.save("user-management-report.pdf")
-      toast.success("PDF report has been generated and downloaded")
+      toast.success("PDF generated successfully!")
     } catch (error) {
       console.error("Error generating PDF:", error)
       toast.error("Failed to generate PDF report")
@@ -701,63 +650,129 @@ useEffect(() => {
 }, [editedUser?.verifications]);
 
   // Separate function to fetch updated users
-  const fetchUpdatedUsers = async (accessToken) => {
-    try {
-      // Prepare filter parameters
-      const params = {
-        limit: itemsPerPage,
-        page: filter?.currentPage,
-      }
+  // const fetchUpdatedUsers = async (accessToken) => {
+  //   try {
+  //     // Prepare filter parameters
+  //     const params = {
+  //       limit: itemsPerPage,
+  //       page: filter?.currentPage,
+  //     }
 
-      // Fix disability filter handling
-      if (filter?.hasDisability && filter.hasDisability !== "all") {
-        // Send as string 'true'/'false' instead of boolean
-        params.hasDisability = filter.hasDisability // Keep as string
+  //     // Fix disability filter handling
+  //     if (filter?.hasDisability && filter.hasDisability !== "all") {
+  //       // Send as string 'true'/'false' instead of boolean
+  //       params.hasDisability = filter.hasDisability // Keep as string
         
-        if (filter.hasDisability === "true" && filter?.disabilityType && filter.disabilityType !== "all") {
-          params.disabilityType = filter.disabilityType
-        }
-      }
+  //       if (filter.hasDisability === "true" && filter?.disabilityType && filter.disabilityType !== "all") {
+  //         params.disabilityType = filter.disabilityType
+  //       }
+  //     }
 
 
-      // Add other filter parameters
-      if (filter?.search) params.search = filter.search;
-      if (filter?.stateOfResidence) params.stateOfResidence = filter.stateOfResidence;
-      if (filter?.lgaOfResidence) params.lgaOfResidence = filter.lgaOfResidence;
-      if (filter?.senatorialDistrict) params.senatorialDistrict = filter.senatorialDistrict;
-      if (filter?.stateOfOrigin) params.stateOfOrigin = filter.stateOfOrigin;
-      if (filter?.lgaOfOrigin) params.lga = filter.lgaOfOrigin;
-      if (filter?.sector) params.sector = filter.sector;
-      if (filter?.tradeArea) params.tradeArea = filter.tradeArea;
-      if (filter?.role) params.role = filter.role;
-      if (filter?.fromDate) params.fromDate = filter.fromDate;
-      if (filter?.toDate) params.toDate = filter.toDate;
-      if (filter?.sort) params.sort = filter.sort;
+  //     // Add other filter parameters
+  //     if (filter?.search) params.search = filter.search;
+  //     if (filter?.stateOfResidence) params.stateOfResidence = filter.stateOfResidence;
+  //     if (filter?.lgaOfResidence) params.lgaOfResidence = filter.lgaOfResidence;
+  //     if (filter?.senatorialDistrict) params.senatorialDistrict = filter.senatorialDistrict;
+  //     if (filter?.stateOfOrigin) params.stateOfOrigin = filter.stateOfOrigin;
+  //     if (filter?.lgaOfOrigin) params.lga = filter.lgaOfOrigin;
+  //     if (filter?.sector) params.sector = filter.sector;
+  //     if (filter?.tradeArea) params.tradeArea = filter.tradeArea;
+  //     if (filter?.role) params.role = filter.role;
+  //     if (filter?.fromDate) params.fromDate = filter.fromDate;
+  //     if (filter?.toDate) params.toDate = filter.toDate;
+  //     if (filter?.sort) params.sort = filter.sort;
 
-      console.log('Filter params being sent:', params); // Add this for debugging
+  //     console.log('Filter params being sent:', params); // Add this for debugging
 
-      const response = await axios.get(`${API_BASE_URL}/userscert`, {
-        params,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+  //     const response = await axios.get(`${API_BASE_URL}/userscert`, {
+  //       params,
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     });
 
-      if (response.data && response.data.success && response.data.data) {
-        const { users, pagination } = response.data.data;
-        setUsers(users || []);
-        setPagination({
-          currentPage: pagination?.currentPage || 1,
-          totalPages: pagination?.totalPages || 1,
-          totalUsers: pagination?.totalUsers || 0,
-          pageSize: pagination?.pageSize || 25,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      toast.error("Failed to fetch users");
+  //     if (response.data && response.data.success && response.data.data) {
+  //       const { users, pagination } = response.data.data;
+  //       setUsers(users || []);
+  //       setPagination({
+  //         currentPage: pagination?.currentPage || 1,
+  //         totalPages: pagination?.totalPages || 1,
+  //         totalUsers: pagination?.totalUsers || 0,
+  //         pageSize: pagination?.pageSize || 25,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching users:", error);
+  //     toast.error("Failed to fetch users");
+  //   }
+  // };
+  const fetchUpdatedUsers = async () => {
+  try {
+    setLoading(true)
+    const accessToken = localStorage.getItem("accessToken")
+    
+    // Create base params object with proper names
+    const params = {
+      limit: itemsPerPage,
+      page: filter?.currentPage,
     }
-  };
+
+    // Add filters only if they have non-empty values
+    if (filter.search?.trim()) params.search = filter.search.trim()
+    if (filter.stateOfResidence && filter.stateOfResidence !== "all") {
+      params.stateOfResidence = filter.stateOfResidence
+    }
+    if (filter.lgaOfResidence && filter.lgaOfResidence !== "all") {
+      params.lgaOfResidence = filter.lgaOfResidence
+    }
+    if (filter.senatorialDistrict && filter.senatorialDistrict !== "all") {
+      params.senatorialDistrict = filter.senatorialDistrict
+    }
+    if (filter.stateOfOrigin && filter.stateOfOrigin !== "all") {
+      params.stateOfOrigin = filter.stateOfOrigin
+    }
+    if (filter.lgaOfOrigin && filter.lgaOfOrigin !== "all") {
+      params.lga = filter.lgaOfOrigin // Important: backend expects 'lga'
+    }
+    if (filter.role && filter.role !== "all") params.role = filter.role
+    if (filter.hasDisability && filter.hasDisability !== "all") {
+      params.hasDisability = filter.hasDisability
+    }
+    if (filter.hasDisability === "true" && filter.disabilityType && filter.disabilityType !== "all") {
+      params.disabilityType = filter.disabilityType
+    }
+    if (filter.fromDate) params.fromDate = filter.fromDate
+    if (filter.toDate) params.toDate = filter.toDate
+    if (filter.sort) params.sort = filter.sort
+
+    // Debug log
+    console.log('Sending filter params:', params)
+
+    const response = await axios.get(`${API_BASE_URL}/userscert`, {
+      params,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+
+    if (response.data?.success && response.data?.data) {
+      const { users, pagination } = response.data.data
+      setUsers(users || [])
+      setPagination({
+        currentPage: pagination?.currentPage || 1,
+        totalPages: pagination?.totalPages || 1,
+        totalUsers: pagination?.totalUsers || 0,
+        pageSize: pagination?.pageSize || 25,
+      })
+    }
+  } catch (error) {
+    console.error("Error fetching users:", error)
+    toast.error("Failed to fetch users")
+  } finally {
+    setLoading(false)
+  }
+}
 
   // Improved handleCancelEdit function
   const handleCancelEdit = () => {
@@ -1182,7 +1197,10 @@ useEffect(() => {
 
             <div className="w-[200px]">
               <p className="text-left text-[14px] mb-1">LGA of Origin</p>
-              <Select value={filter.lgaOfOrigin} onValueChange={(value) => handleFilterChange("lgaOfOrigin", value)}>
+              <Select
+                value={filter.lgaOfOrigin}
+                onValueChange={(value) => handleFilterChange("lgaOfOrigin", value)}
+              >
                 <SelectTrigger className="text-[12px]">
                   <SelectValue placeholder="Select LGA of Origin" />
                 </SelectTrigger>
@@ -1197,7 +1215,7 @@ useEffect(() => {
                         <SelectItem className="text-[12px]" key={lga} value={lga}>
                           {lga}
                         </SelectItem>
-                      )) || []}
+                      ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -1378,9 +1396,18 @@ useEffect(() => {
         <div className="gap-2 flex justify-between w-full mt-4">
           <h2 className="font-medium">Total Records Found: {pagination?.totalUsers || 0}</h2>
           <div className="gap-2 flex flex-row-reverse justify-start mb-4">
-            <Button onClick={downloadPDF} className="ml-2" variant="outline" disabled={loading || !users?.length}>
+            {/* <Button onClick={downloadPDF} className="ml-2" variant="outline" disabled={loading || !users?.length}>
               <FileText className="mr-2 h-4 w-4" /> Export PDF
               {loading ? <SewingPinFilledIcon className="animate-spin ml-2" /> : null}
+            </Button> */}
+            <Button 
+              onClick={downloadPDF} 
+              className="ml-2" 
+              variant="outline" 
+              disabled={loading || !users?.length}
+            >
+              <FileText className="mr-2 h-4 w-4" /> 
+              {loading ? "Generating PDF..." : "Export PDF"}
             </Button>
 
             {!csvData?.length ? (
