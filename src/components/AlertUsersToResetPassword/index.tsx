@@ -47,7 +47,7 @@ export function AlertUsersToResetPassword() {
             <AlertCircle className="size-[70px] text-green-900" />
           </div>
 
-          <AlertDialogTitle className="text-center text-[25px]">
+          {/* <AlertDialogTitle className="text-center text-[25px]">
             Password reset required for existing users
           </AlertDialogTitle>
           <br />
@@ -55,6 +55,31 @@ export function AlertUsersToResetPassword() {
             Existing users should reset their password using phone number (eg.
             2348********) if an account exists, if not, kindly create a new
             account.
+          </AlertDialogDescription> */}
+
+          <AlertDialogTitle className="text-center text-[25px]">
+            Steps to Register
+          </AlertDialogTitle>
+          <br />
+          <AlertDialogDescription className="text-left">
+            1. Click on "Register". <br />
+            <br />
+            2. Select a user type ("skilled artisan", "intending artisan" or
+            "training center"). <br />
+            <br />
+            3. Fill in all the required information (marked with red asterisks).{" "}
+            <br />
+            <br />
+            4. Add your new password. <br />
+            <br />
+            5. Click on "Sign Up". <br />
+            <br />
+            6. After signing up, you will be redirected to the login page. Log
+            in with your new credentials (email and password). <br />
+            <br />
+            7. You will be redirected to complete your KYC form. <br />
+            <br />
+            8. After completing the KYC, proceed by submitting your application.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

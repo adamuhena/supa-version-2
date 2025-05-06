@@ -1,61 +1,78 @@
+"use client";
 
-"use client"
-
-import { useState, useEffect } from "react"
-import { useLocation, useNavigate, Link } from "react-router-dom"
-import axios from "axios"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
-import { Input } from "../../components/ui/input"
-import { Label } from "../../components/ui/label"
-import { Button } from "../../components/ui/button"
-import { toast } from "sonner"
-import Spinner from "../../components/Spinner"
-import { API_BASE_URL } from "@/config/env"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
-import { states } from "@/data/nigeria.ts"
-import { fetchSectors } from "@/services/api"
-import { Plus, Trash2 } from "lucide-react"
-import clsx from "clsx"
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Button } from "../../components/ui/button";
+import { toast } from "sonner";
+import Spinner from "../../components/Spinner";
+import { API_BASE_URL } from "@/config/env";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+import { states } from "@/data/nigeria.ts";
+import { fetchSectors } from "@/services/api";
+import { Plus, Trash2 } from "lucide-react";
+import clsx from "clsx";
 import UploadButton from "@/components/UploadButton";
 
 export default function SignupForm() {
   // const [signupAs, setSignupAs] = useState("artisan_user");
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState(false);
 
   // Detect screen width
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640) // Tailwind 'sm' breakpoint
+    const checkMobile = () => setIsMobile(window.innerWidth < 640); // Tailwind 'sm' breakpoint
 
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
-  }, [])
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Dynamic color based on selected value (mobile dropdown trigger color)
   const getTriggerColor = () => {
     switch (signupAs) {
       case "artisan_user":
-        return "bg-emerald-800 text-white font-bold"
+        return "bg-emerald-800 text-white font-bold";
       case "intending_artisan":
-        return "bg-red-600 text-white font-bold"
+        return "bg-red-600 text-white font-bold";
       case "training_center":
-        return "bg-blue-600 text-white font-bold"
+        return "bg-blue-600 text-white font-bold";
       default:
-        return "bg-gray-100 text-gray-700"
+        return "bg-gray-100 text-gray-700";
     }
-  }
+  };
 
   // const handleRoleChange = (value) => {
   //   setSignupAs(value);
   // };
 
-  const location = useLocation()
-  const initialTab = location.state?.tab || "artisan_user"
-  const [signupAs, setRole] = useState(initialTab)
-  const [sectors, setSectors] = useState([])
-  const [sectorLoading, setSectorLoading] = useState(true)
-  const [sectorError, setSectorError] = useState(null)
+  const location = useLocation();
+  const initialTab = location.state?.tab || "artisan_user";
+  const [signupAs, setRole] = useState(initialTab);
+  const [sectors, setSectors] = useState([]);
+  const [sectorLoading, setSectorLoading] = useState(true);
+  const [sectorError, setSectorError] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
     //middleName: "",
@@ -84,52 +101,52 @@ export default function SignupForm() {
     legalInfo: {
       tradeAreas: [],
     },
-  })
+  });
 
   // Add this function to handle checkbox change
   const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target
-    setFormData({ ...formData, [name]: checked })
-  }
+    const { name, checked } = e.target;
+    setFormData({ ...formData, [name]: checked });
+  };
 
   // Add this function to handle select change
   const handleSelectChange = (name, value) => {
-    setFormData({ ...formData, [name]: value })
-  }
+    setFormData({ ...formData, [name]: value });
+  };
 
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const navigate = useNavigate()
-  const [lgas, setLgas] = useState([])
-  const [selectedSectorId, setSelectedSectorId] = useState("")
-  const [lgasOfOrigin, setLgasOfOrigin] = useState([])
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const [lgas, setLgas] = useState([]);
+  const [selectedSectorId, setSelectedSectorId] = useState("");
+  const [lgasOfOrigin, setLgasOfOrigin] = useState([]);
   // Add a new state variable for senatorial districts
-  const [senatorialDistricts, setSenatorialDistricts] = useState([])
+  const [senatorialDistricts, setSenatorialDistricts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const accessToken = localStorage.getItem("accessToken")
-        const response = await fetchSectors(accessToken)
-        setSectors(response)
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await fetchSectors(accessToken);
+        setSectors(response);
       } catch (err) {
-        setSectorError("Failed to fetch sectors")
-        console.error(err)
+        setSectorError("Failed to fetch sectors");
+        console.error(err);
       } finally {
-        setSectorLoading(false)
+        setSectorLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   // Update the handleSectorChange function to store both the sector name and ID
   const handleSectorChange = (sectorName) => {
     // Find the selected sector object from the sectors array
-    const selectedSector = sectors.find((sector) => sector.name === sectorName)
+    const selectedSector = sectors.find((sector) => sector.name === sectorName);
 
     if (selectedSector) {
-      setSelectedSectorId(selectedSector._id)
+      setSelectedSectorId(selectedSector._id);
 
       // Update formData with the sector name and reset tradeArea
       setFormData({
@@ -151,14 +168,18 @@ export default function SignupForm() {
             },
           ],
         },
-      })
+      });
     }
-  }
+  };
 
   // Update the trade area handler to store in the correct format
   const handleTradeAreaChange = (tradeAreaName) => {
-    const selectedSector = sectors.find((sector) => sector.name === formData.sector)
-    const selectedTradeArea = selectedSector?.tradeAreas?.find((ta) => ta.name === tradeAreaName)
+    const selectedSector = sectors.find(
+      (sector) => sector.name === formData.sector
+    );
+    const selectedTradeArea = selectedSector?.tradeAreas?.find(
+      (ta) => ta.name === tradeAreaName
+    );
 
     if (selectedTradeArea) {
       setFormData({
@@ -173,12 +194,12 @@ export default function SignupForm() {
             },
           ],
         },
-      })
+      });
     }
-  }
+  };
 
   const handleRoleChange = (newRole) => {
-    setRole(newRole)
+    setRole(newRole);
     setFormData({
       firstName: "",
       lastName: "",
@@ -202,36 +223,44 @@ export default function SignupForm() {
       stateOfOrigin: "",
       hasDisability: false, // Ensure this is a boolean
       disabilityType: "", // Ensure this is a string
-      priorSkillsCerts: newRole === "intending_artisan" ? [{ sector: "", tradeAreas: [], name:"", year:"" }] : [],
+      priorSkillsCerts:
+        newRole === "intending_artisan"
+          ? [{ sector: "", tradeAreas: [], name: "", year: "" }]
+          : [],
       legalInfo: {
         tradeAreas: [],
       },
-    })
-    setSelectedSectorId("")
-  }
+    });
+    setSelectedSectorId("");
+  };
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleStateChange = (stateName) => {
-    setFormData({ ...formData, state: stateName, lga: "" })
-    const selectedState = states.find((state) => state.value === stateName)
-    setLgas(selectedState ? selectedState.lgas : [])
-  }
+    setFormData({ ...formData, state: stateName, lga: "" });
+    const selectedState = states.find((state) => state.value === stateName);
+    setLgas(selectedState ? selectedState.lgas : []);
+  };
 
   const handlePriorSkillsCertChange = (index, field, value) => {
-    const updatedPriorSkillsCerts = [...formData.priorSkillsCerts]
+    const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
 
     if (field === "sector") {
       // Check if this sector is already selected in another entry
-      const sectorAlreadySelected = formData.priorSkillsCerts.some((cert, i) => i !== index && cert.sector === value)
+      const sectorAlreadySelected = formData.priorSkillsCerts.some(
+        (cert, i) => i !== index && cert.sector === value
+      );
 
       if (sectorAlreadySelected) {
-        toast.error("This sector is already selected. Please choose a different sector.", {
-          position: "top-right",
-        })
-        return
+        toast.error(
+          "This sector is already selected. Please choose a different sector.",
+          {
+            position: "top-right",
+          }
+        );
+        return;
       }
 
       // When sector changes, reset trade areas to empty array
@@ -239,26 +268,26 @@ export default function SignupForm() {
         ...updatedPriorSkillsCerts[index],
         sector: value,
         tradeAreas: [], // Reset to empty array when sector changes
-      }
+      };
     } else if (field === "tradeArea") {
       // Add trade area to the array if it doesn't exist already
-      const tradeAreas = updatedPriorSkillsCerts[index].tradeAreas || []
+      const tradeAreas = updatedPriorSkillsCerts[index].tradeAreas || [];
       if (!tradeAreas.includes(value)) {
         updatedPriorSkillsCerts[index] = {
           ...updatedPriorSkillsCerts[index],
           tradeAreas: [...tradeAreas, value],
-        }
+        };
       }
     } else {
       // Handle other fields normally
       updatedPriorSkillsCerts[index] = {
         ...updatedPriorSkillsCerts[index],
         [field]: value,
-      }
+      };
     }
 
-    setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts })
-  }
+    setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+  };
 
   // const addPriorSkillsCert = () => {
   //   setFormData({
@@ -272,41 +301,49 @@ export default function SignupForm() {
       ...formData,
       priorSkillsCerts: [
         ...formData.priorSkillsCerts,
-        { 
-          sector: "", 
+        {
+          sector: "",
           tradeAreas: [],
           name: "",
           year: "",
           priUpload: "",
-          hasCertificate: false
-        }
+          hasCertificate: false,
+        },
       ],
     });
   };
 
   const removePriorSkillsCert = (index) => {
-    const updatedPriorSkillsCerts = formData.priorSkillsCerts.filter((_, i) => i !== index)
-    setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts })
-  }
+    const updatedPriorSkillsCerts = formData.priorSkillsCerts.filter(
+      (_, i) => i !== index
+    );
+    setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+  };
 
   const handleTradeAreaSectorChange = (index, sectorName) => {
-    const selectedSector = sectors.find((sector) => sector.name === sectorName)
+    const selectedSector = sectors.find((sector) => sector.name === sectorName);
 
     if (selectedSector) {
       // Check if this sector is already selected in another trade area
       const sectorAlreadySelected = formData.legalInfo.tradeAreas.some(
         (tradeArea, i) =>
-          i !== index && tradeArea.sector && tradeArea.sector.length > 0 && tradeArea.sector[0] === selectedSector._id,
-      )
+          i !== index &&
+          tradeArea.sector &&
+          tradeArea.sector.length > 0 &&
+          tradeArea.sector[0] === selectedSector._id
+      );
 
       if (sectorAlreadySelected) {
-        toast.error("This sector is already selected. Please choose a different sector.", {
-          position: "top-right",
-        })
-        return
+        toast.error(
+          "This sector is already selected. Please choose a different sector.",
+          {
+            position: "top-right",
+          }
+        );
+        return;
       }
 
-      const updatedTradeAreas = [...formData.legalInfo.tradeAreas]
+      const updatedTradeAreas = [...formData.legalInfo.tradeAreas];
       updatedTradeAreas[index] = {
         ...updatedTradeAreas[index],
         sector: [selectedSector._id],
@@ -316,7 +353,7 @@ export default function SignupForm() {
         facilities: updatedTradeAreas[index]?.facilities || "",
         equipment: updatedTradeAreas[index]?.equipment || "",
         tools: updatedTradeAreas[index]?.tools || "",
-      }
+      };
 
       setFormData({
         ...formData,
@@ -324,30 +361,35 @@ export default function SignupForm() {
           ...formData.legalInfo,
           tradeAreas: updatedTradeAreas,
         },
-      })
+      });
     }
-  }
+  };
 
   const handleTradeAreaMultipleChange = (index, value) => {
-    const tradeAreaItem = formData.legalInfo.tradeAreas[index]
-    const sectorId = tradeAreaItem.sector[0]
-    const selectedSector = sectors.find((sector) => sector._id === sectorId)
-    const selectedTradeArea = selectedSector?.tradeAreas?.find((ta) => ta.name === value)
+    const tradeAreaItem = formData.legalInfo.tradeAreas[index];
+    const sectorId = tradeAreaItem.sector[0];
+    const selectedSector = sectors.find((sector) => sector._id === sectorId);
+    const selectedTradeArea = selectedSector?.tradeAreas?.find(
+      (ta) => ta.name === value
+    );
 
     if (selectedTradeArea) {
-      const updatedTradeAreas = [...formData.legalInfo.tradeAreas]
+      const updatedTradeAreas = [...formData.legalInfo.tradeAreas];
 
       // Check if tradeArea array exists, if not initialize it
       if (!updatedTradeAreas[index].tradeArea) {
-        updatedTradeAreas[index].tradeArea = []
+        updatedTradeAreas[index].tradeArea = [];
       }
 
       // Add the trade area ID to the array if it doesn't already exist
       if (!updatedTradeAreas[index].tradeArea.includes(selectedTradeArea._id)) {
         updatedTradeAreas[index] = {
           ...updatedTradeAreas[index],
-          tradeArea: [...updatedTradeAreas[index].tradeArea, selectedTradeArea._id],
-        }
+          tradeArea: [
+            ...updatedTradeAreas[index].tradeArea,
+            selectedTradeArea._id,
+          ],
+        };
       }
 
       setFormData({
@@ -356,16 +398,16 @@ export default function SignupForm() {
           ...formData.legalInfo,
           tradeAreas: updatedTradeAreas,
         },
-      })
+      });
     }
-  }
+  };
 
   const handleTradeAreaFieldChange = (index, field, value) => {
-    const updatedTradeAreas = [...formData.legalInfo.tradeAreas]
+    const updatedTradeAreas = [...formData.legalInfo.tradeAreas];
     updatedTradeAreas[index] = {
       ...updatedTradeAreas[index],
       [field]: value,
-    }
+    };
 
     setFormData({
       ...formData,
@@ -373,8 +415,8 @@ export default function SignupForm() {
         ...formData.legalInfo,
         tradeAreas: updatedTradeAreas,
       },
-    })
-  }
+    });
+  };
 
   const addTradeArea = () => {
     setFormData({
@@ -394,90 +436,108 @@ export default function SignupForm() {
           },
         ],
       },
-    })
-  }
+    });
+  };
 
   const removeTradeArea = (index) => {
-    const updatedTradeAreas = formData.legalInfo.tradeAreas.filter((_, i) => i !== index)
+    const updatedTradeAreas = formData.legalInfo.tradeAreas.filter(
+      (_, i) => i !== index
+    );
     setFormData({
       ...formData,
       legalInfo: {
         ...formData.legalInfo,
         tradeAreas: updatedTradeAreas,
       },
-    })
-  }
+    });
+  };
 
   function isOnlyNumbers(str) {
-    return /^\d+$/.test(str)
+    return /^\d+$/.test(str);
   }
 
   const setAuthState = (userData) => {
     // Set is logged in flag
-    localStorage.setItem("isLoggedIn", "true")
+    localStorage.setItem("isLoggedIn", "true");
 
     // Handle different user types
     if (userData.trainingCenter) {
       // For training center
-      localStorage.setItem("userRole", userData.trainingCenter.role)
-      localStorage.setItem("userId", userData.trainingCenter._id)
-      localStorage.setItem("isFirstTimeUser", userData.trainingCenter.agree || false)
-      localStorage.setItem("trainingCentreName", userData.trainingCenter.trainingCentreName)
-      localStorage.setItem("regNum", userData.trainingCenter.regNum)
+      localStorage.setItem("userRole", userData.trainingCenter.role);
+      localStorage.setItem("userId", userData.trainingCenter._id);
+      localStorage.setItem(
+        "isFirstTimeUser",
+        userData.trainingCenter.agree || false
+      );
+      localStorage.setItem(
+        "trainingCentreName",
+        userData.trainingCenter.trainingCentreName
+      );
+      localStorage.setItem("regNum", userData.trainingCenter.regNum);
     } else if (userData.user) {
       // For artisan and intending artisan
-      localStorage.setItem("userRole", userData.user.role)
-      localStorage.setItem("userId", userData.user._id)
-      localStorage.setItem("isFirstTimeUser", userData.user.agree || false)
+      localStorage.setItem("userRole", userData.user.role);
+      localStorage.setItem("userId", userData.user._id);
+      localStorage.setItem("isFirstTimeUser", userData.user.agree || false);
     }
 
     // Handle tokens
     if (userData.accessToken) {
       localStorage.setItem(
         "accessToken",
-        typeof userData.accessToken === "object" ? userData.accessToken.accessToken : userData.accessToken,
-      )
+        typeof userData.accessToken === "object"
+          ? userData.accessToken.accessToken
+          : userData.accessToken
+      );
     }
 
     if (userData.refreshToken) {
       localStorage.setItem(
         "refreshToken",
-        typeof userData.refreshToken === "object" ? userData.refreshToken.refreshToken : userData.refreshToken,
-      )
+        typeof userData.refreshToken === "object"
+          ? userData.refreshToken.refreshToken
+          : userData.refreshToken
+      );
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     // START VALIDATION
-    let errorMsg = ""
-    console.log("Form data before submission:", JSON.stringify(formData, null, 2))
+    let errorMsg = "";
+    console.log(
+      "Form data before submission:",
+      JSON.stringify(formData, null, 2)
+    );
     // Format the phone number to start with "234" if it starts with "0"
     const formattedPhoneNumber = formData.phoneNumber.startsWith("0")
       ? "234" + formData.phoneNumber.slice(1)
-      : formData.phoneNumber
+      : formData.phoneNumber;
 
     // Update the phone number in formData
-    formData.phoneNumber = formattedPhoneNumber
+    formData.phoneNumber = formattedPhoneNumber;
 
     if (formData.hasDisability && !formData.disabilityType) {
-      errorMsg = "Please select a disability type"
+      errorMsg = "Please select a disability type";
     } else if (formData.password.trim() !== formData.confirmPassword.trim()) {
-      errorMsg = "Passwords do not match!"
+      errorMsg = "Passwords do not match!";
     } else if (formData.password.trim().length < 6) {
-      errorMsg = "Password must be at least 6 characters!"
+      errorMsg = "Password must be at least 6 characters!";
     } else if (!isOnlyNumbers(formData.phoneNumber)) {
-      errorMsg = "Phone number must be numeric!"
+      errorMsg = "Phone number must be numeric!";
     } else if (formData.phoneNumber.trim().length !== 13) {
-      errorMsg = "Phone number must be 13 digits!"
-    } else if (signupAs !== "training_center" && (!isOnlyNumbers(formData.nin) || formData.nin.trim().length !== 11)) {
-      errorMsg = "NIN must be 11 numeric digits!"
+      errorMsg = "Phone number must be 13 digits!";
+    } else if (
+      signupAs !== "training_center" &&
+      (!isOnlyNumbers(formData.nin) || formData.nin.trim().length !== 11)
+    ) {
+      errorMsg = "NIN must be 11 numeric digits!";
     } else if (signupAs !== "training_center" && formData.gender === "") {
-      errorMsg = "Please select a gender!"
-    } 
+      errorMsg = "Please select a gender!";
+    }
     // else if (
     //   (signupAs === "artisan_user" ) &&
     //   formData.priorSkillsCerts.length > 0 &&
@@ -490,60 +550,69 @@ export default function SignupForm() {
     //   errorMsg = "Sector and at least one Trade Area are required!"
     // }
     // Update the validation check:
-    else if (signupAs === "artisan_user" && formData.priorSkillsCerts.length === 0) {
-      errorMsg = "Please add at least one prior skill or certificate";
-    }
-else if (
-  (signupAs === "artisan_user") &&
-  formData.priorSkillsCerts.length > 0 &&
-  (!formData.priorSkillsCerts[0].sector ||
-    !formData.priorSkillsCerts[0].tradeAreas ||
-    formData.priorSkillsCerts[0].tradeAreas.length === 0 ||
-    (formData.priorSkillsCerts[0].hasCertificate && 
-      (!formData.priorSkillsCerts[0].name ||
-       !formData.priorSkillsCerts[0].year ||
-       !formData.priorSkillsCerts[0].priUpload))) // Check if hasCertificate is true)
-) {
-  errorMsg = formData.priorSkillsCerts[0].hasCertificate 
-    ? "Please complete all certificate details!"
-    : "Sector and at least one Trade Area are required!"
-}
     else if (
-      signupAs === "intending_artisan" &&
-      (!formData.priorSkillsCerts[0].sector || !formData.priorSkillsCerts[0].tradeAreas)
+      signupAs === "artisan_user" &&
+      formData.priorSkillsCerts.length === 0
     ) {
-      errorMsg = "Sector and Trade Area are required!"
+      errorMsg = "Please add at least one prior skill or certificate";
+    } else if (
+      signupAs === "artisan_user" &&
+      formData.priorSkillsCerts.length > 0 &&
+      (!formData.priorSkillsCerts[0].sector ||
+        !formData.priorSkillsCerts[0].tradeAreas ||
+        formData.priorSkillsCerts[0].tradeAreas.length === 0 ||
+        (formData.priorSkillsCerts[0].hasCertificate &&
+          (!formData.priorSkillsCerts[0].name ||
+            !formData.priorSkillsCerts[0].year ||
+            !formData.priorSkillsCerts[0].priUpload))) // Check if hasCertificate is true)
+    ) {
+      errorMsg = formData.priorSkillsCerts[0].hasCertificate
+        ? "Please complete all certificate details!"
+        : "Sector and at least one Trade Area are required!";
+    } else if (
+      signupAs === "intending_artisan" &&
+      (!formData.priorSkillsCerts[0].sector ||
+        !formData.priorSkillsCerts[0].tradeAreas)
+    ) {
+      errorMsg = "Sector and Trade Area are required!";
     } else if (
       signupAs === "training_center" &&
       (formData.legalInfo.tradeAreas.length === 0 ||
         !formData.legalInfo.tradeAreas[0].sector ||
         formData.legalInfo.tradeAreas[0].sector.length === 0)
     ) {
-      errorMsg = "At least one Sector and Trade Area is required!"
+      errorMsg = "At least one Sector and Trade Area is required!";
     }
 
     if (errorMsg) {
-      toast.error(errorMsg, { position: "top-right" })
-      setLoading(false)
-      return
+      toast.error(errorMsg, { position: "top-right" });
+      setLoading(false);
+      return;
     }
     // END VALIDATION
 
     const endpoint =
-      signupAs === "training_center" ? `${API_BASE_URL}/training-centers/register` : `${API_BASE_URL}/signup`
+      signupAs === "training_center"
+        ? `${API_BASE_URL}/training-centers/register`
+        : `${API_BASE_URL}/signup`;
 
     const submissionData = {
       ...formData,
       hasDisability: Boolean(formData.hasDisability), // Ensure it's a boolean
       disabilityType:
-        typeof formData.disabilityType === "object" ? formData.disabilityType.default || "" : formData.disabilityType,
-    }
+        typeof formData.disabilityType === "object"
+          ? formData.disabilityType.default || ""
+          : formData.disabilityType,
+    };
 
-    console.log("Form data before submission:", JSON.stringify(submissionData, null, 2))
+    console.log(
+      "Form data before submission:",
+      JSON.stringify(submissionData, null, 2)
+    );
     // First, log the form data before submission to verify the values
     console.log("Form data before submission:", {
       ...formData,
-      senatorialDistrict: formData.senatorialDistrict // verify this exists
+      senatorialDistrict: formData.senatorialDistrict, // verify this exists
     });
     const payload =
       signupAs === "training_center"
@@ -584,7 +653,7 @@ else if (
               name: cert.name || "",
               year: cert.year || "",
               priUpload: cert.priUpload || "",
-              hasCertificate: cert.hasCertificate || false
+              hasCertificate: cert.hasCertificate || false,
             })),
             role: signupAs,
             nin: submissionData.nin,
@@ -593,7 +662,7 @@ else if (
             password: submissionData.password,
             confirm_password: submissionData.confirmPassword,
             agree: false,
-          }
+          };
     // Prepare the payload with the correct structure for legalInfo.tradeAreas
     // const payload =
     //   signupAs === "training_center"
@@ -646,77 +715,85 @@ else if (
         headers: {
           "Content-Type": "application/json",
         },
-      })
+      });
 
-      console.log("Response:", response.data) // Debugging log
+      console.log("Response:", response.data); // Debugging log
 
       if (response.data.success) {
         // Set authentication state
-        setAuthState(response.data.data)
+        setAuthState(response.data.data);
 
         // Success toast
         toast.success("Signup successful 🚀!", {
           description: "Login Successfully",
           position: "top-right",
           duration: 2000,
-        })
+        });
 
         // Redirect based on role
         setTimeout(() => {
           const role = response.data.data.trainingCenter
             ? response.data.data.trainingCenter.role
-            : response.data.data.user.role
+            : response.data.data.user.role;
 
           switch (role) {
             case "artisan_user":
-              navigate("/register/artisan")
-              break
+              navigate("/register/artisan");
+              break;
             case "intending_artisan":
-              navigate("/register/intendingArtisan")
-              break
+              navigate("/register/intendingArtisan");
+              break;
             case "training_center":
-              navigate("/register/trainingcenter")
-              break
+              navigate("/register/trainingcenter");
+              break;
             default:
-              navigate("/dashboard")
+              navigate("/dashboard");
           }
-        }, 2000)
+        }, 2000);
       } else {
         toast.error(`Signup failed: ${response.data.message}`, {
           duration: 2000,
-        })
+        });
       }
     } catch (error) {
-      console.error("Signup error:", error) // Debugging log
-      const message = "Error!"
+      console.error("Signup error:", error); // Debugging log
+      const message = "Error!";
       const description =
         typeof error?.response?.data === "string"
           ? error?.response?.data
-          : error?.response?.data?.message || "An error occurred. Please try again."
-      setError("Error signing up. Please try again.")
+          : error?.response?.data?.message ||
+            "An error occurred. Please try again.";
+      setError("Error signing up. Please try again.");
       toast.error(message, {
         description,
         position: "top-right",
         style: { textAlign: "left" },
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleStateOfOriginChange = (stateName) => {
-    setFormData({ ...formData, stateOfOrigin: stateName, lga: "" })
-    const selectedState = states.find((state) => state.value === stateName)
-    setLgasOfOrigin(selectedState ? selectedState.lgas : [])
-  }
+    setFormData({ ...formData, stateOfOrigin: stateName, lga: "" });
+    const selectedState = states.find((state) => state.value === stateName);
+    setLgasOfOrigin(selectedState ? selectedState.lgas : []);
+  };
 
   // Update the handleStateOfResidenceChange function to also set senatorial districts
   const handleStateOfResidenceChange = (stateName) => {
-    setFormData({ ...formData, stateOfResidence: stateName, lgaOfResidence: "", senatorialDistrict: "" })
-    const selectedState = states.find((state) => state.value === stateName)
-    setLgas(selectedState ? selectedState.lgas : [])
-    setSenatorialDistricts(selectedState ? selectedState.senatorialDistricts || [] : [])
-  }
+    setFormData({
+      ...formData,
+      stateOfResidence: stateName,
+      lgaOfResidence: "",
+      senatorialDistrict: "",
+    });
+    const selectedState = states.find((state) => state.value === stateName);
+    setLgas(selectedState ? selectedState.lgas : []);
+    setSenatorialDistricts(
+      selectedState ? selectedState.senatorialDistricts || [] : []
+    );
+  };
 
   return (
     <section className=" bg-slate-900   min-h-screen">
@@ -727,8 +804,12 @@ else if (
             {signupAs === "artisan_user" ? (
               <div className="flex h-full items-center justify-center bg-green-100 p-6">
                 <div className="text-center">
-                  <h2 className="mb-2 text-2xl font-bold text-green-800">SignUp Today</h2>
-                  <p className="text-green-600">Access your personal dashboard and track your progress.</p>
+                  <h2 className="mb-2 text-2xl font-bold text-green-800">
+                    SignUp Today
+                  </h2>
+                  <p className="text-green-600">
+                    Access your personal dashboard and track your progress.
+                  </p>
                   <img
                     src="/hairdresser copy.jpeg?height=200&width=200"
                     alt="I am an artisan in this trade area"
@@ -739,8 +820,12 @@ else if (
             ) : signupAs === "intending_artisan" ? (
               <div className="flex h-full items-center justify-center bg-red-100 p-6">
                 <div className="text-center">
-                  <h2 className="mb-2 text-2xl font-bold text-red-800">SignUp Today</h2>
-                  <p className="text-red-600">Access your personal dashboard and track your progress.</p>
+                  <h2 className="mb-2 text-2xl font-bold text-red-800">
+                    SignUp Today
+                  </h2>
+                  <p className="text-red-600">
+                    Access your personal dashboard and track your progress.
+                  </p>
                   <img
                     src="/hairdresser copy.jpeg?height=200&width=200"
                     alt="I am an intending artisan in this trade area"
@@ -751,8 +836,12 @@ else if (
             ) : (
               <div className="flex h-full items-center justify-center bg-blue-100 p-6">
                 <div className="text-center">
-                  <h2 className="mb-2 text-2xl font-bold text-blue-800">SignUp Today</h2>
-                  <p className="text-blue-600">Access your personal dashboard and track your progress.</p>
+                  <h2 className="mb-2 text-2xl font-bold text-blue-800">
+                    SignUp Today
+                  </h2>
+                  <p className="text-blue-600">
+                    Access your personal dashboard and track your progress.
+                  </p>
                   <img
                     src="/hairdresser copy.jpeg?height=200&width=200"
                     alt="I am a training center"
@@ -775,7 +864,9 @@ else if (
                 overflow-y-auto" // Scroll the inside of the card
           >
             <CardHeader className="md:hidden">
-              <CardTitle className="text-2xl font-bold text-gray-600 ">SignUp Today</CardTitle>
+              <CardTitle className="text-2xl font-bold text-gray-600 ">
+                SignUp Today
+              </CardTitle>
               <CardDescription className="text-xs">
                 {" "}
                 Access your personal dashboard and track your progress.
@@ -804,26 +895,26 @@ else if (
                   </TabsTrigger>
                 </TabsList> */}
 
-              <Tabs value={signupAs} onValueChange={handleRoleChange} className="w-full">
+              <Tabs
+                value={signupAs}
+                onValueChange={handleRoleChange}
+                className="w-full">
                 {/* Desktop Tabs */}
                 {!isMobile && (
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger
                       value="artisan_user"
-                      className="data-[state=active]:bg-emerald-800 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
-                    >
+                      className="data-[state=active]:bg-emerald-800 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600">
                       Artisan
                     </TabsTrigger>
                     <TabsTrigger
                       value="intending_artisan"
-                      className="data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
-                    >
+                      className="data-[state=active]:bg-red-600 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600">
                       Intending Artisan
                     </TabsTrigger>
                     <TabsTrigger
                       value="training_center"
-                      className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600"
-                    >
+                      className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-bold text-gray-600">
                       Training Center
                     </TabsTrigger>
                   </TabsList>
@@ -833,26 +924,24 @@ else if (
                 {isMobile && (
                   <div className="w-full mb-4">
                     <Select value={signupAs} onValueChange={handleRoleChange}>
-                      <SelectTrigger className={clsx("w-full", getTriggerColor())}>
+                      <SelectTrigger
+                        className={clsx("w-full", getTriggerColor())}>
                         <SelectValue placeholder="Select Role" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem
                           value="artisan_user"
-                          className="hover:bg-emerald-800 hover:text-white focus:bg-emerald-800 focus:text-white"
-                        >
+                          className="hover:bg-emerald-800 hover:text-white focus:bg-emerald-800 focus:text-white">
                           Artisan
                         </SelectItem>
                         <SelectItem
                           value="intending_artisan"
-                          className="hover:bg-red-600 hover:text-white focus:bg-red-600 focus:text-white"
-                        >
+                          className="hover:bg-red-600 hover:text-white focus:bg-red-600 focus:text-white">
                           Intending Artisan
                         </SelectItem>
                         <SelectItem
                           value="training_center"
-                          className="hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white"
-                        >
+                          className="hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white">
                           Training Center
                         </SelectItem>
                       </SelectContent>
@@ -924,12 +1013,19 @@ else if (
                       />
 
                       <div className="">
-                        <Label htmlFor="gender" className="text-left text-xs text-gray-600">
-                          Gender <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="gender"
+                          className="text-left text-xs text-gray-600">
+                          Gender{" "}
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.gender}
-                          onValueChange={(value) => setFormData({ ...formData, gender: value })}
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, gender: value })
+                          }
                           required={formData.gender} // Add required attribute
                         >
                           <SelectTrigger>
@@ -939,7 +1035,6 @@ else if (
                             <SelectGroup>
                               <SelectItem value="male">Male</SelectItem>
                               <SelectItem value="female">Female</SelectItem>
-                              
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -948,13 +1043,19 @@ else if (
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="maritalStatus" className="text-left text-xs text-gray-600">
-                          Marital Status <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="maritalStatus"
+                          className="text-left text-xs text-gray-600">
+                          Marital Status{" "}
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.maritalStatus}
-                          onValueChange={(value) => setFormData({ ...formData, maritalStatus: value })}
-                        >
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, maritalStatus: value })
+                          }>
                           <SelectTrigger>
                             <SelectValue placeholder="Select marital status" />
                           </SelectTrigger>
@@ -970,8 +1071,13 @@ else if (
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="dob" className="text-left text-xs text-gray-600">
-                          Date of Birth <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="dob"
+                          className="text-left text-xs text-gray-600">
+                          Date of Birth{" "}
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Input
                           type="date"
@@ -987,7 +1093,9 @@ else if (
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="hasDisability" className="text-left text-xs text-gray-600">
+                        <Label
+                          htmlFor="hasDisability"
+                          className="text-left text-xs text-gray-600">
                           Do you have a disability?
                         </Label>
                         <input
@@ -999,8 +1107,10 @@ else if (
                             setFormData({
                               ...formData,
                               hasDisability: e.target.checked,
-                              disabilityType: e.target.checked ? formData.disabilityType : "",
-                            })
+                              disabilityType: e.target.checked
+                                ? formData.disabilityType
+                                : "",
+                            });
                           }}
                           className="w-4 h-4"
                         />
@@ -1008,13 +1118,19 @@ else if (
 
                       {formData.hasDisability && (
                         <div className="space-y-2">
-                          <Label htmlFor="disabilityType" className="text-left text-xs text-gray-600">
+                          <Label
+                            htmlFor="disabilityType"
+                            className="text-left text-xs text-gray-600">
                             Type of Disability
                           </Label>
                           <Select
                             value={formData.disabilityType}
-                            onValueChange={(value) => setFormData({ ...formData, disabilityType: value })}
-                          >
+                            onValueChange={(value) =>
+                              setFormData({
+                                ...formData,
+                                disabilityType: value,
+                              })
+                            }>
                             <SelectTrigger>
                               <SelectValue placeholder="Select disability type" />
                             </SelectTrigger>
@@ -1022,8 +1138,12 @@ else if (
                               <SelectGroup>
                                 <SelectItem value="visual">Visual</SelectItem>
                                 <SelectItem value="hearing">Hearing</SelectItem>
-                                <SelectItem value="mobility">Mobility</SelectItem>
-                                <SelectItem value="cognitive">Cognitive</SelectItem>
+                                <SelectItem value="mobility">
+                                  Mobility
+                                </SelectItem>
+                                <SelectItem value="cognitive">
+                                  Cognitive
+                                </SelectItem>
                                 <SelectItem value="other">Other</SelectItem>
                               </SelectGroup>
                             </SelectContent>
@@ -1035,25 +1155,41 @@ else if (
                     {/* State of Residence and LGA */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="stateOfResidence" className="text-left text-xs text-gray-600">
-                          State of Residence<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="stateOfResidence"
+                          className="text-left text-xs text-gray-600">
+                          State of Residence
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.stateOfResidence}
                           onValueChange={(value) => {
-                            setFormData({ ...formData, stateOfResidence: value, lgaOfResidence: "" })
-                            const selectedState = states.find((state) => state.value === value)
-                            setLgas(selectedState ? selectedState.lgas : [])
-                            setSenatorialDistricts(selectedState ? selectedState.senatorialDistricts || [] : [])
-                          }}
-                        >
+                            setFormData({
+                              ...formData,
+                              stateOfResidence: value,
+                              lgaOfResidence: "",
+                            });
+                            const selectedState = states.find(
+                              (state) => state.value === value
+                            );
+                            setLgas(selectedState ? selectedState.lgas : []);
+                            setSenatorialDistricts(
+                              selectedState
+                                ? selectedState.senatorialDistricts || []
+                                : []
+                            );
+                          }}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select state" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
                               {states.map((state) => (
-                                <SelectItem key={state.value} value={state.value}>
+                                <SelectItem
+                                  key={state.value}
+                                  value={state.value}>
                                   {state.label}
                                 </SelectItem>
                               ))}
@@ -1063,14 +1199,20 @@ else if (
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="lgaOfResidence" className="text-left text-xs text-gray-600">
-                          LGA of Residence<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="lgaOfResidence"
+                          className="text-left text-xs text-gray-600">
+                          LGA of Residence
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.lgaOfResidence}
-                          onValueChange={(value) => setFormData({ ...formData, lgaOfResidence: value })}
-                          disabled={!lgas.length}
-                        >
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, lgaOfResidence: value })
+                          }
+                          disabled={!lgas.length}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select LGA" />
                           </SelectTrigger>
@@ -1087,14 +1229,23 @@ else if (
                       </div>
                       {/* Senatorial District */}
                       <div className="space-y-2">
-                        <Label htmlFor="senatorialDistrict" className="text-left text-xs text-gray-600">
-                          Senatorial District<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="senatorialDistrict"
+                          className="text-left text-xs text-gray-600">
+                          Senatorial District
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.senatorialDistrict}
-                          onValueChange={(value) => setFormData({ ...formData, senatorialDistrict: value })}
-                          disabled={!senatorialDistricts.length}
-                        >
+                          onValueChange={(value) =>
+                            setFormData({
+                              ...formData,
+                              senatorialDistrict: value,
+                            })
+                          }
+                          disabled={!senatorialDistricts.length}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select senatorial district" />
                           </SelectTrigger>
@@ -1126,24 +1277,38 @@ else if (
                     {/* State of Origin and LGA */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="stateOfOrigin" className="text-left text-xs text-gray-600">
-                          State of Origin<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="stateOfOrigin"
+                          className="text-left text-xs text-gray-600">
+                          State of Origin
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.stateOfOrigin}
                           onValueChange={(value) => {
-                            setFormData({ ...formData, stateOfOrigin: value, lga: "" })
-                            const selectedState = states.find((state) => state.value === value)
-                            setLgasOfOrigin(selectedState ? selectedState.lgas : [])
-                          }}
-                        >
+                            setFormData({
+                              ...formData,
+                              stateOfOrigin: value,
+                              lga: "",
+                            });
+                            const selectedState = states.find(
+                              (state) => state.value === value
+                            );
+                            setLgasOfOrigin(
+                              selectedState ? selectedState.lgas : []
+                            );
+                          }}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select state" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
                               {states.map((state) => (
-                                <SelectItem key={state.value} value={state.value}>
+                                <SelectItem
+                                  key={state.value}
+                                  value={state.value}>
                                   {state.label}
                                 </SelectItem>
                               ))}
@@ -1153,14 +1318,20 @@ else if (
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="lga" className="text-left text-xs text-gray-600">
-                          LGA of Origin<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="lga"
+                          className="text-left text-xs text-gray-600">
+                          LGA of Origin
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.lga}
-                          onValueChange={(value) => setFormData({ ...formData, lga: value })}
-                          disabled={!lgasOfOrigin.length}
-                        >
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, lga: value })
+                          }
+                          disabled={!lgasOfOrigin.length}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select LGA" />
                           </SelectTrigger>
@@ -1177,23 +1348,23 @@ else if (
                       </div>
                     </div>
 
-
                     {/* Prior Skills Certificates */}
-                    
 
                     <div className="space-y-4">
                       {/* Header with Label and Add Button */}
                       <div className="flex justify-between items-center">
                         <Label className="text-left text-xs text-gray-600">
-                          Prior Skills/Certificates <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                          Prior Skills/Certificates{" "}
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={addPriorSkillsCert}
-                          className="flex items-center gap-1"
-                        >
+                          className="flex items-center gap-1">
                           <Plus className="h-4 w-4" /> Add Skill
                         </Button>
                       </div>
@@ -1201,15 +1372,16 @@ else if (
                       {/* Skills List or Empty State */}
                       {formData.priorSkillsCerts.length > 0 ? (
                         formData.priorSkillsCerts.map((cert, index) => (
-                          <div key={index} className="grid grid-cols-1 gap-4 p-4 border rounded-md relative">
+                          <div
+                            key={index}
+                            className="grid grid-cols-1 gap-4 p-4 border rounded-md relative">
                             {/* Delete Button */}
                             <Button
                               type="button"
                               variant="ghost"
                               size="icon"
                               onClick={() => removePriorSkillsCert(index)}
-                              className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700"
-                            >
+                              className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700">
                               <Trash2 className="h-4 w-4" />
                             </Button>
 
@@ -1217,21 +1389,33 @@ else if (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {/* Sector Selection */}
                               <div className="space-y-2">
-                                <Label htmlFor={`cert-sector-${index}`} className="text-left text-xs text-gray-600">
-                                  Sector  <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                                <Label
+                                  htmlFor={`cert-sector-${index}`}
+                                  className="text-left text-xs text-gray-600">
+                                  Sector{" "}
+                                  <span className="text-red-600 ml-[4px] text-[13px]">
+                                    *
+                                  </span>
                                 </Label>
                                 <Select
                                   value={cert.sector}
-                                  onValueChange={(value) => handlePriorSkillsCertChange(index, "sector", value)}
-                                  disabled={sectorLoading}
-                                >
+                                  onValueChange={(value) =>
+                                    handlePriorSkillsCertChange(
+                                      index,
+                                      "sector",
+                                      value
+                                    )
+                                  }
+                                  disabled={sectorLoading}>
                                   <SelectTrigger>
                                     <SelectValue placeholder="Select sector" />
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectGroup>
                                       {sectors?.map((sector) => (
-                                        <SelectItem key={sector._id} value={sector.name}>
+                                        <SelectItem
+                                          key={sector._id}
+                                          value={sector.name}>
                                           {sector.name}
                                         </SelectItem>
                                       ))}
@@ -1242,52 +1426,93 @@ else if (
 
                               {/* Trade Areas (Multi-Select) */}
                               <div className="space-y-4">
-                                <Label htmlFor={`cert-tradeArea-${index}`} className="text-left text-xs text-gray-600">
-                                  Trade Areas (Select Multiple) <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                                <Label
+                                  htmlFor={`cert-tradeArea-${index}`}
+                                  className="text-left text-xs text-gray-600">
+                                  Trade Areas (Select Multiple){" "}
+                                  <span className="text-red-600 ml-[4px] text-[13px]">
+                                    *
+                                  </span>
                                 </Label>
                                 <div className="flex flex-col gap-2">
                                   {/* Selected Trade Areas */}
-                                  {cert.tradeAreas && cert.tradeAreas.length > 0 && (
-                                    <div className="flex flex-wrap gap-2 mb-2">
-                                      {cert.tradeAreas.map((taName, taIndex) => (
-                                        <div key={taIndex} className="flex items-center bg-blue-100 px-2 py-1 rounded-md">
-                                          <span className="text-sm">{taName}</span>
-                                          <button
-                                            type="button"
-                                            className="ml-2 text-red-500"
-                                            onClick={() => {
-                                              const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
-                                              updatedPriorSkillsCerts[index] = {
-                                                ...updatedPriorSkillsCerts[index],
-                                                tradeAreas: updatedPriorSkillsCerts[index].tradeAreas.filter(
-                                                  (name) => name !== taName
-                                                ),
-                                              };
-                                              setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
-                                            }}
-                                          >
-                                            ×
-                                          </button>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
+                                  {cert.tradeAreas &&
+                                    cert.tradeAreas.length > 0 && (
+                                      <div className="flex flex-wrap gap-2 mb-2">
+                                        {cert.tradeAreas.map(
+                                          (taName, taIndex) => (
+                                            <div
+                                              key={taIndex}
+                                              className="flex items-center bg-blue-100 px-2 py-1 rounded-md">
+                                              <span className="text-sm">
+                                                {taName}
+                                              </span>
+                                              <button
+                                                type="button"
+                                                className="ml-2 text-red-500"
+                                                onClick={() => {
+                                                  const updatedPriorSkillsCerts =
+                                                    [
+                                                      ...formData.priorSkillsCerts,
+                                                    ];
+                                                  updatedPriorSkillsCerts[
+                                                    index
+                                                  ] = {
+                                                    ...updatedPriorSkillsCerts[
+                                                      index
+                                                    ],
+                                                    tradeAreas:
+                                                      updatedPriorSkillsCerts[
+                                                        index
+                                                      ].tradeAreas.filter(
+                                                        (name) =>
+                                                          name !== taName
+                                                      ),
+                                                  };
+                                                  setFormData({
+                                                    ...formData,
+                                                    priorSkillsCerts:
+                                                      updatedPriorSkillsCerts,
+                                                  });
+                                                }}>
+                                                ×
+                                              </button>
+                                            </div>
+                                          )
+                                        )}
+                                      </div>
+                                    )}
 
                                   {/* Trade Area Dropdown */}
                                   <Select
-                                    onValueChange={(value) => handlePriorSkillsCertChange(index, "tradeArea", value)}
-                                    disabled={!cert.sector}
-                                  >
+                                    onValueChange={(value) =>
+                                      handlePriorSkillsCertChange(
+                                        index,
+                                        "tradeArea",
+                                        value
+                                      )
+                                    }
+                                    disabled={!cert.sector}>
                                     <SelectTrigger>
                                       <SelectValue placeholder="Add trade area" />
                                     </SelectTrigger>
                                     <SelectContent>
                                       <SelectGroup>
                                         {sectors
-                                          ?.find((sector) => sector.name === cert.sector)
-                                          ?.tradeAreas?.filter((ta) => !cert.tradeAreas?.includes(ta.name))
+                                          ?.find(
+                                            (sector) =>
+                                              sector.name === cert.sector
+                                          )
+                                          ?.tradeAreas?.filter(
+                                            (ta) =>
+                                              !cert.tradeAreas?.includes(
+                                                ta.name
+                                              )
+                                          )
                                           .map((ta) => (
-                                            <SelectItem key={ta._id} value={ta.name}>
+                                            <SelectItem
+                                              key={ta._id}
+                                              value={ta.name}>
                                               {ta.name}
                                             </SelectItem>
                                           ))}
@@ -1307,19 +1532,27 @@ else if (
                                     id={`has-certificate-${index}`}
                                     checked={cert.hasCertificate || false}
                                     onChange={(e) => {
-                                      const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
+                                      const updatedPriorSkillsCerts = [
+                                        ...formData.priorSkillsCerts,
+                                      ];
                                       updatedPriorSkillsCerts[index] = {
                                         ...updatedPriorSkillsCerts[index],
                                         hasCertificate: e.target.checked,
                                         // Reset certificate fields if unchecked
                                         name: e.target.checked ? cert.name : "",
-                                        year: e.target.checked ? cert.year : ""
+                                        year: e.target.checked ? cert.year : "",
                                       };
-                                      setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+                                      setFormData({
+                                        ...formData,
+                                        priorSkillsCerts:
+                                          updatedPriorSkillsCerts,
+                                      });
                                     }}
                                     className="w-4 h-4"
                                   />
-                                  <Label htmlFor={`has-certificate-${index}`} className="text-left text-xs text-gray-600">
+                                  <Label
+                                    htmlFor={`has-certificate-${index}`}
+                                    className="text-left text-xs text-gray-600">
                                     I have a certificate for this skill
                                   </Label>
                                 </div>
@@ -1332,13 +1565,21 @@ else if (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   {/* Certificate Name */}
                                   <div className="space-y-2">
-                                    <Label htmlFor={`cert-name-${index}`} className="text-left text-xs text-gray-600">
+                                    <Label
+                                      htmlFor={`cert-name-${index}`}
+                                      className="text-left text-xs text-gray-600">
                                       Certificate Name
                                     </Label>
                                     <Input
                                       id={`cert-name-${index}`}
                                       value={cert.name || ""}
-                                      onChange={(e) => handlePriorSkillsCertChange(index, "name", e.target.value)}
+                                      onChange={(e) =>
+                                        handlePriorSkillsCertChange(
+                                          index,
+                                          "name",
+                                          e.target.value
+                                        )
+                                      }
                                       placeholder="Enter certificate name"
                                       className="w-full"
                                     />
@@ -1346,7 +1587,9 @@ else if (
 
                                   {/* Year Obtained */}
                                   <div className="space-y-2">
-                                    <Label htmlFor={`cert-year-${index}`} className="text-left text-xs text-gray-600">
+                                    <Label
+                                      htmlFor={`cert-year-${index}`}
+                                      className="text-left text-xs text-gray-600">
                                       Year Obtained
                                     </Label>
                                     <Input
@@ -1355,7 +1598,13 @@ else if (
                                       min="1900"
                                       max={new Date().getFullYear()}
                                       value={cert.year || ""}
-                                      onChange={(e) => handlePriorSkillsCertChange(index, "year", e.target.value)}
+                                      onChange={(e) =>
+                                        handlePriorSkillsCertChange(
+                                          index,
+                                          "year",
+                                          e.target.value
+                                        )
+                                      }
                                       placeholder="Enter year"
                                       className="w-full"
                                     />
@@ -1364,31 +1613,42 @@ else if (
 
                                 {/* Certificate Upload */}
                                 <div className="space-y-2">
-                                  <Label 
-                                    htmlFor={`cert-upload-${index}`} 
-                                    className="text-left text-xs text-gray-600"
-                                  >
+                                  <Label
+                                    htmlFor={`cert-upload-${index}`}
+                                    className="text-left text-xs text-gray-600">
                                     Upload Certificate
                                   </Label>
                                   <UploadButton
                                     fileUrl={cert.priUpload}
                                     title={`certificate-${index}`}
                                     handleFileChange={(newFileUrl) => {
-                                      const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
+                                      const updatedPriorSkillsCerts = [
+                                        ...formData.priorSkillsCerts,
+                                      ];
                                       updatedPriorSkillsCerts[index] = {
                                         ...updatedPriorSkillsCerts[index],
-                                        priUpload: newFileUrl
+                                        priUpload: newFileUrl,
                                       };
-                                      setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+                                      setFormData({
+                                        ...formData,
+                                        priorSkillsCerts:
+                                          updatedPriorSkillsCerts,
+                                      });
                                     }}
                                     accept=".jpg, .png, .jpeg, .pdf"
                                     removeFile={() => {
-                                      const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
+                                      const updatedPriorSkillsCerts = [
+                                        ...formData.priorSkillsCerts,
+                                      ];
                                       updatedPriorSkillsCerts[index] = {
                                         ...updatedPriorSkillsCerts[index],
-                                        priUpload: null
+                                        priUpload: null,
                                       };
-                                      setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
+                                      setFormData({
+                                        ...formData,
+                                        priorSkillsCerts:
+                                          updatedPriorSkillsCerts,
+                                      });
                                     }}
                                   />
                                 </div>
@@ -1398,13 +1658,17 @@ else if (
                         ))
                       ) : (
                         <div className="text-center py-4 text-gray-500 text-sm italic">
-                          No prior skills added. Click "Add Skill" to add your previous skills or certifications.
+                          No prior skills added. Click "Add Skill" to add your
+                          previous skills or certifications.
                         </div>
                       )}
                     </div>
 
-
-                    <PasswordFields formData={formData} onChange={handleChange} required />
+                    <PasswordFields
+                      formData={formData}
+                      onChange={handleChange}
+                      required
+                    />
                     <Button type="submit" className="w-full bg-emerald-800">
                       {loading ? <Spinner /> : "Sign Up"}
                     </Button>
@@ -1474,14 +1738,20 @@ else if (
                         required={true}
                       />
                       <div className="">
-                        <Label htmlFor="gender" className="text-left text-xs text-gray-600">
-                          Gender <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="gender"
+                          className="text-left text-xs text-gray-600">
+                          Gender{" "}
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.gender}
-                          onValueChange={(value) => setFormData({ ...formData, gender: value })}
-                          required={formData.gender}
-                        >
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, gender: value })
+                          }
+                          required={formData.gender}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select gender" />
                           </SelectTrigger>
@@ -1489,7 +1759,6 @@ else if (
                             <SelectGroup>
                               <SelectItem value="male">Male</SelectItem>
                               <SelectItem value="female">Female</SelectItem>
-                             
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -1498,13 +1767,19 @@ else if (
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="maritalStatus" className="text-left text-xs text-gray-600">
-                          Marital Status <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="maritalStatus"
+                          className="text-left text-xs text-gray-600">
+                          Marital Status{" "}
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.maritalStatus}
-                          onValueChange={(value) => setFormData({ ...formData, maritalStatus: value })}
-                        >
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, maritalStatus: value })
+                          }>
                           <SelectTrigger>
                             <SelectValue placeholder="Select marital status" />
                           </SelectTrigger>
@@ -1520,8 +1795,13 @@ else if (
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="dob" className="text-left text-xs text-gray-600">
-                          Date of Birth <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="dob"
+                          className="text-left text-xs text-gray-600">
+                          Date of Birth{" "}
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Input
                           type="date"
@@ -1537,7 +1817,9 @@ else if (
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="hasDisability" className="text-left text-xs text-gray-600">
+                        <Label
+                          htmlFor="hasDisability"
+                          className="text-left text-xs text-gray-600">
                           Do you have a disability?
                         </Label>
                         <input
@@ -1549,8 +1831,10 @@ else if (
                             setFormData({
                               ...formData,
                               hasDisability: e.target.checked,
-                              disabilityType: e.target.checked ? formData.disabilityType : "",
-                            })
+                              disabilityType: e.target.checked
+                                ? formData.disabilityType
+                                : "",
+                            });
                           }}
                           className="w-4 h-4"
                         />
@@ -1558,13 +1842,19 @@ else if (
 
                       {formData.hasDisability && (
                         <div className="space-y-2">
-                          <Label htmlFor="disabilityType" className="text-left text-xs text-gray-600">
+                          <Label
+                            htmlFor="disabilityType"
+                            className="text-left text-xs text-gray-600">
                             Type of Disability
                           </Label>
                           <Select
                             value={formData.disabilityType}
-                            onValueChange={(value) => setFormData({ ...formData, disabilityType: value })}
-                          >
+                            onValueChange={(value) =>
+                              setFormData({
+                                ...formData,
+                                disabilityType: value,
+                              })
+                            }>
                             <SelectTrigger>
                               <SelectValue placeholder="Select disability type" />
                             </SelectTrigger>
@@ -1572,8 +1862,12 @@ else if (
                               <SelectGroup>
                                 <SelectItem value="visual">Visual</SelectItem>
                                 <SelectItem value="hearing">Hearing</SelectItem>
-                                <SelectItem value="mobility">Mobility</SelectItem>
-                                <SelectItem value="cognitive">Cognitive</SelectItem>
+                                <SelectItem value="mobility">
+                                  Mobility
+                                </SelectItem>
+                                <SelectItem value="cognitive">
+                                  Cognitive
+                                </SelectItem>
                                 <SelectItem value="other">Other</SelectItem>
                               </SelectGroup>
                             </SelectContent>
@@ -1585,25 +1879,41 @@ else if (
                     {/* State of Residence and LGA */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="stateOfResidence" className="text-left text-xs text-gray-600">
-                          State of Residence<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="stateOfResidence"
+                          className="text-left text-xs text-gray-600">
+                          State of Residence
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.stateOfResidence}
                           onValueChange={(value) => {
-                            setFormData({ ...formData, stateOfResidence: value, lgaOfResidence: "" })
-                            const selectedState = states.find((state) => state.value === value)
-                            setLgas(selectedState ? selectedState.lgas : [])
-                            setSenatorialDistricts(selectedState ? selectedState.senatorialDistricts || [] : [])
-                          }}
-                        >
+                            setFormData({
+                              ...formData,
+                              stateOfResidence: value,
+                              lgaOfResidence: "",
+                            });
+                            const selectedState = states.find(
+                              (state) => state.value === value
+                            );
+                            setLgas(selectedState ? selectedState.lgas : []);
+                            setSenatorialDistricts(
+                              selectedState
+                                ? selectedState.senatorialDistricts || []
+                                : []
+                            );
+                          }}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select state" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
                               {states.map((state) => (
-                                <SelectItem key={state.value} value={state.value}>
+                                <SelectItem
+                                  key={state.value}
+                                  value={state.value}>
                                   {state.label}
                                 </SelectItem>
                               ))}
@@ -1613,14 +1923,20 @@ else if (
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="lgaOfResidence" className="text-left text-xs text-gray-600">
-                          LGA of Residence<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="lgaOfResidence"
+                          className="text-left text-xs text-gray-600">
+                          LGA of Residence
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.lgaOfResidence}
-                          onValueChange={(value) => setFormData({ ...formData, lgaOfResidence: value })}
-                          disabled={!lgas.length}
-                        >
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, lgaOfResidence: value })
+                          }
+                          disabled={!lgas.length}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select LGA" />
                           </SelectTrigger>
@@ -1637,14 +1953,23 @@ else if (
                       </div>
                       {/* Senatorial District */}
                       <div className="space-y-2">
-                        <Label htmlFor="senatorialDistrict" className="text-left text-xs text-gray-600">
-                          Senatorial District<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="senatorialDistrict"
+                          className="text-left text-xs text-gray-600">
+                          Senatorial District
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.senatorialDistrict}
-                          onValueChange={(value) => setFormData({ ...formData, senatorialDistrict: value })}
-                          disabled={!senatorialDistricts.length}
-                        >
+                          onValueChange={(value) =>
+                            setFormData({
+                              ...formData,
+                              senatorialDistrict: value,
+                            })
+                          }
+                          disabled={!senatorialDistricts.length}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select senatorial district" />
                           </SelectTrigger>
@@ -1676,24 +2001,38 @@ else if (
                     {/* State of Origin and LGA */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="stateOfOrigin" className="text-left text-xs text-gray-600">
-                          State of Origin<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="stateOfOrigin"
+                          className="text-left text-xs text-gray-600">
+                          State of Origin
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.stateOfOrigin}
                           onValueChange={(value) => {
-                            setFormData({ ...formData, stateOfOrigin: value, lga: "" })
-                            const selectedState = states.find((state) => state.value === value)
-                            setLgasOfOrigin(selectedState ? selectedState.lgas : [])
-                          }}
-                        >
+                            setFormData({
+                              ...formData,
+                              stateOfOrigin: value,
+                              lga: "",
+                            });
+                            const selectedState = states.find(
+                              (state) => state.value === value
+                            );
+                            setLgasOfOrigin(
+                              selectedState ? selectedState.lgas : []
+                            );
+                          }}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select state" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
                               {states.map((state) => (
-                                <SelectItem key={state.value} value={state.value}>
+                                <SelectItem
+                                  key={state.value}
+                                  value={state.value}>
                                   {state.label}
                                 </SelectItem>
                               ))}
@@ -1703,14 +2042,20 @@ else if (
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="lga" className="text-left text-xs text-gray-600">
-                          LGA of Origin<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="lga"
+                          className="text-left text-xs text-gray-600">
+                          LGA of Origin
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.lga}
-                          onValueChange={(value) => setFormData({ ...formData, lga: value })}
-                          disabled={!lgasOfOrigin.length}
-                        >
+                          onValueChange={(value) =>
+                            setFormData({ ...formData, lga: value })
+                          }
+                          disabled={!lgasOfOrigin.length}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select LGA" />
                           </SelectTrigger>
@@ -1778,80 +2123,106 @@ else if (
 
                     {/* Prior Skills Certificate - Single Entry for Intending Artisan */}
                     {/* Prior Skills Certificate - Single Entry for Intending Artisan */}
-<div className="space-y-4">
-  <Label className="text-left text-xs text-gray-600">
-    Intending Skill <span className="text-red-600 ml-[4px] text-[13px]">*</span>
-  </Label>
-  <div className="grid grid-cols-1 gap-4 p-4 border rounded-md">
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="space-y-2">
-        <Label htmlFor="prior-sector" className="text-left text-xs text-gray-600">
-          Sector
-        </Label>
-        <Select
-          value={formData.priorSkillsCerts[0]?.sector || ""}
-          onValueChange={(value) => {
-            const updatedPriorSkillsCerts = [{ 
-              sector: value, 
-              tradeAreas: [], // Reset trade areas when sector changes
-              name: formData.priorSkillsCerts[0]?.name || "",
-              year: formData.priorSkillsCerts[0]?.year || ""
-            }];
-            setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
-          }}
-          disabled={sectorLoading}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select sector" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {sectors?.map((sector) => (
-                <SelectItem key={sector._id} value={sector.name}>
-                  {sector.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
+                    <div className="space-y-4">
+                      <Label className="text-left text-xs text-gray-600">
+                        Intending Skill{" "}
+                        <span className="text-red-600 ml-[4px] text-[13px]">
+                          *
+                        </span>
+                      </Label>
+                      <div className="grid grid-cols-1 gap-4 p-4 border rounded-md">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="prior-sector"
+                              className="text-left text-xs text-gray-600">
+                              Sector
+                            </Label>
+                            <Select
+                              value={formData.priorSkillsCerts[0]?.sector || ""}
+                              onValueChange={(value) => {
+                                const updatedPriorSkillsCerts = [
+                                  {
+                                    sector: value,
+                                    tradeAreas: [], // Reset trade areas when sector changes
+                                    name:
+                                      formData.priorSkillsCerts[0]?.name || "",
+                                    year:
+                                      formData.priorSkillsCerts[0]?.year || "",
+                                  },
+                                ];
+                                setFormData({
+                                  ...formData,
+                                  priorSkillsCerts: updatedPriorSkillsCerts,
+                                });
+                              }}
+                              disabled={sectorLoading}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select sector" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  {sectors?.map((sector) => (
+                                    <SelectItem
+                                      key={sector._id}
+                                      value={sector.name}>
+                                      {sector.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="prior-tradeArea" className="text-left text-xs text-gray-600">
-          Trade Area
-        </Label>
-        <Select
-          value={formData.priorSkillsCerts[0]?.tradeAreas?.[0] || ""}
-          onValueChange={(value) => {
-            const updatedPriorSkillsCerts = [...formData.priorSkillsCerts];
-            updatedPriorSkillsCerts[0] = {
-              ...updatedPriorSkillsCerts[0],
-              tradeAreas: [value] // Store as array with single value
-            };
-            setFormData({ ...formData, priorSkillsCerts: updatedPriorSkillsCerts });
-          }}
-          disabled={!formData.priorSkillsCerts[0]?.sector}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select trade area" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {sectors
-                ?.find((sector) => sector.name === formData.priorSkillsCerts[0]?.sector)
-                ?.tradeAreas?.map((ta) => (
-                  <SelectItem key={ta._id} value={ta.name}>
-                    {ta.name}
-                  </SelectItem>
-                ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="prior-tradeArea"
+                              className="text-left text-xs text-gray-600">
+                              Trade Area
+                            </Label>
+                            <Select
+                              value={
+                                formData.priorSkillsCerts[0]?.tradeAreas?.[0] ||
+                                ""
+                              }
+                              onValueChange={(value) => {
+                                const updatedPriorSkillsCerts = [
+                                  ...formData.priorSkillsCerts,
+                                ];
+                                updatedPriorSkillsCerts[0] = {
+                                  ...updatedPriorSkillsCerts[0],
+                                  tradeAreas: [value], // Store as array with single value
+                                };
+                                setFormData({
+                                  ...formData,
+                                  priorSkillsCerts: updatedPriorSkillsCerts,
+                                });
+                              }}
+                              disabled={!formData.priorSkillsCerts[0]?.sector}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select trade area" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  {sectors
+                                    ?.find(
+                                      (sector) =>
+                                        sector.name ===
+                                        formData.priorSkillsCerts[0]?.sector
+                                    )
+                                    ?.tradeAreas?.map((ta) => (
+                                      <SelectItem key={ta._id} value={ta.name}>
+                                        {ta.name}
+                                      </SelectItem>
+                                    ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
 
-    {/* Add name and year fields */}
-    {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Add name and year fields */}
+                        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="space-y-2">
         <Label htmlFor="cert-name" className="text-left text-xs text-gray-600">
           Certificate Name
@@ -1895,10 +2266,14 @@ else if (
         />
       </div>
     </div> */}
-  </div>
-</div>
+                      </div>
+                    </div>
 
-                    <PasswordFields formData={formData} onChange={handleChange} required />
+                    <PasswordFields
+                      formData={formData}
+                      onChange={handleChange}
+                      required
+                    />
                     <Button type="submit" className="w-full bg-red-600">
                       {loading ? <Spinner /> : "Sign Up"}
                     </Button>
@@ -1962,17 +2337,26 @@ else if (
                     {/* Second Row: State and LGA */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                       <div className="space-y-2">
-                        <Label htmlFor="state" className="text-left text-xs text-gray-600">
-                          State<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="state"
+                          className="text-left text-xs text-gray-600">
+                          State
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
-                        <Select value={formData.state} onValueChange={handleStateChange}>
+                        <Select
+                          value={formData.state}
+                          onValueChange={handleStateChange}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select state" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
                               {states.map((state) => (
-                                <SelectItem key={state.value} value={state.value}>
+                                <SelectItem
+                                  key={state.value}
+                                  value={state.value}>
                                   {state.label}
                                 </SelectItem>
                               ))}
@@ -1982,17 +2366,21 @@ else if (
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="lga" className="text-left text-xs text-gray-600">
-                          LGA<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                        <Label
+                          htmlFor="lga"
+                          className="text-left text-xs text-gray-600">
+                          LGA
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Select
                           value={formData.lga}
                           onValueChange={(value) => {
-                            console.log("Selected LGA:", value) // Debugging step
-                            setFormData({ ...formData, lga: value })
+                            console.log("Selected LGA:", value); // Debugging step
+                            setFormData({ ...formData, lga: value });
                           }}
-                          disabled={!lgas.length}
-                        >
+                          disabled={!lgas.length}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select LGA" />
                           </SelectTrigger>
@@ -2025,209 +2413,306 @@ else if (
                     <div className="space-y-4 mt-4">
                       <div className="flex justify-between items-center">
                         <Label className="text-left text-xs text-gray-600">
-                          Sectors & Trade Areas<span className="text-red-600 ml-[4px] text-[13px]">*</span>
+                          Sectors & Trade Areas
+                          <span className="text-red-600 ml-[4px] text-[13px]">
+                            *
+                          </span>
                         </Label>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={addTradeArea}
-                          className="flex items-center gap-1"
-                        >
+                          className="flex items-center gap-1">
                           <Plus className="h-4 w-4" /> Add Trade Area
                         </Button>
                       </div>
 
                       {formData.legalInfo.tradeAreas.length > 0 ? (
-                        formData.legalInfo.tradeAreas.map((tradeAreaItem, index) => (
-                          <div key={index} className="grid grid-cols-1 gap-4 p-4 border rounded-md relative">
-                            {index > 0 && (
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => removeTradeArea(index)}
-                                className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            )}
+                        formData.legalInfo.tradeAreas.map(
+                          (tradeAreaItem, index) => (
+                            <div
+                              key={index}
+                              className="grid grid-cols-1 gap-4 p-4 border rounded-md relative">
+                              {index > 0 && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => removeTradeArea(index)}
+                                  className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              )}
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label htmlFor={`sector-${index}`} className="text-left text-xs text-gray-600">
-                                  Sector
-                                </Label>
-                                <Select
-                                  value={sectors?.find((sector) => sector._id === tradeAreaItem.sector[0])?.name || ""}
-                                  onValueChange={(value) => handleTradeAreaSectorChange(index, value)}
-                                  disabled={sectorLoading}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select sector" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectGroup>
-                                      {sectors?.map((sector) => (
-                                        <SelectItem key={sector._id} value={sector.name}>
-                                          {sector.name}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectGroup>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-
-                              <div className="space-y-2">
-                                <Label htmlFor={`tradeArea-${index}`} className="text-left text-xs text-gray-600">
-                                  Trade Areas (Select Multiple)
-                                </Label>
-                                <div className="flex flex-col gap-2">
-                                  {/* Display selected trade areas */}
-                                  {tradeAreaItem.tradeArea && tradeAreaItem.tradeArea.length > 0 && (
-                                    <div className="flex flex-wrap gap-2 mb-2">
-                                      {tradeAreaItem.tradeArea.map((taId, taIndex) => {
-                                        const taName = sectors
-                                          ?.find((sector) => sector._id === tradeAreaItem.sector[0])
-                                          ?.tradeAreas?.find((ta) => ta._id === taId)?.name
-
-                                        return taName ? (
-                                          <div
-                                            key={taId}
-                                            className="flex items-center bg-blue-100 px-2 py-1 rounded-md"
-                                          >
-                                            <span className="text-sm">{taName}</span>
-                                            <button
-                                              type="button"
-                                              className="ml-2 text-red-500"
-                                              onClick={() => {
-                                                // Remove this trade area
-                                                const updatedTradeAreas = [...formData.legalInfo.tradeAreas]
-                                                updatedTradeAreas[index] = {
-                                                  ...updatedTradeAreas[index],
-                                                  tradeArea: updatedTradeAreas[index].tradeArea.filter(
-                                                    (id) => id !== taId,
-                                                  ),
-                                                }
-
-                                                setFormData({
-                                                  ...formData,
-                                                  legalInfo: {
-                                                    ...formData.legalInfo,
-                                                    tradeAreas: updatedTradeAreas,
-                                                  },
-                                                })
-                                              }}
-                                            >
-                                              ×
-                                            </button>
-                                          </div>
-                                        ) : null
-                                      })}
-                                    </div>
-                                  )}
-
-                                  {/* Trade area selector */}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label
+                                    htmlFor={`sector-${index}`}
+                                    className="text-left text-xs text-gray-600">
+                                    Sector
+                                  </Label>
                                   <Select
-                                    onValueChange={(value) => handleTradeAreaMultipleChange(index, value)}
-                                    disabled={!tradeAreaItem.sector.length}
-                                  >
+                                    value={
+                                      sectors?.find(
+                                        (sector) =>
+                                          sector._id === tradeAreaItem.sector[0]
+                                      )?.name || ""
+                                    }
+                                    onValueChange={(value) =>
+                                      handleTradeAreaSectorChange(index, value)
+                                    }
+                                    disabled={sectorLoading}>
                                     <SelectTrigger>
-                                      <SelectValue placeholder="Add trade area" />
+                                      <SelectValue placeholder="Select sector" />
                                     </SelectTrigger>
                                     <SelectContent>
                                       <SelectGroup>
-                                        {sectors
-                                          ?.find((sector) => sector._id === tradeAreaItem.sector[0])
-                                          ?.tradeAreas?.filter((ta) => !tradeAreaItem.tradeArea?.includes(ta._id))
-                                          .map((ta) => (
-                                            <SelectItem key={ta._id} value={ta.name}>
-                                              {ta.name}
-                                            </SelectItem>
-                                          ))}
+                                        {sectors?.map((sector) => (
+                                          <SelectItem
+                                            key={sector._id}
+                                            value={sector.name}>
+                                            {sector.name}
+                                          </SelectItem>
+                                        ))}
                                       </SelectGroup>
                                     </SelectContent>
                                   </Select>
                                 </div>
-                              </div>
-                            </div>
 
-                            {/* Additional fields for each trade area */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-                              <div className="space-y-2">
-                                <Label htmlFor={`instructors-${index}`} className="text-left text-xs text-gray-600">
-                                  Instructors
-                                </Label>
-                                <Input
-                                  id={`instructors-${index}`}
-                                  value={tradeAreaItem.instructors}
-                                  onChange={(e) => handleTradeAreaFieldChange(index, "instructors", e.target.value)}
-                                  placeholder="Number of instructors"
-                                  className="w-full"
-                                />
+                                <div className="space-y-2">
+                                  <Label
+                                    htmlFor={`tradeArea-${index}`}
+                                    className="text-left text-xs text-gray-600">
+                                    Trade Areas (Select Multiple)
+                                  </Label>
+                                  <div className="flex flex-col gap-2">
+                                    {/* Display selected trade areas */}
+                                    {tradeAreaItem.tradeArea &&
+                                      tradeAreaItem.tradeArea.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 mb-2">
+                                          {tradeAreaItem.tradeArea.map(
+                                            (taId, taIndex) => {
+                                              const taName = sectors
+                                                ?.find(
+                                                  (sector) =>
+                                                    sector._id ===
+                                                    tradeAreaItem.sector[0]
+                                                )
+                                                ?.tradeAreas?.find(
+                                                  (ta) => ta._id === taId
+                                                )?.name;
+
+                                              return taName ? (
+                                                <div
+                                                  key={taId}
+                                                  className="flex items-center bg-blue-100 px-2 py-1 rounded-md">
+                                                  <span className="text-sm">
+                                                    {taName}
+                                                  </span>
+                                                  <button
+                                                    type="button"
+                                                    className="ml-2 text-red-500"
+                                                    onClick={() => {
+                                                      // Remove this trade area
+                                                      const updatedTradeAreas =
+                                                        [
+                                                          ...formData.legalInfo
+                                                            .tradeAreas,
+                                                        ];
+                                                      updatedTradeAreas[index] =
+                                                        {
+                                                          ...updatedTradeAreas[
+                                                            index
+                                                          ],
+                                                          tradeArea:
+                                                            updatedTradeAreas[
+                                                              index
+                                                            ].tradeArea.filter(
+                                                              (id) =>
+                                                                id !== taId
+                                                            ),
+                                                        };
+
+                                                      setFormData({
+                                                        ...formData,
+                                                        legalInfo: {
+                                                          ...formData.legalInfo,
+                                                          tradeAreas:
+                                                            updatedTradeAreas,
+                                                        },
+                                                      });
+                                                    }}>
+                                                    ×
+                                                  </button>
+                                                </div>
+                                              ) : null;
+                                            }
+                                          )}
+                                        </div>
+                                      )}
+
+                                    {/* Trade area selector */}
+                                    <Select
+                                      onValueChange={(value) =>
+                                        handleTradeAreaMultipleChange(
+                                          index,
+                                          value
+                                        )
+                                      }
+                                      disabled={!tradeAreaItem.sector.length}>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Add trade area" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          {sectors
+                                            ?.find(
+                                              (sector) =>
+                                                sector._id ===
+                                                tradeAreaItem.sector[0]
+                                            )
+                                            ?.tradeAreas?.filter(
+                                              (ta) =>
+                                                !tradeAreaItem.tradeArea?.includes(
+                                                  ta._id
+                                                )
+                                            )
+                                            .map((ta) => (
+                                              <SelectItem
+                                                key={ta._id}
+                                                value={ta.name}>
+                                                {ta.name}
+                                              </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="space-y-2">
-                                <Label htmlFor={`trainees-${index}`} className="text-left text-xs text-gray-600">
-                                  Trainees
-                                </Label>
-                                <Input
-                                  id={`trainees-${index}`}
-                                  value={tradeAreaItem.trainees}
-                                  onChange={(e) => handleTradeAreaFieldChange(index, "trainees", e.target.value)}
-                                  placeholder="Number of trainees"
-                                  className="w-full"
-                                />
+
+                              {/* Additional fields for each trade area */}
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                                <div className="space-y-2">
+                                  <Label
+                                    htmlFor={`instructors-${index}`}
+                                    className="text-left text-xs text-gray-600">
+                                    Instructors
+                                  </Label>
+                                  <Input
+                                    id={`instructors-${index}`}
+                                    value={tradeAreaItem.instructors}
+                                    onChange={(e) =>
+                                      handleTradeAreaFieldChange(
+                                        index,
+                                        "instructors",
+                                        e.target.value
+                                      )
+                                    }
+                                    placeholder="Number of instructors"
+                                    className="w-full"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label
+                                    htmlFor={`trainees-${index}`}
+                                    className="text-left text-xs text-gray-600">
+                                    Trainees
+                                  </Label>
+                                  <Input
+                                    id={`trainees-${index}`}
+                                    value={tradeAreaItem.trainees}
+                                    onChange={(e) =>
+                                      handleTradeAreaFieldChange(
+                                        index,
+                                        "trainees",
+                                        e.target.value
+                                      )
+                                    }
+                                    placeholder="Number of trainees"
+                                    className="w-full"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label
+                                    htmlFor={`facilities-${index}`}
+                                    className="text-left text-xs text-gray-600">
+                                    Facilities
+                                  </Label>
+                                  <Input
+                                    id={`facilities-${index}`}
+                                    value={tradeAreaItem.facilities}
+                                    onChange={(e) =>
+                                      handleTradeAreaFieldChange(
+                                        index,
+                                        "facilities",
+                                        e.target.value
+                                      )
+                                    }
+                                    placeholder="Available facilities"
+                                    className="w-full"
+                                  />
+                                </div>
                               </div>
-                              <div className="space-y-2">
-                                <Label htmlFor={`facilities-${index}`} className="text-left text-xs text-gray-600">
-                                  Facilities
-                                </Label>
-                                <Input
-                                  id={`facilities-${index}`}
-                                  value={tradeAreaItem.facilities}
-                                  onChange={(e) => handleTradeAreaFieldChange(index, "facilities", e.target.value)}
-                                  placeholder="Available facilities"
-                                  className="w-full"
-                                />
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label
+                                    htmlFor={`equipment-${index}`}
+                                    className="text-left text-xs text-gray-600">
+                                    Equipment
+                                  </Label>
+                                  <Input
+                                    id={`equipment-${index}`}
+                                    value={tradeAreaItem.equipment}
+                                    onChange={(e) =>
+                                      handleTradeAreaFieldChange(
+                                        index,
+                                        "equipment",
+                                        e.target.value
+                                      )
+                                    }
+                                    placeholder="Available equipment"
+                                    className="w-full"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label
+                                    htmlFor={`tools-${index}`}
+                                    className="text-left text-xs text-gray-600">
+                                    Tools
+                                  </Label>
+                                  <Input
+                                    id={`tools-${index}`}
+                                    value={tradeAreaItem.tools}
+                                    onChange={(e) =>
+                                      handleTradeAreaFieldChange(
+                                        index,
+                                        "tools",
+                                        e.target.value
+                                      )
+                                    }
+                                    placeholder="Available tools"
+                                    className="w-full"
+                                  />
+                                </div>
                               </div>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label htmlFor={`equipment-${index}`} className="text-left text-xs text-gray-600">
-                                  Equipment
-                                </Label>
-                                <Input
-                                  id={`equipment-${index}`}
-                                  value={tradeAreaItem.equipment}
-                                  onChange={(e) => handleTradeAreaFieldChange(index, "equipment", e.target.value)}
-                                  placeholder="Available equipment"
-                                  className="w-full"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor={`tools-${index}`} className="text-left text-xs text-gray-600">
-                                  Tools
-                                </Label>
-                                <Input
-                                  id={`tools-${index}`}
-                                  value={tradeAreaItem.tools}
-                                  onChange={(e) => handleTradeAreaFieldChange(index, "tools", e.target.value)}
-                                  placeholder="Available tools"
-                                  className="w-full"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        ))
+                          )
+                        )
                       ) : (
                         <div className="text-center py-4 text-gray-500 text-sm italic">
-                          No trade areas added. Click "Add Trade Area" to add sectors and trade areas.
+                          No trade areas added. Click "Add Trade Area" to add
+                          sectors and trade areas.
                         </div>
                       )}
                     </div>
 
                     {/* Password Fields */}
-                    <PasswordFields formData={formData} onChange={handleChange} />
+                    <PasswordFields
+                      formData={formData}
+                      onChange={handleChange}
+                    />
 
                     {/* Submit Button */}
                     <Button type="submit" className="w-full bg-blue-600">
@@ -2247,16 +2732,26 @@ else if (
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 // Input field with label component
-const LabelInput = ({ name, label, type = "text", value, onChange, placeholder, required = false }) => (
+const LabelInput = ({
+  name,
+  label,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  required = false,
+}) => (
   <div className="space-y-2">
     <div className="w-full flex ">
       <div htmlFor={name} className="text-left text-xs text-gray-600">
         {label}
-        {required ? <span className="text-red-600 ml-[4px] text-[13px]">*</span> : undefined}
+        {required ? (
+          <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+        ) : undefined}
       </div>
     </div>
 
@@ -2271,7 +2766,7 @@ const LabelInput = ({ name, label, type = "text", value, onChange, placeholder, 
       className="w-full"
     />
   </div>
-)
+);
 
 // Password fields component
 const PasswordFields = ({ formData, onChange, required }) => (
@@ -2279,8 +2774,10 @@ const PasswordFields = ({ formData, onChange, required }) => (
     <div className="space-y-2">
       <div className="w-full flex">
         <div htmlFor={"password"} className="text-left text-xs text-gray-600">
-          Password
-          {required ? <span className="text-red-600 ml-[4px] text-[13px]">*</span> : undefined}
+          New Password
+          {required ? (
+            <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+          ) : undefined}
         </div>
       </div>
       <Input
@@ -2296,9 +2793,13 @@ const PasswordFields = ({ formData, onChange, required }) => (
     </div>
     <div className="space-y-2">
       <div className="w-full flex">
-        <div htmlFor={"confirmPassword"} className="text-left text-xs text-gray-600">
-          Confirm Password
-          {required ? <span className="text-red-600 ml-[4px] text-[13px]">*</span> : undefined}
+        <div
+          htmlFor={"confirmPassword"}
+          className="text-left text-xs text-gray-600">
+          Confirm New Password
+          {required ? (
+            <span className="text-red-600 ml-[4px] text-[13px]">*</span>
+          ) : undefined}
         </div>
       </div>
       <Input
@@ -2313,6 +2814,4 @@ const PasswordFields = ({ formData, onChange, required }) => (
       />
     </div>
   </div>
-)
-
-
+);

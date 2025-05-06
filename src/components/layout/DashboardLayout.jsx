@@ -389,7 +389,6 @@
 //   </SidebarGroup>
 // )}
 
-
 //           {isLinkAccessible([
 //             "admin",
 //             "superadmin",
@@ -587,7 +586,6 @@
 //     </SidebarProvider>
 //   );
 // }
-
 
 // import { Link, Outlet } from "react-router-dom";
 // import { useState, useEffect } from "react";
@@ -1079,8 +1077,6 @@
 //             className={cn("fill-neutral-200/40 ")}
 //           />
 
-          
-          
 //         </div>
 //         <Outlet /> {/* This will render the nested routes */}
 //       </SidebarInset>
@@ -1088,12 +1084,13 @@
 //   );
 // }
 
-"use client"
+"use client";
 
-import { Link, Outlet, useNavigate } from "react-router-dom"
-import { useState, useEffect, useRef } from "react"
-import { cn } from "../../lib/utils"
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { cn } from "../../lib/utils";
 import {
+  BaggageClaim,
   Bell,
   BookOpen,
   BookUser,
@@ -1110,9 +1107,11 @@ import {
   Star,
   UploadIcon,
   UserCircle,
-} from "lucide-react"
+  ActivityIcon,
+  ShoppingBag,
+} from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -1120,7 +1119,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+} from "@/components/ui/breadcrumb";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1129,8 +1128,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
@@ -1145,110 +1144,110 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
-import logo3 from "../../assets/logo.png"
-import axios from "axios"
-import { DotPattern } from "../ui/dot-pattern"
-import Spinner from "./spinner"
-import { API_BASE_URL } from "@/config/env"
-import useLogout from "@/pages/loginPage/logout"
-import { jwtDecode } from "jwt-decode"
+} from "@/components/ui/sidebar";
+import logo3 from "../../assets/logo.png";
+import axios from "axios";
+import { DotPattern } from "../ui/dot-pattern";
+import Spinner from "./spinner";
+import { API_BASE_URL } from "@/config/env";
+import useLogout from "@/pages/loginPage/logout";
+import { jwtDecode } from "jwt-decode";
 
 // Token expiration check function
 const checkTokenExpiration = (token) => {
-  if (!token) return true
+  if (!token) return true;
 
   try {
-    const decoded = jwtDecode(token)
-    const currentTime = Date.now() / 1000
-    return decoded.exp < currentTime
+    const decoded = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
+    return decoded.exp < currentTime;
   } catch (error) {
-    console.error("Token decode error:", error)
-    return true // Consider invalid if we can't decode
+    console.error("Token decode error:", error);
+    return true; // Consider invalid if we can't decode
   }
-}
+};
 
 export default function DashboardLayout({ href, title }) {
-  const [userData, setUserData] = useState(null)
-  const navigate = useNavigate()
-  const logout = useLogout()
-  const isMounted = useRef(true)
-  const hasDataFetched = useRef(false)
+  const [userData, setUserData] = useState(null);
+  const navigate = useNavigate();
+  const logout = useLogout();
+  const isMounted = useRef(true);
+  const hasDataFetched = useRef(false);
 
   // Fetch user data from API
   useEffect(() => {
     // Set isMounted to true when component mounts
-    isMounted.current = true
+    isMounted.current = true;
 
     // Only fetch data if we haven't already
-    if (hasDataFetched.current) return
+    if (hasDataFetched.current) return;
 
     const fetchUserData = async () => {
       try {
-        const accessToken = localStorage.getItem("accessToken")
-        const userId = localStorage.getItem("userId")
+        const accessToken = localStorage.getItem("accessToken");
+        const userId = localStorage.getItem("userId");
 
         if (!accessToken || !userId) {
-          logout()
-          return
+          logout();
+          return;
         }
 
         // Check token expiration before making the request
         if (checkTokenExpiration(accessToken)) {
-          console.log("Token expired in DashboardLayout")
-          logout()
-          return
+          console.log("Token expired in DashboardLayout");
+          logout();
+          return;
         }
 
         const response = await axios.get(`${API_BASE_URL}/users/${userId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        })
+        });
 
         if (isMounted.current && response.data.success) {
-          setUserData(response.data.data)
-          hasDataFetched.current = true
+          setUserData(response.data.data);
+          hasDataFetched.current = true;
         }
       } catch (error) {
-        console.error("Error fetching user data:", error)
+        console.error("Error fetching user data:", error);
 
         // Check if error is due to token expiration (401 Unauthorized)
         if (error.response && error.response.status === 401) {
-          console.log("401 Unauthorized in DashboardLayout - logging out")
-          logout()
+          console.log("401 Unauthorized in DashboardLayout - logging out");
+          logout();
         }
       }
-    }
+    };
 
-    fetchUserData()
+    fetchUserData();
 
     // Cleanup function
     return () => {
-      isMounted.current = false
-    }
-  }, []) // Empty dependency array to run only once
+      isMounted.current = false;
+    };
+  }, []); // Empty dependency array to run only once
 
   const handleLogout = () => {
-    logout()
-  }
+    logout();
+  };
 
   if (!userData) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spinner />
       </div>
-    )
+    );
   }
 
   // Role-based filtering function
   const isLinkAccessible = (allowedRoles) => {
     if (!userData || !userData.role) {
-      console.error("User data or role is missing:", userData)
-      return false
+      console.error("User data or role is missing:", userData);
+      return false;
     }
-    return allowedRoles.includes(userData.role)
-  }
+    return allowedRoles.includes(userData.role);
+  };
 
   return (
     <SidebarProvider>
@@ -1260,17 +1259,24 @@ export default function DashboardLayout({ href, title }) {
                 <Link
                   to="/login"
                   onClick={(e) => {
-                    e.preventDefault()
-                    navigate("/login")
+                    e.preventDefault();
+                    navigate("/login");
                   }}
-                  className="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-100 transition"
-                >
+                  className="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-100 transition">
                   <div className="flex aspect-square bg-white size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <img src={logo3 || "/placeholder.svg"} alt="Logo 1" className="size-8" />
+                    <img
+                      src={logo3 || "/placeholder.svg"}
+                      alt="Logo 1"
+                      className="size-8"
+                    />
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate text-emerald-800 text-xl font-semibold">ITF SUPA</span>
-                    <span className="truncate text-red-700 text-xs">Skill-Up Artisan</span>
+                    <span className="truncate text-emerald-800 text-xl font-semibold">
+                      ITF SUPA
+                    </span>
+                    <span className="truncate text-red-700 text-xs">
+                      Skill-Up Artisan
+                    </span>
                   </div>
                 </Link>
               </SidebarMenuButton>
@@ -1331,7 +1337,9 @@ export default function DashboardLayout({ href, title }) {
 
               {/* Center Group */}
               <SidebarGroup>
-                <SidebarGroupLabel>Trainee | Centre Management</SidebarGroupLabel>
+                <SidebarGroupLabel>
+                  Trainee | Centre Management
+                </SidebarGroupLabel>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
@@ -1413,7 +1421,12 @@ export default function DashboardLayout({ href, title }) {
             </SidebarGroup>
           )}
 
-          {isLinkAccessible(["admin", "superadmin", "artisan_user", "intending_artisan"]) ? (
+          {isLinkAccessible([
+            "admin",
+            "superadmin",
+            "artisan_user",
+            "intending_artisan",
+          ]) ? (
             <SidebarGroup className="group-data-[collapsible=icon]:hidden">
               <SidebarGroupLabel>Artisans</SidebarGroupLabel>
               <SidebarMenu>
@@ -1425,6 +1438,24 @@ export default function DashboardLayout({ href, title }) {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
+
+                {isLinkAccessible(["artisan_user"]) && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/trainee/job-requests">
+                        <ShoppingBag />
+                        <span>Job Requests</span>
+                      </Link>
+                    </SidebarMenuButton>
+
+                    <SidebarMenuButton asChild>
+                      <Link to="/trainee/job-portfolio">
+                        <ShoppingBag />
+                        <span>Job Portfolio</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
 
                 {/* Only render this SidebarMenuItem if the user is not an intending_artisan */}
                 {isLinkAccessible(["admin", "superadmin", "artisan_user"]) && (
@@ -1465,7 +1496,12 @@ export default function DashboardLayout({ href, title }) {
             </SidebarGroup>
           ) : null}
 
-          {isLinkAccessible(["admin", "superadmin", "artisan_user", "intending_artisan"]) ? (
+          {isLinkAccessible([
+            "admin",
+            "superadmin",
+            "artisan_user",
+            "intending_artisan",
+          ]) ? (
             <SidebarGroup className="mt-auto">
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -1496,13 +1532,20 @@ export default function DashboardLayout({ href, title }) {
             <SidebarMenuItem>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="bg-red-600 ">
-                  <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent  bg-green-50 rounded-lg">
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent  bg-green-50 rounded-lg">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={userData.profileImage} alt={userData.firstName} />
+                      <AvatarImage
+                        src={userData.profileImage}
+                        alt={userData.firstName}
+                      />
                       <AvatarFallback>{userData.firstName}</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">{userData.firstName}</span>
+                      <span className="truncate font-semibold">
+                        {userData.firstName}
+                      </span>
                       <span className="truncate text-xs">{userData.email}</span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4" />
@@ -1512,25 +1555,36 @@ export default function DashboardLayout({ href, title }) {
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                       <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage src={userData.profileImage} alt={userData.firstName} />
+                        <AvatarImage
+                          src={userData.profileImage}
+                          alt={userData.firstName}
+                        />
                         <AvatarFallback>{userData.firstName}</AvatarFallback>
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">{userData.firstName}</span>
-                        <span className="truncate text-xs">{userData.email}</span>
+                        <span className="truncate font-semibold">
+                          {userData.firstName}
+                        </span>
+                        <span className="truncate text-xs">
+                          {userData.email}
+                        </span>
                       </div>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem variant="outline" onClick={() => navigate("/biodata")}>
+                    <DropdownMenuItem
+                      variant="outline"
+                      onClick={() => navigate("/biodata")}>
                       <UserCircle />
                       Account
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem variant="outline" onClick={() => navigate("#")}>
+                    <DropdownMenuItem
+                      variant="outline"
+                      onClick={() => navigate("#")}>
                       <Bell />
                       Notifications
                     </DropdownMenuItem>
@@ -1566,14 +1620,20 @@ export default function DashboardLayout({ href, title }) {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <DotPattern width={20} height={20} cx={1} cy={1} cr={1} className={cn("fill-neutral-200/40 ")} />
+          <DotPattern
+            width={20}
+            height={20}
+            cx={1}
+            cy={1}
+            cr={1}
+            className={cn("fill-neutral-200/40 ")}
+          />
           <Outlet /> {/* This will render the nested routes */}
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
-
 
 // import { Link, Outlet } from "react-router-dom";
 // import { useState, useEffect } from "react";
@@ -2081,12 +2141,6 @@ export default function DashboardLayout({ href, title }) {
 //     </SidebarProvider>
 //   );
 // }
-
-
-
-
-
-
 
 // import { Link, Outlet } from "react-router-dom";
 // import { useState, useEffect } from "react";

@@ -79,114 +79,114 @@ const ArtisanDashboard = ({
   return (
     <ProtectedRoute href="/trainee/dashboard">
       {/* <DashboardPage title="Trainee Dashboard"> */}
-        <div className="container mx-auto p-6">
-          <header className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold"> Dashboard </h1>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate("/biodata")}>
-                <UserCircle className="mr-2 h-4 w-4" /> Update Profile
-              </Button>
+      <div className="container mx-auto p-6">
+        <header className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold"> Dashboard </h1>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => navigate("/biodata")}>
+              <UserCircle className="mr-2 h-4 w-4" /> Update Profile
+            </Button>
 
-              <Button variant="destructive" onClick={logout}>
-                <LogOut className="mr-2 h-4 w-4" /> Logout
-              </Button>
-            </div>
-          </header>
+            <Button variant="destructive" onClick={logout}>
+              <LogOut className="mr-2 h-4 w-4" /> Logout
+            </Button>
+          </div>
+        </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="border-2 border-green-400 p-4 rounded-lg shadow-md">
-              <CardHeader>
-                <CardTitle>Profile</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col items-center">
-                <Avatar className="h-24 w-24 mb-4">
-                  <AvatarImage
-                    src={userData?.profileImage}
-                    alt={userData?.firstName}
-                  />
-                  <AvatarFallback>{userData.firstName}</AvatarFallback>
-                  {/* {artisan.name.split(' ').map(n => n[0]).join('')}  */}
-                </Avatar>
-                <h2 className="text-2xl font-semibold">{userData.firstName}</h2>
-                <div className="flex flex-col text-sm gap-4 items-center">
-                  <Badge className="mt-2">
-                    {userData.priorSkillsCerts[0]?.sector}
-                  </Badge>
-                  <div className="text-md text-emerald-800 mb-2">
-                    Trade Area: {userData.priorSkillsCerts[0]?.tradeArea}
-                  </div>
-                </div>
-
-                <div className="flex flex-row items-center font-semibold mt-2">
-                  <Star className="h-5 w-5  text-yellow-400 mr-1" />
-                  <span> {" " + role}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-yellow-400 p-4 rounded-lg shadow-md">
-              <CardHeader>
-                <CardTitle>Licensing | Certification</CardTitle>
-              </CardHeader>
-              <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="border-2 border-green-400 p-4 rounded-lg shadow-md">
+            <CardHeader>
+              <CardTitle>Profile</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center">
+              <Avatar className="h-24 w-24 mb-4">
+                <AvatarImage
+                  src={userData?.profileImage}
+                  alt={userData?.firstName}
+                />
+                <AvatarFallback>{userData.firstName}</AvatarFallback>
+                {/* {artisan.name.split(' ').map(n => n[0]).join('')}  */}
+              </Avatar>
+              <h2 className="text-2xl font-semibold">{userData.firstName}</h2>
+              <div className="flex flex-col text-sm gap-4 items-center">
+                <Badge className="mt-2">
+                  {userData.priorSkillsCerts[0]?.sector}
+                </Badge>
                 <div className="text-md text-emerald-800 mb-2">
-                  Cirtification Status:
+                  Trade Area: {userData.priorSkillsCerts[0]?.tradeArea}
                 </div>
-                {userData.certifiedStatus === false ? (
-                  <Badge variant="destructive">Not Certified</Badge>
-                ) : userData.certifiedStatus === true ? (
-                  <Badge variant="success" className="bg-green-400 text-white">
-                    Certified
-                  </Badge>
-                ) : null}
-                <div className="text-md text-red-600 mb-2 mt-5">
-                  License Status:
-                </div>
-                {userData.licenseStatus === false ? (
-                  <Badge variant="destructive">Not Licensed</Badge>
-                ) : userData.licenseStatus === true ? (
-                  <Badge variant="success" className="bg-green-400 text-white">
-                    Licensed
-                  </Badge>
-                ) : null}
-                {userData.role !== "artisan_user" ||
-                  ("admin" && (
-                    <div className="mt-4">
-                      {userData.certifiedStatus === false ||
-                      userData.licenseStatus === false ? (
-                        <Button
-                          className="w-full"
-                          onClick={() => navigate("/certification/upload")}>
-                          {userData.certifiedStatus === false
-                            ? "Get Certified"
-                            : "Get Licensed"}
-                        </Button>
-                      ) : null}
-                    </div>
-                  ))}
-              </CardContent>
-            </Card>
+              </div>
 
-            <Calendar />
-          </div>
+              <div className="flex flex-row items-center font-semibold mt-2">
+                <Star className="h-5 w-5  text-yellow-400 mr-1" />
+                <span> {" " + role}</span>
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className="mt-6">
-            <Card className="border-2 border-red-400 p-4 rounded-lg shadow-md">
-              <CardHeader>
-                {userRole === "intending_artisan" && (
-                  <CardTitle> Assigned Training Center</CardTitle>
-                )}{" "}
-                {userRole === "artisan_user" && (
-                  <CardTitle> Assigned Skill-UP Training Center</CardTitle>
-                )}
-              </CardHeader>
-              <CardContent>
-                <UserGroupDetails />
-                <ArtisanTrainingManagement />
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="border-2 border-yellow-400 p-4 rounded-lg shadow-md">
+            <CardHeader>
+              <CardTitle>Licensing | Certification</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-md text-emerald-800 mb-2">
+                Cirtification Status:
+              </div>
+              {userData.certifiedStatus === false ? (
+                <Badge variant="destructive">Not Certified</Badge>
+              ) : userData.certifiedStatus === true ? (
+                <Badge variant="success" className="bg-green-400 text-white">
+                  Certified
+                </Badge>
+              ) : null}
+              <div className="text-md text-red-600 mb-2 mt-5">
+                License Status:
+              </div>
+              {userData.licenseStatus === false ? (
+                <Badge variant="destructive">Not Licensed</Badge>
+              ) : userData.licenseStatus === true ? (
+                <Badge variant="success" className="bg-green-400 text-white">
+                  Licensed
+                </Badge>
+              ) : null}
+              {userData.role !== "artisan_user" ||
+                ("admin" && (
+                  <div className="mt-4">
+                    {userData.certifiedStatus === false ||
+                    userData.licenseStatus === false ? (
+                      <Button
+                        className="w-full"
+                        onClick={() => navigate("/certification/upload")}>
+                        {userData.certifiedStatus === false
+                          ? "Get Certified"
+                          : "Get Licensed"}
+                      </Button>
+                    ) : null}
+                  </div>
+                ))}
+            </CardContent>
+          </Card>
+
+          <Calendar />
         </div>
+
+        <div className="mt-6">
+          <Card className="border-2 border-red-400 p-4 rounded-lg shadow-md">
+            <CardHeader>
+              {userRole === "intending_artisan" && (
+                <CardTitle> Assigned Training Center</CardTitle>
+              )}{" "}
+              {userRole === "artisan_user" && (
+                <CardTitle> Assigned Skill-UP Training Center</CardTitle>
+              )}
+            </CardHeader>
+            <CardContent>
+              <UserGroupDetails />
+              <ArtisanTrainingManagement />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
       {/* </DashboardPage> */}
     </ProtectedRoute>
   );

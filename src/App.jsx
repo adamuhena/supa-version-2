@@ -116,7 +116,6 @@
 
 //           {/* </DocumentProvider> */}
 
-
 //           {/* Public route for login */}
 //           <Route
 //             path="/login"
@@ -345,7 +344,6 @@
 
 // export default App;
 
-
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
@@ -357,6 +355,10 @@ import ArtisanForm from "./pages/forms/artisan/index";
 import IntendingArtisanForm from "./pages/forms/intendinArtisan/index";
 import TrainingCenterForm from "./pages/forms/registrationCenter/index";
 import ArtisanDashboard from "./pages/dashboard/artisan/ArtisanDashboard";
+import ArtisanJobRequestDashboard from "./pages/dashboard/artisan/ArtisanJobRequestDashboard";
+
+import ArtisanJobPortfolioDashboard from "./pages/dashboard/artisan/ArtisanJobPortfolioDashboard";
+
 import PublicRoute from "./components/PublicRoute";
 import DocumentUpload from "./pages/dashboard/artisan/DocumentUpload";
 import Biodata from "./pages/dashboard/BiodataPage";
@@ -412,51 +414,266 @@ function App() {
           <Route path="/doc" element={<DocPreview />} />
           <Route path="/beneficiaries" element={<PDFPreviewPage2 />} />
           <Route path="/marketplace" element={<ComingSoon />} />
-          <Route path="/login" element={<PublicRoute><LoginForm /></PublicRoute>} />
-          <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <LoginForm />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <PublicRoute>
+                <ForgotPassword />
+              </PublicRoute>
+            }
+          />
           <Route path="/signUp" element={<SignupForm />} />
           <Route path="/register" element={<Register />} />
           <Route path="/not-authorized" element={<NotAuthorized />} />
 
           {/* Training Centre Routes */}
-          <Route path="training-center/biodata" element={<ProtectedRoute allowedRoles={["training_center"]}><TrainingCenterBiodata /></ProtectedRoute>} />
-          <Route path="register/artisan" element={<ProtectedRoute allowedRoles={["artisan_user"]}><ArtisanForm /></ProtectedRoute>} />
-          <Route path="register/intendingArtisan" element={<ProtectedRoute allowedRoles={["intending_artisan"]}><IntendingArtisanForm /></ProtectedRoute>} />
-          <Route path="register/trainingcenter" element={<ProtectedRoute allowedRoles={["training_center"]}><TrainingCenterForm /></ProtectedRoute>} />
-         
-          <Route path="training-center/groups" element={<ProtectedRoute allowedRoles={["admin", "superadmin", "training_center"]}><TrainingStatus /></ProtectedRoute>} />
-          <Route path="trainingcenter/dashboard" element={<ProtectedRoute allowedRoles={["training_center"]}><TrainingCenterDashboard /></ProtectedRoute>} />
+          <Route
+            path="training-center/biodata"
+            element={
+              <ProtectedRoute allowedRoles={["training_center"]}>
+                <TrainingCenterBiodata />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="register/artisan"
+            element={
+              <ProtectedRoute allowedRoles={["artisan_user"]}>
+                <ArtisanForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="register/intendingArtisan"
+            element={
+              <ProtectedRoute allowedRoles={["intending_artisan"]}>
+                <IntendingArtisanForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="register/trainingcenter"
+            element={
+              <ProtectedRoute allowedRoles={["training_center"]}>
+                <TrainingCenterForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="training-center/groups"
+            element={
+              <ProtectedRoute
+                allowedRoles={["admin", "superadmin", "training_center"]}>
+                <TrainingStatus />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="trainingcenter/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["training_center"]}>
+                <TrainingCenterDashboard />
+              </ProtectedRoute>
+            }
+          />
           {/* Protected Routes */}
           <Route path="/" element={<DashboardLayout />}>
             {/* Admin and Superadmin Routes */}
-            <Route path="admin/dashboard" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminDashboard /></ProtectedRoute>} />
-            <Route path="admin/usermanagement" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><UserManagement /></ProtectedRoute>} />
-            <Route path="admin/sectors" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminSectors /></ProtectedRoute>} />
-            <Route path="admin/certification" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><UserCert /></ProtectedRoute>} />
-            <Route path="admin/training-status" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><TrainingManagement /></ProtectedRoute>} />
-            <Route path="admin/dashboard/reports" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminDashboardReports /></ProtectedRoute>} />
-            <Route path="admin/trainingcenter/reports" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><TrainingCenterReport /></ProtectedRoute>} />
-            <Route path="document/verification" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminDocumentVerification /></ProtectedRoute>} />
-            <Route path="training/groups" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><TrainingGroupDetails /></ProtectedRoute>} />
-            <Route path="training-center/status" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><TrainingManagement /></ProtectedRoute>} />
-            <Route path="biodata" element={<ProtectedRoute allowedRoles={["admin", "superadmin", "artisan_user", "intending_artisan"]}><Biodata /></ProtectedRoute>} />
+            <Route
+              path="admin/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/usermanagement"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+                  <UserManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/sectors"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+                  <AdminSectors />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/certification"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+                  <UserCert />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/training-status"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+                  <TrainingManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/dashboard/reports"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+                  <AdminDashboardReports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/trainingcenter/reports"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+                  <TrainingCenterReport />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="document/verification"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+                  <AdminDocumentVerification />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="training/groups"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+                  <TrainingGroupDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="training-center/status"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "superadmin"]}>
+                  <TrainingManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="biodata"
+              element={
+                <ProtectedRoute
+                  allowedRoles={[
+                    "admin",
+                    "superadmin",
+                    "artisan_user",
+                    "intending_artisan",
+                  ]}>
+                  <Biodata />
+                </ProtectedRoute>
+              }
+            />
             {/* Training Center Routes */}
-            
-            
-            
-            <Route path="training-center" element={<ProtectedRoute allowedRoles={["training_center"]}><TrainingCenterDashboard /></ProtectedRoute>} />
-            <Route path="training-center-management" element={<ProtectedRoute allowedRoles={["admin", "superadmin", "training_center"]}><TrainingCenterManagement /></ProtectedRoute>} />
+
+            <Route
+              path="training-center"
+              element={
+                <ProtectedRoute allowedRoles={["training_center"]}>
+                  <TrainingCenterDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="training-center-management"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin", "superadmin", "training_center"]}>
+                  <TrainingCenterManagement />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Artisan and Intending Artisan Routes */}
-            <Route path="trainee/dashboard" element={<ProtectedRoute allowedRoles={["artisan_user", "intending_artisan"]}><ArtisanDashboard /></ProtectedRoute>} />
-            
-            <Route path="certification/upload" element={<ProtectedRoute allowedRoles={["admin", "superadmin", "artisan_user"]}><DocumentUpload /></ProtectedRoute>} />
+            <Route
+              path="trainee/dashboard"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["artisan_user", "intending_artisan"]}>
+                  <ArtisanDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="trainee/job-requests"
+              element={
+                <ProtectedRoute allowedRoles={["artisan_user"]}>
+                  <ArtisanJobRequestDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="trainee/job-portfolio"
+              element={
+                <ProtectedRoute allowedRoles={["artisan_user"]}>
+                  <ArtisanJobPortfolioDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="certification/upload"
+              element={
+                <ProtectedRoute
+                  allowedRoles={["admin", "superadmin", "artisan_user"]}>
+                  <DocumentUpload />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Document Management Routes */}
-            <Route path="documents" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="documents/create" element={<ProtectedRoute><CreateDocument /></ProtectedRoute>} />
-            <Route path="documents/edit/:id" element={<ProtectedRoute><EditDocument /></ProtectedRoute>} />
-            <Route path="documents/preview/:_id" element={<ProtectedRoute><DocumentPreview /></ProtectedRoute>} />
+            <Route
+              path="documents"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="documents/create"
+              element={
+                <ProtectedRoute>
+                  <CreateDocument />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="documents/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <EditDocument />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="documents/preview/:_id"
+              element={
+                <ProtectedRoute>
+                  <DocumentPreview />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Miscellaneous Routes */}
             <Route path="test" element={<TestPage />} />
