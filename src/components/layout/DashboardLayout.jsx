@@ -1094,6 +1094,7 @@ import {
   Bell,
   BookOpen,
   BookUser,
+  Building,
   ChevronsUpDown,
   FolderKanban,
   Frame,
@@ -1306,15 +1307,23 @@ export default function DashboardLayout({ href, title }) {
               <SidebarGroup>
                 <SidebarGroupLabel>User Setup</SidebarGroupLabel>
                 <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/admin/usermanagement">
-                        <BookUser />
-                        <span>User Management</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
+                {isLinkAccessible(["superadmin"]) && (
+                  <><SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <Link to="/admin/usermanagement">
+                          <BookUser />
+                          <span>User Management</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem><SidebarMenuItem>
+                        <SidebarMenuButton asChild>
+                          <Link to="/admin/training-centersmgt">
+                            <Building />
+                            <span>Training Centers</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem></>
+                      )}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/admin/sectors">

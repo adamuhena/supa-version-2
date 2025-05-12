@@ -249,6 +249,7 @@ const nigeria = [
       'Onitsha-South',
       'Orumba-North',
       'Orumba-South',
+      'Oyi',
     ],
     name: 'Anambra',
     senatorialDistricts: ['Anambra North', 'Anambra Central', 'Anambra South']
@@ -349,6 +350,7 @@ const nigeria = [
       'Kwande',
       'Logo',
       'Makurdi',
+      'Obi',
       'Ogbadibo',
       'Ohimini',
       'Oju',

@@ -574,14 +574,64 @@ export default function SignupForm() {
       (!formData.priorSkillsCerts[0].sector ||
         !formData.priorSkillsCerts[0].tradeAreas)
     ) {
-      errorMsg = "Sector and Trade Area are required!";
-    } else if (
-      signupAs === "training_center" &&
-      (formData.legalInfo.tradeAreas.length === 0 ||
-        !formData.legalInfo.tradeAreas[0].sector ||
-        formData.legalInfo.tradeAreas[0].sector.length === 0)
-    ) {
-      errorMsg = "At least one Sector and Trade Area is required!";
+      errorMsg = "Sector and Trade Area are required!"
+    } 
+    
+    // else if (
+    //   signupAs === "training_center" &&
+    //   (formData.legalInfo.tradeAreas.length === 0 ||
+    //     !formData.legalInfo.tradeAreas[0].sector ||
+    //     formData.legalInfo.tradeAreas[0].sector.length === 0)
+    // ) {
+    //   errorMsg = "At least one Sector and Trade Area is required!"
+    // }
+
+    // Validate trade areas for training center
+    else if (signupAs === "training_center") {
+      if (formData.legalInfo.tradeAreas.length === 0) {
+        toast.error("Please add at least one trade area");
+        return;
+      }
+
+      // Validate each trade area
+      for (let i = 0; i < formData.legalInfo.tradeAreas.length; i++) {
+        const tradeArea = formData.legalInfo.tradeAreas[i];
+        
+        if (!tradeArea.sector || tradeArea.sector.length === 0) {
+          toast.error(`Please select a sector for trade area ${i + 1}`);
+          return;
+        }
+        
+        if (!tradeArea.tradeArea || tradeArea.tradeArea.length === 0) {
+          toast.error(`Please select at least one trade area for sector ${i + 1}`);
+          return;
+        }
+        
+        if (!tradeArea.instructors) {
+          toast.error(`Please enter number of instructors for trade area ${i + 1}`);
+          return;
+        }
+        
+        if (!tradeArea.trainees) {
+          toast.error(`Please enter number of trainees for trade area ${i + 1}`);
+          return;
+        }
+        
+        if (!tradeArea.facilities) {
+          toast.error(`Please enter facilities for trade area ${i + 1}`);
+          return;
+        }
+        
+        if (!tradeArea.equipment) {
+          toast.error(`Please enter equipment for trade area ${i + 1}`);
+          return;
+        }
+        
+        if (!tradeArea.tools) {
+          toast.error(`Please enter tools for trade area ${i + 1}`);
+          return;
+        }
+      }
     }
 
     if (errorMsg) {

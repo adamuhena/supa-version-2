@@ -1,4 +1,3 @@
-"use client"
 
 import { useEffect, useState } from "react"
 import axios from "axios"
@@ -99,10 +98,7 @@ const UserManagement = () => {
   const [loadingCSV, setLoadingCSV] = useState(false)
   const [csvData, setcsvData] = useState([])
   const [isEditing, setIsEditing] = useState(false)
-
-  const [verificationChanges, setVerificationChanges] = useState({});
-  const [isVerificationUpdating, setIsVerificationUpdating] = useState(false);
-
+  
 
   // Add these state variables inside the UserManagement component, after the other state declarations
   const [selectedBank, setSelectedBank] = useState("")
@@ -134,15 +130,13 @@ const UserManagement = () => {
     lgaOfResidence: "",
     senatorialDistrict: "",
     stateOfOrigin: "",
-    lgaOfOrigin: "", // Add this
-    role: "",
+    lgaOfOrigin: "",
     sector: "",
     tradeArea: "",
-    hasDisability: "all",
-    disabilityType: "all",
+    role: "",
     fromDate: "",
     toDate: "",
-    sort: "-createdAt"
+    sort: "-createdAt",
   }
   const [filter, setFilter] = useState({
     ...defaultData,
@@ -157,82 +151,26 @@ const UserManagement = () => {
   }, [])
 
   // Fix the handleFilterChange function to use correct field names
-  // const handleFilterChange = (key, value) => {
-  //   // If the value is "all", set it to an empty string in the filter
-  //   const filterValue = value === "all" ? "" : value;
-  //   // setFilter((x) => ({ ...x, [key]: filterValue }))
-  //   setFilter((prev) => {
-  //     const newFilter = { ...prev, [key]: filterValue };
-      
-  //     // Reset disabilityType when hasDisability changes
-  //     if (key === "hasDisability" && filterValue !== "true") {
-  //       newFilter.disabilityType = "all";
-  //     }
-      
-  //     return newFilter;
-  //   });
-
-  //   // If changing stateOfResidence, reset LGA and senatorial district
-  //   if (key === "stateOfResidence") {
-  //     setFilter((x) => ({ ...x, lgaOfResidence: "", senatorialDistrict: "" }))
-  //   }
-
-  //   // If changing stateOfOrigin, reset lgaOfOrigin
-  //   if (key === "stateOfOrigin") {
-  //     setFilter((x) => ({ ...x, lgaOfOrigin: "" }))
-  //   }
-
-  //   // If changing sector, reset trade area
-  //   if (key === "sector") {
-  //     setFilter((x) => ({ ...x, tradeArea: "" }))
-  //   }
-  // }
-
   const handleFilterChange = (key, value) => {
-    setFilter(prev => {
-      const newFilter = { ...prev };
-      
-      // Handle "all" value
-      const filterValue = value === "all" ? "" : value;
-      
-      // Handle special cases
-      switch (key) {
-        case "stateOfResidence":
-          newFilter.stateOfResidence = filterValue;
-          newFilter.lgaOfResidence = ""; // Reset dependent field
-          newFilter.senatorialDistrict = ""; // Reset dependent field
-          break;
-          
-        case "stateOfOrigin":
-          newFilter.stateOfOrigin = filterValue;
-          newFilter.lgaOfOrigin = ""; // Reset dependent field
-          break;
-          
-        case "hasDisability":
-          newFilter.hasDisability = filterValue;
-          if (filterValue !== "true") {
-            newFilter.disabilityType = ""; // Reset dependent field
-          }
-          break;
-          
-        case "sector":
-          newFilter.sector = filterValue;
-          newFilter.tradeArea = ""; // Reset dependent field
-          break;
-          
-        default:
-          newFilter[key] = filterValue;
-      }
-      
-      // Reset to first page when filter changes
-      newFilter.currentPage = 1
-      
-      // Debug log
-      console.log('Updated filter:', newFilter)
-      
-      return newFilter;
-    });
-  };
+    // If the value is "all", set it to an empty string in the filter
+    const filterValue = value === "all" ? "" : value
+    setFilter((x) => ({ ...x, [key]: filterValue }))
+
+    // If changing stateOfResidence, reset LGA and senatorial district
+    if (key === "stateOfResidence") {
+      setFilter((x) => ({ ...x, lgaOfResidence: "", senatorialDistrict: "" }))
+    }
+
+    // If changing stateOfOrigin, reset lgaOfOrigin
+    if (key === "stateOfOrigin") {
+      setFilter((x) => ({ ...x, lgaOfOrigin: "" }))
+    }
+
+    // If changing sector, reset trade area
+    if (key === "sector") {
+      setFilter((x) => ({ ...x, tradeArea: "" }))
+    }
+  }
 
   const currentPage = filter?.currentPage
 
@@ -270,90 +208,106 @@ const UserManagement = () => {
     if (!Array.isArray(users) || users.length === 0) {
       return []
     }
-  
-    // Define headers first
-    const headers = [
-      "S/N",
-      "Full Name",
-      "Email",
-      "Phone Number",
-      "Role",
-      "Verification Status",
-      "State of Residence",
-      "LGA of Residence",
-      "Senatorial District",
-      "Sectors",
-      "Trade Areas",
-      "Has Disability",
-      "Disability Type",
-      "Registration Date"
-    ]
-  
-    // Map users to rows
-    const rows = users.map((user, index) => {
-      // Extract sector and trade area information
-      const sectors = user.priorSkillsCerts
-        ? user.priorSkillsCerts
-            .map((cert) => cert.sector)
-            .filter(Boolean)
-            .join(", ")
-        : ""
-      
-      const tradeAreas = user.priorSkillsCerts
-        ? user.priorSkillsCerts
-            .map((cert) => cert.tradeArea)
-            .flat()
-            .filter(Boolean)
-            .join(", ")
-        : ""
-  
-      return [
-        index + 1,
-        `${user?.firstName || ""} ${user?.lastName || ""}`,
-        user?.email || "",
-        user?.phoneNumber || "",
-        user?.role || "",
-        user?.currentVerificationStatus || "pending",
-        user?.stateOfResidence || "",
-        user?.lgaOfResidence || "",
-        user?.senatorialDistrict || "",
-        sectors,
-        tradeAreas,
-        user?.hasDisability ? "Yes" : "No",
-        user?.hasDisability ? (user?.disabilityType || "Not specified") : "N/A",
-        user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : ""
-      ]
-    })
-  
+
+    const headerMapping = {
+      sn: "S/N",
+      fullName: "Full Name",
+      email: "Email",
+      phoneNumber: "Phone Number",
+      role: "Role",
+      verificationStatus: "Verification Status",
+      stateOfResidence: "State of Residence",
+      lgaOfResidence: "LGA of Residence",
+      senatorialDistrict: "Senatorial District",
+      sectors: "Sectors",
+      tradeAreas: "Trade Areas",
+      createdAt: "Registration Date",
+    }
+
+    const headers = Object.keys(users[0]).map((key) => headerMapping[key] || key)
+    const rows = users.map((user) => Object.keys(user).map((key) => user[key]))
+
+    // const rows = users.map((user) => ({
+    //   ...user,
+    //   verificationStatus: user.currentVerificationStatus || "pending",
+
     return [headers, ...rows]
   }
-  
+
   const downloadCSV = async () => {
     setLoadingCSV(true)
     try {
       const accessToken = localStorage.getItem("accessToken")
+
+      // Prepare filter parameters
       const params = {
         limit: MAX_CSV_ROWS,
         page: 1,
-        ...filter
       }
-  
+
+      // Add search parameter if it exists
+      if (filter?.search) params.search = filter.search
+
+      // Add other filter parameters if they exist and are not empty
+      if (filter?.stateOfResidence) params.stateOfResidence = filter.stateOfResidence
+      if (filter?.lgaOfResidence) params.lgaOfResidence = filter.lgaOfResidence
+      if (filter?.senatorialDistrict) params.senatorialDistrict = filter.senatorialDistrict
+      if (filter?.stateOfOrigin) params.stateOfOrigin = filter.stateOfOrigin
+      if (filter?.lgaOfOrigin) params.lga = filter.lgaOfOrigin // Note: The backend expects 'lga' for lgaOfOrigin
+      if (filter?.sector) params.sector = filter.sector
+      if (filter?.tradeArea) params.tradeArea = filter.tradeArea
+      if (filter?.role) params.role = filter.role
+      if (filter?.fromDate) params.fromDate = filter.fromDate
+      if (filter?.toDate) params.toDate = filter.toDate
+      if (filter?.sort) params.sort = filter.sort
+
       const response = await axios.get(`${API_BASE_URL}/userscert`, {
         params,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-  
-      if (response.data?.success && response.data?.data?.users) {
-        const formatted = formatUserToCSV(response.data.data.users)
-        setcsvData(formatted)
-        toast.success("CSV data generated successfully!")
-      } else {
-        throw new Error("Failed to fetch user data")
-      }
+
+      const { data } = response.data
+      const formatted = formatUserToCSV(
+        (data?.users || []).map((x, i) => {
+          // Extract sector and trade area information
+          const sectors = x.priorSkillsCerts
+            ? x.priorSkillsCerts
+                .map((cert) => cert.sector)
+                .filter(Boolean)
+                .join(", ")
+            : ""
+          const tradeAreas = x.priorSkillsCerts
+            ? x.priorSkillsCerts
+                .map((cert) => cert.tradeArea)
+                .filter(Boolean)
+                .join(", ")
+            : ""
+
+          return {
+            sn: i + 1,
+            fullName: `${x?.firstName || ""} ${x?.lastName || ""}`,
+            email: x?.email || "",
+            phoneNumber: x?.phoneNumber || "",
+            role: x?.role || "",
+            verificationStatus: x?.currentVerificationStatus || "pending",
+            stateOfResidence: x?.stateOfResidence || "",
+            lgaOfResidence: x?.lgaOfResidence || "",
+            senatorialDistrict: x?.senatorialDistrict || "",
+            sectors: sectors,
+            tradeAreas: tradeAreas,
+            createdAt: x?.createdAt ? new Date(x.createdAt).toLocaleDateString() : "",
+          }
+        }),
+      )
+      setcsvData(formatted)
+
+      toast.success(
+        "CSV data has been generated with the filter options applied. Kindly click the 'Download CSV' button to download!",
+      )
     } catch (error) {
-      console.error("Error generating CSV:", error)
+      console.error("Error fetching users:", error)
       toast.error("Failed to generate CSV data")
     } finally {
       setLoadingCSV(false)
@@ -364,69 +318,105 @@ const UserManagement = () => {
     setLoading(true)
     try {
       const accessToken = localStorage.getItem("accessToken")
+
+      // Prepare filter parameters
       const params = {
-        limit: 1000000,
+        limit: 1000000, // Limit for PDF to avoid large files
         page: 1,
-        ...filter
       }
-  
+
+      // Add search parameter if it exists
+      if (filter?.search) params.search = filter.search
+
+      // Add other filter parameters if they exist and are not empty
+      if (filter?.stateOfResidence) params.stateOfResidence = filter.stateOfResidence
+      if (filter?.lgaOfResidence) params.lgaOfResidence = filter.lgaOfResidence
+      if (filter?.senatorialDistrict) params.senatorialDistrict = filter.senatorialDistrict
+      if (filter?.stateOfOrigin) params.stateOfOrigin = filter.stateOfOrigin
+      if (filter?.lgaOfOrigin) params.lga = filter.lgaOfOrigin // Note: The backend expects 'lga' for lgaOfOrigin
+      if (filter?.sector) params.sector = filter.sector
+      if (filter?.tradeArea) params.tradeArea = filter.tradeArea
+      if (filter?.role) params.role = filter.role
+      if (filter?.fromDate) params.fromDate = filter.fromDate
+      if (filter?.toDate) params.toDate = filter.toDate
+      if (filter?.sort) params.sort = filter.sort
+
       const response = await axios.get(`${API_BASE_URL}/userscert`, {
         params,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-  
-      if (!response.data?.success || !response.data?.data?.users) {
-        throw new Error("Failed to fetch user data")
-      }
-  
-      const users = response.data.data.users
-  
+
+      const { data } = response.data
+      const users = data?.users || []
+
       // Create PDF document
       const doc = new jsPDF()
       doc.setFontSize(18)
       doc.text("User Management Report", 14, 22)
       doc.setFontSize(11)
       doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30)
-  
+
       // Define table columns
       const columns = [
-        { header: "S/N", dataKey: "sn", width: 20 },
-        { header: "Name", dataKey: "name", width: 40 },
-        { header: "Email", dataKey: "email", width: 50 },
-        { header: "Phone", dataKey: "phone", width: 30 },
-        { header: "Role", dataKey: "role", width: 30 },
-        { header: "Status", dataKey: "status", width: 30 }
+        { header: "S/N", dataKey: "sn" },
+        { header: "Name", dataKey: "name" },
+        { header: "Email", dataKey: "email" },
+        { header: "Phone", dataKey: "phone" },
+        { header: "Role", dataKey: "role" },
+        { header: "Verification Status", dataKey: "verificationStatus" },
+        { header: "State", dataKey: "state" },
+        { header: "LGA", dataKey: "lga" },
       ]
-  
+
       // Prepare data for table
       const tableData = users.map((user, index) => ({
-        sn: (index + 1).toString(),
+        sn: index + 1,
         name: `${user.firstName || ""} ${user.lastName || ""}`,
         email: user.email || "",
         phone: user.phoneNumber || "",
         role: user.role || "",
-        status: user.currentVerificationStatus || "pending"
+        verificationStatus: user.currentVerificationStatus || "pending",
+        state: user.stateOfResidence || "",
+        lga: user.lgaOfResidence || "",
       }))
-  
+
       // Add table to PDF
       doc.autoTable({
+        columns,
+        body: tableData,
         startY: 40,
-        head: [columns.map(col => col.header)],
-        body: tableData.map(row => columns.map(col => row[col.dataKey])),
-        theme: 'grid',
-        headStyles: { fillColor: [66, 66, 66] },
         styles: { fontSize: 8, cellPadding: 2 },
-        columnStyles: columns.reduce((acc, col) => ({
-          ...acc,
-          [col.dataKey]: { cellWidth: col.width }
-        }), {})
+        headStyles: { fillColor: [66, 66, 66] },
       })
-  
+
+      // Add filter information
+      const filterInfo = []
+      if (filter.search) filterInfo.push(`Search: ${filter.search}`)
+      if (filter.stateOfResidence) filterInfo.push(`State: ${filter.stateOfResidence}`)
+      if (filter.lgaOfResidence) filterInfo.push(`LGA: ${filter.lgaOfResidence}`)
+      if (filter.senatorialDistrict) filterInfo.push(`Senatorial District: ${filter.senatorialDistrict}`)
+      if (filter.role) filterInfo.push(`Role: ${filter.role}`)
+      if (filter.verificationStatus) filterInfo.push(`Verification Status: ${filter.verificationStatus}`)
+      if (filter.sector) filterInfo.push(`Sector: ${filter.sector}`)
+      if (filter.tradeArea) filterInfo.push(`Trade Area: ${filter.tradeArea}`)
+      if (filter.fromDate) filterInfo.push(`From: ${filter.fromDate}`)
+      if (filter.toDate) filterInfo.push(`To: ${filter.toDate}`)
+
+      if (filterInfo.length > 0) {
+        const finalY = doc.lastAutoTable.finalY || 40
+        doc.setFontSize(10)
+        doc.text("Filters Applied:", 14, finalY + 10)
+        doc.setFontSize(8)
+        filterInfo.forEach((info, index) => {
+          doc.text(info, 14, finalY + 15 + index * 5)
+        })
+      }
+
       // Save the PDF
       doc.save("user-management-report.pdf")
-      toast.success("PDF generated successfully!")
+      toast.success("PDF report has been generated and downloaded")
     } catch (error) {
       console.error("Error generating PDF:", error)
       toast.error("Failed to generate PDF report")
@@ -434,26 +424,6 @@ const UserManagement = () => {
       setLoading(false)
     }
   }
-
-  // Add these handler functions
-const handleUpdateVerification = async (userId, verificationId, verificationData) => {
-  try {
-    const accessToken = localStorage.getItem("accessToken");
-    const response = await axios.patch(
-      `${API_BASE_URL}/users/${userId}/verifications/${verificationId}`,
-      verificationData,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
 
   const clearFilter = () => {
     setFilter(defaultData)
@@ -466,313 +436,107 @@ const handleUpdateVerification = async (userId, verificationId, verificationData
     // Create a deep copy of the user to avoid reference issues
     const userCopy = JSON.parse(JSON.stringify(user))
     setSelectedUser(userCopy)
-    setEditedUser(userCopy)
+    // setEditedUser(userCopy)
+    setEditedUser({
+      ...user,
+      role: user?.role || '',
+      certifiedStatus: user?.certifiedStatus || false,
+      licenseStatus: user?.licenseStatus || false,
+      currentVerificationStatus: user?.currentVerificationStatus || 'pending'
+    });
     setEditMode(true)
     setIsEditing(true)
   }
 
   // Improved handleSaveChanges function
-  // const handleSaveChanges = async () => {
-  //   try {
-  //     setLoading(true)
-  //     const accessToken = localStorage.getItem("accessToken")
+  const handleSaveChanges = async () => {
+    try {
+      setLoading(true)
+      const accessToken = localStorage.getItem("accessToken")
 
-  //     // Make a copy of the current editedUser to avoid race conditions
-  //     const userToUpdate = { ...editedUser }
+      // Make a copy of the current editedUser to avoid race conditions
+      const userToUpdate = { ...editedUser }
 
-  //     // Perform the API call to update the user
-  //     const response = await axios.patch(`${API_BASE_URL}/users/${userToUpdate._id}`, userToUpdate, {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     })
-
-  //     // Check if the update was successful
-  //     if (response.data && response.data.success) {
-  //       toast.success("User updated successfully")
-
-  //       // Update the local users array with the updated user data
-  //       setUsers((prevUsers) =>
-  //         prevUsers.map((user) => (user._id === userToUpdate._id ? { ...user, ...response.data.data } : user)),
-  //       )
-
-  //       // Update the selectedUser with the new data
-  //       setSelectedUser(response.data.data)
-
-  //       // Reset edit mode but keep the updated data visible
-  //       setEditMode(false)
-  //       setIsEditing(false)
-  //       setEditedUser(null)
-  //     } else {
-  //       toast.error("Failed to update user: " + (response.data?.message || "Unknown error"))
-  //     }
-  //   } catch (error) {
-  //     console.error("Error updating user:", error)
-  //     toast.error("Failed to update user: " + (error.response?.data?.message || error.message))
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
-
-  // Update your handleSaveChanges function to handle both types of updates
-const handleSaveChanges = async () => {
-  try {
-    setLoading(true);
-    const accessToken = localStorage.getItem("accessToken");
-
-    // Handle verification updates first
-    if (editedUser?.verifications) {
-      const newVerifications = editedUser.verifications.filter(v => !v._id);
-      const modifiedVerifications = editedUser.verifications.filter(
-        v => v._id && verificationChanges[v._id]
-      );
-
-      // Update existing verifications that have been modified
-      for (const verification of modifiedVerifications) {
-        await handleUpdateVerification(
-          editedUser._id,
-          verification._id,
-          {
-            year: verification.year,
-            status: verification.status,
-            assessorName: verification.assessorName,
-            date: verification.date,
-            notes: verification.notes,
-            expirationDate: verification.expirationDate
-          }
-        );
-      }
-
-      // Handle new verifications
-      if (newVerifications.length > 0) {
-        const updateData = {
-          newVerification: newVerifications[0]
-        };
-
-        await axios.patch(
-          `${API_BASE_URL}/users/${editedUser._id}`,
-          updateData,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-      }
-    }
-
-    // Handle other user data updates
-    const response = await axios.patch(
-      `${API_BASE_URL}/users/${editedUser._id}`,
-      editedUser,
-      {
+      // Perform the API call to update the user
+      const response = await axios.patch(`${API_BASE_URL}/users/${userToUpdate._id}`, userToUpdate, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      }
-    );
+      })
 
-    if (response.data && response.data.success) {
-      toast.success("User updated successfully");
-      setUsers(prevUsers =>
-        prevUsers.map(user =>
-          user._id === editedUser._id ? response.data.data : user
+      // Check if the update was successful
+      if (response.data && response.data.success) {
+        toast.success("User updated successfully")
+
+        // Update the local users array with the updated user data
+        setUsers((prevUsers) =>
+          prevUsers.map((user) => (user._id === userToUpdate._id ? { ...user, ...response.data.data } : user)),
         )
-      );
-      setSelectedUser(response.data.data);
-      setEditMode(false);
-      setIsEditing(false);
-      setEditedUser(null);
-      setVerificationChanges({});
-    }
-  } catch (error) {
-    console.error("Error updating user:", error);
-    toast.error("Failed to update user: " + (error.response?.data?.message || error.message));
-  } finally {
-    setLoading(false);
-  }
-};
 
+        // Update the selectedUser with the new data
+        setSelectedUser(response.data.data)
 
-// Add this useEffect to track verification changes
-useEffect(() => {
-  if (editedUser?.verifications) {
-    const changes = {};
-    editedUser.verifications.forEach(verification => {
-      if (verification._id) {
-        const originalVerification = selectedUser?.verifications?.find(
-          v => v._id === verification._id
-        );
-        if (originalVerification) {
-          const hasChanged = ['year', 'status', 'assessorName', 'date', 'notes', 'expirationDate']
-            .some(field => verification[field] !== originalVerification[field]);
-          if (hasChanged) {
-            changes[verification._id] = true;
-          }
-        }
+        // Reset edit mode but keep the updated data visible
+        setEditMode(false)
+        setIsEditing(false)
+        setEditedUser(null)
+      } else {
+        toast.error("Failed to update user: " + (response.data?.message || "Unknown error"))
       }
-    });
-    setVerificationChanges(changes);
-  }
-}, [editedUser?.verifications, selectedUser?.verifications]);
-
-// Update your verification input handlers to track changes
-const handleVerificationChange = (index, field, value) => {
-  setEditedUser(prev => {
-    if (!prev) return null;
-    
-    const updatedVerifications = [...(prev.verifications || [])];
-    updatedVerifications[index] = {
-      ...updatedVerifications[index],
-      [field]: value
-    };
-
-    return {
-      ...prev,
-      verifications: updatedVerifications
-    };
-  });
-};
-
-// Add this effect to update currentVerificationStatus when verifications change
-useEffect(() => {
-  if (editedUser?.verifications?.length > 0) {
-    const latestVerification = [...editedUser.verifications]
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-    
-    if (latestVerification?.status) {
-      setEditedUser(prev => ({
-        ...prev,
-        currentVerificationStatus: latestVerification.status
-      }));
+    } catch (error) {
+      console.error("Error updating user:", error)
+      toast.error("Failed to update user: " + (error.response?.data?.message || error.message))
+    } finally {
+      setLoading(false)
     }
   }
-}, [editedUser?.verifications]);
 
   // Separate function to fetch updated users
-  // const fetchUpdatedUsers = async (accessToken) => {
-  //   try {
-  //     // Prepare filter parameters
-  //     const params = {
-  //       limit: itemsPerPage,
-  //       page: filter?.currentPage,
-  //     }
+  const fetchUpdatedUsers = async (accessToken) => {
+    try {
+      // Prepare filter parameters
+      const params = {
+        limit: itemsPerPage,
+        page: filter?.currentPage,
+      }
 
-  //     // Fix disability filter handling
-  //     if (filter?.hasDisability && filter.hasDisability !== "all") {
-  //       // Send as string 'true'/'false' instead of boolean
-  //       params.hasDisability = filter.hasDisability // Keep as string
-        
-  //       if (filter.hasDisability === "true" && filter?.disabilityType && filter.disabilityType !== "all") {
-  //         params.disabilityType = filter.disabilityType
-  //       }
-  //     }
+      // Add search parameter if it exists
+      if (filter?.search) params.search = filter.search
 
+      // Add other filter parameters if they exist and are not empty
+      if (filter?.stateOfResidence) params.stateOfResidence = filter.stateOfResidence
+      if (filter?.lgaOfResidence) params.lgaOfResidence = filter.lgaOfResidence
+      if (filter?.senatorialDistrict) params.senatorialDistrict = filter.senatorialDistrict
+      if (filter?.stateOfOrigin) params.stateOfOrigin = filter.stateOfOrigin
+      if (filter?.lgaOfOrigin) params.lga = filter.lgaOfOrigin // Note: The backend expects 'lga' for lgaOfOrigin
+      if (filter?.sector) params.sector = filter.sector
+      if (filter?.tradeArea) params.tradeArea = filter.tradeArea
+      if (filter?.role) params.role = filter.role
+      if (filter?.fromDate) params.fromDate = filter.fromDate
+      if (filter?.toDate) params.toDate = filter.toDate
+      if (filter?.sort) params.sort = filter.sort
 
-  //     // Add other filter parameters
-  //     if (filter?.search) params.search = filter.search;
-  //     if (filter?.stateOfResidence) params.stateOfResidence = filter.stateOfResidence;
-  //     if (filter?.lgaOfResidence) params.lgaOfResidence = filter.lgaOfResidence;
-  //     if (filter?.senatorialDistrict) params.senatorialDistrict = filter.senatorialDistrict;
-  //     if (filter?.stateOfOrigin) params.stateOfOrigin = filter.stateOfOrigin;
-  //     if (filter?.lgaOfOrigin) params.lga = filter.lgaOfOrigin;
-  //     if (filter?.sector) params.sector = filter.sector;
-  //     if (filter?.tradeArea) params.tradeArea = filter.tradeArea;
-  //     if (filter?.role) params.role = filter.role;
-  //     if (filter?.fromDate) params.fromDate = filter.fromDate;
-  //     if (filter?.toDate) params.toDate = filter.toDate;
-  //     if (filter?.sort) params.sort = filter.sort;
-
-  //     console.log('Filter params being sent:', params); // Add this for debugging
-
-  //     const response = await axios.get(`${API_BASE_URL}/userscert`, {
-  //       params,
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     });
-
-  //     if (response.data && response.data.success && response.data.data) {
-  //       const { users, pagination } = response.data.data;
-  //       setUsers(users || []);
-  //       setPagination({
-  //         currentPage: pagination?.currentPage || 1,
-  //         totalPages: pagination?.totalPages || 1,
-  //         totalUsers: pagination?.totalUsers || 0,
-  //         pageSize: pagination?.pageSize || 25,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching users:", error);
-  //     toast.error("Failed to fetch users");
-  //   }
-  // };
-  const fetchUpdatedUsers = async () => {
-  try {
-    setLoading(true)
-    const accessToken = localStorage.getItem("accessToken")
-    
-    // Create base params object with proper names
-    const params = {
-      limit: itemsPerPage,
-      page: filter?.currentPage,
-    }
-
-    // Add filters only if they have non-empty values
-    if (filter.search?.trim()) params.search = filter.search.trim()
-    if (filter.stateOfResidence && filter.stateOfResidence !== "all") {
-      params.stateOfResidence = filter.stateOfResidence
-    }
-    if (filter.lgaOfResidence && filter.lgaOfResidence !== "all") {
-      params.lgaOfResidence = filter.lgaOfResidence
-    }
-    if (filter.senatorialDistrict && filter.senatorialDistrict !== "all") {
-      params.senatorialDistrict = filter.senatorialDistrict
-    }
-    if (filter.stateOfOrigin && filter.stateOfOrigin !== "all") {
-      params.stateOfOrigin = filter.stateOfOrigin
-    }
-    if (filter.lgaOfOrigin && filter.lgaOfOrigin !== "all") {
-      params.lga = filter.lgaOfOrigin // Important: backend expects 'lga'
-    }
-    if (filter.role && filter.role !== "all") params.role = filter.role
-    if (filter.hasDisability && filter.hasDisability !== "all") {
-      params.hasDisability = filter.hasDisability
-    }
-    if (filter.hasDisability === "true" && filter.disabilityType && filter.disabilityType !== "all") {
-      params.disabilityType = filter.disabilityType
-    }
-    if (filter.fromDate) params.fromDate = filter.fromDate
-    if (filter.toDate) params.toDate = filter.toDate
-    if (filter.sort) params.sort = filter.sort
-
-    // Debug log
-    console.log('Sending filter params:', params)
-
-    const response = await axios.get(`${API_BASE_URL}/userscert`, {
-      params,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-
-    if (response.data?.success && response.data?.data) {
-      const { users, pagination } = response.data.data
-      setUsers(users || [])
-      setPagination({
-        currentPage: pagination?.currentPage || 1,
-        totalPages: pagination?.totalPages || 1,
-        totalUsers: pagination?.totalUsers || 0,
-        pageSize: pagination?.pageSize || 25,
+      const response = await axios.get(`${API_BASE_URL}/userscert`, {
+        params,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       })
+
+      if (response.data && response.data.success && response.data.data) {
+        const { users, pagination } = response.data.data
+        setUsers(users || [])
+        setPagination({
+          currentPage: pagination?.currentPage || 1,
+          totalPages: pagination?.totalPages || 1,
+          totalUsers: pagination?.totalUsers || 0,
+          pageSize: pagination?.pageSize || 25,
+        })
+      }
+    } catch (error) {
+      console.error("Error fetching updated users:", error)
     }
-  } catch (error) {
-    console.error("Error fetching users:", error)
-    toast.error("Failed to fetch users")
-  } finally {
-    setLoading(false)
   }
-}
 
   // Improved handleCancelEdit function
   const handleCancelEdit = () => {
@@ -783,68 +547,89 @@ useEffect(() => {
   }
 
   // Enhance the handleInputChange function to better handle arrays and nested objects
-  const handleInputChange = (field, value, index = null, subfield = null) => {
-    console.log('Checkbox change:', field, value); // Add this line for debugging
+  // const handleInputChange = (field, value, index = null, subfield = null) => {
+  //   if (!editedUser) return
 
-    if (!editedUser) return
+  //   setEditedUser((prev) => {
+  //     if (!prev) return null
 
-    setEditedUser((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        [field]: value
-      };
+  //     // Handle array fields with index
+  //     if (index !== null) {
+  //       const arrayField = prev[field] || []
+  //       const updatedArray = [...arrayField]
 
-      // Handle array fields with index
-      if (index !== null) {
-        const arrayField = prev[field] || []
-        const updatedArray = [...arrayField]
+  //       if (subfield) {
+  //         // Special handling for tradeArea which is an array
+  //         if (subfield === "tradeArea") {
+  //           // If value is an array, use it directly, otherwise create a new array with the value
+  //           const tradeAreaValue = Array.isArray(value) ? value : [value]
+  //           updatedArray[index] = {
+  //             ...updatedArray[index],
+  //             [subfield]: tradeAreaValue,
+  //           }
+  //         } else {
+  //           // Handle other nested object fields
+  //           updatedArray[index] = {
+  //             ...updatedArray[index],
+  //             [subfield]: value,
+  //           }
+  //         }
+  //       } else {
+  //         // Replace entire array item
+  //         updatedArray[index] = value
+  //       }
 
-        if (subfield) {
-          // Special handling for tradeArea which is an array
-          if (subfield === "tradeArea") {
-            // If value is an array, use it directly, otherwise create a new array with the value
-            const tradeAreaValue = Array.isArray(value) ? value : [value]
-            updatedArray[index] = {
-              ...updatedArray[index],
-              [subfield]: tradeAreaValue,
-            }
-          } else {
-            // Handle other nested object fields
-            updatedArray[index] = {
-              ...updatedArray[index],
-              [subfield]: value,
-            }
-          }
-        } else {
-          // Replace entire array item
-          updatedArray[index] = value
-        }
+  //       return {
+  //         ...prev,
+  //         [field]: updatedArray,
+  //       }
+  //     }
+  //     // Handle nested fields like "bankAccount.accountName"
+  //     else if (typeof field === "string" && field.includes(".")) {
+  //       const [parent, child] = field.split(".")
+  //       return {
+  //         ...prev,
+  //         [parent]: {
+  //           ...(prev[parent] || {}),
+  //           [child]: value,
+  //         },
+  //       }
+  //     } else {
+  //       // Handle regular fields
+  //       return {
+  //         ...prev,
+  //         [field]: value,
+  //       }
+  //     }
+  //   })
+  // }
 
-        return {
-          ...prev,
-          [field]: updatedArray,
-        }
+  // Add this to your handleInputChange function
+const handleInputChange = (field, value, index = null) => {
+  if (!editedUser) return;
+
+  setEditedUser(prev => {
+    const newData = { ...prev };
+    
+    if (index !== null) {
+      // Handle array updates
+      if (!Array.isArray(newData[field])) {
+        newData[field] = [];
       }
-      // Handle nested fields like "bankAccount.accountName"
-      else if (typeof field === "string" && field.includes(".")) {
-        const [parent, child] = field.split(".")
-        return {
-          ...prev,
-          [parent]: {
-            ...(prev[parent] || {}),
-            [child]: value,
-          },
-        }
-      } else {
-        // Handle regular fields
-        return {
-          ...prev,
-          [field]: value,
-        }
-      }
-    })
-  }
+      newData[field][index] = value;
+    } else if (field.includes('.')) {
+      // Handle nested object updates
+      const [parent, child] = field.split('.');
+      if (!newData[parent]) newData[parent] = {};
+      newData[parent][child] = value;
+    } else {
+      // Handle direct field updates
+      newData[field] = value;
+    }
+    
+    return newData;
+  });
+};
 
   // Add a function to add a trade area to the tradeArea array
   const addTradeAreaToSkill = (skillIndex, tradeAreaValue) => {
@@ -987,7 +772,6 @@ useEffect(() => {
   useEffect(() => {
     // Only fetch users if the component is mounted and we're not currently editing
     if (isMounted && !isEditing) {
-      console.log('Filter changed:', filter) // Add this line
       const controller = new AbortController()
       const signal = controller.signal
 
@@ -1003,7 +787,49 @@ useEffect(() => {
             return
           }
 
-          await fetchUpdatedUsers(accessToken);
+          // Prepare filter parameters
+          const params = {
+            limit: itemsPerPage,
+            page: filter?.currentPage,
+          }
+
+          // Add search parameter if it exists
+          if (filter?.search) params.search = filter.search
+
+          // Add other filter parameters if they exist and are not empty
+          if (filter?.stateOfResidence) params.stateOfResidence = filter.stateOfResidence
+          if (filter?.lgaOfResidence) params.lgaOfResidence = filter.lgaOfResidence
+          if (filter?.senatorialDistrict) params.senatorialDistrict = filter.senatorialDistrict
+          if (filter?.stateOfOrigin) params.stateOfOrigin = filter.stateOfOrigin
+          if (filter?.lgaOfOrigin) params.lga = filter.lgaOfOrigin // Note: The backend expects 'lga' for lgaOfOrigin
+          if (filter?.sector) params.sector = filter.sector
+          if (filter?.tradeArea) params.tradeArea = filter.tradeArea
+          if (filter?.role) params.role = filter.role
+          if (filter?.fromDate) params.fromDate = filter.fromDate
+          if (filter?.toDate) params.toDate = filter.toDate
+          if (filter?.sort) params.sort = filter.sort
+
+          const response = await axios.get(`${API_BASE_URL}/userscert`, {
+            params,
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            signal: signal,
+          })
+
+          if (response.data && response.data.success && response.data.data) {
+            const { users, pagination } = response.data.data
+            setUsers(users || [])
+            setPagination({
+              currentPage: pagination?.currentPage || 1,
+              totalPages: pagination?.totalPages || 1,
+              totalUsers: pagination?.totalUsers || 0,
+              pageSize: pagination?.pageSize || 25,
+            })
+            sethasLoadedFirst(true)
+          } else {
+            toast.error("Failed to fetch users data")
+          }
         } catch (error) {
           if (!axios.isCancel(error)) {
             console.error("Error fetching users:", error)
@@ -1035,8 +861,6 @@ useEffect(() => {
     filter?.senatorialDistrict,
     filter?.stateOfOrigin,
     filter?.lgaOfOrigin,
-    filter?.hasDisability,
-    filter?.disabilityType, // Add this dependency
     filter?.sort,
     isEditing,
     isMounted,
@@ -1078,8 +902,6 @@ useEffect(() => {
     }
   }
 
-
-  
   // Add this function to validate account number
   const validateAccountNumber = (value) => /^\d{10}$/.test(value)
 
@@ -1197,10 +1019,7 @@ useEffect(() => {
 
             <div className="w-[200px]">
               <p className="text-left text-[14px] mb-1">LGA of Origin</p>
-              <Select
-                value={filter.lgaOfOrigin}
-                onValueChange={(value) => handleFilterChange("lgaOfOrigin", value)}
-              >
+              <Select value={filter.lgaOfOrigin} onValueChange={(value) => handleFilterChange("lgaOfOrigin", value)}>
                 <SelectTrigger className="text-[12px]">
                   <SelectValue placeholder="Select LGA of Origin" />
                 </SelectTrigger>
@@ -1215,7 +1034,7 @@ useEffect(() => {
                         <SelectItem className="text-[12px]" key={lga} value={lga}>
                           {lga}
                         </SelectItem>
-                      ))}
+                      )) || []}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -1312,52 +1131,7 @@ useEffect(() => {
                 </SelectContent>
               </Select>
             </div>
-
-            <div className="w-[200px]">
-            <p className="text-left text-[14px] mb-1">Disability Status</p>
-            <Select
-              value={filter?.hasDisability}
-              onValueChange={(value) => handleFilterChange("hasDisability", value)}
-            >
-              <SelectTrigger className="text-[12px]">
-                <SelectValue placeholder="Select Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="true">Has Disability</SelectItem>
-                  <SelectItem value="false">No Disability</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
           </div>
-
-          {filter?.hasDisability === "true" && (
-            <div className="w-[200px]">
-              <p className="text-left text-[14px] mb-1">Disability Type</p>
-              <Select
-                value={filter?.disabilityType}
-                onValueChange={(value) => handleFilterChange("disabilityType", value)}
-              >
-                <SelectTrigger className="text-[12px]">
-                  <SelectValue placeholder="Select Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="visual">Visual</SelectItem>
-                    <SelectItem value="hearing">Hearing</SelectItem>
-                    <SelectItem value="mobility">Mobility</SelectItem>
-                    <SelectItem value="cognitive">Cognitive</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          </div>
-
 
           <div className="flex gap-[20px] flex-wrap mb-4">
             <div className="w-[200px]">
@@ -1396,18 +1170,9 @@ useEffect(() => {
         <div className="gap-2 flex justify-between w-full mt-4">
           <h2 className="font-medium">Total Records Found: {pagination?.totalUsers || 0}</h2>
           <div className="gap-2 flex flex-row-reverse justify-start mb-4">
-            {/* <Button onClick={downloadPDF} className="ml-2" variant="outline" disabled={loading || !users?.length}>
+            <Button onClick={downloadPDF} className="ml-2" variant="outline" disabled={loading || !users?.length}>
               <FileText className="mr-2 h-4 w-4" /> Export PDF
               {loading ? <SewingPinFilledIcon className="animate-spin ml-2" /> : null}
-            </Button> */}
-            <Button 
-              onClick={downloadPDF} 
-              className="ml-2" 
-              variant="outline" 
-              disabled={loading || !users?.length}
-            >
-              <FileText className="mr-2 h-4 w-4" /> 
-              {loading ? "Generating PDF..." : "Export PDF"}
             </Button>
 
             {!csvData?.length ? (
@@ -1455,9 +1220,6 @@ useEffect(() => {
                 {filter.sort === "stateOfOrigin" ? "↑" : filter.sort === "-stateOfOrigin" ? "↓" : ""}
               </TableHead>
               <TableHead>Contact</TableHead>
-              <TableHead className="cursor-pointer" onClick={() => handleSort("hasDisability")}>
-                Disability Status {filter.sort === "hasDisability" ? "↑" : filter.sort === "-hasDisability" ? "↓" : ""}
-              </TableHead>
               <TableHead className="cursor-pointer" onClick={() => handleSort("createdAt")}>
                 Registration Date {filter.sort === "createdAt" ? "↑" : filter.sort === "-createdAt" ? "↓" : ""}
               </TableHead>
@@ -1525,22 +1287,6 @@ useEffect(() => {
                         <span className="text-left text-[10px]">{user?.email || "---"}</span>
                       </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell className="text-left text-[12px]">
-                  <div className="flex flex-col">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      user.hasDisability 
-                        ? "bg-yellow-100 text-yellow-800" 
-                        : "bg-gray-100 text-gray-800"
-                    }`}>
-                      {user.hasDisability ? "Yes" : "No"}
-                    </span>
-                    {user.hasDisability && (
-                      <span className="text-xs text-gray-600 mt-1">
-                        Type: {user.disabilityType || "Not specified"}
-                      </span>
-                    )}
                   </div>
                 </TableCell>
                 <TableCell className="text-left text-[12px]">
@@ -1851,57 +1597,6 @@ useEffect(() => {
                                 </div>
                               </div>
 
-                              <div className="grid gap-2">
-                                <h4 className="font-medium">Verification Records</h4>
-                                <div className="space-y-4">
-                                  {selectedUser.verifications && selectedUser.verifications.length > 0 ? (
-                                    selectedUser.verifications.map((record, index) => (
-                                      <div key={index} className="border p-2 rounded-md">
-                                        <div className="grid grid-cols-2 gap-2 text-sm">
-                                          <div>
-                                            <p className="font-medium">Year:</p>
-                                            <p>{record.year}</p>
-                                          </div>
-                                          <div>
-                                            <p className="font-medium">Status:</p>
-                                            <span className={`inline-block px-2 py-1 rounded-full text-xs ${
-                                              record.status === "approved" 
-                                                ? "bg-green-100 text-green-800"
-                                                : record.status === "denied"
-                                                  ? "bg-red-100 text-red-800"
-                                                  : "bg-yellow-100 text-yellow-800"
-                                            }`}>
-                                              {record.status}
-                                            </span>
-                                          </div>
-                                          <div>
-                                            <p className="font-medium">Verifier:</p>
-                                            <p>{record.assessorName || "Not specified"}</p>
-                                          </div>
-                                          <div>
-                                            <p className="font-medium">Date:</p>
-                                            <p>{new Date(record.date).toLocaleDateString()}</p>
-                                          </div>
-                                          {record.notes && (
-                                            <div className="col-span-2">
-                                              <p className="font-medium">Notes:</p>
-                                              <p>{record.notes}</p>
-                                            </div>
-                                          )}
-                                          {record.expirationDate && (
-                                            <div>
-                                              <p className="font-medium">Expires:</p>
-                                              <p>{new Date(record.expirationDate).toLocaleDateString()}</p>
-                                            </div>
-                                          )}
-                                        </div>
-                                      </div>
-                                    ))
-                                  ) : (
-                                    <p className="text-muted-foreground">No verification records found</p>
-                                  )}
-                                </div>
-                              </div>
                             </div>
                           </div>
                         )}
@@ -2300,7 +1995,7 @@ useEffect(() => {
                                 </div>
                               </div>
 
-                              <div className="border-b pb-4">
+                              {/* <div className="border-b pb-4">
                                 <h3 className="text-lg font-medium mb-4">Account Status</h3>
                                 <div className="grid gap-4 md:grid-cols-2">
                                   <div className="grid gap-2">
@@ -2321,156 +2016,7 @@ useEffect(() => {
                                     </Select>
                                   </div>
 
-
-                                  <div className="border-b pb-4">
-                                    <h3 className="text-lg font-medium mb-4">Verification Records</h3>
-                                    <div className="space-y-4">
-                                      <div className="flex justify-between items-center">
-                                        <p className="text-sm text-muted-foreground">
-                                          Manage verification records
-                                        </p>
-                                        <Button
-                                          type="button"
-                                          variant="outline"
-                                          size="sm"
-                                          onClick={() =>
-                                            addArrayItem("verifications", {
-                                              year: new Date().getFullYear(),
-                                              status: "pending",
-                                              date: new Date().toISOString(),
-                                              notes: "",
-                                            })
-                                          }
-                                          className="flex items-center gap-1"
-                                        >
-                                          <Plus className="h-4 w-4" /> Add Verification
-                                        </Button>
-                                      </div>
-
-                                      {(editedUser?.verifications || []).length > 0 ? (
-                                        (editedUser?.verifications || []).map((record, index) => (
-                                          <div key={index} className="grid gap-4 p-4 border rounded-md relative">
-                                            <Button
-                                              type="button"
-                                              variant="ghost"
-                                              size="icon"
-                                              onClick={() => removeArrayItem("verifications", index)}
-                                              className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700"
-                                            >
-                                              <Trash2 className="h-4 w-4" />
-                                            </Button>
-
-                                            <div className="grid grid-cols-2 gap-4">
-                                              <div className="space-y-2">
-                                                <Label>Year</Label>
-                                                <Input
-                                                  type="number"
-                                                  value={record.year}
-                                                  onChange={(e) => {
-                                                    const updatedRecord = {
-                                                      ...record,
-                                                      year: parseInt(e.target.value)
-                                                    };
-                                                    handleInputChange("verifications", updatedRecord, index);
-                                                  }}
-                                                  min={2000}
-                                                  max={new Date().getFullYear()}
-                                                />
-                                              </div>
-
-                                              <div className="space-y-2">
-                                                <Label>Status</Label>
-                                                <Select
-                                                  value={record.status}
-                                                  onValueChange={(value) => {
-                                                    const updatedRecord = {
-                                                      ...record,
-                                                      status: value
-                                                    };
-                                                    handleInputChange("verifications", updatedRecord, index);
-                                                  }}
-                                                >
-                                                  <SelectTrigger>
-                                                    <SelectValue />
-                                                  </SelectTrigger>
-                                                  <SelectContent>
-                                                    <SelectItem value="pending">Pending</SelectItem>
-                                                    <SelectItem value="approved">Approved</SelectItem>
-                                                    <SelectItem value="denied">Denied</SelectItem>
-                                                  </SelectContent>
-                                                </Select>
-                                              </div>
-
-                                              <div className="space-y-2">
-                                                <Label>Verifier Name</Label>
-                                                <Input
-                                                  value={record.assessorName || ""}
-                                                  onChange={(e) => {
-                                                    const updatedRecord = {
-                                                      ...record,
-                                                      assessorName: e.target.value
-                                                    };
-                                                    handleInputChange("verifications", updatedRecord, index);
-                                                  }}
-                                                />
-                                              </div>
-
-                                              <div className="space-y-2">
-                                                <Label>Verification Date</Label>
-                                                <Input
-                                                  type="date"
-                                                  value={record.date ? new Date(record.date).toISOString().split('T')[0] : ""}
-                                                  onChange={(e) => {
-                                                    const updatedRecord = {
-                                                      ...record,
-                                                      date: new Date(e.target.value).toISOString()
-                                                    };
-                                                    handleInputChange("verifications", updatedRecord, index);
-                                                  }}
-                                                />
-                                              </div>
-
-                                              <div className="space-y-2">
-                                                <Label>Expiration Date</Label>
-                                                <Input
-                                                  type="date"
-                                                  value={record.expirationDate ? new Date(record.expirationDate).toISOString().split('T')[0] : ""}
-                                                  onChange={(e) => {
-                                                    const updatedRecord = {
-                                                      ...record,
-                                                      expirationDate: new Date(e.target.value).toISOString()
-                                                    };
-                                                    handleInputChange("verifications", updatedRecord, index);
-                                                  }}
-                                                />
-                                              </div>
-
-                                              <div className="space-y-2 col-span-2">
-                                                <Label>Notes</Label>
-                                                <Textarea
-                                                  value={record.notes || ""}
-                                                  onChange={(e) => {
-                                                    const updatedRecord = {
-                                                      ...record,
-                                                      notes: e.target.value
-                                                    };
-                                                    handleInputChange("verifications", updatedRecord, index);
-                                                  }}
-                                                  placeholder="Add verification notes..."
-                                                />
-                                              </div>
-                                            </div>
-                                          </div>
-                                        ))
-                                      ) : (
-                                        <div className="text-center py-4 text-gray-500 text-sm italic">
-                                          No verification records. Click "Add Verification" to add a record.
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-
-                                  {/* <div className="grid gap-2">
+                                  <div className="grid gap-2">
                                     <Label htmlFor="certifiedStatus">Certified Status</Label>
                                     <div className="flex items-center space-x-2">
                                       <Checkbox
@@ -2502,49 +2048,7 @@ useEffect(() => {
                                         Licensed
                                       </label>
                                     </div>
-                                  </div> */}
-
-
-                                  {/* Replace the existing certifiedStatus checkbox with this */}
-                                  <div className="grid gap-2">
-                                    <Label htmlFor="certifiedStatus">Certified Status</Label>
-                                    <div className="flex items-center space-x-2">
-                                      <Checkbox
-                                        id="certifiedStatus"
-                                        checked={editedUser.certifiedStatus || false}
-                                        onCheckedChange={(checked) => {
-                                          handleInputChange("certifiedStatus", checked);
-                                        }}
-                                      />
-                                      <label
-                                        htmlFor="certifiedStatus"
-                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                      >
-                                        Certified
-                                      </label>
-                                    </div>
                                   </div>
-
-                                  {/* Replace the existing licenseStatus checkbox with this */}
-                                  <div className="grid gap-2">
-                                    <Label htmlFor="licenseStatus">License Status</Label>
-                                    <div className="flex items-center space-x-2">
-                                      <Checkbox
-                                        id="licenseStatus"
-                                        checked={editedUser.licenseStatus || false}
-                                        onCheckedChange={(checked) => {
-                                          handleInputChange("licenseStatus", checked);
-                                        }}
-                                      />
-                                      <label
-                                        htmlFor="licenseStatus"
-                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                      >
-                                        Licensed
-                                      </label>
-                                    </div>
-                                  </div>
-
                                   <div className="grid gap-2">
                                     <Label htmlFor="verificationStatus">Verification Status</Label>
                                     <Select
@@ -2557,7 +2061,85 @@ useEffect(() => {
                                       <SelectContent>
                                         <SelectItem value="pending">Pending</SelectItem>
                                         <SelectItem value="approved">Approved</SelectItem>
-                                        <SelectItem value="denied">Denied </SelectItem>
+                                        <SelectItem value="denied">Denied</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                </div>
+                              </div> */}
+
+                              <div className="border-b pb-4">
+                                <h3 className="text-lg font-medium mb-4">Account Status</h3>
+                                <div className="grid gap-4 md:grid-cols-2">
+                                  {/* Role Selection */}
+                                  <div className="grid gap-2">
+                                    <Label htmlFor="role">Role</Label>
+                                    <Select
+                                      value={editedUser?.role || ""}
+                                      onValueChange={(value) => handleInputChange("role", value)}
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select Role" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="artisan_user">Artisan User</SelectItem>
+                                        <SelectItem value="intending_artisan">Intending Artisan</SelectItem>
+                                        <SelectItem value="regular_user">Regular User</SelectItem>
+                                        <SelectItem value="admin">Admin</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+
+                                  {/* Certified Status */}
+                                  <div className="grid gap-2">
+                                    <Label htmlFor="certifiedStatus">Certified Status</Label>
+                                    <div className="flex items-center space-x-2">
+                                      <Checkbox
+                                        id="certifiedStatus"
+                                        checked={editedUser?.certifiedStatus || false}
+                                        onCheckedChange={(checked) => handleInputChange("certifiedStatus", checked)}
+                                      />
+                                      <label
+                                        htmlFor="certifiedStatus"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                      >
+                                        Certified
+                                      </label>
+                                    </div>
+                                  </div>
+
+                                  {/* License Status */}
+                                  <div className="grid gap-2">
+                                    <Label htmlFor="licenseStatus">License Status</Label>
+                                    <div className="flex items-center space-x-2">
+                                      <Checkbox
+                                        id="licenseStatus"
+                                        checked={editedUser?.licenseStatus || false}
+                                        onCheckedChange={(checked) => handleInputChange("licenseStatus", checked)}
+                                      />
+                                      <label
+                                        htmlFor="licenseStatus"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                      >
+                                        Licensed
+                                      </label>
+                                    </div>
+                                  </div>
+
+                                  {/* Verification Status */}
+                                  <div className="grid gap-2">
+                                    <Label htmlFor="verificationStatus">Verification Status</Label>
+                                    <Select
+                                      value={editedUser?.currentVerificationStatus || ""}
+                                      onValueChange={(value) => handleInputChange("currentVerificationStatus", value)}
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select verification status" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="pending">Pending</SelectItem>
+                                        <SelectItem value="approved">Approved</SelectItem>
+                                        <SelectItem value="denied">Denied</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </div>
@@ -3090,4 +2672,3 @@ useEffect(() => {
 }
 
 export default UserManagement
-

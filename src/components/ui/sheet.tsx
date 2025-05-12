@@ -48,32 +48,15 @@ SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 //   }
 // );
 
-const sheetVariants = cva(
-  "fixed z-50 gap-4 bg-white p-6 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out dark:bg-neutral-950",
-  {
-    variants: {
-      side: {
-        top: "inset-x-0 top-0 w-full border-b ...", // Full width
-        bottom: "inset-x-0 bottom-0 w-full border-t ...", // Full width
-        left: "inset-y-0 left-0 h-full w-full border-r ...", // Full width
-        right: "inset-y-0 right-0 h-full w-full border-l ...", // Full width
-      },
-    },
-    defaultVariants: {
-      side: "right",
-    },
-  }
-);
-
 // const sheetVariants = cva(
 //   "fixed z-50 gap-4 bg-white p-6 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out dark:bg-neutral-950",
 //   {
 //     variants: {
 //       side: {
-//         // For left/right sheets:
-//         left: "inset-y-0 left-0 h-full w-4/5 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-xl", // changed from w-3/4 & sm:max-w-sm
-//         right:
-//           "inset-y-0 right-0 h-full w-4/5 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-xl", // changed from w-3/4 & sm:max-w-sm
+//         top: "inset-x-0 top-0 w-full border-b ...", // Full width
+//         bottom: "inset-x-0 bottom-0 w-full border-t ...", // Full width
+//         left: "inset-y-0 left-0 h-full w-full border-r ...", // Full width
+//         right: "inset-y-0 right-0 h-full w-full border-l ...", // Full width
 //       },
 //     },
 //     defaultVariants: {
@@ -81,6 +64,23 @@ const sheetVariants = cva(
 //     },
 //   }
 // );
+
+const sheetVariants = cva(
+  "fixed z-50 gap-4 bg-white p-6 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out dark:bg-neutral-950",
+  {
+    variants: {
+      side: {
+        // For left/right sheets:
+        left: "inset-y-0 left-0 h-full w-4/5 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-xl", // changed from w-3/4 & sm:max-w-sm
+        right:
+          "inset-y-0 right-0 h-full w-4/5 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-xl", // changed from w-3/4 & sm:max-w-sm
+      },
+    },
+    defaultVariants: {
+      side: "right",
+    },
+  }
+);
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,

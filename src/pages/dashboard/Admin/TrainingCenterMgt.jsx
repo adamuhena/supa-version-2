@@ -147,6 +147,8 @@ const TrainingCenterManagement = () => {
     lga: "",
     sector: "",
     tradeArea: "",
+    dateFrom: "",
+    dateTo: "",
     sort: "-createdAt",
   }
   const [filter, setFilter] = useState({
@@ -156,12 +158,39 @@ const TrainingCenterManagement = () => {
   // const handleFilterChange = (key, value) => {
   //   setFilter((x) => ({ ...x, [key]: value }))
   // }
+  // const handleFilterChange = (key, value) => {
+  //   setFilter((x) => ({ 
+  //     ...x, 
+  //     [key]: value === "all" ? "" : value // Convert "all" back to empty string for API
+  //   }))
+  // }
+
   const handleFilterChange = (key, value) => {
-    setFilter((x) => ({ 
-      ...x, 
-      [key]: value === "all" ? "" : value // Convert "all" back to empty string for API
-    }))
-  }
+    setFilter(prev => {
+      const newFilter = { ...prev };
+      
+      // Handle 'all' values
+      if (value === 'all') {
+        newFilter[key] = '';
+      } else {
+        newFilter[key] = value;
+      }
+      
+      // Reset dependent fields
+      if (key === 'state') {
+        newFilter.lga = '';
+      }
+      if (key === 'sector') {
+        newFilter.tradeArea = '';
+      }
+      
+      // Reset to first page when filter changes
+      newFilter.currentPage = 1;
+      
+      return newFilter;
+    });
+  };
+
   const currentPage = filter?.currentPage
 
   // Add pagination state handler
@@ -271,10 +300,23 @@ const TrainingCenterManagement = () => {
       address: "Address",
       sectors: "Sectors",
       tradeAreas: "Trade Areas",
+      registrationDate: "Registration Date", 
     }
+
+    // const headers = Object.keys(users[0]).map((key) => headerMapping[key] || key)
+    // const rows = users.map((user) => Object.keys(user).map((key) => user[key]))
 
     const headers = Object.keys(users[0]).map((key) => headerMapping[key] || key)
     const rows = users.map((user) => Object.keys(user).map((key) => user[key]))
+
+      // const headers = Object.keys(users[0]).map((key) => headerMapping[key] || key)
+      // const rows = users.map((user) => {
+      //   const formattedUser = {
+      //     ...user,
+      //     registrationDate: user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "---"
+      //   };
+      //   return Object.keys(formattedUser).map((key) => formattedUser[key]);
+      // });
 
     return [headers, ...rows]
   }
@@ -292,6 +334,8 @@ const TrainingCenterManagement = () => {
           lga: filter?.lga,
           sector: filter?.sector,
           tradeArea: filter?.tradeArea,
+          dateFrom: filter?.dateFrom,
+          dateTo: filter?.dateTo,
           sort: filter?.sort,
         },
         headers: {
@@ -300,6 +344,8 @@ const TrainingCenterManagement = () => {
       })
 
       const { data } = response.data
+
+      console.log('Sample record:', data[0])
       const formatted = formatTCToCSV(
         (data || []).map((x, i) => {
           // Use the new function to extract trade areas
@@ -317,6 +363,8 @@ const TrainingCenterManagement = () => {
             })
           })
 
+          console.log('CreatedAt value:', x.createdAt, 'Type:', typeof x.createdAt);
+
           return {
             sn: i + 1,
             trainingCentreName: x?.trainingCentreName,
@@ -328,6 +376,9 @@ const TrainingCenterManagement = () => {
             address: x?.address,
             sectors: sectors.replace(/,\s*$/, ""),
             tradeAreas: tradeAreas.replace(/,\s*$/, ""),
+            
+            registrationDate: x.createdAt ? new Date(x.createdAt).toLocaleDateString() : "---"
+            
           }
         }),
       )
@@ -350,49 +401,93 @@ const TrainingCenterManagement = () => {
     setcsvData([])
   }
 
+  // const fetchReports = async () => {
+  //   setLoading(true)
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken")
+  //     const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
+  //       params: {
+  //         limit: itemsPerPage,
+  //         page: filter?.currentPage,
+  //         search: filter?.search,
+  //         state: filter?.state,
+  //         lga: filter?.lga,
+  //         sector: filter?.sector,
+  //         tradeArea: filter?.tradeArea,
+  //         assessmentStatus: filter?.assessmentStatus, // Add this
+  //         sort: filter?.sort,
+  //       },
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     })
+
+  //     const { data, pagination } = response.data
+  //     setReports(data)
+
+  //     setpagination((x) => {
+  //       return {
+  //         ...x,
+  //         total: pagination.total,
+  //         totalPages: pagination.totalPages,
+  //       }
+  //     })
+  //   } catch (error) {
+  //     console.error("Error fetching reports:", error)
+  //     toast.error("Failed to fetch training centers")
+  //   } finally {
+  //     setLoading(false)
+  //     setcsvData([])
+  //   }
+  // }
+
   const fetchReports = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const accessToken = localStorage.getItem("accessToken")
+      const accessToken = localStorage.getItem("accessToken");
+      const params = {
+        limit: itemsPerPage,
+        page: filter?.currentPage,
+        ...(filter.search && { search: filter.search }),
+        ...(filter.state && filter.state !== 'all' && { state: filter.state }),
+        ...(filter.lga && filter.lga !== 'all' && { lga: filter.lga }),
+        ...(filter.sector && filter.sector !== 'all' && { sector: filter.sector }),
+        ...(filter.tradeArea && filter.tradeArea !== 'all' && { tradeArea: filter.tradeArea }),
+        ...(filter.assessmentStatus && filter.assessmentStatus !== 'all' && { 
+          assessmentStatus: filter.assessmentStatus 
+        }),
+        ...(filter.dateFrom && { dateFrom: filter.dateFrom }),
+        ...(filter.dateTo && { dateTo: filter.dateTo }),
+        sort: filter?.sort
+      };
+  
       const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
-        params: {
-          limit: itemsPerPage,
-          page: filter?.currentPage,
-          search: filter?.search,
-          state: filter?.state,
-          lga: filter?.lga,
-          sector: filter?.sector,
-          tradeArea: filter?.tradeArea,
-          assessmentStatus: filter?.assessmentStatus, // Add this
-          sort: filter?.sort,
-        },
+        params,
         headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-
-      const { data, pagination } = response.data
-      setReports(data)
-
-      setpagination((x) => {
-        return {
-          ...x,
-          total: pagination.total,
-          totalPages: pagination.totalPages,
+          Authorization: `Bearer ${accessToken}`
         }
-      })
+      });
+  
+      const { data, pagination } = response.data;
+      setReports(data);
+      setpagination(prev => ({
+        ...prev,
+        total: pagination.total,
+        totalPages: pagination.totalPages
+      }));
     } catch (error) {
-      console.error("Error fetching reports:", error)
-      toast.error("Failed to fetch training centers")
+      console.error("Error fetching reports:", error);
+      toast.error("Failed to fetch training centers");
     } finally {
-      setLoading(false)
-      setcsvData([])
+      setLoading(false);
+      setcsvData([]);
     }
-  }
+  };
 
+  
   useEffect(() => {
     fetchReports()
-  }, [filter?.search, filter?.currentPage, filter?.state, filter?.lga, filter?.sector, filter?.tradeArea])
+  }, [filter?.search, filter?.currentPage, filter?.state, filter?.lga, filter?.sector, filter?.tradeArea, filter?.dateFrom, filter?.dateTo,])
 
   // const handleViewCenter = (center) => {
   //   setSelectedCenter(center)
@@ -724,6 +819,26 @@ const TrainingCenterManagement = () => {
               </SelectContent>
             </Select>
           </div>
+
+          <div className="w-[200px]">
+            <p className="text-left text-[14px] mb-1">From Date</p>
+            <Input
+              type="date"
+              className="text-[12px]"
+              value={filter.dateFrom}
+              onChange={(e) => handleFilterChange("dateFrom", e.target.value)}
+            />
+          </div>
+
+          <div className="w-[200px]">
+            <p className="text-left text-[14px] mb-1">To Date</p>
+            <Input
+              type="date"
+              className="text-[12px]"
+              value={filter.dateTo}
+              onChange={(e) => handleFilterChange("dateTo", e.target.value)}
+            />
+          </div>
         </div>
 
         <div className="w-full items-center justify-start flex gap-4">
@@ -768,6 +883,9 @@ const TrainingCenterManagement = () => {
               <TableHead>Address</TableHead>
               <TableHead>Trade Areas</TableHead>
               <TableHead>Assessment Status</TableHead>
+              <TableHead className="cursor-pointer" onClick={() => handleSort("createdAt")}>
+                Registration Date {filter.sort === "createdAt" ? "↑" : filter.sort === "-createdAt" ? "↓" : ""}
+              </TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -866,6 +984,10 @@ const TrainingCenterManagement = () => {
                     }`}>
                       {ASSESSMENT_STATUS[center.currentAssessmentStatus || 'pending'].label}
                     </span>
+                  </TableCell>
+
+                  <TableCell className="text-left text-[12px]">
+                    {center?.createdAt ? new Date(center.createdAt).toLocaleDateString() : "---"}
                   </TableCell>
                   
                   <TableCell>
