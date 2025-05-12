@@ -884,6 +884,7 @@ export default function AdminSectors() {
                                   variant="destructive"
                                   size="sm"
                                   onClick={() => setTradeAreaToDelete({ sector: currentTradeAreaSector, tradeArea })}
+                                  disabled={true}
                                 >
                                   <Trash className="h-4 w-4" />
                                 </Button>
@@ -959,6 +960,7 @@ export default function AdminSectors() {
                               variant="destructive"
                               size="sm"
                               onClick={() => setSectorToDelete(sector)}
+                              disabled={true}
                             >
                               <Trash className="h-4 w-4" />
                             </Button>
