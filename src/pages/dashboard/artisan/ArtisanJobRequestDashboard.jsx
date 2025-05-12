@@ -21,6 +21,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Cross1Icon } from "@radix-ui/react-icons";
+import { Select } from "@/components/ui/select";
 
 function generateUserAvatarFalback({ first_name, last_name }) {
   return `${!first_name ? "" : `${(first_name || "").trim()[0]}`}${
@@ -163,6 +164,11 @@ const ArtisanDashboard = () => {
                       <th className="border border-gray-300 px-4 py-2">
                         Job Title
                       </th>
+
+                      <th className="border border-gray-300 px-4 py-2">
+                        Job Location
+                      </th>
+
                       <th className="border border-gray-300 px-4 py-2">
                         Client
                       </th>
@@ -186,6 +192,12 @@ const ArtisanDashboard = () => {
 
                         <td className="border border-gray-300 px-4 py-2">
                           {transaction?.jobTitle || "N/A"}
+                        </td>
+
+                        <td className="border border-gray-300 px-4 py-2">
+                          {transaction?.jobLocation?.state
+                            ? `${transaction?.jobLocation?.lga}, ${transaction?.jobLocation?.state}`
+                            : "N/A"}
                         </td>
 
                         <td className="border border-gray-300 px-4 py-2">
@@ -401,7 +413,17 @@ const Modal = ({ handleActionClick, selectedItem, close, refresh }) => {
                     </p>
 
                     <p className=" mb-3 flex flex-col ">
-                      <strong>Job Location:</strong> {selectedItem?.jobLocation}
+                      <strong>Job State:</strong>
+                      {selectedItem?.jobLocation?.state || "N/A"}
+                    </p>
+                    <p className=" mb-3 flex flex-col ">
+                      <strong>Job LGA:</strong>
+                      {selectedItem?.jobLocation?.lga || "N/A"}
+                    </p>
+
+                    <p className=" mb-3 flex flex-col ">
+                      <strong>Job Address:</strong>
+                      {selectedItem?.jobLocation?.address || "N/A"}
                     </p>
                     <p className=" mb-3 flex flex-col ">
                       <strong>Status:</strong>
