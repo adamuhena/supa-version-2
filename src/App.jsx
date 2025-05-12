@@ -116,6 +116,7 @@
 
 //           {/* </DocumentProvider> */}
 
+
 //           {/* Public route for login */}
 //           <Route
 //             path="/login"
@@ -344,6 +345,7 @@
 
 // export default App;
 
+
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
@@ -505,8 +507,9 @@ function App() {
             <Route path="biodata" element={<ProtectedRoute allowedRoles={["admin", "superadmin", "artisan_user", "intending_artisan"]}><Biodata /></ProtectedRoute>} />
 
             {/* Training Center Routes */}
-            {/* <Route path="training/assign/smart" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><SmartAssignmentForm /></ProtectedRoute>} /> */}
-            <Route path="training-assignment" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><TrainingAssignmentDashboard /></ProtectedRoute>} />
+            
+            
+            
             <Route path="training-center" element={<ProtectedRoute allowedRoles={["training_center"]}><TrainingCenterDashboard /></ProtectedRoute>} />
             <Route path="training-center-management" element={<ProtectedRoute allowedRoles={["superadmin", "admin"]}><TrainingCenterManagement /></ProtectedRoute>} />
 
@@ -550,12 +553,11 @@ function App() {
             />
 
             {/* Document Management Routes */}
-            <Route path="documents" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><Dashboard /></ProtectedRoute>} />
-            <Route path="documents/create" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><CreateDocument /></ProtectedRoute>} />
-            <Route path="documents/edit/:id" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><EditDocument /></ProtectedRoute>} />
-            <Route path="documents/preview/:_id" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><DocumentPreview /></ProtectedRoute>} />
-            
-            
+            <Route path="documents" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="documents/create" element={<ProtectedRoute><CreateDocument /></ProtectedRoute>} />
+            <Route path="documents/edit/:id" element={<ProtectedRoute><EditDocument /></ProtectedRoute>} />
+            <Route path="documents/preview/:_id" element={<ProtectedRoute><DocumentPreview /></ProtectedRoute>} />
+
             {/* Miscellaneous Routes */}
             <Route path="test" element={<TestPage />} />
           </Route>

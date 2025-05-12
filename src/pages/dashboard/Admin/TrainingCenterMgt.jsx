@@ -444,25 +444,19 @@ const TrainingCenterManagement = () => {
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const accessToken = localStorage.getItem("accessToken");
-      const params = {
-        limit: itemsPerPage,
-        page: filter?.currentPage,
-        ...(filter.search && { search: filter.search }),
-        ...(filter.state && filter.state !== 'all' && { state: filter.state }),
-        ...(filter.lga && filter.lga !== 'all' && { lga: filter.lga }),
-        ...(filter.sector && filter.sector !== 'all' && { sector: filter.sector }),
-        ...(filter.tradeArea && filter.tradeArea !== 'all' && { tradeArea: filter.tradeArea }),
-        ...(filter.assessmentStatus && filter.assessmentStatus !== 'all' && { 
-          assessmentStatus: filter.assessmentStatus 
-        }),
-        ...(filter.dateFrom && { dateFrom: filter.dateFrom }),
-        ...(filter.dateTo && { dateTo: filter.dateTo }),
-        sort: filter?.sort
-      };
-  
+      const accessToken = localStorage.getItem("accessToken")
       const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
-        params,
+        params: {
+          limit: itemsPerPage,
+          page: filter?.currentPage,
+          search: filter?.search,
+          state: filter?.state,
+          lga: filter?.lga,
+          sector: filter?.sector,
+          tradeArea: filter?.tradeArea,
+          assessmentStatus: filter?.assessmentStatus, // Add this
+          sort: filter?.sort,
+        },
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
