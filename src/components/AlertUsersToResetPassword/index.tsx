@@ -41,7 +41,7 @@ export function AlertUsersToResetPassword() {
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogContent>
+      <AlertDialogContent className="max-h-[90vh] overflow-y-auto">
         <AlertDialogHeader>
           <div className="flex flex-col items-center justify-center w-full">
             <AlertCircle className="size-[70px] text-green-900" />

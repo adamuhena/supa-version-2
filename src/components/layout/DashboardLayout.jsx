@@ -1307,23 +1307,26 @@ export default function DashboardLayout({ href, title }) {
               <SidebarGroup>
                 <SidebarGroupLabel>User Setup</SidebarGroupLabel>
                 <SidebarMenu>
-                {isLinkAccessible(["superadmin"]) && (
-                  <><SidebarMenuItem>
-                      <SidebarMenuButton asChild>
-                        <Link to="/admin/usermanagement">
-                          <BookUser />
-                          <span>User Management</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem><SidebarMenuItem>
+                  {isLinkAccessible(["superadmin"]) && (
+                    <>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton asChild>
+                          <Link to="/admin/usermanagement">
+                            <BookUser />
+                            <span>User Management</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
                         <SidebarMenuButton asChild>
                           <Link to="/admin/training-centersmgt">
                             <Building />
                             <span>Training Centers</span>
                           </Link>
                         </SidebarMenuButton>
-                      </SidebarMenuItem></>
-                      )}
+                      </SidebarMenuItem>
+                    </>
+                  )}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/admin/sectors">
@@ -1460,7 +1463,7 @@ export default function DashboardLayout({ href, title }) {
                     <SidebarMenuButton asChild>
                       <Link to="/trainee/job-portfolio">
                         <ShoppingBag />
-                        <span>Job Portfolio</span>
+                        <span>My Recent Works</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

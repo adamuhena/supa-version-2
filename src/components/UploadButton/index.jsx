@@ -59,7 +59,7 @@ function UploadButton({
             <UploadIcon className={"text-black"} />
           </>
         ) : (
-          <span>Upload</span>
+          <span>{title || "Upload"}</span>
         )}
 
         <input
