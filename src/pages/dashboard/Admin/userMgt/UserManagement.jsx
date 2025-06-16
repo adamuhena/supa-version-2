@@ -212,13 +212,16 @@ const UserManagement = () => {
     const headerMapping = {
       sn: "S/N",
       fullName: "Full Name",
+      gender: "Gender",
       email: "Email",
       phoneNumber: "Phone Number",
       role: "Role",
       verificationStatus: "Verification Status",
       stateOfResidence: "State of Residence",
       lgaOfResidence: "LGA of Residence",
+      street: "Address",
       senatorialDistrict: "Senatorial District",
+      disability: "Disability",
       sectors: "Sectors",
       tradeAreas: "Trade Areas",
       createdAt: "Registration Date",
@@ -288,13 +291,16 @@ const UserManagement = () => {
           return {
             sn: i + 1,
             fullName: `${x?.firstName || ""} ${x?.lastName || ""}`,
+            gender: x?.gender || "",
             email: x?.email || "",
             phoneNumber: x?.phoneNumber || "",
             role: x?.role || "",
             verificationStatus: x?.currentVerificationStatus || "pending",
             stateOfResidence: x?.stateOfResidence || "",
             lgaOfResidence: x?.lgaOfResidence || "",
+            street: x?.street || "",
             senatorialDistrict: x?.senatorialDistrict || "",
+            disability: `${x?.disabilityType ? ` ${x?.disabilityType}` : "none"}`,
             sectors: sectors,
             tradeAreas: tradeAreas,
             createdAt: x?.createdAt ? new Date(x.createdAt).toLocaleDateString() : "",
@@ -362,24 +368,30 @@ const UserManagement = () => {
       const columns = [
         { header: "S/N", dataKey: "sn" },
         { header: "Name", dataKey: "name" },
+        { header: "Gender", dataKey: "gender"},
         { header: "Email", dataKey: "email" },
         { header: "Phone", dataKey: "phone" },
         { header: "Role", dataKey: "role" },
         { header: "Verification Status", dataKey: "verificationStatus" },
         { header: "State", dataKey: "state" },
         { header: "LGA", dataKey: "lga" },
+        { header: "Address", dataKey: "adress" },
+        { header: "Disability", dataKey: "disability" },
       ]
 
       // Prepare data for table
       const tableData = users.map((user, index) => ({
         sn: index + 1,
         name: `${user.firstName || ""} ${user.lastName || ""}`,
+        gender: user.gender || "",
         email: user.email || "",
         phone: user.phoneNumber || "",
         role: user.role || "",
         verificationStatus: user.currentVerificationStatus || "pending",
         state: user.stateOfResidence || "",
         lga: user.lgaOfResidence || "",
+        adress: user.street || "",
+        disability:`${user.hasDisability || ""}${user.disabilityType ? ` ${user.disabilityType}` : ""}`,
       }))
 
       // Add table to PDF
@@ -1201,6 +1213,9 @@ const handleInputChange = (field, value, index = null) => {
               <TableHead className="cursor-pointer" onClick={() => handleSort("firstName")}>
                 Name {filter.sort === "firstName" ? "↑" : filter.sort === "-firstName" ? "↓" : ""}
               </TableHead>
+              <TableHead className="cursor-pointer" onClick={() => handleSort("gender")}>
+                Gender {filter.sort === "gender" ? "↑" : filter.sort === "-gender" ? "↓" : ""}
+              </TableHead>
               <TableHead className="cursor-pointer" onClick={() => handleSort("email")}>
                 Email {filter.sort === "email" ? "↑" : filter.sort === "-email" ? "↓" : ""}
               </TableHead>
@@ -1211,6 +1226,9 @@ const handleInputChange = (field, value, index = null) => {
                 State of Residence/LGA{" "}
                 {filter.sort === "stateOfResidence" ? "↑" : filter.sort === "-stateOfResidence" ? "↓" : ""}
               </TableHead>
+              <TableHead>
+                Address
+              </TableHead>
               <TableHead className="cursor-pointer">
                 Senatorial District{" "}
                 {filter.sort === "senatorialDistrict" ? "↑" : filter.sort === "-senatorialDistrict" ? "↓" : ""}
@@ -1219,7 +1237,12 @@ const handleInputChange = (field, value, index = null) => {
                 State of Origin/LGA{" "}
                 {filter.sort === "stateOfOrigin" ? "↑" : filter.sort === "-stateOfOrigin" ? "↓" : ""}
               </TableHead>
+              
               <TableHead>Contact</TableHead>
+              <TableHead className="cursor-pointer" onClick={() => handleSort("hasDisability")}>
+                Disability Status{" "}
+                {filter.sort === "hasDisability" ? "↑" : filter.sort === "-hasDisability" ? "↓" : ""}
+              </TableHead>
               <TableHead className="cursor-pointer" onClick={() => handleSort("createdAt")}>
                 Registration Date {filter.sort === "createdAt" ? "↑" : filter.sort === "-createdAt" ? "↓" : ""}
               </TableHead>
@@ -1241,6 +1264,7 @@ const handleInputChange = (field, value, index = null) => {
                 <TableCell className="text-left max-w-[200px] text-[12px]">
                   {`${user.firstName || ""} ${user.lastName || ""}`}
                 </TableCell>
+                <TableCell className="text-left text-[12px]">{user?.gender}</TableCell>
                 <TableCell className="text-left text-[12px]">{user.email || ""}</TableCell>
                 <TableCell className="text-left text-[12px]">
                   <span
@@ -1265,6 +1289,7 @@ const handleInputChange = (field, value, index = null) => {
                     </div>
                   </div>
                 </TableCell>
+                <TableCell className="text-left text-[12px]">{user?.street || "---"}</TableCell>
                 <TableCell className="text-left text-[12px]">{user?.senatorialDistrict || "---"}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
@@ -1286,6 +1311,14 @@ const handleInputChange = (field, value, index = null) => {
                         <Mail className="size-[14px]" />
                         <span className="text-left text-[10px]">{user?.email || "---"}</span>
                       </div>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="text-left text-[12px]">
+                  <div className="flex items-center gap-2">
+                    <div className="flex flex-col">
+                      <span className="text-left text-[12px]">{user?.hasDisability || "---"}</span>
+                      <span className="text-left text-[10px]">{user?.disabilityType || "---"}</span>
                     </div>
                   </div>
                 </TableCell>

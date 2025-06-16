@@ -79,6 +79,8 @@ function formatUsersToCSV(users) {
     nin: "NIN",
     sectors: "Sectors",
     tradeAreas: "Trade Areas",
+    hasDisability: "Has Disability",
+    disabilityType: "Disability Type",
     createdAt: "Date Registered",
   };
 
@@ -309,25 +311,22 @@ const AdminDashboardReports = () => {
         limit: 1000000,
       };
 
+      if (form.dateFrom || form.dateTo) {
+      formattedParams.createdAt = {};
+      
       if (form.dateFrom) {
-        // Set time to start of day for dateFrom
         const startDate = new Date(form.dateFrom);
         startDate.setHours(0, 0, 0, 0);
-        formattedParams.createdAt = {
-          ...formattedParams.createdAt,
-          $gte: startDate.toISOString(),
-        };
+        formattedParams.createdAt.$gte = startDate.toISOString();
       }
 
       if (form.dateTo) {
-        // Set time to end of day for dateTo
         const endDate = new Date(form.dateTo);
         endDate.setHours(23, 59, 59, 999);
-        formattedParams.createdAt = {
-          ...formattedParams.createdAt,
-          $lte: endDate.toISOString(),
-        };
+        formattedParams.createdAt.$lte = endDate.toISOString();
       }
+    }
+  
 
       const response = await axios.post(
         `${API_BASE_URL}/users-reports`,
@@ -361,6 +360,15 @@ const AdminDashboardReports = () => {
             tradeAreas = tradeAreas.replace(/,\s*$/, "");
           }
 
+          // Format date
+        const createdAtDate = user.createdAt 
+          ? new Date(user.createdAt).toLocaleDateString()
+          : "";
+
+            // Handle disability data correctly
+        const hasDisability = user.hasDisability === true ? "Yes" : "No";
+
+
           return {
             "Ref-Number": user?._id || "",
             phoneNumber: user?.phoneNumber || "",
@@ -377,9 +385,9 @@ const AdminDashboardReports = () => {
             nin: user?.nin || "",
             sectors: sectors || "",
             tradeAreas: tradeAreas || "",
-            hasDisability: user?.hasDisability || "",
-            disabilityType: user?.disabilityType || "",
-            createdAt: user?.createdAt || "",
+            hasDisability: hasDisability,
+            disabilityType: user?.disabilityType || "None",
+            createdAt: createdAtDate
           };
         });
 
@@ -401,186 +409,7 @@ const AdminDashboardReports = () => {
       setLoadingCSV(false);
     }
   };
-  // const downloadAllData = async () => {
-  //   setLoadingCSV(true);
-  //   try {
-  //     const accessToken = localStorage.getItem("accessToken");
-
-  //     // Build filter params object
-  //     const filterParams = {
-  //       ...form,
-  //       page: 1,
-  //       limit: 1000000, // Large limit to get all records
-  //       ...(form.dateFrom || form.dateTo) && {
-  //         createdAt: {
-  //           ...(form.dateFrom && {
-  //             $gte: new Date(form.dateFrom).toISOString()
-  //           }),
-  //           ...(form.dateTo && {
-  //             $lte: new Date(form.dateTo).toISOString()
-  //           })
-  //         }
-  //       }
-  //     };
-
-  //     const response = await axios.post(
-  //       `${API_BASE_URL}/users-reports`,
-  //       { filterParams },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //           'Content-Type': 'application/json'
-  //         },
-  //       }
-  //     );
-
-  //     const { users } = response?.data?.data || {};
-
-  //     if (users?.length > 0) {
-  //       const processedUsers = users.map((user) => {
-  //         // Process prior skills and certifications
-  //         const skillsInfo = user.priorSkillsCerts?.reduce((acc, cert) => {
-  //           acc.sectors.add(cert.sector || '');
-  //           acc.tradeAreas.add(cert.tradeArea || '');
-  //           return acc;
-  //         }, { sectors: new Set(), tradeAreas: new Set() });
-
-  //         return {
-  //           "Ref-Number": user?._id || "",
-  //           "Phone Number": user?.phoneNumber || "",
-  //           "First Name": user?.firstName || "",
-  //           "Last Name": user?.lastName || "",
-  //           "Email": user?.email || "",
-  //           "Role": formatString(user?.role || ""),
-  //           "Gender": user?.gender || "",
-  //           "State of Origin": user?.stateOfOrigin || "",
-  //           "LGA of Origin": user?.lga || "",
-  //           "State of Residence": user?.stateOfResidence || "",
-  //           "LGA of Residence": user?.lgaOfResidence || "",
-  //           "Address": user?.street || "",
-  //           "NIN": user?.nin || "",
-  //           "Sectors": Array.from(skillsInfo?.sectors || []).filter(Boolean).join(", ") || "",
-  //           "Trade Areas": Array.from(skillsInfo?.tradeAreas || []).filter(Boolean).join(", ") || "",
-  //           "Has Disability": user?.hasDisability ? "Yes" : "No",
-  //           "Disability Type": user?.disabilityType || "",
-  //           "Registration Date": new Date(user?.createdAt).toLocaleDateString()
-  //         };
-  //       });
-
-  //       const formattedData = formatUsersToCSV(processedUsers);
-  //       setCsvData(formattedData);
-  //       setAllData(true);
-
-  //       toast.success("CSV data generated successfully. Click 'Download CSV' to save.");
-  //     } else {
-  //       toast.error("No data available to download");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error generating CSV:", error);
-  //     toast.error("Failed to generate CSV data");
-  //   } finally {
-  //     setLoadingCSV(false);
-  //   }
-  // };
-
-  // const downloadAllData = async () => {
-  //   setLoadingCSV(true);
-  //   try {
-  //     const accessToken = localStorage.getItem("accessToken");
-  //     const CHUNK_SIZE = 1000;
-  //     let currentPage = 1;
-  //     let allProcessedUsers = [];
-
-  //     // Build filter params with non-empty values only
-  //     const filterParams = {
-  //       page: currentPage,
-  //       limit: CHUNK_SIZE,
-  //       ...(form.role && { role: form.role }),
-  //       ...(form.stateOfResidence && { stateOfResidence: form.stateOfResidence }),
-  //       ...(form.lgaOfResidence && { lgaOfResidence: form.lgaOfResidence }),
-  //       ...(form.stateOfOrigin && { stateOfOrigin: form.stateOfOrigin }),
-  //       ...(form.lga && { lga: form.lga }),
-  //       ...(form.gender && { gender: form.gender }),
-  //       ...(form.hasDisability && { hasDisability: form.hasDisability === "Yes" }),
-  //       ...(form.sector && { sector: form.sector }),
-  //       ...(form.tradeArea && { tradeArea: form.tradeArea }),
-  //       ...(form.dateFrom || form.dateTo) && {
-  //         createdAt: {
-  //           ...(form.dateFrom && {
-  //             $gte: new Date(form.dateFrom).toISOString()
-  //           }),
-  //           ...(form.dateTo && {
-  //             $lte: new Date(form.dateTo).toISOString()
-  //           })
-  //         }
-  //       }
-  //     };
-
-  //     while (true) {
-  //       const response = await axios.post(
-  //         `${API_BASE_URL}/users-reports`,
-  //         {
-  //           filterParams: {
-  //             ...filterParams,
-  //             page: currentPage
-  //           }
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${accessToken}`,
-  //             'Content-Type': 'application/json'
-  //           }
-  //         }
-  //       );
-
-  //       const { users, pagination } = response?.data?.data || {};
-
-  //       if (!users?.length) break;
-
-  //       const processedChunk = users.map(user => ({
-  //         "Ref-Number": user?._id || "",
-  //         "Phone Number": user?.phoneNumber || "",
-  //         "First Name": user?.firstName || "",
-  //         "Last Name": user?.lastName || "",
-  //         "Email": user?.email || "",
-  //         "Role": formatString(user?.role || ""),
-  //         "Gender": user?.gender || "",
-  //         "State of Origin": user?.stateOfOrigin || "",
-  //         "LGA of Origin": user?.lga || "",
-  //         "State of Residence": user?.stateOfResidence || "",
-  //         "LGA of Residence": user?.lgaOfResidence || "",
-  //         "Address": user?.street || "",
-  //         "NIN": user?.nin || "",
-  //         "Sectors": processSkillsInfo(user.priorSkillsCerts, 'sector'),
-  //         "Trade Areas": processSkillsInfo(user.priorSkillsCerts, 'tradeArea'),
-  //         "Has Disability": user?.hasDisability ? "Yes" : "No",
-  //         "Disability Type": user?.disabilityType || "",
-  //         "Registration Date": new Date(user?.createdAt).toLocaleDateString()
-  //       }));
-
-  //       allProcessedUsers = [...allProcessedUsers, ...processedChunk];
-
-  //       if (currentPage >= pagination.totalPages) break;
-  //       currentPage++;
-  //     }
-
-  //     if (allProcessedUsers.length > 0) {
-  //       const formattedData = formatUsersToCSV(allProcessedUsers);
-  //       setCsvData(formattedData);
-  //       setAllData(true);
-  //       toast.success("CSV data generated successfully. Click 'Download CSV' to save.");
-  //     } else {
-  //       toast.error("No data available to download");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error generating CSV:", error);
-  //     toast.error("Failed to generate CSV data");
-  //   } finally {
-  //     setLoadingCSV(false);
-  //   }
-  // };
-
-  // Helper function to process skills info
+  
   const processSkillsInfo = (skillsCerts = [], field) => {
     if (!skillsCerts?.length) return "";
     const items = new Set();
@@ -621,6 +450,10 @@ const AdminDashboardReports = () => {
   };
 
   const search = () => {
+    const searchParams = {
+    ...form,
+    hasDisability: form.hasDisability === "Yes" ? true : undefined
+  };
     fetchUsers(form);
     setAllData(false);
   };
@@ -1192,9 +1025,9 @@ const AdminDashboardReports = () => {
                           )}
                         </TableCell>
                         <TableCell>
-                          <div>{user.hasDisability || "---"}</div>
+                          <div>{user.hasDisability === true ? "Yes" : "No"}</div>
                           <div className="text-sm text-gray-500">
-                            {user.disabilityType || "---"}
+                            {user.disabilityType || "None"}
                           </div>
                         </TableCell>
                         <TableCell>{user.createdAt || "---"}</TableCell>

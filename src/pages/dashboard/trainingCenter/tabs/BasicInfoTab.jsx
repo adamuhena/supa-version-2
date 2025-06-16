@@ -1,197 +1,131 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { Eye } from "lucide-react"
 import UploadButton from "@/components/UploadButton"
 
+const DOCUMENT_FIELDS = [
+  {
+    id: 'certificateOfRegistration',
+    label: 'Certificate of Registration',
+    required: true
+  },
+  {
+    id: 'taxClearanceCertificate',
+    label: 'Tax Clearance Certificate',
+    required: true
+  },
+  {
+    id: 'proofOfAddress',
+    label: 'Proof of Address',
+    required: true
+  },
+  {
+    id: 'accreditationCertificate',
+    label: 'Accreditation Certificate',
+    required: true
+  }
+]
+
+// Add this utility function after the imports
+const cleanFileUrl = (url) => {
+  if (!url) return '';
+  // Remove timestamp numbers after file extension
+  return url.replace(/(\.[^.]+)\d+$/, '$1');
+};
+
 const BasicInfoTab = ({ center, handleInputChange, handleSubmit }) => {
   // Function to handle document updates
-  const handleDocumentChange = (field, fileUrl) => {
+  const handleDocumentChange = (field, value) => {
+    // Clean the URL before saving
+    const newValue = typeof value === 'string' 
+      ? cleanFileUrl(value)
+      : value?.returnedUri 
+        ? cleanFileUrl(value.returnedUri)
+        : '';
+      
+    const updatedDocs = {
+      ...(center.verificationDocuments || {}),
+      [field]: newValue
+    };
+
     handleInputChange({
       target: {
-        name: `verificationDocuments.${field}`,
-        value: fileUrl
+        name: 'verificationDocuments',
+        value: updatedDocs
       }
-    })
+    });
+  }
+
+  // Function to handle document removal
+  const handleDocumentRemoval = (field) => {
+    handleDocumentChange(field, '')
   }
 
   // Validation function
   const isFormValid = () => {
-    const docs = center.verificationDocuments || {};
-    return Boolean(
-      docs.certificateOfRegistration &&
-      docs.taxClearanceCertificate &&
-      docs.proofOfAddress &&
-      docs.accreditationCertificate
-    );
+    const docs = center.verificationDocuments || {}
+    return DOCUMENT_FIELDS.every(field => 
+      !field.required || Boolean(docs[field.id])
+    )
   }
 
   return (
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information Section */}
-          {/* <div className="space-y-4">
-            <h2 className="text-left font-[600] text-[20px]">Basic Information</h2>
-            <Input
-              name="trainingCentreName"
-              value={center.trainingCentreName}
-              onChange={handleInputChange}
-              placeholder="Training Centre Name"
-            />
-            <Input 
-              name="regNum" 
-              value={center.regNum} 
-              onChange={handleInputChange} 
-              placeholder="Registration Number" 
-            />
-            <Input 
-              name="email" 
-              type="email" 
-              value={center.email} 
-              onChange={handleInputChange} 
-              placeholder="Email" 
-            />
-            <Input
-              name="phoneNumber"
-              value={center.phoneNumber}
-              onChange={handleInputChange}
-              placeholder="Phone Number"
-            />
-            <Input 
-              name="address" 
-              value={center.address} 
-              onChange={handleInputChange} 
-              placeholder="Address" 
-            />
-          </div> */}
-
-          {/* Verification Documents Section */}
-          <div className="space-y-4">
-            <h2 className="text-left font-[600] text-[20px]">Verification Documents</h2>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-4">
+        <h2 className="text-left font-[600] text-[20px]">
+          Verification Documents
+        </h2>
+        
+        {DOCUMENT_FIELDS.map(field => (
+          <div key={field.id} className="space-y-2">
+            <Label 
+              htmlFor={field.id} 
+              className="text-left leading-[1.3] flex items-center gap-1"
+            >
+              {field.label}
+              {field.required && <span className="text-red-500">*</span>}
+            </Label>
             
-            {/* Certificate of Registration */}
-            <div className="space-y-2">
-              <Label htmlFor="certificateOfRegistration" className="text-left leading-[1.3]">
-                Certificate of Registration
-              </Label>
-              <div className="flex flex-col gap-2">
-                <UploadButton
-                  fileUrl={center.verificationDocuments?.certificateOfRegistration}
-                  handleFileChange={(url) => handleDocumentChange("certificateOfRegistration", url)}
-                  removeFile={() => handleDocumentChange("certificateOfRegistration", "")}
-                  accept=".jpg, .png, .jpeg, .pdf, .doc, .docx"
-                />
-                {center.verificationDocuments?.certificateOfRegistration && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.open(center.verificationDocuments.certificateOfRegistration, '_blank')}
-                    className="flex items-center gap-2 w-fit"
-                  >
-                    <Eye className="h-4 w-4" />
-                    View Document
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            {/* Tax Clearance Certificate */}
-            <div className="space-y-2">
-              <Label htmlFor="taxClearanceCertificate" className="text-left leading-[1.3]">
-                Tax Clearance Certificate
-              </Label>
-              <div className="flex flex-col gap-2">
-                <UploadButton
-                  fileUrl={center.verificationDocuments?.taxClearanceCertificate}
-                  handleFileChange={(url) => handleDocumentChange("taxClearanceCertificate", url)}
-                  removeFile={() => handleDocumentChange("taxClearanceCertificate", "")}
-                  accept=".jpg, .png, .jpeg, .pdf, .doc, .docx"
-                />
-                {center.verificationDocuments?.taxClearanceCertificate && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.open(center.verificationDocuments.taxClearanceCertificate, '_blank')}
-                    className="flex items-center gap-2 w-fit"
-                  >
-                    <Eye className="h-4 w-4" />
-                    View Document
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            {/* Proof of Address */}
-            <div className="space-y-2">
-              <Label htmlFor="proofOfAddress" className="text-left leading-[1.3]">
-                Proof of Address
-              </Label>
-              <div className="flex flex-col gap-2">
-                <UploadButton
-                  fileUrl={center.verificationDocuments?.proofOfAddress}
-                  handleFileChange={(url) => handleDocumentChange("proofOfAddress", url)}
-                  removeFile={() => handleDocumentChange("proofOfAddress", "")}
-                  accept=".jpg, .png, .jpeg, .pdf, .doc, .docx"
-                />
-                {center.verificationDocuments?.proofOfAddress && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.open(center.verificationDocuments.proofOfAddress, '_blank')}
-                    className="flex items-center gap-2 w-fit"
-                  >
-                    <Eye className="h-4 w-4" />
-                    View Document
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            {/* Accreditation Certificate */}
-            <div className="space-y-2">
-              <Label htmlFor="accreditationCertificate" className="text-left leading-[1.3]">
-                Accreditation Certificate
-              </Label>
-              <div className="flex flex-col gap-2">
-                <UploadButton
-                  fileUrl={center.verificationDocuments?.accreditationCertificate}
-                  handleFileChange={(url) => handleDocumentChange("accreditationCertificate", url)}
-                  removeFile={() => handleDocumentChange("accreditationCertificate", "")}
-                  accept=".jpg, .png, .jpeg, .pdf, .doc, .docx"
-                  
-                />
-                {center.verificationDocuments?.accreditationCertificate && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.open(center.verificationDocuments.accreditationCertificate, '_blank')}
-                    className="flex items-center gap-2 w-fit"
-                  >
-                    <Eye className="h-4 w-4" />
-                    View Document
-                  </Button>
-                )}
-              </div>
+            <div className="flex flex-col gap-2">
+              <UploadButton
+                fileUrl={center.verificationDocuments?.[field.id] || ''}
+                title={field.label}
+                handleFileChange={(url) => handleDocumentChange(field.id, url)}
+                removeFile={() => handleDocumentRemoval(field.id)}
+                accept=".jpg, .png, .jpeg, .pdf, .doc, .docx"
+              />
+              
+              {center.verificationDocuments?.[field.id] && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const cleanUrl = cleanFileUrl(center.verificationDocuments[field.id]);
+                    window.open(cleanUrl, '_blank');
+                  }}
+                  className="flex items-center gap-2 w-fit"
+                >
+                  <Eye className="h-4 w-4" />
+                  View Document
+                </Button>
+              )}
             </div>
           </div>
+        ))}
+      </div>
 
-          <Button 
-            type="submit" 
-            className="w-full bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            // disabled={!isFormValid()}
-            disabled={true} 
-          >
-            {isFormValid() ? 'Update Basic Info' : 'Please Upload All Required Documents'}
-          </Button>
-        </form>
+      <Button 
+        type="submit" 
+        className="w-full bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={!isFormValid()}
+      >
+        {isFormValid() ? 'Update Documents' : 'Please Upload All Required Documents'}
+      </Button>
+    </form>
   )
 }
 
 export default BasicInfoTab
-
