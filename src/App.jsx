@@ -50,6 +50,7 @@ import TrainingCenterManagement from "./pages/dashboard/Admin/TrainingCenterMgt"
 import DashboardLayout from "./components/layout/DashboardLayout";
 import TrainingCenterMgt from "./pages/dashboard/Admin/TrainingCenterMgt/TrainingCenterManagement";
 import TrainingAssignmentDashboard from "./pages/dashboard/Admin/Assignment/TrainingAssignmentDashboard";
+import MarketplaceReport from "./pages/dashboard/Admin/marketplace-report";
 
 
 function App() {
@@ -147,6 +148,7 @@ function App() {
             {/* Admin and Superadmin Routes */}
             <Route path="admin/dashboard" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminDashboard /></ProtectedRoute>} />
             <Route path="admin/usermanagement" element={<ProtectedRoute allowedRoles={["superadmin"]}><UserManagement /></ProtectedRoute>} />
+            <Route path="admin/marketplacereport/reports" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}>< MarketplaceReport/></ProtectedRoute>} />
             <Route path="/admin/training-centersmgt" element={<ProtectedRoute allowedRoles={["superadmin"]}><TrainingCenterMgt /></ProtectedRoute>} />
             <Route path="admin/sectors" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminSectors /></ProtectedRoute>} />
             <Route path="admin/certification" element={<ProtectedRoute allowedRoles={["superadmin", "admin"]}><UserCert /></ProtectedRoute>} />

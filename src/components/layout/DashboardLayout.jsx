@@ -1412,6 +1412,15 @@ export default function DashboardLayout({ href, title }) {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/admin/marketplacereport/reports">
+                        <Building />
+                        <span>Marketplace Reports</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroup>
             </>
