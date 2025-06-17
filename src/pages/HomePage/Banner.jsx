@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo7 from "../HomePage/image/bimg.png";
@@ -22,9 +21,7 @@ export default function Banner() {
       />
 
       {/* Top Gradient Background */}
-      <div
-        className="absolute inset-x-0 -top-20 -z-0 transform-gpu overflow-hidden blur-3xl sm:-top-80 md:-top-96 lg:-top-110"
-      >
+      <div className="absolute inset-x-0 -top-20 -z-0 transform-gpu overflow-hidden blur-3xl sm:-top-80 md:-top-96 lg:-top-110">
         <div
           style={{
             clipPath:
@@ -47,13 +44,11 @@ export default function Banner() {
                 <div
                   className="rounded-full px-3 py-1 text-sm text-white 
                   ring-1 ring-gray-200/10 hover:ring-gray-900/20 
-                  bg-transparent backdrop-blur-lg inline-block"
-                >
+                  bg-transparent backdrop-blur-lg inline-block">
                   Announcing our next Phase of SUPA.
                   <Link
                     to="/about"
-                    className="ml-2 font-semibold text-green-500 hover:text-yellow-400"
-                  >
+                    className="ml-2 font-semibold text-green-500 hover:text-yellow-400">
                     Read more
                   </Link>
                 </div>
@@ -79,23 +74,21 @@ export default function Banner() {
                       className="h-12 px-8 text-sm rounded-full 
                       bg-emerald-900 hover:bg-emerald-900/80 text-white 
                       transition-colors duration-300"
-                      onClick={() => navigate("/register")}
-                    >
+                      onClick={() => navigate("/register")}>
                       Register
                     </button>
                   </Link>
                 </BlurFade>
                 <BlurFade delay={0.25} inView>
-                <Link to="/marketplace">
                   <button
                     className="h-12 px-8 text-sm rounded-full 
                     bg-white text-yellow-600 border border-yellow-600 
                     hover:bg-yellow-50 transition-colors duration-300"
-                    onClick={() => navigate("/marketplace")}
-                  >
+                    onClick={() =>
+                      (window.location = "http://localhost:5173/")
+                    }>
                     View Marketplace
                   </button>
-                  </Link>
                 </BlurFade>
               </div>
             </div>

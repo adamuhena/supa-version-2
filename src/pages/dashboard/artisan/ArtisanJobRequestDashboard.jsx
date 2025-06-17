@@ -20,8 +20,9 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Cross1Icon } from "@radix-ui/react-icons";
+import { Cross1Icon, StarFilledIcon, StarIcon } from "@radix-ui/react-icons";
 import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 function generateUserAvatarFalback({ first_name, last_name }) {
   return `${!first_name ? "" : `${(first_name || "").trim()[0]}`}${
@@ -168,6 +169,9 @@ const ArtisanDashboard = () => {
                       <th className="border border-gray-300 px-4 py-2">
                         Job Location
                       </th>
+                      <th className="border border-gray-300 px-4 py-2">
+                        Agreed Sum
+                      </th>
 
                       <th className="border border-gray-300 px-4 py-2">
                         Client
@@ -197,6 +201,14 @@ const ArtisanDashboard = () => {
                         <td className="border border-gray-300 px-4 py-2">
                           {transaction?.jobLocation?.state
                             ? `${transaction?.jobLocation?.lga}, ${transaction?.jobLocation?.state}`
+                            : "N/A"}
+                        </td>
+
+                        <td className="border border-gray-300 px-4 py-2">
+                          {transaction?.agreedSum
+                            ? `₦${Number(
+                                transaction?.agreedSum
+                              ).toLocaleString()}`
                             : "N/A"}
                         </td>
 
@@ -306,8 +318,12 @@ const Modal = ({ handleActionClick, selectedItem, close, refresh }) => {
   };
 
   const [completing, setcompleting] = useState(false);
+  const [agreedSum, setagreedSum] = useState("");
 
   const completeJob = async () => {
+    if (!agreedSum?.trim()?.length || !Number(agreedSum)) {
+      return alert("Agreed sum is required!");
+    }
     const userId = localStorage.getItem("userId");
 
     try {
@@ -320,6 +336,7 @@ const Modal = ({ handleActionClick, selectedItem, close, refresh }) => {
           artisan_id: userId,
           status: "artisan-completed",
           request_id: selectedItem?._id,
+          agreedSum,
         }
       );
       toast.success("Job completed successfully. Awaiting client approval!");
@@ -439,6 +456,50 @@ const Modal = ({ handleActionClick, selectedItem, close, refresh }) => {
                       </div>
                     </p>
 
+                    <p className=" mb-3 flex flex-col ">
+                      <strong>Agreed Sum:</strong>
+                      <div>
+                        {selectedItem?.agreedSum
+                          ? `₦${Number(
+                              selectedItem?.agreedSum
+                            ).toLocaleString()}`
+                          : "N/A"}
+                      </div>
+                    </p>
+
+                    <p className=" mb-3 flex flex-col ">
+                      <strong>Rating Given To Artisan:</strong>
+                      <div>
+                        {!selectedItem?.ratingGivenToArtisan?.rating
+                          ? "N/A"
+                          : [1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                className="focus:outline-none cursor-pointer">
+                                {star <=
+                                selectedItem?.ratingGivenToArtisan?.rating ? (
+                                  <StarFilledIcon
+                                    className={`size-[20px] ${"fill-green-400 text-green-400"}`}
+                                  />
+                                ) : (
+                                  <StarIcon
+                                    className={`size-[20px] ${"text-gray-300"}`}
+                                  />
+                                )}
+                              </button>
+                            ))}
+                      </div>
+                    </p>
+
+                    <p className=" mb-3 flex flex-col ">
+                      <strong>Additional message from client:</strong>
+                      <div>
+                        {!selectedItem?.ratingGivenToArtisan?.message
+                          ? "N/A"
+                          : selectedItem?.ratingGivenToArtisan?.message}
+                      </div>
+                    </p>
+
                     {selectedItem?.artisanRejectionReason ? (
                       <p className=" mb-3 flex flex-col ">
                         <strong>{startCase("artisanRejectionReason")}</strong>
@@ -484,15 +545,23 @@ const Modal = ({ handleActionClick, selectedItem, close, refresh }) => {
                   ) : null}
 
                   {selectedItem?.status === "accepted" ? (
-                    <>
+                    <div className="flex flex-col items-start justify-start">
+                      <Label>
+                        Please insert the agreed sum for the job in (Naira) *
+                      </Label>
+                      <Input
+                        value={agreedSum}
+                        className="mb-2"
+                        onChange={(e) => setagreedSum(e?.target?.value)}
+                      />
                       <Button
-                        disabled={loading}
+                        disabled={loading || !agreedSum}
                         onClick={completeJob}
                         className="bg-green-700">
                         I have completed the job
                         {completing ? <Spinner /> : <CheckCheckIcon />}
                       </Button>
-                    </>
+                    </div>
                   ) : null}
                 </CardFooter>
               </Card>
