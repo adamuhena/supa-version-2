@@ -124,6 +124,7 @@ const MarketplaceReport = () => {
   const [clientFilter, setClientFilter] = useState({ ...defaultData })
   const [requestFilter, setRequestFilter] = useState({ ...defaultData })
 
+
   // Set mounted state on component mount/unmount
   useEffect(() => {
     setIsMounted(true)
@@ -131,6 +132,7 @@ const MarketplaceReport = () => {
       setIsMounted(false)
     }
   }, [])
+  
 
   // Filter change handlers
   const handleArtisanFilterChange = (key, value) => {
