@@ -25,7 +25,7 @@ const SkillsTab = ({
   const [error, setError] = useState(null)
 
   // Check if user is admin/superadmin to determine edit permissions
-  const isEditable = user?.role === "admin" || user?.role === "superadmin";
+  const isEditable = user?.role === "superadmin";
 
   // Check user role to determine which sections to show
   const isArtisanUser = user?.role === "artisan_user"

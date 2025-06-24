@@ -101,6 +101,7 @@ const TrainingCenterManagement = () => {
   const logout = useLogout()
   const navigate = useNavigate()
   const [error, setError] = useState(null)
+  const [userRole, setUserRole] = useState("");
 
   const [sectors, setSectors] = useState([])
   const [hasLoadedFirst, sethasLoadedFirst] = useState(false)
@@ -109,6 +110,12 @@ const TrainingCenterManagement = () => {
   const [selectedCenter, setSelectedCenter] = useState(null)
   const [editedCenter, setEditedCenter] = useState(null)
   const [selectedTab, setSelectedTab] = useState("details")
+
+  useEffect(() => {
+  // Adjust the key if your user object is stored differently
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user?.role) setUserRole(user.role);
+}, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -852,6 +859,7 @@ const TrainingCenterManagement = () => {
 
         <div className="gap-2 flex justify-between w-full mt-4">
           <h2 className="font-medium">Total Records Found: {pagination?.total || 0}</h2>
+          {userRole === "superadmin" && (
           <div className="gap-2 flex flex-row-reverse justify-start mb-4">
             {!csvData?.length ? (
               <button onClick={downloadCSV} className="border-[1px] text-[12px] p-2 font-medium">
@@ -869,6 +877,7 @@ const TrainingCenterManagement = () => {
               </CSVLink>
             )}
           </div>
+          )}
         </div>
 
         <Table className={`${loading ? "opacity-30" : ""} overflow-x-auto`}>

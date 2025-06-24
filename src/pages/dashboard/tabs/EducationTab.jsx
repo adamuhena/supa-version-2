@@ -149,7 +149,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-
 const qualifications = [
   {
     value: "none",
@@ -172,7 +171,10 @@ const qualifications = [
     label: "Post-Graduate"
   }
 ];
+
 const EducationTab = ({ user, handleUpdate, submitChanges }) => {
+  const isEditable = user?.role === "superadmin"; // <-- Added
+
   // Add validation for graduation year
   const currentYear = new Date().getFullYear();
   const minYear = 1900;
@@ -183,7 +185,6 @@ const EducationTab = ({ user, handleUpdate, submitChanges }) => {
       ...user.education,
       [field]: value
     };
-    
     handleUpdate("education", updatedEducation);
   };
 
@@ -205,34 +206,35 @@ const EducationTab = ({ user, handleUpdate, submitChanges }) => {
                 id="education-school"
                 value={user.education?.school || ""}
                 onChange={(e) => handleChange("school", e.target.value)}
+                disabled={!isEditable}
               />
             </div>
 
-
-<div className="space-y-2">
-  <Label htmlFor="education-highestQualification">Highest Qualification</Label>
-  <Select
-    value={user.education?.highestQualification || ""}
-    onValueChange={(value) => handleChange("highestQualification", value)}
-  >
-    <SelectTrigger>
-      <SelectValue placeholder="Select highest qualification" />
-    </SelectTrigger>
-    <SelectContent>
-      {qualifications.map((qual) => (
-        <SelectItem key={qual.value} value={qual.value}>
-          {qual.label}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-</div>
+            <div className="space-y-2">
+              <Label htmlFor="education-highestQualification">Highest Qualification</Label>
+              <Select
+                value={user.education?.highestQualification || ""}
+                onValueChange={(value) => handleChange("highestQualification", value)}
+                disabled={!isEditable}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select highest qualification" />
+                </SelectTrigger>
+                <SelectContent>
+                  {qualifications.map((qual) => (
+                    <SelectItem key={qual.value} value={qual.value}>
+                      {qual.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="education-graduationYear">Graduation Year</Label>
               <Input
                 id="education-graduationYear"
-                type="number" 
+                type="number"
                 min={minYear}
                 max={currentYear}
                 value={user.education?.graduationYear || ""}
@@ -241,6 +243,7 @@ const EducationTab = ({ user, handleUpdate, submitChanges }) => {
                   handleChange("graduationYear", value.toString());
                 }}
                 placeholder={`Enter year between ${minYear} and ${currentYear}`}
+                disabled={!isEditable}
               />
             </div>
 
@@ -251,6 +254,7 @@ const EducationTab = ({ user, handleUpdate, submitChanges }) => {
                   fileUrl={user.education?.eduUpload || ""}
                   handleFileChange={(url) => handleChange("eduUpload", url)}
                   removeFile={() => handleChange("eduUpload", "")}
+                  disabled={!isEditable}
                 />
                 {user.education?.eduUpload && (
                   <FilePreview fileUrl={user.education.eduUpload} />
@@ -261,7 +265,8 @@ const EducationTab = ({ user, handleUpdate, submitChanges }) => {
             <Button
               onClick={handleSubmit}
               className="mt-4 bg-green-500 hover:bg-green-600"
-              disabled={true} >
+              disabled={!isEditable}
+            >
               Update Education
             </Button>
           </div>

@@ -767,7 +767,7 @@ import { states } from "../../../data/nigeria";
 
 const PersonalTab = ({ user, handleUpdate, submitChanges }) => {
   // Check if user is admin/superadmin to determine edit permissions
-  const isEditable = user?.role === "admin" || user?.role === "superadmin";
+  const isEditable =  user?.role === "superadmin";
   
   const selectedStateLGASOriginFormatted = useMemo(() => {
     if (!user.stateOfOrigin) return [];

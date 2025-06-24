@@ -88,6 +88,7 @@ const banks = [
 
 const UserManagement = () => {
   // Component state management
+  const [userRole, setUserRole] = useState("");
   const [isMounted, setIsMounted] = useState(false)
   const [hasLoadedFirst, sethasLoadedFirst] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -141,6 +142,12 @@ const UserManagement = () => {
   const [filter, setFilter] = useState({
     ...defaultData,
   })
+
+  useEffect(() => {
+  // Adjust the key if your user object is stored differently
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user?.role) setUserRole(user.role);
+}, []);
 
   // Set mounted state on component mount/unmount
   useEffect(() => {
@@ -1181,6 +1188,7 @@ const handleInputChange = (field, value, index = null) => {
 
         <div className="gap-2 flex justify-between w-full mt-4">
           <h2 className="font-medium">Total Records Found: {pagination?.totalUsers || 0}</h2>
+          {userRole === "superadmin" && (
           <div className="gap-2 flex flex-row-reverse justify-start mb-4">
             <Button onClick={downloadPDF} className="ml-2" variant="outline" disabled={loading || !users?.length}>
               <FileText className="mr-2 h-4 w-4" /> Export PDF
@@ -1204,6 +1212,7 @@ const handleInputChange = (field, value, index = null) => {
               </CSVLink>
             )}
           </div>
+          )}
         </div>
 
         <Table className={`${loading ? "opacity-30" : ""} overflow-x-auto`}>
@@ -1358,7 +1367,7 @@ const handleInputChange = (field, value, index = null) => {
                               <div className="flex items-center gap-4">
                                 <div className="w-24 h-24 rounded-full overflow-hidden">
                                   <img
-                                    src={selectedUser.profileImage || "/placeholder.svg?height=96&width=96"}
+                                    src={selectedUser?.profileImage || "/placeholder.svg?height=96&width=96"}
                                     alt="Profile"
                                     className="w-full h-full object-cover"
                                   />

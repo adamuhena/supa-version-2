@@ -721,9 +721,22 @@ export default function DistributionDashboard() {
     tradeArea: "all",
   })
   const [showFilters, setShowFilters] = useState(false)
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Get user from localStorage (adjust key as needed)
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const isEditable = user?.role === "superadmin";
+
 
   // Update the fetchAnalytics function to handle the new API structure
   const fetchAnalytics = async () => {
+     setError(null);
     const accessToken = localStorage.getItem("accessToken")
     if (!accessToken) {
       setError("Access token is missing. Please log in again.")
@@ -815,9 +828,11 @@ export default function DistributionDashboard() {
             <span className="text-gray-500">click to filter from our range of data</span>
           </div>
 
+          {isEditable && (
           <div className="flex items-center">
             <ExportDropdown analyticsData={analyticsData} />
           </div>
+          )}
         </div>
 
         <div

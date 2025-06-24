@@ -1304,11 +1304,12 @@ export default function DashboardLayout({ href, title }) {
               </SidebarGroup>
 
               {/* User Group */}
+              {isLinkAccessible(["superadmin"]) && (
+                    <>
               <SidebarGroup>
                 <SidebarGroupLabel>User Setup</SidebarGroupLabel>
                 <SidebarMenu>
-                  {isLinkAccessible(["superadmin"]) && (
-                    <>
+                  
                       <SidebarMenuItem>
                         <SidebarMenuButton asChild>
                           <Link to="/admin/usermanagement">
@@ -1325,8 +1326,7 @@ export default function DashboardLayout({ href, title }) {
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
-                    </>
-                  )}
+                  
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/admin/sectors">
@@ -1344,8 +1344,11 @@ export default function DashboardLayout({ href, title }) {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                   
                 </SidebarMenu>
               </SidebarGroup>
+              </>
+              )}
 
               {/* Center Group */}
               <SidebarGroup>
@@ -1392,6 +1395,8 @@ export default function DashboardLayout({ href, title }) {
               </SidebarGroup>
 
               {/* Reports Group */}
+              {isLinkAccessible(["superadmin"]) && (
+                    <>
               <SidebarGroup>
                 <SidebarGroupLabel>Reports</SidebarGroupLabel>
                 <SidebarMenu>
@@ -1423,6 +1428,8 @@ export default function DashboardLayout({ href, title }) {
                   </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroup>
+              </>
+              )}
             </>
           ) : null}
 
@@ -1443,7 +1450,6 @@ export default function DashboardLayout({ href, title }) {
           )}
 
           {isLinkAccessible([
-            "admin",
             "superadmin",
             "artisan_user",
             "intending_artisan",
@@ -1479,7 +1485,7 @@ export default function DashboardLayout({ href, title }) {
                 )}
 
                 {/* Only render this SidebarMenuItem if the user is not an intending_artisan */}
-                {isLinkAccessible(["admin", "superadmin", "artisan_user"]) && (
+                {isLinkAccessible(["superadmin", "artisan_user"]) && (
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/certification/upload">
@@ -1493,7 +1499,7 @@ export default function DashboardLayout({ href, title }) {
             </SidebarGroup>
           ) : null}
 
-          {isLinkAccessible(["admin", "superadmin"]) ? (
+          {isLinkAccessible(["superadmin"]) ? (
             <SidebarGroup className="group-data-[collapsible=icon]:hidden">
               <SidebarGroupLabel>Training Center</SidebarGroupLabel>
               <SidebarMenu>
@@ -1518,7 +1524,6 @@ export default function DashboardLayout({ href, title }) {
           ) : null}
 
           {isLinkAccessible([
-            "admin",
             "superadmin",
             "artisan_user",
             "intending_artisan",
