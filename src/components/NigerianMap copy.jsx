@@ -30,10 +30,13 @@ const NigerianMap = ({ analyticsData }) => {
     const stateInfo = stateData[stateId];
     if (!stateInfo) return null;
 
-    const stateInfoFromBackendOrigin =
-      analyticsData?.stateOfOrigin?.[stateInfo?.name];
-    const stateInfoFromBackendResidence =
-      analyticsData?.stateOfResidence?.[stateInfo?.name];
+    const stateResidence = analyticsData?.stateOfResidenceDistribution?.find(
+      (state) => state._id?.toLowerCase() === stateInfo.name?.toLowerCase()
+    );
+
+    const stateOrigin = analyticsData?.stateOfOriginDistribution?.find(
+      (state) => state._id?.toLowerCase() === stateInfo.name?.toLowerCase()
+    );
 
     const centers = analyticsData?.trainingCenterStats?.centersByState?.find(
       (state) => state._id?.toLowerCase() === stateInfo.name?.toLowerCase()
@@ -42,22 +45,10 @@ const NigerianMap = ({ analyticsData }) => {
     return {
       name: stateInfo.name,
       residenceCount: {
-        total:
-          stateInfoFromBackendResidence?.artisan_user +
-            stateInfoFromBackendResidence?.intending_artisan || 0,
-        artisan_user: stateInfoFromBackendResidence?.artisan_user || 0,
-        intending_artisan:
-          stateInfoFromBackendResidence?.intending_artisan || 0,
+        total: stateResidence?.total || 0,
+        artisan_user: stateResidence?.artisan_user || 0,
+        intending_artisan: stateResidence?.intending_artisan || 0,
       },
-
-      originCount: {
-        total:
-          stateInfoFromBackendOrigin?.artisan_user +
-            stateInfoFromBackendOrigin?.intending_artisan || 0,
-        artisan_user: stateInfoFromBackendOrigin?.artisan_user || 0,
-        intending_artisan: stateInfoFromBackendOrigin?.intending_artisan || 0,
-      },
-
       // originCount: {
       //   total: stateOrigin?.total || 0,
       //   artisan_user: stateOrigin?.artisan_user || 0,
@@ -65,13 +56,8 @@ const NigerianMap = ({ analyticsData }) => {
       // },
       trainingCenters: centers?.count || 0,
       centersList: centers?.centers || [],
-      total:
-        stateInfoFromBackendResidence?.artisan_user +
-          stateInfoFromBackendResidence?.intending_artisan || 0,
-
-      stateTotal:
-        stateInfoFromBackendOrigin?.artisan_user +
-          stateInfoFromBackendOrigin?.intending_artisan || 0,
+      total: stateResidence?.total || 0,
+      stateTotal: stateOrigin?.total || 0, // Add this line
     };
   };
 

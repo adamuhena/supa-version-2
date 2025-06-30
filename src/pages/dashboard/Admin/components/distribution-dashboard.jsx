@@ -1,4 +1,3 @@
-
 // "use client"
 
 // import { useState, useEffect } from "react"
@@ -100,8 +99,8 @@
 //                 setError(null);   // (Optional) Clear error
 //                 fetchAnalytics();
 //               }}
-//               className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 
-//                        transition-colors duration-200 font-medium focus:outline-none 
+//               className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700
+//                        transition-colors duration-200 font-medium focus:outline-none
 //                        focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
 //             >
 //               Retry
@@ -251,32 +250,30 @@
 //   )
 // }
 
+"use client";
 
-
-"use client"
-
-import { useState } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { GenderDistribution } from "./components/gender-distribution"
-import { GeographicDistribution } from "./components/geographic-distribution"
-import { SectorDistribution } from "./components/sector-distribution"
-import { TradeAreaDistribution } from "./components/trade-area-distribution"
-import { DistributionFilters } from "./components/distribution-filters"
-import { ErrorBoundary } from "@/components/ErrorBoundary"
-import Metrics from "./Metrics"
-import NigerianMap from "@/components/NigerianMap"
-import RecentRegistrations from "./RecentRegistrations"
-import { Button } from "@/components/ui/button"
-import { ChevronRight, Filter } from "lucide-react"
-import NewRegistration from "./NewRegistration"
-import { PayloadDataTable } from "./components/payload-data-table"
-import { ExportDropdown } from "./export-dropdown"
-import { useDistributionData } from "./hooks/distribution-data"
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { GenderDistribution } from "./components/gender-distribution";
+import { GeographicDistribution } from "./components/geographic-distribution";
+import { SectorDistribution } from "./components/sector-distribution";
+import { TradeAreaDistribution } from "./components/trade-area-distribution";
+import { DistributionFilters } from "./components/distribution-filters";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import Metrics from "./Metrics";
+import NigerianMap from "@/components/NigerianMap";
+import RecentRegistrations from "./RecentRegistrations";
+import { Button } from "@/components/ui/button";
+import { ChevronRight, Filter } from "lucide-react";
+import NewRegistration from "./NewRegistration";
+import { PayloadDataTable } from "./components/payload-data-table";
+import { ExportDropdown } from "./export-dropdown";
+import { useDistributionData } from "./hooks/distribution-data";
 
 export default function DistributionDashboardOptimized() {
-  const [activeTab, setActiveTab] = useState("main")
+  const [activeTab, setActiveTab] = useState("main");
   const [filters, setFilters] = useState({
     role: "all",
     gender: "all",
@@ -284,43 +281,64 @@ export default function DistributionDashboardOptimized() {
     stateOfOrigin: "all",
     sector: "all",
     tradeArea: "all",
-  })
-  const [showFilters, setShowFilters] = useState(false)
+  });
+  const [showFilters, setShowFilters] = useState(false);
 
   // Separate data fetching for each tab
-  const mainData = useDistributionData({
-    endpoint: "/distribution/main-dashboard",
+  // const mainData = useDistributionData({
+  //   endpoint: "/distribution/main-dashboard",
+  //   enabled: true, // Always load main dashboard data
+  // });
+
+  // const genderData = useDistributionData({
+  //   endpoint: "/distribution/gender",
+  //   enabled: activeTab === "gender",
+  // })
+
+  // const geographicData = useDistributionData({
+  //   endpoint: "/distribution/geographic",
+  //   enabled: activeTab === "geographic",
+  // })
+
+  // const sectorData = useDistributionData({
+  //   endpoint: "/distribution/sector",
+  //   enabled: activeTab === "sector",
+  // })
+
+  // // For payload tab, we can use the main data or create a separate endpoint
+  // const payloadData = useDistributionData({
+  //   endpoint: "/distribution/all", // Keep using the full data for payload table
+  //   enabled: activeTab === "payload",
+  // });
+
+  // const mainData = {};
+  const genderData = {};
+  const geographicData = {};
+  const sectorData = {};
+  const payloadData = {};
+
+  // const mainData = useDistributionData({
+  //   endpoint: "/distribution/main-dashboard",
+  //   enabled: true, // Always load main dashboard data
+  // });
+
+  const userRolesData = useDistributionData({
+    endpoint: "/distribution/count/users-by-role",
     enabled: true, // Always load main dashboard data
-  })
+  });
 
-  const genderData = useDistributionData({
-    endpoint: "/distribution/gender",
-    enabled: activeTab === "gender",
-  })
-
-  const geographicData = useDistributionData({
-    endpoint: "/distribution/geographic",
-    enabled: activeTab === "geographic",
-  })
-
-  const sectorData = useDistributionData({
-    endpoint: "/distribution/sector",
-    enabled: activeTab === "sector",
-  })
-
-  // For payload tab, we can use the main data or create a separate endpoint
-  const payloadData = useDistributionData({
-    endpoint: "/distribution/all", // Keep using the full data for payload table
-    enabled: activeTab === "payload",
-  })
+  const mainData = useDistributionData({
+    endpoint: "/distribution/count/users-by-state",
+    enabled: true, // Always load main dashboard data
+  });
 
   const handleFilterChange = (newFilters) => {
-    setFilters((prev) => ({ ...prev, ...newFilters }))
-  }
+    setFilters((prev) => ({ ...prev, ...newFilters }));
+  };
 
   const handleTabChange = (value) => {
-    setActiveTab(value)
-  }
+    setActiveTab(value);
+  };
 
   // Loading component for individual tabs
   const TabLoadingState = () => (
@@ -332,7 +350,7 @@ export default function DistributionDashboardOptimized() {
         <Skeleton className="h-32 w-full" />
       </div>
     </div>
-  )
+  );
 
   // Error component for individual tabs
   const TabErrorState = ({ error, onRetry }) => (
@@ -342,12 +360,15 @@ export default function DistributionDashboardOptimized() {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-red-600">{error}</p>
-        <Button onClick={onRetry} variant="outline" className="text-red-600 border-red-300 bg-transparent">
+        <Button
+          onClick={onRetry}
+          variant="outline"
+          className="text-red-600 border-red-300 bg-transparent">
           Retry
         </Button>
       </CardContent>
     </Card>
-  )
+  );
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -360,14 +381,19 @@ export default function DistributionDashboardOptimized() {
               size="sm"
               className={`
                 inline-flex items-center px-3 py-1 rounded-md
-                ${showFilters ? "bg-primary/10 text-primary hover:bg-primary/20" : "hover:bg-gray-100"}
-              `}
-            >
+                ${
+                  showFilters
+                    ? "bg-primary/10 text-primary hover:bg-primary/20"
+                    : "hover:bg-gray-100"
+                }
+              `}>
               <Filter className="h-4 w-4 mr-2" />
               <span>Filters</span>
             </Button>
             <ChevronRight className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-500">click to filter from our range of data</span>
+            <span className="text-gray-500">
+              click to filter from our range of data
+            </span>
           </div>
 
           <div className="flex items-center">
@@ -378,59 +404,64 @@ export default function DistributionDashboardOptimized() {
         <div
           className={`
           mt-3 transition-all duration-300 ease-in-out
-          ${showFilters ? "opacity-100 max-h-[500px]" : "opacity-0 max-h-0 overflow-hidden"}
-        `}
-        >
+          ${
+            showFilters
+              ? "opacity-100 max-h-[500px]"
+              : "opacity-0 max-h-0 overflow-hidden"
+          }
+        `}>
           <div className="p-4 border rounded-lg bg-white shadow-sm">
             <DistributionFilters onFilterChange={handleFilterChange} />
           </div>
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-8">
+      <Tabs
+        value={activeTab}
+        onValueChange={handleTabChange}
+        className="space-y-8">
         <TabsList className="grid w-full h-auto lg:grid-cols-5 gap-2 bg-gray-100 p-1 rounded-lg">
           <TabsTrigger
             value="main"
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900
-                     data-[state=active]:shadow-sm px-4 py-2 rounded-md"
-          >
+                     data-[state=active]:shadow-sm px-4 py-2 rounded-md">
             Main Dashboard
           </TabsTrigger>
           <TabsTrigger
             value="gender"
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900
-                     data-[state=active]:shadow-sm px-4 py-2 rounded-md"
-          >
+                     data-[state=active]:shadow-sm px-4 py-2 rounded-md">
             Gender Distribution
             {genderData.loading && <span className="ml-2 animate-spin">⟳</span>}
           </TabsTrigger>
           <TabsTrigger
             value="geographic"
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900
-                     data-[state=active]:shadow-sm px-4 py-2 rounded-md"
-          >
+                     data-[state=active]:shadow-sm px-4 py-2 rounded-md">
             Geographic Distribution
-            {geographicData.loading && <span className="ml-2 animate-spin">⟳</span>}
+            {geographicData.loading && (
+              <span className="ml-2 animate-spin">⟳</span>
+            )}
           </TabsTrigger>
           <TabsTrigger
             value="sector"
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900
-                     data-[state=active]:shadow-sm px-4 py-2 rounded-md"
-          >
+                     data-[state=active]:shadow-sm px-4 py-2 rounded-md">
             Sector Distribution
             {sectorData.loading && <span className="ml-2 animate-spin">⟳</span>}
           </TabsTrigger>
           <TabsTrigger
             value="payload"
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900
-                       data-[state=active]:shadow-sm px-4 py-2 rounded-md"
-          >
+                       data-[state=active]:shadow-sm px-4 py-2 rounded-md">
             Distribution Count
-            {payloadData.loading && <span className="ml-2 animate-spin">⟳</span>}
+            {payloadData.loading && (
+              <span className="ml-2 animate-spin">⟳</span>
+            )}
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="main" className="mt-8">
+        {/* <TabsContent value="main" className="mt-8">
           {mainData.loading ? (
             <TabLoadingState />
           ) : mainData.error ? (
@@ -454,16 +485,46 @@ export default function DistributionDashboardOptimized() {
               </section>
             </div>
           )}
+        </TabsContent> */}
+
+        <TabsContent value="main" className="mt-8">
+          <div className="w-full h-auto">
+            <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+              <div className="lg:col-span-12">
+                <Metrics
+                  analyticsData={userRolesData.data}
+                  loading={userRolesData?.loading}
+                />
+              </div>
+            </section>
+
+            <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+              <div className="lg:col-span-8">
+                <NigerianMap analyticsData={mainData.data} />
+              </div>
+              <div className="lg:col-span-4 flex flex-col gap-8">
+                <RecentRegistrations analyticsData={mainData.data} />
+                <NewRegistration />
+              </div>
+            </section>
+          </div>
         </TabsContent>
 
         <TabsContent value="gender" className="mt-0">
           {genderData.loading ? (
             <TabLoadingState />
           ) : genderData.error ? (
-            <TabErrorState error={genderData.error} onRetry={genderData.refetch} />
+            <TabErrorState
+              error={genderData.error}
+              onRetry={genderData.refetch}
+            />
           ) : (
             <div className="w-full h-[400px] min-h-[400px]">
-              <GenderDistribution analyticsData={genderData.data} geoData={genderData.data} filters={filters} />
+              <GenderDistribution
+                analyticsData={genderData.data}
+                geoData={genderData.data}
+                filters={filters}
+              />
             </div>
           )}
         </TabsContent>
@@ -472,10 +533,16 @@ export default function DistributionDashboardOptimized() {
           {geographicData.loading ? (
             <TabLoadingState />
           ) : geographicData.error ? (
-            <TabErrorState error={geographicData.error} onRetry={geographicData.refetch} />
+            <TabErrorState
+              error={geographicData.error}
+              onRetry={geographicData.refetch}
+            />
           ) : (
             <div className="w-full h-[500px] min-h-[500px]">
-              <GeographicDistribution geoData={geographicData.data} filters={filters} />
+              <GeographicDistribution
+                geoData={geographicData.data}
+                filters={filters}
+              />
             </div>
           )}
         </TabsContent>
@@ -484,7 +551,10 @@ export default function DistributionDashboardOptimized() {
           {sectorData.loading ? (
             <TabLoadingState />
           ) : sectorData.error ? (
-            <TabErrorState error={sectorData.error} onRetry={sectorData.refetch} />
+            <TabErrorState
+              error={sectorData.error}
+              onRetry={sectorData.refetch}
+            />
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <Card className="shadow-md hover:shadow-lg transition-shadow duration-200">
@@ -517,7 +587,10 @@ export default function DistributionDashboardOptimized() {
           {payloadData.loading ? (
             <TabLoadingState />
           ) : payloadData.error ? (
-            <TabErrorState error={payloadData.error} onRetry={payloadData.refetch} />
+            <TabErrorState
+              error={payloadData.error}
+              onRetry={payloadData.refetch}
+            />
           ) : (
             <div className="w-full">
               <PayloadDataTable analyticsData={payloadData.data} />
@@ -526,5 +599,5 @@ export default function DistributionDashboardOptimized() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

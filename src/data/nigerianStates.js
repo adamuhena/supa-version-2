@@ -13,7 +13,10 @@ export const stateData = {
   edo: { name: "Edo", coordinates: [5.971, 6.587] },
   ekiti: { name: "Ekiti", coordinates: [5.317, 7.721] },
   enugu: { name: "Enugu", coordinates: [7.432, 6.541] },
-  "Federal Capital Territory": { name: "Federal Capital Territory", coordinates: [7.066, 8.821] },
+  "Federal Capital Territory": {
+    name: "Federal Capital Territory",
+    coordinates: [7.066, 8.821],
+  },
   gombe: { name: "Gombe", coordinates: [11.244, 10.524] },
   imo: { name: "Imo", coordinates: [7.015, 5.555] },
   jigawa: { name: "Jigawa", coordinates: [9.463, 12.413] },
@@ -35,17 +38,17 @@ export const stateData = {
   sokoto: { name: "Sokoto", coordinates: [5.383, 13.244] },
   taraba: { name: "Taraba", coordinates: [10.88, 7.827] },
   yobe: { name: "Yobe", coordinates: [11.599, 11.929] },
-  zamfara: { name: "Zamfara", coordinates: [6.301, 12.133] }
+  zamfara: { name: "Zamfara", coordinates: [6.301, 12.133] },
 };
 
 // Helper function to get state metadata
 export const getStateMetadata = (stateName) => {
-  const stateInfo = nigeria.find(state => state.name === stateName);
+  const stateInfo = nigeria.find((state) => state.name === stateName);
   return {
     cities: stateInfo?.cities || [],
     lgas: stateInfo?.lgas || [],
     senatorialDistricts: stateInfo?.senatorialDistricts || [],
-    code: stateInfo?.code || ''
+    code: stateInfo?.code || "",
   };
 };
 
