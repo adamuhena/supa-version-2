@@ -366,6 +366,12 @@ import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { FileText, Eye, ChevronLeft, Maximize, Minimize } from "lucide-react"
 
+function displayStateName(state) {
+  if (state === "Uyo") return "Akwa Ibom";
+  if (state === "Calabar") return "Cross River";
+  return state;
+}
+
 const nigerianStates = [
   "Abia",
   "Adamawa",
@@ -409,9 +415,9 @@ const nigerianStates = [
 const beneficiaryCategories = [
   {
     id: "shortlisted",
-    label: "SUPA Nominees",
+    label: "Registered Artisans",
     types: [
-      { value: "shortlisted_artisans", label: "Nominees" },
+      { value: "shortlisted_artisans", label: "Artisans" },
     ]
   },
   {
@@ -441,7 +447,7 @@ years.forEach(year => {
       category.types.forEach(type => {
         pdfData[year][state].push({
           id: `${year}-${state}-${type.value}`,
-          title: `${state} ${year} SUPA ${type.label}`,
+          title: `${displayStateName(state)} ${year} Registered ${type.label}`,
           url: `/SUPA${year}/${state}_${type.value}.pdf`,
           type: type.value,
           category: category.id
@@ -567,7 +573,7 @@ export default function PDFPreviewPage2() {
         <section className="bg-slate-900 pt-32 pb-10">
           <div className="container mx-auto px-4">
             <div className="inline-block rounded-lg bg-muted px-6 md:px-16 lg:px-32 xl:px-40 py-5 text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-emerald-600">
-              2024 Beneficiaries / 2025 Nominees
+             Beneficiaries / Registered Artisans
             </div>
           </div>
         </section>
@@ -622,13 +628,13 @@ export default function PDFPreviewPage2() {
               </svg>
               <div className="ml-2 sm:ml-3 min-w-0 flex-1">
                 <h3 className="text-xs sm:text-sm lg:text-base font-semibold text-blue-800 leading-tight">
-                  To Check Successful SUPA 2025 Nominiees
+                  To Check Successful List of Artisan for Screening
                 </h3>
-                <p className="text-xs sm:text-xs text-blue-700 mt-0.5 leading-relaxed">
+                {/* <p className="text-xs sm:text-xs text-blue-700 mt-0.5 leading-relaxed">
                   To check if you're Nominated for SUPA 2025:
-                </p>
+                </p> */}
                 <p className="text-xs sm:text-xs text-blue-600 mt-1 italic font-medium">
-                  Note: Selected Nominees will undergo screening.
+                  Note: Succesful Artian will undergo screening.
                 </p>
               </div>
             </div>
@@ -652,13 +658,13 @@ export default function PDFPreviewPage2() {
                 <div className="flex items-center p-1.5 sm:p-2 bg-white/60 rounded border border-blue-200">
                   <span className="inline-flex items-center justify-center w-5 h-5 sm:w-5 sm:h-5 bg-blue-600 text-white rounded-full text-xs font-bold flex-shrink-0">3</span>
                   <span className="ml-2 text-xs text-blue-800">
-                    Click <span className="font-semibold">SUPA Nominees</span>
+                    Click <span className="font-semibold">Registered Artisans</span>
                   </span>
                 </div>
                 <div className="flex items-center p-1.5 sm:p-2 bg-white/60 rounded border border-blue-200">
                   <span className="inline-flex items-center justify-center w-5 h-5 sm:w-5 sm:h-5 bg-blue-600 text-white rounded-full text-xs font-bold flex-shrink-0">4</span>
                   <span className="ml-2 text-xs text-blue-800">
-                    Click <span className="font-semibold">Preview List</span> under SUPA Artisans
+                    Click <span className="font-semibold">Preview List</span> Registered Artisans
                   </span>
                 </div>
               </div>
@@ -717,14 +723,14 @@ export default function PDFPreviewPage2() {
     <div className="flex items-center gap-2 p-2 bg-white/60 rounded border border-blue-200">
       <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-bold flex-shrink-0">3</span>
       <span className="text-xs xl:text-sm">
-        Click <span className="font-semibold">SUPA Nominees</span>
+        Click <span className="font-semibold">Registered Artisans</span>
       </span>
     </div>
     
     <div className="flex items-center gap-2 p-2 bg-white/60 rounded border border-blue-200">
       <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-bold flex-shrink-0">4</span>
       <span className="text-xs xl:text-sm">
-        Click <span className="font-semibold">Preview List</span> under SUPA Nominees
+        Click <span className="font-semibold">Preview List</span> Registered Artisans
       </span>
     </div>
   </div>
@@ -761,7 +767,7 @@ export default function PDFPreviewPage2() {
                       <SelectContent>
                         {nigerianStates.map(state => (
                           <SelectItem key={state} value={state}>
-                            {state}
+                            {displayStateName(state)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -815,7 +821,7 @@ export default function PDFPreviewPage2() {
                       <TabsContent key={category.id} value={category.id} className="mt-6">
                         <div>
                           <h3 className="text-xl font-semibold mb-4">
-                            {category.label} for {selectedState} - {selectedYear}
+                            {category.label} for {displayStateName(selectedState)} - {selectedYear}
                           </h3>
 
                           {isCheckingPdfs ? (
@@ -866,7 +872,7 @@ export default function PDFPreviewPage2() {
                                   <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                                   <h4 className="text-lg font-medium mb-2">No Documents Available</h4>
                                   <p className="text-muted-foreground">
-                                    There are no documents available for {category.label.toLowerCase()} in {selectedState} for {selectedYear}.
+                                    There are no documents available for {category.label.toLowerCase()} in {displayStateName(selectedState)} for {selectedYear}.
                                   </p>
                                 </div>
                               )}
