@@ -312,9 +312,9 @@ export default function DistributionDashboardOptimized() {
   // });
 
   // const mainData = {};
-  const genderData = {};
-  const geographicData = {};
-  const sectorData = {};
+  // const genderData = {};
+  // const geographicData = {};
+  // const sectorData = {};
   const payloadData = {};
 
   // const mainData = useDistributionData({
@@ -330,6 +330,23 @@ export default function DistributionDashboardOptimized() {
   const mainData = useDistributionData({
     endpoint: "/distribution/count/users-by-state",
     enabled: true, // Always load main dashboard data
+  });
+
+  //distribution/gender
+  const genderData = useDistributionData({
+    endpoint: "/distribution/gender",
+    enabled: activeTab === "gender",
+});
+//distribution/geographic
+  const geographicData = useDistributionData({
+    endpoint: "/distribution/geographic",
+    enabled: activeTab === "geographic",
+  });
+
+  ///distribution/sector
+  const sectorData = useDistributionData({  
+    endpoint: "/distribution/sector",
+    enabled: activeTab === "sector",
   });
 
   const handleFilterChange = (newFilters) => {
@@ -420,7 +437,7 @@ export default function DistributionDashboardOptimized() {
         value={activeTab}
         onValueChange={handleTabChange}
         className="space-y-8">
-        <TabsList className="grid w-full h-auto lg:grid-cols-5 gap-2 bg-gray-100 p-1 rounded-lg">
+        <TabsList className="grid w-full h-auto lg:grid-cols-4 gap-2 bg-gray-100 p-1 rounded-lg">
           <TabsTrigger
             value="main"
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900
@@ -450,7 +467,7 @@ export default function DistributionDashboardOptimized() {
             Sector Distribution
             {sectorData.loading && <span className="ml-2 animate-spin">⟳</span>}
           </TabsTrigger>
-          <TabsTrigger
+          {/* <TabsTrigger
             value="payload"
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900
                        data-[state=active]:shadow-sm px-4 py-2 rounded-md">
@@ -458,7 +475,7 @@ export default function DistributionDashboardOptimized() {
             {payloadData.loading && (
               <span className="ml-2 animate-spin">⟳</span>
             )}
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
 
         {/* <TabsContent value="main" className="mt-8">
@@ -503,7 +520,10 @@ export default function DistributionDashboardOptimized() {
                 <NigerianMap analyticsData={mainData.data} />
               </div>
               <div className="lg:col-span-4 flex flex-col gap-8">
-                <RecentRegistrations analyticsData={mainData.data} />
+                <RecentRegistrations 
+                  analyticsData={userRolesData.data} 
+                  loading={userRolesData?.loading}
+                />
                 <NewRegistration />
               </div>
             </section>
@@ -583,7 +603,7 @@ export default function DistributionDashboardOptimized() {
           )}
         </TabsContent>
 
-        <TabsContent value="payload" className="mt-0">
+        {/* <TabsContent value="payload" className="mt-0">
           {payloadData.loading ? (
             <TabLoadingState />
           ) : payloadData.error ? (
@@ -596,7 +616,7 @@ export default function DistributionDashboardOptimized() {
               <PayloadDataTable analyticsData={payloadData.data} />
             </div>
           )}
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );

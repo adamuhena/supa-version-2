@@ -35,9 +35,9 @@ const NigerianMap = ({ analyticsData }) => {
     const stateInfoFromBackendResidence =
       analyticsData?.stateOfResidence?.[stateInfo?.name];
 
-    const centers = analyticsData?.trainingCenterStats?.centersByState?.find(
-      (state) => state._id?.toLowerCase() === stateInfo.name?.toLowerCase()
-    );
+    const trainingCentersCount =
+      analyticsData?.trainingCentersByState?.[stateInfo.name] || 0;
+
 
     return {
       name: stateInfo.name,
@@ -63,8 +63,8 @@ const NigerianMap = ({ analyticsData }) => {
       //   artisan_user: stateOrigin?.artisan_user || 0,
       //   intending_artisan: stateOrigin?.intending_artisan || 0
       // },
-      trainingCenters: centers?.count || 0,
-      centersList: centers?.centers || [],
+      trainingCenters:trainingCentersCount,
+      centersList: [],
       total:
         stateInfoFromBackendResidence?.artisan_user +
           stateInfoFromBackendResidence?.intending_artisan || 0,
