@@ -80,6 +80,9 @@ export default function LoginForm() {
 
         localStorage.setItem("userId", _id);
         localStorage.setItem("userRole", userRole);
+        // Store the full user object for easy access everywhere
+        localStorage.setItem("user", JSON.stringify(userData));
+
         localStorage.setItem("accessToken", data.accessToken.accessToken);
         localStorage.setItem("refreshToken", data.accessToken.refreshToken);
         localStorage.setItem("isFirstTimeUser", JSON.stringify(isFirstTimeUser));

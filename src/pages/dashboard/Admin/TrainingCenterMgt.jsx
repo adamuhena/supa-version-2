@@ -9,6 +9,7 @@ import { toast } from "sonner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { CSVLink } from "react-csv"
+import { Badge } from "@/components/ui/badge";
 import "jspdf-autotable"
 import {
   Pagination,
@@ -31,7 +32,8 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import UploadButton from "@/components/UploadButton"
 import { FilePreview } from "@/components/FilePreview";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter, } from "@/components/ui/card";
+import { CheckCircle, XCircle, Clock , FileText, Calendar, User } from "lucide-react";
 
 import {
   AlertDialog,
@@ -83,6 +85,28 @@ const ASSESSMENT_STATUS = {
   denied: { label: "Denied", color: "bg-red-100 text-red-800" }
 }
 
+const getStatusIcon = (status) => {
+  switch (status) {
+    case "approved":
+      return <CheckCircle className="h-4 w-4 text-green-600" />
+    case "denied":
+      return <XCircle  className="h-4 w-4 text-red-600" />
+    default:
+      return <Clock className="h-4 w-4 text-yellow-600" />
+  }
+}
+
+const getStatusColor = (status) => {
+  switch (status) {
+    case "approved":
+      return "bg-green-100 text-green-800 border-green-200"
+    case "denied":
+      return "bg-red-100 text-red-800 border-red-200"
+    default:
+      return "bg-yellow-100 text-yellow-800 border-yellow-200"
+  }
+}
+
 const useDebounce = ({ onChange, debounce = 500 }) => {
   const [value, setValue] = useState("")
 
@@ -101,6 +125,9 @@ const TrainingCenterManagement = () => {
   const logout = useLogout()
   const navigate = useNavigate()
   const [error, setError] = useState(null)
+  const [userRole, setUserRole] = useState("");
+  const [currentUser, setCurrentUser] = useState(null)
+  const [isAddingAssessment, setIsAddingAssessment] = useState(false)
 
   const [sectors, setSectors] = useState([])
   const [hasLoadedFirst, sethasLoadedFirst] = useState(false)
@@ -109,6 +136,49 @@ const TrainingCenterManagement = () => {
   const [selectedCenter, setSelectedCenter] = useState(null)
   const [editedCenter, setEditedCenter] = useState(null)
   const [selectedTab, setSelectedTab] = useState("details")
+
+  const [newAssessment, setNewAssessment] = useState({
+    year: new Date().getFullYear(),
+    status: "pending",
+    date: new Date().toISOString().split("T")[0], // Format as YYYY-MM-DD
+    notes: "",
+    expirationDate: "",
+    assessorName: `${currentUser?.firstName || ""} ${currentUser?.lastName || ""}`.trim() || currentUser?.email
+  })
+  // const sortedAssessments = (editMode ? editedCenter?.assessmentRecords : selectedCenter?.assessmentRecords || [])
+  // .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+const sortedAssessments = (editMode 
+  ? (isAddingAssessment 
+      ? [...(editedCenter?.assessmentRecords || []), newAssessment] 
+      : editedCenter?.assessmentRecords)
+  : selectedCenter?.assessmentRecords || [])
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+
+  
+
+
+useEffect(() => {
+  if (currentUser) {
+    setNewAssessment((prev) => ({
+      ...prev,
+      assessorName:
+        `${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim() ||
+        currentUser.email ||
+        ""
+    }));
+  }
+}, [currentUser]);
+
+useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("user"))
+  setCurrentUser(user)
+}, [])
+
+  useEffect(() => {
+  // Adjust the key if your user object is stored differently
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user?.role) setUserRole(user.role);
+}, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -538,7 +608,7 @@ const TrainingCenterManagement = () => {
   //   try {
   //     setLoading(true)
   //     const accessToken = localStorage.getItem("accessToken")
-
+  
   //     // If there's a new assessment record without an ID, it's a new assessment
   //     const newAssessment = editedCenter.assessmentRecords?.find(record => !record._id)
       
@@ -546,8 +616,8 @@ const TrainingCenterManagement = () => {
   //       ...editedCenter,
   //       ...(newAssessment && { newAssessment }),
   //     }
-
-  //     await axios.patch(
+  
+  //     const response = await axios.patch(
   //       `${API_BASE_URL}/training-centers/${editedCenter._id}`,
   //       payload,
   //       {
@@ -556,11 +626,18 @@ const TrainingCenterManagement = () => {
   //         },
   //       }
   //     )
-
+  
+  //     // Update local state with the response data
+  //     const updatedCenter = response.data.data
+  //     setSelectedCenter(updatedCenter)
+      
+  //     // Refresh the table data
+  //     await fetchReports()
+      
   //     toast.success("Training center updated successfully")
-  //     fetchReports()
   //     setEditMode(false)
-  //     setSelectedCenter(null)
+      
+  //     // Don't clear selected center so the view shows updated data
   //     setEditedCenter(null)
   //   } catch (error) {
   //     console.error("Error updating training center:", error)
@@ -569,50 +646,50 @@ const TrainingCenterManagement = () => {
   //     setLoading(false)
   //   }
   // }
-  const handleSaveChanges = async () => {
-    try {
-      setLoading(true)
-      const accessToken = localStorage.getItem("accessToken")
-  
-      // If there's a new assessment record without an ID, it's a new assessment
-      const newAssessment = editedCenter.assessmentRecords?.find(record => !record._id)
-      
-      const payload = {
-        ...editedCenter,
-        ...(newAssessment && { newAssessment }),
-      }
-  
-      const response = await axios.patch(
-        `${API_BASE_URL}/training-centers/${editedCenter._id}`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-  
-      // Update local state with the response data
-      const updatedCenter = response.data.data
-      setSelectedCenter(updatedCenter)
-      
-      // Refresh the table data
-      await fetchReports()
-      
-      toast.success("Training center updated successfully")
-      setEditMode(false)
-      
-      // Don't clear selected center so the view shows updated data
-      setEditedCenter(null)
-    } catch (error) {
-      console.error("Error updating training center:", error)
-      toast.error("Failed to update training center")
-    } finally {
-      setLoading(false)
-    }
-  }
   
   // Update handleViewCenter to fetch fresh data
+ const handleSaveChanges = async () => {
+  try {
+    setLoading(true)
+    const accessToken = localStorage.getItem("accessToken")
+  
+    // Prepare payload
+    const payload = {
+      ...editedCenter,
+      // Handle new assessment records without IDs
+      newAssessment: editedCenter.assessmentRecords?.find(record => !record._id) || null
+    }
+  
+    const response = await axios.patch(
+      `${API_BASE_URL}/training-centers/${editedCenter._id}`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+  
+    // Update local state with the response data
+    const updatedCenter = response.data.data
+    setSelectedCenter(updatedCenter)
+    
+    // Refresh the table data
+    await fetchReports()
+    
+    toast.success("Training center updated successfully")
+    setEditMode(false)
+    
+    // Don't clear selected center so the view shows updated data
+    setEditedCenter(null)
+  } catch (error) {
+    console.error("Error updating training center:", error)
+    toast.error("Failed to update training center")
+  } finally {
+    setLoading(false)
+  }
+}
+ 
   const handleViewCenter = async (center) => {
     try {
       const accessToken = localStorage.getItem("accessToken")
@@ -662,6 +739,65 @@ const TrainingCenterManagement = () => {
     }
   }
 
+//   const handleAddAssessment = () => {
+//   const newAssessment = {
+//     year: new Date().getFullYear(),
+//     status: "pending",
+//     date: new Date().toISOString(),
+//     notes: "",
+//     assessorName: `${currentUser?.firstName || ""} ${currentUser?.lastName || ""}`.trim() || currentUser?.email,
+//     expirationDate: ""
+//   }
+  
+//   setEditedCenter(prev => ({
+//     ...prev,
+//     assessmentRecords: [...(prev.assessmentRecords || []), newAssessment]
+//   }))
+// }
+
+const handleAddAssessment = async () => {
+  if (!newAssessment.year || !newAssessment.status || !newAssessment.date) {
+    toast.error("Please fill in all required fields")
+    return
+  }
+
+  setLoading(true)
+  try {
+    // Format dates properly
+    const assessmentToAdd = {
+      ...newAssessment,
+      date: new Date(newAssessment.date).toISOString(),
+      expirationDate: newAssessment.expirationDate 
+        ? new Date(newAssessment.expirationDate).toISOString()
+        : null,
+      assessedBy: currentUser?.id || currentUser?._id
+    }
+
+    // Add to edited center
+    setEditedCenter(prev => ({
+      ...prev,
+      assessmentRecords: [...(prev.assessmentRecords || []), assessmentToAdd]
+    }))
+
+    // Reset form
+    setIsAddingAssessment(false)
+    setNewAssessment({
+      year: new Date().getFullYear(),
+      status: "pending",
+      date: new Date().toISOString().split("T")[0],
+      notes: "",
+      expirationDate: "",
+      assessorName: `${currentUser?.firstName || ""} ${currentUser?.lastName || ""}`.trim() || currentUser?.email
+    })
+
+    toast.success("Assessment record added successfully")
+  } catch (error) {
+    console.error("Error adding assessment:", error)
+    toast.error("Failed to add assessment")
+  } finally {
+    setLoading(false)
+  }
+}
   // These constants are already defined at the top of the file, so we don't need to redefine them here
 
   return (
@@ -852,6 +988,7 @@ const TrainingCenterManagement = () => {
 
         <div className="gap-2 flex justify-between w-full mt-4">
           <h2 className="font-medium">Total Records Found: {pagination?.total || 0}</h2>
+          {userRole === "superadmin" && (
           <div className="gap-2 flex flex-row-reverse justify-start mb-4">
             {!csvData?.length ? (
               <button onClick={downloadCSV} className="border-[1px] text-[12px] p-2 font-medium">
@@ -869,6 +1006,7 @@ const TrainingCenterManagement = () => {
               </CSVLink>
             )}
           </div>
+          )}
         </div>
 
         <Table className={`${loading ? "opacity-30" : ""} overflow-x-auto`}>
@@ -1023,6 +1161,16 @@ const TrainingCenterManagement = () => {
                                     </p>
                                   </div>
                                   {/* Add Assessment Status Badge */}
+                                  {/* <div className="ml-auto">
+                                    <div className="flex flex-col items-end gap-1">
+                                      <span className="text-sm font-medium">Assessment Status</span>
+                                      <span className={`inline-block px-3 py-1 rounded-full text-sm ${
+                                        ASSESSMENT_STATUS[selectedCenter.currentAssessmentStatus || 'pending'].color
+                                      }`}>
+                                        {ASSESSMENT_STATUS[selectedCenter.currentAssessmentStatus || 'pending'].label}
+                                      </span>
+                                    </div>
+                                  </div> */}
                                   <div className="ml-auto">
                                     <div className="flex flex-col items-end gap-1">
                                       <span className="text-sm font-medium">Assessment Status</span>
@@ -2674,7 +2822,7 @@ const TrainingCenterManagement = () => {
                                   </form>
                                 </TabsContent>
 
-                                <TabsContent value="assessmentRecords">
+                                {/* <TabsContent value="assessmentRecords">
                                   <div className="space-y-6">
                                     {editMode ? (
                                       // Edit Mode
@@ -2881,7 +3029,185 @@ const TrainingCenterManagement = () => {
                                       </div>
                                     )}
                                   </div>
-                                </TabsContent>
+                                </TabsContent> */}
+                                <TabsContent value="assessmentRecords">
+  <div className="space-y-6">
+    {/* Current Status Overview */}
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          {getStatusIcon(selectedCenter?.currentAssessmentStatus)}
+          Current Assessment Status
+        </CardTitle>
+        <CardDescription>
+          Latest assessment status for {selectedCenter?.trainingCentreName}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center justify-between">
+          <Badge className={getStatusColor(selectedCenter?.currentAssessmentStatus)}>
+            {selectedCenter?.currentAssessmentStatus?.toUpperCase() || "PENDING"}
+          </Badge>
+          {editMode && (
+            <Button 
+              onClick={() => setIsAddingAssessment(true)}
+              size="sm" 
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Assessment
+            </Button>
+          )}
+        </div>
+        {sortedAssessments.length > 0 && (
+          <div className="mt-4 text-sm">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span>Last assessed on: {new Date(sortedAssessments[0].date).toLocaleDateString()}</span>
+            </div>
+            {sortedAssessments[0].expirationDate && (
+              <div className="flex items-center gap-2 mt-1">
+                <Calendar className="h-4 w-4" />
+                <span>Expires on: {new Date(sortedAssessments[0].expirationDate).toLocaleDateString()}</span>
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+
+    {/* Add New Assessment Form */}
+    {isAddingAssessment && (
+      <Card>
+        {/* ... keep your existing add assessment form ... */}
+      </Card>
+    )}
+
+    {/* Assessment History */}
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <FileText className="h-5 w-5" />
+          Assessment History
+        </CardTitle>
+        <CardDescription>Complete history of assessment records</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {sortedAssessments.length > 0 ? (
+          <div className="space-y-4">
+            {sortedAssessments.map((assessment, index) => (
+              <div
+                key={assessment._id || index}
+                className={`p-4 border rounded-lg ${
+                  index === 0 
+                    ? "border-blue-200 bg-blue-50" 
+                    : "border-gray-200"
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      {getStatusIcon(assessment.status)}
+                      <Badge className={getStatusColor(assessment.status)}>
+                        {assessment.status.toUpperCase()}
+                      </Badge>
+                      <span className="text-sm font-medium">Year {assessment.year}</span>
+                      {index === 0 && (
+                        <Badge variant="outline" className="text-xs">
+                          CURRENT
+                        </Badge>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        <span>Assessed on: {new Date(assessment.date).toLocaleDateString()}</span>
+                      </div>
+
+                      {assessment.assessorName && (
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          <span>By: {assessment.assessorName}</span>
+                        </div>
+                      )}
+
+                      {assessment.expirationDate && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          <span>Expires: {new Date(assessment.expirationDate).toLocaleDateString()}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {assessment.notes && (
+                      <div className="mt-2 p-2 bg-gray-50 rounded text-sm">
+                        <strong>Notes:</strong> {assessment.notes}
+                      </div>
+                    )}
+                  </div>
+
+                  {editMode && (
+                    <div className="flex gap-2">
+                      <Select
+                        value={assessment.status}
+                        onValueChange={(value) => {
+                          const updatedRecords = [...editedCenter.assessmentRecords]
+                          const recordIndex = updatedRecords.findIndex(r => 
+                            r._id === assessment._id || 
+                            (r.year === assessment.year && r.date === assessment.date)
+                          )
+                          if (recordIndex >= 0) {
+                            updatedRecords[recordIndex] = {
+                              ...updatedRecords[recordIndex],
+                              status: value
+                            }
+                            handleNestedInputChange("assessmentRecords", null, updatedRecords)
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="approved">Approved</SelectItem>
+                          <SelectItem value="denied">Denied</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          const updatedRecords = editedCenter.assessmentRecords.filter(
+                            r => r._id !== assessment._id && 
+                                (r.year !== assessment.year || r.date !== assessment.date)
+                          )
+                          handleNestedInputChange("assessmentRecords", null, updatedRecords)
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <p>No assessment records found</p>
+            {editMode && !isAddingAssessment && (
+              <p className="text-sm">Click "Add Assessment" to create the first record</p>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  </div>
+</TabsContent>
+                                
                               </Tabs>
                             </div>
                           )}

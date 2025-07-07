@@ -992,6 +992,7 @@ const nigeria = [
       'Ilorin-South',
       'Ilorin-West',
       'Ifelodun',
+      "Irepodun",
       'Isin',
       'Kaiama',
       'Moro',

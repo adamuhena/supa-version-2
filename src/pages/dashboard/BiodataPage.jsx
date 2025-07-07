@@ -535,7 +535,7 @@ const Biodata = () => {
           </TabsContent>
         </Tabs>
 
-        {(user.role === "admin" || user.role === "superadmin") && (
+        {(user.role === "superadmin") && (
   <Card className="border p-4 rounded-lg shadow-md mt-6">
     <CardHeader>
       <CardTitle>Additional Information</CardTitle>
