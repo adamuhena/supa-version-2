@@ -353,7 +353,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
         const response = await axios.get(endpoint, {
           headers: { Authorization: `Bearer ${accessToken}` },
           signal: controllerRef.current.signal,
-          timeout: 10000, // Add timeout to prevent hanging requests
+          // timeout: 10000, // Add timeout to prevent hanging requests
         })
 
         if (!isMounted.current) return
