@@ -820,6 +820,8 @@ const Modal = ({ selectedItem, close, refresh }) => {
   const [confirmReject, setConfirmReject] = useState(false);
   const [artisanRejectionReason, setArtisanRejectionReason] = useState("");
   const [agreedSum, setAgreedSum] = useState("");
+  // In your Modal component
+
 
   const handleCloseModal = () => {
     close?.();
@@ -923,6 +925,53 @@ const rejectAmount = async () => {
       setLoading(false);
     }
   };
+
+const startJob = async () => {
+  console.log('Attempting to start job...'); // Frontend log 1
+  const userId = localStorage.getItem("userId");
+  const accessToken = localStorage.getItem("accessToken");
+  try {
+    setLoading(true);
+    console.log('Request payload:', { 
+      request_id: selectedItem?._id, 
+      artisan_id: userId 
+    }); // Frontend log 2
+    
+    const response = await axios.patch(
+      `${API_BASE_URL}/marketplace/artisan/start-job`,
+      {
+        request_id: selectedItem?._id,
+        artisan_id: userId
+      },
+      {
+        headers: { 
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    console.log('API Response:', response); // Frontend log 3
+    
+    if (response.data.success) {
+      toast.success("Job started successfully!");
+      getTransactions();
+    } else {
+      console.log('API returned unsuccessful:', response.data);
+      toast.error(response.data.message || "Failed to start job");
+    }
+  } catch (error) {
+    console.error('Full error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      response: error.response?.data,
+      request: error.request
+    });
+    toast.error(error.response?.data?.message || "Failed to start job");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-[10]">
@@ -1087,7 +1136,7 @@ const rejectAmount = async () => {
                 )}
 
                 {/* Job Completion (after amount accepted) */}
-                {selectedItem?.status === 'accepted' || 'client-rejected' && (
+                {/* {selectedItem?.status === 'accepted' ? (
                   <div className="w-full">
                     <Label>Agreed Sum</Label>
                     <p className="text-lg font-bold mb-2">
@@ -1104,7 +1153,27 @@ const rejectAmount = async () => {
                       </Button>
                     </div>
                   </div>
-                )}
+                ): null} */}
+                {/* // In your render logic */}
+              {selectedItem?.status === 'accepted' && (
+                <Button
+                  onClick={startJob}
+                  disabled={loading}
+                  className="bg-blue-600"
+                >
+                  {loading ? <Spinner /> : "Confirm Job Start"}
+                </Button>
+              )}
+
+              {(selectedItem?.status === 'artisan-started' || selectedItem?.status === 'artisan-completed') && (
+                <Button
+                  onClick={completeJob}
+                  disabled={loading || selectedItem?.status === 'artisan-completed'}
+                  className="bg-green-600"
+                >
+                  {loading ? <Spinner /> : "Mark Job as Completed"}
+                </Button>
+              )}
               </CardFooter>
             </Card>
           </TabsContent>
