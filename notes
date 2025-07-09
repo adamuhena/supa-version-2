@@ -2509,13 +2509,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CalendarIcon, UserIcon, FileTextIcon, CheckCircleIcon, XCircleIcon, ClockIcon, Plus, HouseIcon } from "lucide-react"
+import { CalendarIcon, UserIcon, FileTextIcon, CheckCircleIcon, XCircleIcon, ClockIcon, Plus } from "lucide-react"
 import { toast } from "sonner"
 import axios from "axios"
 import { API_BASE_URL } from "@/config/env"
 import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 
 export function VerificationStatusManager({ user, onVerificationUpdate, currentUser }) {
   const [isAddingVerification, setIsAddingVerification] = useState(false)
@@ -2542,8 +2541,6 @@ export function VerificationStatusManager({ user, onVerificationUpdate, currentU
   const [selectedSector, setSelectedSector] = useState("")
   const [selectedTradeArea, setSelectedTradeArea] = useState("")
   const [currentVerificationId, setCurrentVerificationId] = useState(null)
-
-
 
   // Helper to reset form state
   const resetAssignForm = () => {
@@ -2610,10 +2607,10 @@ export function VerificationStatusManager({ user, onVerificationUpdate, currentU
 
   useEffect(() => {
     // Fetch training centers in user's state when needed
-    if ( user.stateOfResidence) {
+    if (isAssigningTraining && user.stateOfResidence) {
       fetchTrainingCenters()
     }
-  }, [user.stateOfResidence])
+  }, [isAssigningTraining, user.stateOfResidence])
 
   const fetchTrainingCenters = async () => {
     try {
@@ -2631,9 +2628,6 @@ export function VerificationStatusManager({ user, onVerificationUpdate, currentU
       toast.error("Failed to load training centers")
     }
   }
-
-
- 
 
   useEffect(() => {
     axios.get(`${API_BASE_URL}/sectors`)
@@ -2924,18 +2918,6 @@ const hasValidAssignment = (verification) => {
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   )
 
-
-  const [showVerificationHistory, setShowVerificationHistory] = useState(false);
-const [historyVerification, setHistoryVerification] = useState(null);
-
-// Handler for Show History button
-const handleShowHistory = (verification) => {
-  console.log("verification",verification)
-  setHistoryVerification(verification);
-  setShowVerificationHistory(true);
-};
-
-
   return (
     <div className="space-y-6">
       {/* Current Status Overview */}
@@ -3218,12 +3200,8 @@ const handleShowHistory = (verification) => {
                 Cancel
               </Button>
               <Button 
-                // onClick={() => currentAssignment ? 
-                //   handleReassignTraining(currentAssignment._id) : 
-                //   handleAssignTraining()
-                // } 
-
-                   onClick={() => 
+                onClick={() => currentAssignment ? 
+                  handleReassignTraining(currentAssignment._id) : 
                   handleAssignTraining()
                 } 
                 disabled={loading}
@@ -3276,22 +3254,9 @@ const handleShowHistory = (verification) => {
           {sortedVerifications.length > 0 ? (
             <div className="space-y-4">
               {sortedVerifications.map((verification, index) => {
-                const shouldReassignTraining = verification?.trainingAssignment?.length ?true:false
-const activeAssignment = (verification?.trainingAssignment||[])?.find(assignment => assignment?.currentAssignment?.status === "active")?.currentAssignment;
-                // Get active training center name
-             let assignedTo =""
-            
-               if (typeof activeAssignment?.trainingCenterId === "object") {
-                 assignedTo = activeAssignment?.trainingCenterId?.trainingCentreName || activeAssignment?.trainingCenterId.name || "";
-               } else {
-                  
-                 const found = trainingCenters.find(tc => tc?._id === activeAssignment?.trainingCenterId);
-                 assignedTo = found?.trainingCentreName || activeAssignment?.trainingCenterId || "";
-               }
+                const shouldReassignTraining = verification?.trainingAssignment?._id
 
-
-
-               
+                console.log("verificationverification", verification);
                 const hasAssignment = hasValidAssignment(verification);
                 
                 const trainingCenterName = (() => {
@@ -3329,14 +3294,6 @@ const activeAssignment = (verification?.trainingAssignment||[])?.find(assignment
                             <CalendarIcon className="h-4 w-4" />
                             <span>Verified on: {new Date(verification.date).toLocaleDateString()}</span>
                           </div>
-
- {!assignedTo?null:  <div className="flex items-center gap-2">
-                            <HouseIcon className="h-4 w-4" />
-                            <span>Assigned To: {assignedTo}</span>
-                          </div>}
-
-                          
-
 
                           {verification.verifierName || verifierNames[verification.verifiedBy] ? (
                             <div className="flex items-center gap-2">
@@ -3418,7 +3375,6 @@ const activeAssignment = (verification?.trainingAssignment||[])?.find(assignment
                         {verification.status === "approved" && (
                           <>
                             {!hasValidAssignment(verification) ? (
-                              <>
                               <Button 
                                 variant="outline" 
                                 size="sm"
@@ -3441,142 +3397,6 @@ const activeAssignment = (verification?.trainingAssignment||[])?.find(assignment
                                 {shouldReassignTraining ? "Reassign Training" : "Assign Training"}
                                 {/* Assign Training */}
                               </Button>
-
-
-                              {shouldReassignTraining? 
-                              <>
-
-<Dialog open={showVerificationHistory} onOpenChange={setShowVerificationHistory}>
-  <DialogContent className="max-w-3xl">
-    <DialogHeader>
-      <DialogTitle>Verification History</DialogTitle>
-      <DialogDescription>
-        All verification records for {user.firstName} {user.lastName}
-      </DialogDescription>
-    </DialogHeader>
-    <div className="overflow-x-auto">
-      {/* <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Year</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Verified By</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Notes</TableHead>
-            <TableHead>Expiration Date</TableHead>
-            <TableHead>Training Assignment(s)</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {(Array.isArray(historyVerification) ? historyVerification : []).map((v, idx) => (
-            <TableRow key={v._id || idx}>
-              <TableCell>{v.year}</TableCell>
-              <TableCell>
-                <Badge className={getStatusColor(v.status)}>{v.status?.toUpperCase()}</Badge>
-              </TableCell>
-              <TableCell>
-                {verifierNames[v.verifiedBy] || v.verifiedBy || "Unknown"}
-              </TableCell>
-              <TableCell>
-                {v.date ? new Date(v.date).toLocaleDateString() : ""}
-              </TableCell>
-              <TableCell>{v.notes || ""}</TableCell>
-              <TableCell>
-                {v.expirationDate ? new Date(v.expirationDate).toLocaleDateString() : ""}
-              </TableCell>
-              <TableCell>
-                {Array.isArray(v.trainingAssignment) && v.trainingAssignment.length > 0
-                  ? v.trainingAssignment.join(", ")
-                  : (typeof v.trainingAssignment === "string" && v.trainingAssignment)
-                    ? v.trainingAssignment
-                    : "—"}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table> */}
-
-      <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Training Center</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Sector</TableHead>
-                <TableHead>Trade Area</TableHead>
-                <TableHead>Year</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Assigned By</TableHead>
-                <TableHead>Assigned At</TableHead>
-                <TableHead>Notes</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {/* If assignmentHistory is an array of objects as described */}
-              {(Array.isArray(historyVerification) ? historyVerification : []).map((item, idx) => {
-                // Use currentAssignment if assignmentHistory is empty
-                const assignment = item.currentAssignment || item;
-                // Get training center name
-                let centerName = "";
-            
-                if (typeof assignment.trainingCenterId === "object") {
-                  centerName = assignment.trainingCenterId.trainingCentreName || assignment.trainingCenterId.name || "";
-                } else {
-                  
-                  const found = trainingCenters.find(tc => tc._id === assignment.trainingCenterId);
-                  centerName = found?.trainingCentreName || assignment.trainingCenterId || "";
-                }
-
-                
-                // Get assigned by name
-                const assignedByName = verifierNames[assignment.assignedBy] || assignment.assignedBy || "Unknown";
-                return (
-                  <TableRow key={item._id || idx}>
-                    <TableCell>{centerName}</TableCell>
-                    <TableCell>{assignment?.trainingType}</TableCell>
-                    <TableCell>{assignment?.sector}</TableCell>
-                    <TableCell>{assignment?.tradeArea}</TableCell>
-                    <TableCell>{assignment?.year}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={
-                        assignment?.status === "active" ? "bg-blue-100 text-blue-800" :
-                        assignment?.status === "completed" ? "bg-green-100 text-green-800" :
-                        "bg-gray-100 text-gray-800"
-                      }>
-                        {assignment?.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{assignedByName}</TableCell>
-                    <TableCell>
-                      {assignment?.assignedAt ? new Date(assignment?.assignedAt).toLocaleDateString() : ""}
-                    </TableCell>
-                    <TableCell>{assignment?.notes || "—"}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-    </div>
-    <div className="flex justify-end mt-4">
-      <Button onClick={() => setShowVerificationHistory(false)}>Close</Button>
-    </div>
-  </DialogContent>
-</Dialog>
-
-      <Button
-                              
-onClick={()=> handleShowHistory( verification?.trainingAssignment)}
-
-
-
-                               variant="outline" 
-                                size="sm">Show history</Button>
-                              </>
-                              
-                              
-                              
-                        :null}
-
-                              </>
                             ) : (
                               <div className="flex gap-2">
                                 <Button 
