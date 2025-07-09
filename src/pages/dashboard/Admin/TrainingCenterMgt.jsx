@@ -3078,10 +3078,102 @@ const handleAddAssessment = async () => {
 
     {/* Add New Assessment Form */}
     {isAddingAssessment && (
-      <Card>
-        {/* ... keep your existing add assessment form ... */}
-      </Card>
-    )}
+  <Card className="mt-4">
+    <CardHeader>
+      <CardTitle>Add New Assessment</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          handleAddAssessment();
+        }}
+        className="space-y-4"
+      >
+        <div>
+          <Label>Year</Label>
+          <Input
+            type="number"
+            value={newAssessment.year}
+            onChange={e =>
+              setNewAssessment(prev => ({ ...prev, year: Number(e.target.value) }))
+            }
+            required
+          />
+        </div>
+        <div>
+          <Label>Status</Label>
+          <Select
+            value={newAssessment.status}
+            onValueChange={value =>
+              setNewAssessment(prev => ({ ...prev, status: value }))
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="denied">Denied</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Date</Label>
+          <Input
+            type="date"
+            value={newAssessment.date}
+            onChange={e =>
+              setNewAssessment(prev => ({ ...prev, date: e.target.value }))
+            }
+            required
+          />
+        </div>
+        <div>
+          <Label>Expiration Date</Label>
+          <Input
+            type="date"
+            value={newAssessment.expirationDate}
+            onChange={e =>
+              setNewAssessment(prev => ({ ...prev, expirationDate: e.target.value }))
+            }
+          />
+        </div>
+        <div>
+          <Label>Assessor Name</Label>
+          <Input
+            value={newAssessment.assessorName}
+            onChange={e =>
+              setNewAssessment(prev => ({ ...prev, assessorName: e.target.value }))
+            }
+          />
+        </div>
+        <div>
+          <Label>Notes</Label>
+          <Textarea
+            value={newAssessment.notes}
+            onChange={e =>
+              setNewAssessment(prev => ({ ...prev, notes: e.target.value }))
+            }
+          />
+        </div>
+        <div className="flex gap-2 justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setIsAddingAssessment(false)}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Adding..." : "Add Assessment"}
+          </Button>
+        </div>
+      </form>
+    </CardContent>
+  </Card>
+)}
 
     {/* Assessment History */}
     <Card>
