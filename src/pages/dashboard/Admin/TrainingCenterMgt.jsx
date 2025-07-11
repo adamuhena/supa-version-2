@@ -147,11 +147,17 @@ const TrainingCenterManagement = () => {
   })
   // const sortedAssessments = (editMode ? editedCenter?.assessmentRecords : selectedCenter?.assessmentRecords || [])
   // .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-const sortedAssessments = (editMode 
-  ? (isAddingAssessment 
-      ? [...(editedCenter?.assessmentRecords || []), newAssessment] 
-      : editedCenter?.assessmentRecords)
-  : selectedCenter?.assessmentRecords || [])
+// const sortedAssessments = (editMode 
+//   ? (isAddingAssessment 
+//       ? [...(editedCenter?.assessmentRecords || []), newAssessment] 
+//       : editedCenter?.assessmentRecords)
+//   : selectedCenter?.assessmentRecords || [])
+
+  const sortedAssessments = (editMode 
+    ? (editedCenter?.assessmentRecords || [])
+    : (selectedCenter?.assessmentRecords || []))
+    // .sort((a, b) => new Date(b.date) - new Date(a.date));
+
   .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   
@@ -756,31 +762,88 @@ useEffect(() => {
 // }
 
 const handleAddAssessment = async () => {
+  // Validate required fields
   if (!newAssessment.year || !newAssessment.status || !newAssessment.date) {
-    toast.error("Please fill in all required fields")
-    return
+    toast.error("Please fill in all required fields");
+    return;
   }
 
-  setLoading(true)
+  // Additional validation for approved assessments
+  if (newAssessment.status === "approved" && !newAssessment.expirationDate) {
+    toast.error("Expiration date is required for approved assessments");
+    return;
+  }
+
+  if (!newAssessment.notes || !newAssessment.notes.trim()) {
+    toast.error("Assessment notes are required");
+    return;
+  }
+
+  // Get existing records (defensive check)
+  const records = editedCenter?.assessmentRecords || [];
+  const sortedRecords = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const mostRecent = sortedRecords[0];
+  const now = new Date();
+
+  // Check assessment rules
+  if (mostRecent) {
+    switch (mostRecent.status) {
+      case "approved":
+        if (!mostRecent.expirationDate) {
+          toast.error("Cannot add assessment - previous approval has no expiration date");
+          return;
+        }
+        
+        const expDate = new Date(mostRecent.expirationDate);
+        if (expDate > now) {
+          toast.error(`Cannot add assessment - current approval is valid until ${expDate.toLocaleDateString()}`);
+          return;
+        }
+        break;
+
+      case "pending":
+        if (userRole !== "admin") {  // Only admins can override pending assessments
+          toast.error("Cannot add assessment - a pending assessment already exists");
+          return;
+        }
+        toast.warning("Overriding existing pending assessment");
+        break;
+
+      case "denied":
+        // Explicitly allow adding after denied assessments
+        break;
+
+      default:
+        toast.error("Invalid assessment status in existing record");
+        return;
+    }
+  }
+
+  // If we get here, all checks passed
+  setLoading(true);
   try {
-    // Format dates properly
+    // Prepare the new assessment
     const assessmentToAdd = {
       ...newAssessment,
+      _id: undefined, // Ensure this is a new record
       date: new Date(newAssessment.date).toISOString(),
       expirationDate: newAssessment.expirationDate 
-        ? new Date(newAssessment.expirationDate).toISOString()
+        ? new Date(newAssessment.expirationDate).toISOString() 
         : null,
-      assessedBy: currentUser?.id || currentUser?._id
-    }
+      assessedBy: currentUser?.id || currentUser?._id,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
 
-    // Add to edited center
+    // Update state
     setEditedCenter(prev => ({
       ...prev,
-      assessmentRecords: [...(prev.assessmentRecords || []), assessmentToAdd]
-    }))
+      assessmentRecords: [...(prev.assessmentRecords || []), assessmentToAdd],
+      currentAssessmentStatus: newAssessment.status // Update the center's overall status
+    }));
 
     // Reset form
-    setIsAddingAssessment(false)
+    setIsAddingAssessment(false);
     setNewAssessment({
       year: new Date().getFullYear(),
       status: "pending",
@@ -788,16 +851,21 @@ const handleAddAssessment = async () => {
       notes: "",
       expirationDate: "",
       assessorName: `${currentUser?.firstName || ""} ${currentUser?.lastName || ""}`.trim() || currentUser?.email
-    })
+    });
 
-    toast.success("Assessment record added successfully")
+    toast.success("Assessment record added successfully");
+    
+    // Optional: Auto-refresh data
+    await fetchReports();
+
   } catch (error) {
-    console.error("Error adding assessment:", error)
-    toast.error("Failed to add assessment")
+    console.error("Error adding assessment:", error);
+    toast.error("Failed to add assessment");
   } finally {
-    setLoading(false)
+    setLoading(false);
   }
-}
+};
+
   // These constants are already defined at the top of the file, so we don't need to redefine them here
 
   return (
@@ -3083,11 +3151,17 @@ const handleAddAssessment = async () => {
       <CardTitle>Add New Assessment</CardTitle>
     </CardHeader>
     <CardContent>
-      <form
+      {/* <form
         onSubmit={e => {
           e.preventDefault();
           handleAddAssessment();
+        }} */}
+
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          handleAddAssessment();
         }}
+
         className="space-y-4"
       >
         <div>
