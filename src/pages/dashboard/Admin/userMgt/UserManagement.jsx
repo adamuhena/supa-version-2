@@ -22,6 +22,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Cross1Icon, SewingPinFilledIcon } from "@radix-ui/react-icons"
 import useLogout from "@/pages/loginPage/logout"
 import { LogOut, Mail, PhoneCall, UserCircle, Edit, Eye, Save, X, Download, FileText, Trash2, Plus } from "lucide-react"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { API_BASE_URL } from "@/config/env"
 import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom"
@@ -30,6 +31,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import UploadButton from "@/components/UploadButton"
 import { FilePreview } from "@/components/FilePreview";
+import { VerificationStatusManager } from "./components/VerificationStatusManager"
 
 import {
   Sheet,
@@ -86,8 +88,18 @@ const banks = [
   { id: 26, name: "Others" },
 ]
 
+const tabOptions = [
+  { value: "personal-info", label: "Personal Info" },
+  { value: "account-status", label: "Account | Verification Status" },
+  { value: "education", label: "Education" },
+  { value: "skills-certifications", label: "Skills & Certifications" },
+  { value: "experience", label: "Experience" },
+  { value: "bank-info", label: "Bank Info" },
+];
 const UserManagement = () => {
   // Component state management
+  const [activeTab, setActiveTab] = useState(tabOptions[0].value);
+  const [userRole, setUserRole] = useState("");
   const [isMounted, setIsMounted] = useState(false)
   const [hasLoadedFirst, sethasLoadedFirst] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -141,6 +153,12 @@ const UserManagement = () => {
   const [filter, setFilter] = useState({
     ...defaultData,
   })
+
+  useEffect(() => {
+  // Adjust the key if your user object is stored differently
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user?.role) setUserRole(user.role);
+}, []);
 
   // Set mounted state on component mount/unmount
   useEffect(() => {
@@ -444,21 +462,51 @@ const UserManagement = () => {
   }
 
   // Improved handleEditUser function
-  const handleEditUser = (user) => {
-    // Create a deep copy of the user to avoid reference issues
-    const userCopy = JSON.parse(JSON.stringify(user))
-    setSelectedUser(userCopy)
-    // setEditedUser(userCopy)
-    setEditedUser({
-      ...user,
-      role: user?.role || '',
-      certifiedStatus: user?.certifiedStatus || false,
-      licenseStatus: user?.licenseStatus || false,
-      currentVerificationStatus: user?.currentVerificationStatus || 'pending'
+  // const handleEditUser = (user) => {
+  //   // Create a deep copy of the user to avoid reference issues
+  //   const userCopy = JSON.parse(JSON.stringify(user))
+  //   setSelectedUser(userCopy)
+  //   // setEditedUser(userCopy)
+  //   setEditedUser({
+  //     ...user,
+  //     role: user?.role || '',
+  //     certifiedStatus: user?.certifiedStatus || false,
+  //     licenseStatus: user?.licenseStatus || false,
+  //     currentVerificationStatus: user?.currentVerificationStatus || 'pending'
+  //   });
+  //   console.log("verifications on mount", user.verifications);
+  //   setEditMode(true)
+  //   setIsEditing(true)
+  // }
+
+  const handleEditUser = async (user) => {
+  try {
+    setLoading(true);
+    const accessToken = localStorage.getItem("accessToken");
+    // Fetch the full user details from the backend
+    const res = await axios.get(`${API_BASE_URL}/users/${user._id}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
-    setEditMode(true)
-    setIsEditing(true)
+    const fullUser = res.data.data;
+
+    setSelectedUser(fullUser);
+    setEditedUser({
+      ...fullUser,
+      role: fullUser?.role || '',
+      certifiedStatus: fullUser?.certifiedStatus || false,
+      licenseStatus: fullUser?.licenseStatus || false,
+      currentVerificationStatus: fullUser?.currentVerificationStatus || 'pending'
+    });
+    console.log("verifications on mount", fullUser.verifications);
+    setEditMode(true);
+    setIsEditing(true);
+  } catch (error) {
+    console.error("Failed to fetch full user details:", error);
+    toast.error("Failed to load full user details.");
+  } finally {
+    setLoading(false);
   }
+};
 
   // Improved handleSaveChanges function
   const handleSaveChanges = async () => {
@@ -920,11 +968,11 @@ const handleInputChange = (field, value, index = null) => {
   return (
     <ProtectedRoute>
       <div className="container mx-auto py-6">
-        {loading && !hasLoadedFirst && (
+        {/* {loading && !hasLoadedFirst && (
           <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm">
             <Spinner />
           </div>
-        )}
+        )} */}
         <header className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold">User Management</h1>
@@ -1181,6 +1229,7 @@ const handleInputChange = (field, value, index = null) => {
 
         <div className="gap-2 flex justify-between w-full mt-4">
           <h2 className="font-medium">Total Records Found: {pagination?.totalUsers || 0}</h2>
+          {userRole === "superadmin" && (
           <div className="gap-2 flex flex-row-reverse justify-start mb-4">
             <Button onClick={downloadPDF} className="ml-2" variant="outline" disabled={loading || !users?.length}>
               <FileText className="mr-2 h-4 w-4" /> Export PDF
@@ -1204,6 +1253,7 @@ const handleInputChange = (field, value, index = null) => {
               </CSVLink>
             )}
           </div>
+          )}
         </div>
 
         <Table className={`${loading ? "opacity-30" : ""} overflow-x-auto`}>
@@ -1217,7 +1267,7 @@ const handleInputChange = (field, value, index = null) => {
                 Gender {filter.sort === "gender" ? "↑" : filter.sort === "-gender" ? "↓" : ""}
               </TableHead>
               <TableHead className="cursor-pointer" onClick={() => handleSort("email")}>
-                Email {filter.sort === "email" ? "↑" : filter.sort === "-email" ? "↓" : ""}
+                Contact {filter.sort === "email" ? "↑" : filter.sort === "-email" ? "↓" : ""}
               </TableHead>
               <TableHead className="cursor-pointer" onClick={() => handleSort("role")}>
                 Role {filter.sort === "role" ? "↑" : filter.sort === "-role" ? "↓" : ""}
@@ -1229,16 +1279,16 @@ const handleInputChange = (field, value, index = null) => {
               <TableHead>
                 Address
               </TableHead>
-              <TableHead className="cursor-pointer">
+              {/* <TableHead className="cursor-pointer">
                 Senatorial District{" "}
                 {filter.sort === "senatorialDistrict" ? "↑" : filter.sort === "-senatorialDistrict" ? "↓" : ""}
-              </TableHead>
+              </TableHead> */}
               <TableHead className="cursor-pointer" onClick={() => handleSort("stateOfOrigin")}>
                 State of Origin/LGA{" "}
                 {filter.sort === "stateOfOrigin" ? "↑" : filter.sort === "-stateOfOrigin" ? "↓" : ""}
               </TableHead>
               
-              <TableHead>Contact</TableHead>
+              {/* <TableHead>Contact</TableHead> */}
               <TableHead className="cursor-pointer" onClick={() => handleSort("hasDisability")}>
                 Disability Status{" "}
                 {filter.sort === "hasDisability" ? "↑" : filter.sort === "-hasDisability" ? "↓" : ""}
@@ -1265,7 +1315,21 @@ const handleInputChange = (field, value, index = null) => {
                   {`${user.firstName || ""} ${user.lastName || ""}`}
                 </TableCell>
                 <TableCell className="text-left text-[12px]">{user?.gender}</TableCell>
-                <TableCell className="text-left text-[12px]">{user.email || ""}</TableCell>
+                <TableCell className="text-left text-[12px]">
+                  <div className="flex items-center gap-2">
+                    <div className="flex flex-col">
+                      <div className="flex flex-row gap-1 items-center">
+                        <PhoneCall className="size-[14px]" />
+                        <span className="text-left text-[10px]">{user?.phoneNumber || "---"}</span>
+                      </div>
+
+                      <div className="flex flex-row gap-1 items-center">
+                        <Mail className="size-[14px]" />
+                        <span className="text-left text-[10px]">{user?.email || "---"}</span>
+                      </div>
+                    </div>
+                  </div>
+                </TableCell>
                 <TableCell className="text-left text-[12px]">
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
@@ -1286,11 +1350,12 @@ const handleInputChange = (field, value, index = null) => {
                     <div className="flex flex-col">
                       <span className="text-left text-[12px]">{user?.stateOfResidence || "---"}</span>
                       <span className="text-left text-[10px]">{user?.lgaOfResidence || "---"}</span>
+                      <span className="text-left text-[10px]"> {user?.senatorialDistrict || "---"} </span>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell className="text-left text-[12px]">{user?.street || "---"}</TableCell>
-                <TableCell className="text-left text-[12px]">{user?.senatorialDistrict || "---"}</TableCell>
+                {/* <TableCell className="text-left text-[12px]">{user?.senatorialDistrict || "---"}</TableCell> */}
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <div className="flex flex-col">
@@ -1299,7 +1364,7 @@ const handleInputChange = (field, value, index = null) => {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <div className="flex items-center gap-2">
                     <div className="flex flex-col">
                       <div className="flex flex-row gap-1 items-center">
@@ -1313,7 +1378,7 @@ const handleInputChange = (field, value, index = null) => {
                       </div>
                     </div>
                   </div>
-                </TableCell>
+                </TableCell> */}
                 <TableCell className="text-left text-[12px]">
                   <div className="flex items-center gap-2">
                     <div className="flex flex-col">
@@ -1358,7 +1423,7 @@ const handleInputChange = (field, value, index = null) => {
                               <div className="flex items-center gap-4">
                                 <div className="w-24 h-24 rounded-full overflow-hidden">
                                   <img
-                                    src={selectedUser.profileImage || "/placeholder.svg?height=96&width=96"}
+                                    src={selectedUser?.profileImage || "/placeholder.svg?height=96&width=96"}
                                     alt="Profile"
                                     className="w-full h-full object-cover"
                                   />
@@ -1637,6 +1702,8 @@ const handleInputChange = (field, value, index = null) => {
                         {selectedUser && editMode && editedUser && (
                           <div className="py-4">
                             <div className="space-y-6">
+
+                              
                               <div className="flex items-center gap-4">
                                 <div className="w-24 h-24 rounded-full overflow-hidden">
                                   <img
@@ -1661,6 +1728,36 @@ const handleInputChange = (field, value, index = null) => {
                                   />
                                 </div>
                               </div>
+
+                              {/* <Tabs defaultValue="account-status" className="w-full mb-6">
+                                <TabsList>
+                                  <TabsTrigger value="personal-info">Personal Info</TabsTrigger>
+                                  <TabsTrigger value="account-status">Account Status</TabsTrigger>
+                                  <TabsTrigger value="education">Education</TabsTrigger>  
+                                  <TabsTrigger value="skills-certifications">Skills & Certifications</TabsTrigger>
+                                  <TabsTrigger value="experience">Experience</TabsTrigger>
+                                  <TabsTrigger value="bank-info">Bank Info</TabsTrigger>
+
+                                  
+                                </TabsList> */}
+
+                            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                              <div className="mb-4">
+                                <select
+                                  className="border rounded px-3 py-2 w-full"
+                                  value={activeTab}
+                                  onChange={e => setActiveTab(e.target.value)}
+                                >
+                                  {tabOptions.map(tab => (
+                                    <option key={tab.value} value={tab.value}>
+                                      {tab.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+
+
+                              <TabsContent value="personal-info">
                               <div className="border-b pb-4">
                                 <h3 className="text-lg font-medium mb-4">Personal Information</h3>
                                 <div className="grid gap-4 md:grid-cols-2">
@@ -1796,7 +1893,6 @@ const handleInputChange = (field, value, index = null) => {
                                   </div>
                                 </div>
                               </div>
-
                               <div className="border-b pb-4">
                                 <h3 className="text-lg font-medium mb-4">Contact Information</h3>
                                 <div className="grid gap-4 md:grid-cols-2">
@@ -1819,17 +1915,17 @@ const handleInputChange = (field, value, index = null) => {
                                     />
                                   </div>
 
-                                  <div className="grid gap-2">
+                                  {/* <div className="grid gap-2">
                                     <Label htmlFor="profileImage">Profile Image URL</Label>
                                     <Input
                                       id="profileImage"
                                       value={editedUser.profileImage || ""}
                                       onChange={(e) => handleInputChange("profileImage", e.target.value)}
                                     />
-                                  </div>
+                                  </div> */}
                                 </div>
                               </div>
-
+                            
                               <div className="border-b pb-4">
                                 <h3 className="text-lg font-medium mb-4">Location</h3>
                                 <div className="grid gap-4 md:grid-cols-2">
@@ -1959,7 +2055,8 @@ const handleInputChange = (field, value, index = null) => {
                                   </div>
                                 </div>
                               </div>
-
+                              </TabsContent>
+                              <TabsContent value="education">
                               <div className="border-b pb-4">
                                 <h3 className="text-lg font-medium mb-4">Education</h3>
                                 <div className="grid gap-4 md:grid-cols-2">
@@ -2027,6 +2124,7 @@ const handleInputChange = (field, value, index = null) => {
                                   </div>
                                 </div>
                               </div>
+                              </TabsContent>
 
                               {/* <div className="border-b pb-4">
                                 <h3 className="text-lg font-medium mb-4">Account Status</h3>
@@ -2100,7 +2198,7 @@ const handleInputChange = (field, value, index = null) => {
                                   </div>
                                 </div>
                               </div> */}
-
+                              <TabsContent value="account-status">
                               <div className="border-b pb-4">
                                 <h3 className="text-lg font-medium mb-4">Account Status</h3>
                                 <div className="grid gap-4 md:grid-cols-2">
@@ -2159,26 +2257,21 @@ const handleInputChange = (field, value, index = null) => {
                                     </div>
                                   </div>
 
-                                  {/* Verification Status */}
-                                  <div className="grid gap-2">
-                                    <Label htmlFor="verificationStatus">Verification Status</Label>
-                                    <Select
-                                      value={editedUser?.currentVerificationStatus || ""}
-                                      onValueChange={(value) => handleInputChange("currentVerificationStatus", value)}
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select verification status" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="pending">Pending</SelectItem>
-                                        <SelectItem value="approved">Approved</SelectItem>
-                                        <SelectItem value="denied">Denied</SelectItem>
-                                      </SelectContent>
-                                    </Select>
+                                  {/* Verification Status Manager */}
+                                  <div className="col-span-2">
+                                    <VerificationStatusManager 
+                                      user={editedUser} 
+                                      onVerificationUpdate={(updatedUser) => {
+                                        setEditedUser(updatedUser);
+                                        setSelectedUser(updatedUser);
+                                      }}
+                                      currentUser={JSON.parse(localStorage.getItem("user")) || {}}
+                                    />
                                   </div>
                                 </div>
                               </div>
-
+                              </TabsContent>
+                              <TabsContent value="skills-certifications">
                               <div className="border-b pb-4">
                                 <h3 className="text-lg font-medium mb-4">Skills & Certifications</h3>
                                 <div className="space-y-4">
@@ -2406,6 +2499,8 @@ const handleInputChange = (field, value, index = null) => {
                                   )}
                                 </div>
                               </div>
+                              </TabsContent>
+                              <TabsContent value="experience">
 
                               <div className="border-b pb-4">
                                 <h3 className="text-lg font-medium mb-4">Experience</h3>
@@ -2523,6 +2618,8 @@ const handleInputChange = (field, value, index = null) => {
                                   )}
                                 </div>
                               </div>
+                              </TabsContent>
+                              <TabsContent value="bank-info">
 
                               {/* Replace the entire Bank Account Details section in the edit mode with this updated version */}
                               <div className="border-b pb-4">
@@ -2599,6 +2696,12 @@ const handleInputChange = (field, value, index = null) => {
                                   </div>
                                 )}
                               </div>
+
+
+                              
+                              </TabsContent>
+                             </Tabs>
+
                             </div>
                           </div>
                         )}
@@ -2628,9 +2731,9 @@ const handleInputChange = (field, value, index = null) => {
                       </SheetContent>
                     </Sheet>
 
-                    <Button variant="outline" size="sm" onClick={() => handleEditUser(user)}>
+                    {/* <Button variant="outline" size="sm" onClick={() => handleEditUser(user)}>
                       <Edit className="h-4 w-4 mr-1" /> Edit
-                    </Button>
+                    </Button> */}
                   </div>
                 </TableCell>
               </TableRow>

@@ -8,6 +8,7 @@ import { LogOut, UserCircle } from "lucide-react";
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
+import DistributionDashboard from "./components/distribution-dashboard";
 
 
 const AdminDashboard = () => {
@@ -33,7 +34,8 @@ const AdminDashboard = () => {
               </Button>
             </div>
           </header>
-          <Dashboard />
+          {/* <Dashboard /> */}
+          <DistributionDashboard />
         </div>
       {/* </DashboardPage> */}
     </ProtectedRoute>

@@ -31,11 +31,12 @@ const MapTooltip = ({ stateName, data, position }) => {
 
   return (
     <div
-      className="absolute z-50 bg-white/70 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-gray-200/50 min-w-[250px]"
+      className="absolute z-10 bg-white/70 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-gray-200/50 min-w-[250px]"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        transform: 'translate(-200%, -200%)'
+        transform: 'translate(-30%, -150%)'
+        // transform: 'none'  // Center the tooltip
       }}
     >
       <h3 className="font-bold text-lg mb-2">{stateName}</h3>

@@ -113,73 +113,66 @@
 //   );
 // }
 
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Users, UserPlus, School, UsersRound } from "lucide-react";
 import { API_BASE_URL } from "@/config/env";
+import { Skeleton } from "@/components/ui/skeleton";
+import Spinner from "@/components/Spinner";
 
 // Reusable MetricCard component
-const MetricCard = ({ title, value, icon: Icon }) => (
-  <div className="bg-white p-6 rounded-lg shadow-md">
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-sm font-medium text-gray-500">{title}</p>
-        <p className="text-2xl font-semibold text-gray-900">{value}</p>
+const MetricCard = ({ title, value, icon: Icon, loading }) => {
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md relative">
+      {loading ? (
+        <div className="absolute top-0 left-0  h-[100%] w-[100%] bg-white/75 flex items-center justify-center">
+          <Spinner />
+        </div>
+      ) : null}
+
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-500">{title}</p>
+          <p className="text-2xl font-semibold text-gray-900">{value}</p>
+        </div>
+        <Icon className="h-8 w-8 text-emerald-500" />
       </div>
-      <Icon className="h-8 w-8 text-emerald-500" />
     </div>
-  </div>
-);
+  );
+};
 
-
-
-const Metrics = ({ analyticsData }) => {
-   
+const Metrics = ({ analyticsData, loading }) => {
+  console.log("analyticsData", analyticsData);
   // Calculate counts from analytics data
-  const artisan_userCount = analyticsData?.overallCounts?.find(
-    count => count._id === "artisan_user"
-  )?.count || 0;
+  const artisan_userCount = analyticsData?.artisan_user || 0;
+  const intending_artisanCount = analyticsData?.intending_artisan || 0;
+  const training_centerCount = analyticsData?.training_center || 0;
 
-  const intending_artisanCount = analyticsData?.overallCounts?.find(
-    count => count._id === "intending_artisan"
-  )?.count || 0;
+  // For training groups, if you have that data in analytics
+  const training_groupCount = 0;
 
-  // Get total unique sectors and trade areas
-  const uniqueSectors = new Set(
-    analyticsData?.sectorDistribution?.map(item => item._id)
-  ).size;
-
-  const uniqueTradeAreas = new Set(
-    analyticsData?.tradeAreaDistribution?.map(item => item._id?.tradeArea)
-  ).size;
-
- // Get training center count from the analytics data
- const training_centerCount = analyticsData?.trainingCenterStats?.totalCenters || 0;
-
- // For training groups, if you have that data in analytics
- const training_groupCount = analyticsData?.trainingGroups?.length || 0;
-
-
- 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
       <MetricCard
+        loading={loading}
         title="Registered Artisans"
         value={artisan_userCount.toLocaleString()}
         icon={Users}
       />
       <MetricCard
+        loading={loading}
         title="Intending Artisans"
         value={intending_artisanCount.toLocaleString()}
         icon={UserPlus}
       />
       <MetricCard
+        loading={loading}
         title="Training Centers"
         value={training_centerCount.toLocaleString()}
         icon={School}
       />
       <MetricCard
+        loading={loading}
         title="Trade Area Groups"
         value={training_groupCount.toLocaleString()}
         icon={UsersRound}

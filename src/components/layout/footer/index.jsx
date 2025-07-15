@@ -36,8 +36,8 @@ function Footer() {
                   title: "Industrial Training Fund – Along Miango Road, P.M.B 2199 Jos, Plateau State, Nigeria. 930272",
                 },
                 {
-                  title: "+2348138202997",
-                  path: "tel:+2348138202997",
+                  title: "+23408033243748",
+                  path: "tel:+23408033243748",
                 },
               ].map((item, index) => (
                 <a

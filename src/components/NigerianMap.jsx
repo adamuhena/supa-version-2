@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { MapIcon } from 'lucide-react';
-import { geoMercator, geoPath } from 'd3-geo';
-import { feature } from 'topojson-client';
-import MapTooltip from './MapTooltip';
-import nigeriaTopoData from '../data/nigeriaTopo.json';
-import { stateData } from '../data/nigerianStates';
+import React, { useState, useEffect } from "react";
+import { MapIcon } from "lucide-react";
+import { geoMercator, geoPath } from "d3-geo";
+import { feature } from "topojson-client";
+import MapTooltip from "./MapTooltip";
+import nigeriaTopoData from "../data/nigeriaTopo.json";
+import { stateData } from "../data/nigerianStates";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const NigerianMap = ({ analyticsData }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [tooltip, setTooltip] = useState({
     show: false,
-    state: '',
+    state: "",
     position: { x: 0, y: 0 },
     data: null,
   });
+
+  console.log("analyticsData", analyticsData);
 
   // Add effect to handle loading state
   useEffect(() => {
@@ -28,57 +30,71 @@ const NigerianMap = ({ analyticsData }) => {
     const stateInfo = stateData[stateId];
     if (!stateInfo) return null;
 
-    const stateResidence = analyticsData?.stateOfResidenceDistribution?.find(
-      state => state._id?.toLowerCase() === stateInfo.name?.toLowerCase()
-    );
+    const stateInfoFromBackendOrigin =
+      analyticsData?.stateOfOrigin?.[stateInfo?.name];
+    const stateInfoFromBackendResidence =
+      analyticsData?.stateOfResidence?.[stateInfo?.name];
 
-    const stateOrigin = analyticsData?.stateOfOriginDistribution?.find(
-      state => state._id?.toLowerCase() === stateInfo.name?.toLowerCase()
-    );
+    const trainingCentersCount =
+      analyticsData?.trainingCentersByState?.[stateInfo.name] || 0;
 
-    const centers = analyticsData?.trainingCenterStats?.centersByState?.find(
-      state => state._id?.toLowerCase() === stateInfo.name?.toLowerCase()
-    );
 
     return {
       name: stateInfo.name,
       residenceCount: {
-        total: stateResidence?.total || 0,
-        artisan_user: stateResidence?.artisan_user || 0,
-        intending_artisan: stateResidence?.intending_artisan || 0
+        total:
+          stateInfoFromBackendResidence?.artisan_user +
+            stateInfoFromBackendResidence?.intending_artisan || 0,
+        artisan_user: stateInfoFromBackendResidence?.artisan_user || 0,
+        intending_artisan:
+          stateInfoFromBackendResidence?.intending_artisan || 0,
       },
+
       originCount: {
-        total: stateOrigin?.total || 0,
-        artisan_user: stateOrigin?.artisan_user || 0,
-        intending_artisan: stateOrigin?.intending_artisan || 0
+        total:
+          stateInfoFromBackendOrigin?.artisan_user +
+            stateInfoFromBackendOrigin?.intending_artisan || 0,
+        artisan_user: stateInfoFromBackendOrigin?.artisan_user || 0,
+        intending_artisan: stateInfoFromBackendOrigin?.intending_artisan || 0,
       },
-      trainingCenters: centers?.count || 0,
-      centersList: centers?.centers || [],
-      total: (stateResidence?.total || 0),
-      stateTotal: (stateOrigin?.total || 0) // Add this line
+
+      // originCount: {
+      //   total: stateOrigin?.total || 0,
+      //   artisan_user: stateOrigin?.artisan_user || 0,
+      //   intending_artisan: stateOrigin?.intending_artisan || 0
+      // },
+      trainingCenters:trainingCentersCount,
+      centersList: [],
+      total:
+        stateInfoFromBackendResidence?.artisan_user +
+          stateInfoFromBackendResidence?.intending_artisan || 0,
+
+      stateTotal:
+        stateInfoFromBackendOrigin?.artisan_user +
+          stateInfoFromBackendOrigin?.intending_artisan || 0,
     };
   };
 
   // Get color based on the total number of users
   const getColorByDensity = (stateId) => {
     const data = getStateData(stateId);
-    if (!data) return '#e5e7eb';
+    if (!data) return "#e5e7eb";
 
     const total = data.total;
-    if (total > 30000) return '#FF6347';  // Tomato Red for extreme density
-    if (total > 25000) return '#FF5733';  // Red-Orange for very high density
-    if (total > 20000) return '#C70039';  // Dark Red for high density
-    if (total > 15000) return '#900C3F';  // Deep Pink for high density
-    if (total > 10000) return '#581845';  // Dark Purple for moderate-high density
-    if (total > 8000) return '#D2691E';  // Chocolate for very high density
-    if (total > 6000) return '#FF8C00';  // Dark Orange for high density
-    if (total > 5000) return '#20B2AA';  // LightSeaGreen for medium density
-    if (total > 3000) return '#3CB371';  // MediumSeaGreen for moderate density
-    if (total > 2000) return '#2E8B57';  // SeaGreen for medium density
-    if (total > 1000) return '#228B22';  // ForestGreen for low-medium density
-    if (total > 500) return '#006400';   // DarkGreen for low density
-    if (total > 100) return '#8B0000';   // DarkRed for very low density
-    return '#E0FFFF';  // Light Cyan for minimal density
+    if (total > 30000) return "#FF6347"; // Tomato Red for extreme density
+    if (total > 25000) return "#FF5733"; // Red-Orange for very high density
+    if (total > 20000) return "#C70039"; // Dark Red for high density
+    if (total > 15000) return "#900C3F"; // Deep Pink for high density
+    if (total > 10000) return "#581845"; // Dark Purple for moderate-high density
+    if (total > 8000) return "#D2691E"; // Chocolate for very high density
+    if (total > 6000) return "#FF8C00"; // Dark Orange for high density
+    if (total > 5000) return "#20B2AA"; // LightSeaGreen for medium density
+    if (total > 3000) return "#3CB371"; // MediumSeaGreen for moderate density
+    if (total > 2000) return "#2E8B57"; // SeaGreen for medium density
+    if (total > 1000) return "#228B22"; // ForestGreen for low-medium density
+    if (total > 500) return "#006400"; // DarkGreen for low density
+    if (total > 100) return "#8B0000"; // DarkRed for very low density
+    return "#E0FFFF"; // Light Cyan for minimal density
   };
 
   // Handle mouse hover event
@@ -93,14 +109,14 @@ const NigerianMap = ({ analyticsData }) => {
       state: stateName,
       position: {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       },
-      data: getStateData(stateId)
+      data: getStateData(stateId),
     });
   };
 
   const handleMouseLeave = () => {
-    setTooltip(prev => ({ ...prev, show: false }));
+    setTooltip((prev) => ({ ...prev, show: false }));
   };
 
   // Calculate total sum of artisans and intending artisans
@@ -120,11 +136,14 @@ const NigerianMap = ({ analyticsData }) => {
   }, 0);
 
   // Convert TopoJSON to GeoJSON
-  const nigeriaGeoData = feature(nigeriaTopoData, nigeriaTopoData.objects.default);
+  const nigeriaGeoData = feature(
+    nigeriaTopoData,
+    nigeriaTopoData.objects.default
+  );
 
   // Create map projection
   const projection = geoMercator()
-    .center([8.6753, 9.0820]) // Nigeria's approximate center
+    .center([8.6753, 9.082]) // Nigeria's approximate center
     .scale(2500)
     .translate([400, 400]);
 
@@ -158,15 +177,12 @@ const NigerianMap = ({ analyticsData }) => {
       </CardHeader>
       <CardContent className="p-6">
         <div className="relative w-full pt-0 max-w-4xl mx-auto">
-          <svg
-            viewBox="0 150 800 450"
-            className="w-full h-auto rounded-lg"
-          >
+          <svg viewBox="0 150 800 450" className="w-full h-auto rounded-lg">
             <g>
               {nigeriaGeoData.features.map((feature) => {
                 const stateName = feature.properties.name;
                 const stateId = Object.keys(stateData).find(
-                  key => stateData[key].name === stateName
+                  (key) => stateData[key].name === stateName
                 );
 
                 if (!stateId) return null;
@@ -200,8 +216,7 @@ const NigerianMap = ({ analyticsData }) => {
                     textAnchor="middle"
                     dy=".3em"
                     className="text-[8px] font-medium pointer-events-none"
-                    fill={total > 500 ? '#fff' : '#374151'}
-                  >
+                    fill={total > 500 ? "#fff" : "#374151"}>
                     {state.name}
                   </text>
                 );
@@ -285,18 +300,24 @@ const NigerianMap = ({ analyticsData }) => {
           <div className="mt-6 text-center">
             <div className="flex items-center justify-center gap-4">
               <p className="text-xs text-gray-900">
-                Total by State of Residence: {' '}
-                <span className="text-emerald-600">{totalArtisans.toLocaleString()}</span>
+                Total by State of Residence:{" "}
+                <span className="text-emerald-600">
+                  {totalArtisans.toLocaleString()}
+                </span>
               </p>
               <span className="text-gray-300">|</span>
               <p className="text-xs text-gray-900">
-                Total by State of Origin: {' '}
-                <span className="text-emerald-600">{totalbyState.toLocaleString()}</span>
+                Total by State of Origin:{" "}
+                <span className="text-emerald-600">
+                  {totalbyState.toLocaleString()}
+                </span>
               </p>
             </div>
             <p className="text-xs text-gray-900 mt-2">
-              Total Training Centre by State: {' '}
-              <span className="text-emerald-600">{tCenter.toLocaleString()}</span>
+              Total Training Centre by State:{" "}
+              <span className="text-emerald-600">
+                {tCenter.toLocaleString()}
+              </span>
             </p>
           </div>
         </div>

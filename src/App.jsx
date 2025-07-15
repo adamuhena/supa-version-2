@@ -130,7 +130,7 @@ function App() {
             path="training-center/groups"
             element={
               <ProtectedRoute
-                allowedRoles={["admin", "superadmin", "training_center"]}>
+                allowedRoles={["superadmin", "training_center"]}>
                 <TrainingStatus />
               </ProtectedRoute>
             }
@@ -146,12 +146,16 @@ function App() {
           {/* Protected Routes */}
           <Route path="/" element={<DashboardLayout />}>
             {/* Admin and Superadmin Routes */}
-            <Route path="admin/dashboard" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminDashboard /></ProtectedRoute>} />
+            <Route path="admin/dashboard" element={<ProtectedRoute allowedRoles={["admin","superadmin"]}><AdminDashboard /></ProtectedRoute>} />
             <Route path="admin/usermanagement" element={<ProtectedRoute allowedRoles={["superadmin"]}><UserManagement /></ProtectedRoute>} />
-            <Route path="admin/marketplacereport/reports" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}>< MarketplaceReport/></ProtectedRoute>} />
+            <Route path="admin/marketplacereport/reports" element={<ProtectedRoute allowedRoles={["superadmin"]}>< MarketplaceReport/></ProtectedRoute>} />
             <Route path="/admin/training-centersmgt" element={<ProtectedRoute allowedRoles={["superadmin"]}><TrainingCenterMgt /></ProtectedRoute>} />
             <Route path="admin/sectors" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminSectors /></ProtectedRoute>} />
+            {/*admin only routes*/}
             <Route path="admin/certification" element={<ProtectedRoute allowedRoles={["superadmin", "admin"]}><UserCert /></ProtectedRoute>} />
+            <Route path="training-center-management" element={<ProtectedRoute allowedRoles={["superadmin", "admin"]}><TrainingCenterManagement /></ProtectedRoute>} />
+            
+
             <Route path="admin/training-status" element={<ProtectedRoute allowedRoles={["superadmin"]}><TrainingManagement /></ProtectedRoute>} />
             <Route path="admin/dashboard/reports" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminDashboardReports /></ProtectedRoute>} />
             <Route path="admin/trainingcenter/reports" element={<ProtectedRoute allowedRoles={["superadmin"]}><TrainingCenterReport /></ProtectedRoute>} />
@@ -164,9 +168,9 @@ function App() {
             
             
             {/* <Route path="training/assign/smart" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><SmartAssignmentForm /></ProtectedRoute>} /> */}
-            <Route path="training-assignment" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><TrainingAssignmentDashboard /></ProtectedRoute>} />
+            <Route path="training-assignment" element={<ProtectedRoute allowedRoles={["superadmin"]}><TrainingAssignmentDashboard /></ProtectedRoute>} />
             <Route path="training-center" element={<ProtectedRoute allowedRoles={["training_center"]}><TrainingCenterDashboard /></ProtectedRoute>} />
-            <Route path="training-center-management" element={<ProtectedRoute allowedRoles={["superadmin", "admin"]}><TrainingCenterManagement /></ProtectedRoute>} />
+            {/* <Route path="training-center-management" element={<ProtectedRoute allowedRoles={["superadmin", "admin"]}><TrainingCenterManagement /></ProtectedRoute>} /> */}
 
             {/* Artisan and Intending Artisan Routes */}
             <Route
@@ -201,17 +205,17 @@ function App() {
               path="certification/upload"
               element={
                 <ProtectedRoute
-                  allowedRoles={["admin", "superadmin", "artisan_user"]}>
+                  allowedRoles={["superadmin", "artisan_user"]}>
                   <DocumentUpload />
                 </ProtectedRoute>
               }
             />
 
             {/* Document Management Routes */}
-            <Route path="documents" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><Dashboard /></ProtectedRoute>} />
-            <Route path="documents/create" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><CreateDocument /></ProtectedRoute>} />
-            <Route path="documents/edit/:id" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><EditDocument /></ProtectedRoute>} />
-            <Route path="documents/preview/:_id" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><DocumentPreview /></ProtectedRoute>} />
+            <Route path="documents" element={<ProtectedRoute allowedRoles={["superadmin"]}><Dashboard /></ProtectedRoute>} />
+            <Route path="documents/create" element={<ProtectedRoute allowedRoles={["superadmin"]}><CreateDocument /></ProtectedRoute>} />
+            <Route path="documents/edit/:id" element={<ProtectedRoute allowedRoles={["superadmin"]}><EditDocument /></ProtectedRoute>} />
+            <Route path="documents/preview/:_id" element={<ProtectedRoute allowedRoles={["superadmin"]}><DocumentPreview /></ProtectedRoute>} />
 
             {/* Miscellaneous Routes */}
             <Route path="test" element={<TestPage />} />

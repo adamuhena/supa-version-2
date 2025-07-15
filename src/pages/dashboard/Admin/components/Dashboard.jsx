@@ -16,56 +16,56 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchAnalytics = async () => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      setError("Access token is missing. Please log in again.");
-      setLoading(false);
-      return;
-    }
-    try {
-      const response = await axios.get(`${API_BASE_URL}/dashboard-analytics`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      if (response.data.success) {
-        setAnalyticsData(response.data.data[0] || {});
-      } else {
-        throw new Error(
-          response.data.message || "Failed to fetch analytics data"
-        );
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchAnalytics = async () => {
+  //   const accessToken = localStorage.getItem("accessToken");
+  //   if (!accessToken) {
+  //     setError("Access token is missing. Please log in again.");
+  //     setLoading(false);
+  //     return;
+  //   }
+  //   try {
+  //     const response = await axios.get(`${API_BASE_URL}/dashboard-analytics`, {
+  //       headers: { Authorization: `Bearer ${accessToken}` },
+  //     });
+  //     if (response.data.success) {
+  //       setAnalyticsData(response.data.data[0] || {});
+  //     } else {
+  //       throw new Error(
+  //         response.data.message || "Failed to fetch analytics data"
+  //       );
+  //     }
+  //   } catch (err) {
+  //     setError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
+  // useEffect(() => {
+  //   fetchAnalytics();
+  // }, []);
 
-  const genderDistribution = useMemo(() => {
-    const genderData = analyticsData.genderDistribution || [];
-    const groupByRoleAndGender = (role) => {
-      const filteredData = genderData.filter((entry) => entry.role === role);
-      return [
-        {
-          name: "Male",
-          value: filteredData.find((e) => e.gender === "male")?.count || 0,
-        },
-        {
-          name: "Female",
-          value: filteredData.find((e) => e.gender === "female")?.count || 0,
-        },
-      ];
-    };
+  // const genderDistribution = useMemo(() => {
+  //   const genderData = analyticsData.genderDistribution || [];
+  //   const groupByRoleAndGender = (role) => {
+  //     const filteredData = genderData.filter((entry) => entry.role === role);
+  //     return [
+  //       {
+  //         name: "Male",
+  //         value: filteredData.find((e) => e.gender === "male")?.count || 0,
+  //       },
+  //       {
+  //         name: "Female",
+  //         value: filteredData.find((e) => e.gender === "female")?.count || 0,
+  //       },
+  //     ];
+  //   };
 
-    return {
-      artisanGenderData: groupByRoleAndGender("artisan_user"),
-      intendingArtisanGenderData: groupByRoleAndGender("intending_artisan"),
-    };
-  }, [analyticsData]);
+  //   return {
+  //     artisanGenderData: groupByRoleAndGender("artisan_user"),
+  //     intendingArtisanGenderData: groupByRoleAndGender("intending_artisan"),
+  //   };
+  // }, [analyticsData]);
 
 //   if (loading)
 //     return (
@@ -105,30 +105,31 @@ export default function Dashboard() {
 //     </div>
 //   );
 // }
-if (loading) {
-  return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
-      <Spinner />
-    </div>
-  );
-}
+// if (loading) {
+//   return (
+//     <div className="flex justify-center items-center min-h-screen bg-gray-50">
+//       <Spinner />
+//     </div>
+//   );
+// }
 
-if (error) {
-  return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
-      <div className="text-center p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
-        <p className="text-gray-600">{error}</p>
-        <button
-          onClick={fetchAnalytics}
-          className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-        >
-          Retry
-        </button>
-      </div>
-    </div>
-  );
-}
+// if (error) {
+//   return (
+//     <div className="flex justify-center items-center min-h-screen bg-gray-50">
+//       <div className="text-center p-6 bg-white rounded-lg shadow-lg">
+//         <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
+//         <p className="text-gray-600">{error}</p>
+//         <button
+//           onClick={fetchAnalytics}
+//           className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+//         >
+//           Retry
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
+
 
 return (
   <div className="min-h-screen bg-gray-50">
