@@ -154,6 +154,7 @@ export function VerificationStatusManager({
   const [completionNotes, setCompletionNotes] = useState("");
   const [completionDate, setCompletionDate] = useState("");
   const [pendingStatus, setPendingStatus] = useState("");
+  
 
   // Helper to reset form state
   const resetAssignForm = () => {
@@ -1139,7 +1140,7 @@ export function VerificationStatusManager({
                       Foundation Training
                     </SelectItem>
                     <SelectItem value="initial">Initial Training</SelectItem>
-                    <SelectItem value="futher">
+                    <SelectItem value="further">
                       Further Training
                     </SelectItem>
                     <SelectItem value="up_skilling">Up Skilling Training</SelectItem>
@@ -1549,47 +1550,6 @@ export function VerificationStatusManager({
                                           </DialogDescription>
                                         </DialogHeader>
                                         <div className="overflow-x-auto">
-                                          {/* <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Year</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Verified By</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Notes</TableHead>
-            <TableHead>Expiration Date</TableHead>
-            <TableHead>Training Assignment(s)</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {(Array.isArray(historyVerification) ? historyVerification : []).map((v, idx) => (
-            <TableRow key={v._id || idx}>
-              <TableCell>{v.year}</TableCell>
-              <TableCell>
-                <Badge className={getStatusColor(v.status)}>{v.status?.toUpperCase()}</Badge>
-              </TableCell>
-              <TableCell>
-                {verifierNames[v.verifiedBy] || v.verifiedBy || "Unknown"}
-              </TableCell>
-              <TableCell>
-                {v.date ? new Date(v.date).toLocaleDateString() : ""}
-              </TableCell>
-              <TableCell>{v.notes || ""}</TableCell>
-              <TableCell>
-                {v.expirationDate ? new Date(v.expirationDate).toLocaleDateString() : ""}
-              </TableCell>
-              <TableCell>
-                {Array.isArray(v.trainingAssignment) && v.trainingAssignment.length > 0
-                  ? v.trainingAssignment.join(", ")
-                  : (typeof v.trainingAssignment === "string" && v.trainingAssignment)
-                    ? v.trainingAssignment
-                    : "—"}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table> */}
-
                                           <Table>
                                             <TableHeader>
                                               <TableRow>
@@ -1624,44 +1584,31 @@ export function VerificationStatusManager({
                                                 : []
                                               ).map((item, idx) => {
                                                 // Use currentAssignment if assignmentHistory is empty
-                                                const assignment =
-                                                  item.currentAssignment ||
-                                                  item;
+                                                const assignment = item.currentAssignment || item;
                                                 // assignment._id may be undefined if only item has _id
                                                 console.log("assignment test:", assignment);
                                                 // Get training center name
-                                                let centerName = "";
-
-                                                if (
-                                                  typeof assignment.trainingCenterId ===
-                                                  "object"
-                                                ) {
-                                                  centerName =
-                                                    assignment.trainingCenterId
-                                                      .trainingCentreName ||
-                                                    assignment.trainingCenterId
-                                                      .name ||
-                                                    "";
-                                                } else {
-                                                  const found =
-                                                    trainingCenters.find(
-                                                      (tc) =>
-                                                        tc._id ===
-                                                        assignment.trainingCenterId
-                                                    );
-                                                  centerName =
-                                                    found?.trainingCentreName ||
-                                                    assignment.trainingCenterId ||
-                                                    "";
+                                                let centerName = "—";
+                                                if (typeof item.trainingCenterId === "object" && item.trainingCenterId !== null) {
+                                                  centerName = item.trainingCenterId.trainingCentreName || item.trainingCenterId.name || "—";
+                                                } else if (typeof item.trainingCenterId === "string") {
+                                                  const found = trainingCenters.find(tc => tc._id === item.trainingCenterId);
+                                                  centerName = found?.trainingCentreName || "—";
                                                 }
 
                                                 // Get assigned by name
-                                                const assignedByName =
-                                                  verifierNames[
-                                                    assignment.assignedBy
-                                                  ] ||
-                                                  assignment.assignedBy ||
-                                                  "Unknown";
+                                                let assignedByName = "Unknown";
+                                                if (assignment.assignedBy) {
+                                                  if (typeof assignment.assignedBy === "object" && assignment.assignedBy !== null) {
+                                                    assignedByName =
+                                                      (assignment.assignedBy.firstName || "") +
+                                                      (assignment.assignedBy.lastName ? " " + assignment.assignedBy.lastName : "") ||
+                                                      assignment.assignedBy.email ||
+                                                      "Unknown";
+                                                  } else {
+                                                    assignedByName = verifierNames[assignment.assignedBy] || assignment.assignedBy || "Unknown";
+                                                  }
+                                                }
                                                 return (
                                                   <TableRow
                                                     key={item._id || idx}
@@ -1863,7 +1810,7 @@ export function VerificationStatusManager({
         </CardContent>
       </Card>
 
-      {showCompletionDialog && (
+      {/* {showCompletionDialog && (
         <Dialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
           <DialogContent>
             <DialogHeader>
@@ -1873,6 +1820,7 @@ export function VerificationStatusManager({
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
+              <div>
               <Label htmlFor="completion-date">Completion Date</Label>
               <Input
                 id="completion-date"
@@ -1880,13 +1828,17 @@ export function VerificationStatusManager({
                 value={completionDate}
                 onChange={(e) => setCompletionDate(e.target.value)}
               />
+              </div>
+              <div className="space-y-2">
               <Label htmlFor="completion-notes">Completion Notes</Label>
               <Textarea
                 id="completion-notes"
+                type="text"
                 value={completionNotes}
                 onChange={(e) => setCompletionNotes(e.target.value)}
                 placeholder="Enter completion notes"
               />
+              </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">
               <Button
@@ -1931,7 +1883,80 @@ export function VerificationStatusManager({
             </div>
           </DialogContent>
         </Dialog>
-      )}
+      )} */}
+      {showCompletionDialog && (
+  <Dialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Complete Assignment</DialogTitle>
+        <DialogDescription>
+          Please provide completion notes and date.
+        </DialogDescription>
+      </DialogHeader>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="completion-date">Completion Date</Label>
+          <Input
+            id="completion-date"
+            type="date"
+            value={completionDate}
+            onChange={(e) => setCompletionDate(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="completion-notes">Completion Notes</Label>
+          <Textarea
+            id="completion-notes"
+            value={completionNotes}
+            onChange={(e) => setCompletionNotes(e.target.value)}
+            placeholder="Enter completion notes"
+          />
+        </div>
+      </div>
+      <div className="flex justify-end gap-2 mt-4">
+        <Button
+          variant="outline"
+          onClick={() => {
+            setShowCompletionDialog(false);
+            setCompletionNotes("");
+            setCompletionDate("");
+            setPendingAssignmentId(null);
+            setPendingStatus("");
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={async () => {
+            // Validate that both fields are filled
+            if (!completionDate) {  // Removed .trim() for date validation
+              toast.error("Please select a completion date");
+              return;
+            }
+            if (!completionNotes.trim()) {
+              toast.error("Please provide completion notes");
+              return;
+            }
+            
+            await handleUpdateAssignmentStatus(
+              pendingAssignmentId,
+              pendingStatus,
+              completionNotes,
+              completionDate
+            );
+            setShowCompletionDialog(false);
+            setCompletionNotes("");
+            setCompletionDate("");
+            setPendingAssignmentId(null);
+            setPendingStatus("");
+          }}
+        >
+          Complete Assignment
+        </Button>
+      </div>
+    </DialogContent>
+  </Dialog>
+)}
     </div>
   );
 }

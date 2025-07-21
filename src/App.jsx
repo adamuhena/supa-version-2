@@ -51,6 +51,7 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import TrainingCenterMgt from "./pages/dashboard/Admin/TrainingCenterMgt/TrainingCenterManagement";
 import TrainingAssignmentDashboard from "./pages/dashboard/Admin/Assignment/TrainingAssignmentDashboard";
 import MarketplaceReport from "./pages/dashboard/Admin/marketplace-report";
+import TrainingStatusComponent from "./pages/dashboard/Admin/userMgt/components/main-component";
 
 
 function App() {
@@ -163,6 +164,7 @@ function App() {
             <Route path="training/groups" element={<ProtectedRoute allowedRoles={["superadmin"]}><TrainingGroupDetails /></ProtectedRoute>} />
             <Route path="training-center/status" element={<ProtectedRoute allowedRoles={["superadmin"]}><TrainingManagement /></ProtectedRoute>} />
             <Route path="biodata" element={<ProtectedRoute allowedRoles={["admin", "superadmin", "artisan_user", "intending_artisan"]}><Biodata /></ProtectedRoute>} />
+            <Route path="training/status" element={<ProtectedRoute allowedRoles={["admin", "superadmin", "artisan_user", "intending_artisan"]}><TrainingStatusComponent /></ProtectedRoute>} />
 
             {/* Training Center Routes */}
             

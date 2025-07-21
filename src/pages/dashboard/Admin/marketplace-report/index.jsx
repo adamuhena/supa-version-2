@@ -49,6 +49,8 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ExportButtons from "@/components/ExportButtons";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 import {
   Sheet,
@@ -645,10 +647,16 @@ const MarketplaceReport = () => {
     switch (status) {
       case "requested":
         return "bg-yellow-100 text-yellow-800";
+      case "amount-proposed":
+        return "bg-purple-100 text-purple-800";
       case "accepted":
         return "bg-blue-100 text-blue-800";
+      case "artisan-started":
+        return "bg-indigo-100 text-indigo-800";
       case "artisan-rejected":
         return "bg-red-100 text-red-800";
+      case "client-rejected":
+        return "bg-pink-100 text-pink-800";
       case "artisan-completed":
         return "bg-green-100 text-green-800";
       case "completed":
@@ -677,6 +685,260 @@ const MarketplaceReport = () => {
 
     fetchData();
   }, [activeTab]);
+
+  // 5. Add modal state and action handlers to the component
+  const [modalLoading, setModalLoading] = useState(false);
+  const [confirmReject, setConfirmReject] = useState(false);
+  const [artisanRejectionReason, setArtisanRejectionReason] = useState("");
+  const [showApproveDialog, setShowApproveDialog] = useState(false);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [adminRejectReason, setAdminRejectReason] = useState("");
+
+  const acceptAmount = async () => {
+    if (!selectedItem) return;
+    setModalLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        toast.error("No access token found");
+        return;
+      }
+      const response = await axios.patch(
+        `${API_BASE_URL}/marketplace/artisan/accept-amount`,
+        {
+          request_id: selectedItem._id,
+          artisan_id: selectedItem.artisan?._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response.data?.success) {
+        toast.success("Amount accepted successfully!");
+        setRequests((prev) =>
+          prev.map((req) =>
+            req._id === selectedItem._id ? { ...req, status: "accepted" } : req
+          )
+        );
+        setRequestPagination((prev) => ({
+          ...prev,
+          totalUsers: prev.totalUsers - 1,
+        }));
+        setSelectedItem(null);
+      } else {
+        toast.error(response.data.message || "Failed to accept amount");
+      }
+    } catch (error) {
+      console.error("Error accepting amount:", error);
+      toast.error(error.response?.data?.message || "Failed to accept amount");
+    } finally {
+      setModalLoading(false);
+    }
+  };
+  const rejectAmount = async () => {
+    if (!selectedItem) return;
+    setModalLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        toast.error("No access token found");
+        return;
+      }
+      const response = await axios.patch(
+        `${API_BASE_URL}/marketplace/artisan/reject-amount`,
+        {
+          request_id: selectedItem._id,
+          artisan_id: selectedItem.artisan?._id,
+          artisanRejectionReason,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response.data?.success) {
+        toast.success("Amount rejected successfully!");
+        setRequests((prev) =>
+          prev.map((req) =>
+            req._id === selectedItem._id ? { ...req, status: "artisan-rejected" } : req
+          )
+        );
+        setRequestPagination((prev) => ({
+          ...prev,
+          totalUsers: prev.totalUsers - 1,
+        }));
+        setSelectedItem(null);
+      } else {
+        toast.error(response.data.message || "Failed to reject amount");
+      }
+    } catch (error) {
+      console.error("Error rejecting amount:", error);
+      toast.error(error.response?.data?.message || "Failed to reject amount");
+    } finally {
+      setModalLoading(false);
+      setConfirmReject(false);
+      setArtisanRejectionReason("");
+    }
+  };
+  const startJob = async () => {
+    if (!selectedItem) return;
+    setModalLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        toast.error("No access token found");
+        return;
+      }
+      const response = await axios.patch(
+        `${API_BASE_URL}/marketplace/artisan/start-job`,
+        {
+          request_id: selectedItem._id,
+          artisan_id: selectedItem.artisan?._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response.data?.success) {
+        toast.success("Job started successfully!");
+        setRequests((prev) =>
+          prev.map((req) =>
+            req._id === selectedItem._id ? { ...req, status: "artisan-started" } : req
+          )
+        );
+        setRequestPagination((prev) => ({
+          ...prev,
+          totalUsers: prev.totalUsers - 1,
+        }));
+        setSelectedItem(null);
+      } else {
+        toast.error(response.data.message || "Failed to start job");
+      }
+    } catch (error) {
+      console.error("Error starting job:", error);
+      toast.error(error.response?.data?.message || "Failed to start job");
+    } finally {
+      setModalLoading(false);
+    }
+  };
+  const completeJob = async () => {
+    if (!selectedItem) return;
+    setModalLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        toast.error("No access token found");
+        return;
+      }
+      const response = await axios.patch(
+        `${API_BASE_URL}/marketplace/artisan/update-request-status`,
+        {
+          artisan_id: selectedItem.artisan?._id,
+          status: "artisan-completed",
+          request_id: selectedItem._id,
+          agreedSum: selectedItem.agreedSum || 0,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response.data?.success) {
+        toast.success("Job completed successfully. Awaiting client approval!");
+        setRequests((prev) =>
+          prev.map((req) =>
+            req._id === selectedItem._id ? { ...req, status: "artisan-completed" } : req
+          )
+        );
+        setSelectedItem(null);
+      } else {
+        toast.error(response.data.message || "Failed to complete job");
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "An error occurred");
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  const approveCompletion = async () => {
+    if (!selectedItem) return;
+    setModalLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        toast.error("No access token found");
+        return;
+      }
+      const response = await axios.put(
+        `${API_BASE_URL}/marketplace/requests/${selectedItem._id}/approve-completion`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response.data?.success) {
+        toast.success("Job marked as completed!");
+        setRequests((prev) =>
+          prev.map((req) =>
+            req._id === selectedItem._id ? { ...req, status: "completed" } : req
+          )
+        );
+        setSelectedItem(null);
+      }
+    } catch (error) {
+      console.error("Error approving completion:", error);
+      toast.error("Failed to approve completion");
+    } finally {
+      setModalLoading(false);
+      setShowApproveDialog(false);
+    }
+  };
+
+  const rejectCompletion = async () => {
+    if (!selectedItem) return;
+    setModalLoading(true);
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        toast.error("No access token found");
+        return;
+      }
+      const response = await axios.put(
+        `${API_BASE_URL}/marketplace/requests/${selectedItem._id}/reject-completion`,
+        { reason: adminRejectReason },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response.data?.success) {
+        toast.success("Job completion rejected!");
+        setRequests((prev) =>
+          prev.map((req) =>
+            req._id === selectedItem._id ? { ...req, status: "client-rejected" } : req
+          )
+        );
+        setSelectedItem(null);
+      }
+    } catch (error) {
+      console.error("Error rejecting completion:", error);
+      toast.error("Failed to reject completion");
+    } finally {
+      setModalLoading(false);
+      setShowRejectDialog(false);
+      setAdminRejectReason("");
+    }
+  };
 
   return (
     <ProtectedRoute>
@@ -1367,12 +1629,13 @@ const MarketplaceReport = () => {
                     <TableHead>LGA</TableHead>
                     <TableHead>Address</TableHead>
                     <TableHead>Date Registered</TableHead>
+                    <TableHead>Amount</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center">
+                      <TableCell colSpan={9} className="text-center">
                         <Spinner />
                       </TableCell>
                     </TableRow>
@@ -1395,11 +1658,28 @@ const MarketplaceReport = () => {
                         <TableCell>
                           {new Date(client.createdAt).toLocaleDateString()}
                         </TableCell>
+                        <TableCell>
+                          {(() => {
+                            if ([
+                              'completed',
+                              'accepted',
+                              'artisan-completed',
+                              'artisan-rejected',
+                              'client-rejected',
+                            ].includes(client.status)) {
+                              return client.agreedSum ? `₦${Number(client.agreedSum).toLocaleString()}` : 'N/A';
+                            } else if (client.status === 'amount-proposed') {
+                              return client.proposedSum ? `₦${Number(client.proposedSum).toLocaleString()} (Proposed)` : 'N/A';
+                            } else {
+                              return 'N/A';
+                            }
+                          })()}
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center">
+                      <TableCell colSpan={9} className="text-center">
                         No clients found
                       </TableCell>
                     </TableRow>
@@ -1519,25 +1799,14 @@ const MarketplaceReport = () => {
                           <SelectItem className="text-[12px]" value="all">
                             All Statuses
                           </SelectItem>
-                          <SelectItem className="text-[12px]" value="requested">
-                            Requested
-                          </SelectItem>
-                          <SelectItem className="text-[12px]" value="accepted">
-                            Accepted
-                          </SelectItem>
-                          <SelectItem
-                            className="text-[12px]"
-                            value="artisan-rejected">
-                            Artisan Rejected
-                          </SelectItem>
-                          <SelectItem
-                            className="text-[12px]"
-                            value="artisan-completed">
-                            Artisan Completed
-                          </SelectItem>
-                          <SelectItem className="text-[12px]" value="completed">
-                            Completed
-                          </SelectItem>
+                          <SelectItem className="text-[12px]" value="requested">Requested</SelectItem>
+                          <SelectItem className="text-[12px]" value="amount-proposed">Amount Proposed</SelectItem>
+                          <SelectItem className="text-[12px]" value="accepted">Accepted</SelectItem>
+                          <SelectItem className="text-[12px]" value="artisan-started">Artisan Started</SelectItem>
+                          <SelectItem className="text-[12px]" value="artisan-rejected">Artisan Rejected</SelectItem>
+                          <SelectItem className="text-[12px]" value="client-rejected">Client Rejected</SelectItem>
+                          <SelectItem className="text-[12px]" value="artisan-completed">Artisan Completed</SelectItem>
+                          <SelectItem className="text-[12px]" value="completed">Completed</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -1595,6 +1864,7 @@ const MarketplaceReport = () => {
                   <TableHead>Job Location</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Request Date</TableHead>
+                  <TableHead>Amount</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -1647,6 +1917,23 @@ const MarketplaceReport = () => {
                         ? new Date(request.createdAt).toLocaleDateString()
                         : "---"}
                     </TableCell>
+                    <TableCell className="text-left text-[12px]">
+                      {(() => {
+                        if ([
+                          'completed',
+                          'accepted',
+                          'artisan-completed',
+                          'artisan-rejected',
+                          'client-rejected',
+                        ].includes(request.status)) {
+                          return request.agreedSum ? `₦${Number(request.agreedSum).toLocaleString()}` : 'N/A';
+                        } else if (request.status === 'amount-proposed') {
+                          return request.proposedSum ? `₦${Number(request.proposedSum).toLocaleString()} (Proposed)` : 'N/A';
+                        } else {
+                          return 'N/A';
+                        }
+                      })()}
+                    </TableCell>
                     <TableCell>
                       <Sheet>
                         <SheetTrigger asChild>
@@ -1665,189 +1952,336 @@ const MarketplaceReport = () => {
                             </SheetDescription>
                           </SheetHeader>
                           {selectedItem && (
-                            <div className="py-4 space-y-4">
-                              <div className="grid gap-4">
-                                <div>
-                                  <h4 className="font-medium mb-2">
-                                    Job Information
-                                  </h4>
-                                  <div className="grid grid-cols-1 gap-2 text-sm">
-                                    <div>
-                                      <p className="font-medium">Job Title:</p>
-                                      <p>{selectedItem.jobTitle || "---"}</p>
-                                    </div>
-                                    <div>
-                                      <p className="font-medium">
-                                        Job Description:
-                                      </p>
-                                      <p className="whitespace-pre-wrap">
-                                        {selectedItem.jobDescription || "---"}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="font-medium">Status:</p>
-                                      <Badge
-                                        className={getStatusBadgeColor(
-                                          selectedItem.status
-                                        )}>
-                                        {selectedItem.status || "---"}
-                                      </Badge>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <div>
-                                  <h4 className="font-medium mb-2">
-                                    Job Location
-                                  </h4>
-                                  <div className="grid grid-cols-2 gap-2 text-sm">
-                                    <div>
-                                      <p className="font-medium">State:</p>
-                                      <p>
-                                        {selectedItem.jobLocation?.state ||
-                                          "---"}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="font-medium">LGA:</p>
-                                      <p>
-                                        {selectedItem.jobLocation?.lga || "---"}
-                                      </p>
-                                    </div>
-                                    <div className="col-span-2">
-                                      <p className="font-medium">Address:</p>
-                                      <p>
-                                        {selectedItem.jobLocation?.address ||
-                                          "---"}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <div>
-                                  <h4 className="font-medium mb-2">
-                                    Client Information
-                                  </h4>
-                                  <div className="grid grid-cols-2 gap-2 text-sm">
-                                    <div>
-                                      <p className="font-medium">Name:</p>
-                                      <p>{`${
-                                        selectedItem.client?.firstName || ""
-                                      } ${
-                                        selectedItem.client?.lastName || ""
-                                      }`}</p>
-                                    </div>
-                                    <div>
-                                      <p className="font-medium">Email:</p>
-                                      <p>
-                                        {selectedItem.client?.email || "---"}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="font-medium">Phone:</p>
-                                      <p>
-                                        {selectedItem.client?.phoneNumber ||
-                                          "---"}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <div>
-                                  <h4 className="font-medium mb-2">
-                                    Artisan Information
-                                  </h4>
-                                  <div className="grid grid-cols-2 gap-2 text-sm">
-                                    <div>
-                                      <p className="font-medium">Name:</p>
-                                      <p>{`${
-                                        selectedItem.artisan?.firstName || ""
-                                      } ${
-                                        selectedItem.artisan?.lastName || ""
-                                      }`}</p>
-                                    </div>
-                                    <div>
-                                      <p className="font-medium">Email:</p>
-                                      <p>
-                                        {selectedItem.artisan?.email || "---"}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="font-medium">Phone:</p>
-                                      <p>
-                                        {selectedItem.artisan?.phoneNumber ||
-                                          "---"}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {selectedItem.artisanRejectionReason && (
+                            <Tabs defaultValue="job" className="w-full">
+                              <TabsList className="grid w-full grid-cols-2 mb-4">
+                                <TabsTrigger value="job">Job</TabsTrigger>
+                                <TabsTrigger value="client">Client</TabsTrigger>
+                              </TabsList>
+                              <TabsContent value="job">
+                                {/* Job Information (reuse existing job info UI) */}
+                                <div className="grid gap-4">
                                   <div>
                                     <h4 className="font-medium mb-2">
-                                      Rejection Reason
+                                      Job Information
                                     </h4>
-                                    <p className="text-sm text-red-600">
-                                      {selectedItem.artisanRejectionReason}
-                                    </p>
+                                    <div className="grid grid-cols-1 gap-2 text-sm">
+                                      <div>
+                                        <p className="font-medium">Job Title:</p>
+                                        <p>{selectedItem.jobTitle || "---"}</p>
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">
+                                          Job Description:
+                                        </p>
+                                        <p className="whitespace-pre-wrap">
+                                          {selectedItem.jobDescription || "---"}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">Status:</p>
+                                        <Badge
+                                          className={getStatusBadgeColor(
+                                            selectedItem.status
+                                          )}>
+                                          {selectedItem.status || "---"}
+                                        </Badge>
+                                      </div>
+                                    </div>
                                   </div>
-                                )}
 
-                                <div>
-                                  <h4 className="font-medium mb-2">Timeline</h4>
-                                  <div className="grid grid-cols-1 gap-2 text-sm">
+                                  <div>
+                                    <h4 className="font-medium mb-2">
+                                      Job Location
+                                    </h4>
+                                    <div className="grid grid-cols-2 gap-2 text-sm">
+                                      <div>
+                                        <p className="font-medium">State:</p>
+                                        <p>
+                                          {selectedItem.jobLocation?.state ||
+                                            "---"}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">LGA:</p>
+                                        <p>
+                                          {selectedItem.jobLocation?.lga || "---"}
+                                        </p>
+                                      </div>
+                                      <div className="col-span-2">
+                                        <p className="font-medium">Address:</p>
+                                        <p>
+                                          {selectedItem.jobLocation?.address ||
+                                            "---"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div>
+                                    <h4 className="font-medium mb-2">
+                                      Client Information
+                                    </h4>
+                                    <div className="grid grid-cols-2 gap-2 text-sm">
+                                      <div>
+                                        <p className="font-medium">Name:</p>
+                                        <p>{`${
+                                          selectedItem.client?.firstName || ""
+                                        } ${
+                                          selectedItem.client?.lastName || ""
+                                        }`}</p>
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">Email:</p>
+                                        <p>
+                                          {selectedItem.client?.email || "---"}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">Phone:</p>
+                                        <p>
+                                          {selectedItem.client?.phoneNumber ||
+                                            "---"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div>
+                                    <h4 className="font-medium mb-2">
+                                      Artisan Information
+                                    </h4>
+                                    <div className="grid grid-cols-2 gap-2 text-sm">
+                                      <div>
+                                        <p className="font-medium">Name:</p>
+                                        <p>{`${
+                                          selectedItem.artisan?.firstName || ""
+                                        } ${
+                                          selectedItem.artisan?.lastName || ""
+                                        }`}</p>
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">Email:</p>
+                                        <p>
+                                          {selectedItem.artisan?.email || "---"}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">Phone:</p>
+                                        <p>
+                                          {selectedItem.artisan?.phoneNumber ||
+                                            "---"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {selectedItem.artisanRejectionReason && (
                                     <div>
-                                      <p className="font-medium">
-                                        Request Date:
-                                      </p>
-                                      <p>
-                                        {selectedItem.createdAt
-                                          ? new Date(
-                                              selectedItem.createdAt
-                                            ).toLocaleString()
-                                          : "---"}
+                                      <h4 className="font-medium mb-2">
+                                        Rejection Reason
+                                      </h4>
+                                      <p className="text-sm text-red-600">
+                                        {selectedItem.artisanRejectionReason}
                                       </p>
                                     </div>
-                                    {selectedItem.acceptedOn && (
+                                  )}
+
+                                  <div>
+                                    <h4 className="font-medium mb-2">Timeline</h4>
+                                    <div className="grid grid-cols-1 gap-2 text-sm">
                                       <div>
                                         <p className="font-medium">
-                                          Accepted On:
+                                          Request Date:
                                         </p>
                                         <p>
-                                          {new Date(
-                                            selectedItem.acceptedOn
-                                          ).toLocaleString()}
+                                          {selectedItem.createdAt
+                                            ? new Date(
+                                                selectedItem.createdAt
+                                              ).toLocaleString()
+                                            : "---"}
                                         </p>
                                       </div>
-                                    )}
-                                    {selectedItem.rejectedOn && (
-                                      <div>
-                                        <p className="font-medium">
-                                          Rejected On:
-                                        </p>
-                                        <p>
-                                          {new Date(
-                                            selectedItem.rejectedOn
-                                          ).toLocaleString()}
-                                        </p>
-                                      </div>
-                                    )}
-                                    {selectedItem.completedOn && (
-                                      <div>
-                                        <p className="font-medium">
-                                          Completed On:
-                                        </p>
-                                        <p>
-                                          {new Date(
-                                            selectedItem.completedOn
-                                          ).toLocaleString()}
-                                        </p>
-                                      </div>
-                                    )}
+                                      {selectedItem.acceptedOn && (
+                                        <div>
+                                          <p className="font-medium">
+                                            Accepted On:
+                                          </p>
+                                          <p>
+                                            {new Date(
+                                              selectedItem.acceptedOn
+                                            ).toLocaleString()}
+                                          </p>
+                                        </div>
+                                      )}
+                                      {selectedItem.rejectedOn && (
+                                        <div>
+                                          <p className="font-medium">
+                                            Rejected On:
+                                          </p>
+                                          <p>
+                                            {new Date(
+                                              selectedItem.rejectedOn
+                                            ).toLocaleString()}
+                                          </p>
+                                        </div>
+                                      )}
+                                      {selectedItem.completedOn && (
+                                        <div>
+                                          <p className="font-medium">
+                                            Completed On:
+                                          </p>
+                                          <p>
+                                            {new Date(
+                                              selectedItem.completedOn
+                                            ).toLocaleString()}
+                                          </p>
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </div>
+                                {/* Action buttons based on status */}
+                                {selectedItem.status === 'amount-proposed' && (
+                                  <div className="w-full mt-4">
+                                    <Label>Client Proposed Amount</Label>
+                                    <p className="text-lg font-bold mb-4">
+                                      ₦{Number(selectedItem?.proposedSum).toLocaleString()}
+                                    </p>
+                                    <div className="flex gap-4">
+                                      <Button onClick={acceptAmount} disabled={modalLoading} className="bg-green-600">
+                                        Accept Amount
+                                      </Button>
+                                      {confirmReject ? (
+                                        <div className="flex-1">
+                                          <Textarea
+                                            value={artisanRejectionReason}
+                                            onChange={(e) => setArtisanRejectionReason(e.target.value)}
+                                            placeholder="Reason for rejecting amount"
+                                            className="mb-2"
+                                          />
+                                          <Button
+                                            onClick={rejectAmount}
+                                            disabled={modalLoading || !artisanRejectionReason.trim()}
+                                            className="bg-red-600 w-full"
+                                          >
+                                            Confirm Reject
+                                          </Button>
+                                        </div>
+                                      ) : (
+                                        <Button
+                                          onClick={() => setConfirmReject(true)}
+                                          disabled={modalLoading}
+                                          variant="outline"
+                                          className="border-red-600 text-red-600"
+                                        >
+                                          Reject Amount
+                                        </Button>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                                {selectedItem.status === 'accepted' && (
+                                  <Button
+                                    onClick={startJob}
+                                    disabled={modalLoading}
+                                    className="bg-blue-600 mt-4"
+                                  >
+                                    {modalLoading ? <Spinner /> : "Confirm Job Start"}
+                                  </Button>
+                                )}
+                                {(selectedItem.status === 'artisan-started' || selectedItem.status === 'artisan-completed') && (
+                                  <Button
+                                    onClick={completeJob}
+                                    disabled={modalLoading || selectedItem.status === 'artisan-completed'}
+                                    className="bg-green-600 mt-4"
+                                  >
+                                    {modalLoading ? <Spinner /> : "Mark Job as Completed"}
+                                  </Button>
+                                )}
+                                {/* Admin: Approve/Reject Completion when status is artisan-completed */}
+                                {selectedItem.status === 'artisan-completed' && (
+                                  <div className="flex gap-4 mt-4">
+                                    <Button
+                                      onClick={() => setShowApproveDialog(true)}
+                                      disabled={modalLoading}
+                                      className="bg-green-700"
+                                    >
+                                      Approve Completion
+                                    </Button>
+                                    <Button
+                                      onClick={() => setShowRejectDialog(true)}
+                                      disabled={modalLoading}
+                                      className="bg-red-700"
+                                    >
+                                      Reject Completion
+                                    </Button>
+                                  </div>
+                                )}
+                                {/* Approve dialog */}
+                                {showApproveDialog && (
+                                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                                    <div className="bg-white p-6 rounded shadow-lg">
+                                      <p>Are you sure you want to approve this job as completed?</p>
+                                      <div className="flex gap-4 mt-4">
+                                        <Button onClick={approveCompletion} disabled={modalLoading} className="bg-green-700">Yes, Approve</Button>
+                                        <Button onClick={() => setShowApproveDialog(false)} variant="outline">Cancel</Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                {/* Reject dialog */}
+                                {showRejectDialog && (
+                                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                                    <div className="bg-white p-6 rounded shadow-lg">
+                                      <p>Please provide a reason for rejection:</p>
+                                      <Textarea
+                                        value={adminRejectReason}
+                                        onChange={e => setAdminRejectReason(e.target.value)}
+                                        className="mb-2 mt-2"
+                                        placeholder="Reason for rejection"
+                                      />
+                                      <div className="flex gap-4 mt-2">
+                                        <Button onClick={rejectCompletion} disabled={modalLoading || !adminRejectReason.trim()} className="bg-red-700">Reject</Button>
+                                        <Button onClick={() => setShowRejectDialog(false)} variant="outline">Cancel</Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </TabsContent>
+                              <TabsContent value="client">
+                                {/* Client Information (reuse existing client info UI) */}
+                                <div className="grid gap-4">
+                                  <div>
+                                    <h4 className="font-medium mb-2">
+                                      Client Information
+                                    </h4>
+                                    <div className="grid grid-cols-2 gap-2 text-sm">
+                                      <div>
+                                        <p className="font-medium">Name:</p>
+                                        <p>{`${
+                                          selectedItem.client?.firstName || ""
+                                        } ${
+                                          selectedItem.client?.lastName || ""
+                                        }`}</p>
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">Email:</p>
+                                        <p>
+                                          {selectedItem.client?.email || "---"}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">Phone:</p>
+                                        <p>
+                                          {selectedItem.client?.phoneNumber ||
+                                            "---"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </TabsContent>
+                            </Tabs>
                           )}
                           <SheetFooter>
                             <SheetClose asChild>

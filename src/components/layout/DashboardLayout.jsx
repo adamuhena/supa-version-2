@@ -1110,6 +1110,8 @@ import {
   UserCircle,
   ActivityIcon,
   ShoppingBag,
+  AppWindowIcon,
+  Image,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -1466,6 +1468,18 @@ export default function DashboardLayout({ href, title }) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
 
+
+                {isLinkAccessible(["artisan_user", "intending_artisan"]) && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/training/status">
+                        <AppWindowIcon />
+                        <span>Application Progress</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
+
                 {isLinkAccessible(["artisan_user"]) && (
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
@@ -1477,7 +1491,7 @@ export default function DashboardLayout({ href, title }) {
 
                     <SidebarMenuButton asChild>
                       <Link to="/trainee/job-portfolio">
-                        <ShoppingBag />
+                        <Image />
                         <span>My Recent Works</span>
                       </Link>
                     </SidebarMenuButton>
