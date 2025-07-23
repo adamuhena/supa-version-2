@@ -52,6 +52,7 @@ import TrainingCenterMgt from "./pages/dashboard/Admin/TrainingCenterMgt/Trainin
 import TrainingAssignmentDashboard from "./pages/dashboard/Admin/Assignment/TrainingAssignmentDashboard";
 import MarketplaceReport from "./pages/dashboard/Admin/marketplace-report";
 import TrainingStatusComponent from "./pages/dashboard/Admin/userMgt/components/main-component";
+import PeriodView from "./pages/dashboard/Admin/periodView";
 
 
 function App() {
@@ -158,6 +159,7 @@ function App() {
             
 
             <Route path="admin/training-status" element={<ProtectedRoute allowedRoles={["superadmin"]}><TrainingManagement /></ProtectedRoute>} />
+            <Route path="admin/period" element={<ProtectedRoute allowedRoles={["superadmin"]}><PeriodView /></ProtectedRoute>} />
             <Route path="admin/dashboard/reports" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminDashboardReports /></ProtectedRoute>} />
             <Route path="admin/trainingcenter/reports" element={<ProtectedRoute allowedRoles={["superadmin"]}><TrainingCenterReport /></ProtectedRoute>} />
             <Route path="document/verification" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminDocumentVerification /></ProtectedRoute>} />

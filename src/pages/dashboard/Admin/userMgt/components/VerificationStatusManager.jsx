@@ -154,6 +154,8 @@ export function VerificationStatusManager({
   const [completionNotes, setCompletionNotes] = useState("");
   const [completionDate, setCompletionDate] = useState("");
   const [pendingStatus, setPendingStatus] = useState("");
+  const [periods, setPeriods] = useState([]);
+  const [selectedPeriod, setSelectedPeriod] = useState("");
   
 
   // Helper to reset form state
@@ -259,6 +261,15 @@ export function VerificationStatusManager({
         .catch(() => setSectorsList([]));
     }
   }, [isAssigningTraining]);
+
+  // When fetching periods, add headers
+  const accessToken = localStorage.getItem("accessToken");
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/periods`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    }).then(res => setPeriods(res.data));
+  }, []);
 
   // When a training center is selected:
   const handleTrainingCenterChange = (id) => {
@@ -652,6 +663,7 @@ export function VerificationStatusManager({
         tradeArea: tradeAreaObj?.name || "",
         notes: trainingAssignment.notes,
         changeReason: trainingAssignment.changeReason,
+        periodId: selectedPeriod,
       };
       const response = await axios.post(
         `${API_BASE_URL}/training/users/${user._id}/verifications/${currentVerificationId}/assign`,
@@ -706,6 +718,7 @@ export function VerificationStatusManager({
         notes: trainingAssignment.notes,
         changeReason: trainingAssignment.changeReason,
         assignedBy: currentUser?.id || currentUser?._id,
+        periodId: selectedPeriod,
       };
 
       const response = await axios.patch(
@@ -1206,6 +1219,28 @@ export function VerificationStatusManager({
                         {ta.name}
                       </SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="training-period">Period *</Label>
+                <Select
+                  value={selectedPeriod}
+                  onValueChange={(value) => setSelectedPeriod(value)}
+                  disabled={!trainingCenters.length}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Period" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {periods
+                      .filter(period => period._id && period._id !== "")
+                      .map(period => (
+                        <SelectItem key={period._id} value={String(period._id)}>
+                          {period.name} ({period.year})
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
