@@ -53,6 +53,7 @@ import TrainingAssignmentDashboard from "./pages/dashboard/Admin/Assignment/Trai
 import MarketplaceReport from "./pages/dashboard/Admin/marketplace-report";
 import TrainingStatusComponent from "./pages/dashboard/Admin/userMgt/components/main-component";
 import PeriodView from "./pages/dashboard/Admin/periodView";
+import VerifyAdmission from "./pages/verify-admission";
 
 
 function App() {
@@ -74,6 +75,7 @@ function App() {
           <Route path="/doc" element={<DocPreview />} />
           <Route path="/beneficiaries" element={<PDFPreviewPage2 />} />
           <Route path="/marketplace" element={<ComingSoon />} />
+          <Route path="/verify-admission" element={<VerifyAdmission />} />
           <Route
             path="/login"
             element={

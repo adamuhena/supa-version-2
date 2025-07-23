@@ -21,6 +21,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner"
 import axios from "axios"
 import { API_BASE_URL } from "@/config/env"
+import { useNavigate } from "react-router-dom";
+import { downloadAdmissionLetterPDF } from "@/components/AdmissionLetterPDF";
 
 export function IntendingArtisanView({ currentUser }) {
   const [verifications, setVerifications] = useState([])
@@ -34,6 +36,10 @@ export function IntendingArtisanView({ currentUser }) {
   const [assignmentForHistory, setAssignmentForHistory] = useState(null)
   const [assignmentHistory, setAssignmentHistory] = useState([])
   const [assignmentLoading, setAssignmentLoading] = useState(false)
+  const [admissionEnabled, setAdmissionEnabled] = useState(false);
+  const [periodStatus, setPeriodStatus] = useState("");
+  const [periodName, setPeriodName] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUserVerifications()
@@ -57,6 +63,25 @@ export function IntendingArtisanView({ currentUser }) {
     }
     if (currentUser?.stateOfResidence) fetchTrainingCenters()
   }, [currentUser])
+
+  useEffect(() => {
+    async function fetchAdmissionStatus() {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const res = await axios.get(`${API_BASE_URL}/periods/current`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        setAdmissionEnabled(res.data.admissionLetterEnabled);
+        setPeriodStatus(res.data.status);
+        setPeriodName(res.data.name);
+      } catch (err) {
+        setAdmissionEnabled(false);
+        setPeriodStatus("");
+        setPeriodName("");
+      }
+    }
+    fetchAdmissionStatus();
+  }, []);
 
   const fetchUserVerifications = async () => {
     try {
@@ -209,12 +234,9 @@ export function IntendingArtisanView({ currentUser }) {
       center = trainingCenters.find(tc => tc._id === assignment.trainingCenterId) || null;
     }
 
-    console.log('renderAssignmentSection:', {
-      trainingAssignment: verification.trainingAssignment,
-      assignment,
-      trainingCenters,
-      center
-    });
+    // Determine assignment status
+    const assignmentStatus = assignment.currentAssignment?.status || assignment.status;
+    const hasCenter = !!center;
 
     return (
       <>
@@ -243,17 +265,41 @@ export function IntendingArtisanView({ currentUser }) {
           <div className="flex items-center gap-2">
             <span className="font-medium">Assignment Status:</span>
             <Badge className={(() => {
-              const status = assignment.currentAssignment?.status || assignment.status;
-              if (status === "completed") return "bg-green-100 text-green-800 border-green-200";
-              if (status === "active") return "bg-blue-100 text-blue-800 border-blue-200";
-              if (status === "cancelled") return "bg-red-100 text-red-800 border-red-200";
+              if (assignmentStatus === "completed") return "bg-green-100 text-green-800 border-green-200";
+              if (assignmentStatus === "active") return "bg-blue-100 text-blue-800 border-blue-200";
+              if (assignmentStatus === "cancelled") return "bg-red-100 text-red-800 border-red-200";
               return "bg-yellow-100 text-yellow-800 border-yellow-200";
             })()}>
-              {(assignment.currentAssignment?.status || assignment.status)
-                ? (assignment.currentAssignment?.status || assignment.status).charAt(0).toUpperCase() +
-                  (assignment.currentAssignment?.status || assignment.status).slice(1)
-                : "Unknown"}
+              {assignmentStatus ? assignmentStatus.charAt(0).toUpperCase() + assignmentStatus.slice(1) : "Unknown"}
             </Badge>
+            {/* Admission Letter Button and Debug */}
+            <div>
+              Debug: hasCenter={String(hasCenter)}, admissionEnabled={String(admissionEnabled)}, periodStatus={periodStatus}, assignmentStatus={assignmentStatus}
+            </div>
+            {hasCenter && admissionEnabled && periodStatus !== "suspended" && assignmentStatus !== "cancelled" && (
+              <Button
+                size="sm"
+                onClick={() => {
+                  const pdfAssignment = assignment.currentAssignment || assignment;
+                  const assignmentId = assignment._id; // always from the parent
+                  console.log("PDF payload:", {
+                    user: currentUser,
+                    assignment: pdfAssignment,
+                    assignmentId, // for debug
+                    period: { status: periodStatus, name: periodName, year: new Date().getFullYear() },
+                    verificationId: verification._id
+                  });
+                  downloadAdmissionLetterPDF({
+                    user: currentUser,
+                    assignment: { ...pdfAssignment, _id: assignmentId }, // merge _id into the subdoc
+                    period: { name: periodName, status: periodStatus, year: new Date().getFullYear() },
+                    verificationId: verification._id
+                  });
+                }}
+              >
+                Print Admission Letter
+              </Button>
+            )}
           </div>
           {assignment.status === "completed" && (
             <>

@@ -49,6 +49,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
+import { downloadAdmissionLetterPDF } from "@/components/AdmissionLetterPDF";
 
 /*
 // --- TrainingAssignment Status Update Controller ---
@@ -846,6 +848,40 @@ export function VerificationStatusManager({
     setShowVerificationHistory(true);
   };
 
+  const [admissionEnabled, setAdmissionEnabled] = useState(false);
+  const [periodStatus, setPeriodStatus] = useState("");
+  const [periodName, setPeriodName] = useState("");   
+  useEffect(() => {
+    async function fetchAdmissionStatus() {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const res = await axios.get(`${API_BASE_URL}/periods/current`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        setAdmissionEnabled(res.data.admissionLetterEnabled);
+        setPeriodStatus(res.data.status); // <-- Add this line
+        setPeriodName(res.data.name);
+      } catch (err) {
+        setAdmissionEnabled(false);
+        setPeriodStatus(""); // fallback
+        setPeriodName("");
+      }
+    }
+    fetchAdmissionStatus();
+  }, []);
+
+  const hasTrainingCenter = (() => {
+    const activeAssignment = (
+      user?.verifications?.find(v => v._id === currentVerificationId)?.trainingAssignment || []
+    )?.find(
+      (assignment) =>
+        assignment?.currentAssignment?.status === "active"
+    )?.currentAssignment;
+    return !!activeAssignment?.trainingCenterId;
+  })();
+
+  const navigate = useNavigate();
+
   return (
     <div className="space-y-6">
       {/* Current Status Overview */}
@@ -1426,12 +1462,61 @@ export function VerificationStatusManager({
                             </span>
                           </div>
 
-                          {!assignedTo ? null : (
+                          {/* {!assignedTo ? null : (
                             <div className="flex items-center gap-2">
                               <HouseIcon className="h-4 w-4" />
                               <span>Assigned To: {assignedTo}</span>
+                              {index === 0 && (
+                                <>
+                                  <div>
+                                    Debug: hasTrainingCenter={String(!!activeAssignment?.trainingCenterId)}, 
+                                    admissionEnabled={String(admissionEnabled)}, 
+                                    periodStatus={periodStatus}, 
+                                    assignment.status={activeAssignment?.status}
+                                  </div>
+                                  {activeAssignment &&
+                                    !!activeAssignment.trainingCenterId &&
+                                    admissionEnabled &&
+                                    periodStatus !== "suspended" &&
+                                    activeAssignment.status !== "cancelled" && (
+                                      <Button size="sm" onClick={() => {
+                                        // Find the parent assignment that matches the current activeAssignment
+                                        let assignmentId;
+                                        if (Array.isArray(verification.trainingAssignment)) {
+                                          const parent = verification.trainingAssignment.find(
+                                            a =>
+                                              a.currentAssignment &&
+                                              a.currentAssignment.periodId === activeAssignment.periodId &&
+                                              a.currentAssignment.trainingCenterId === activeAssignment.trainingCenterId // or compare more fields if needed
+                                          );
+                                          assignmentId = parent?._id;
+                                        } else if (verification.trainingAssignment && verification.trainingAssignment.currentAssignment) {
+                                          assignmentId = verification.trainingAssignment._id;
+                                        }
+
+                                        const pdfAssignment = { ...activeAssignment, _id: assignmentId };
+
+                                        console.log("PDF payload:", {
+                                          user,
+                                          assignment: pdfAssignment,
+                                          period: { name: periodStatus, year: new Date().getFullYear() },
+                                          verificationId: verification._id
+                                        });
+
+                                        downloadAdmissionLetterPDF({
+                                          user,
+                                          assignment: pdfAssignment,
+                                          period: { name: periodStatus, year: new Date().getFullYear() },
+                                          verificationId: verification._id
+                                        });
+                                      }}>
+                                        Print Admission Letter
+                                      </Button>
+                                  )}
+                                </>
+                              )}
                             </div>
-                          )}
+                          )} */}
 
                           {verification.verifierName ||
                           verifierNames[verification.verifiedBy] ? (
@@ -1454,6 +1539,48 @@ export function VerificationStatusManager({
                                   verification.expirationDate
                                 ).toLocaleDateString()}
                               </span>
+                              {index === 0 && (
+                                <>
+                                  {/* <div>
+                                    Debug: hasTrainingCenter={String(!!activeAssignment?.trainingCenterId)}, 
+                                    admissionEnabled={String(admissionEnabled)}, 
+                                    periodStatus={periodStatus}, 
+                                    assignment.status={activeAssignment?.status}
+                                  </div> */}
+                                  {activeAssignment &&
+                                    !!activeAssignment.trainingCenterId &&
+                                    admissionEnabled &&
+                                    periodStatus !== "suspended" &&
+                                    activeAssignment.status !== "cancelled" && (
+                                      <Button size="sm" onClick={() => {
+                                        // Find the parent assignment that matches the current activeAssignment
+                                        let assignmentId;
+                                        if (Array.isArray(verification.trainingAssignment)) {
+                                          const parent = verification.trainingAssignment.find(
+                                            a =>
+                                              a.currentAssignment &&
+                                              a.currentAssignment.periodId === activeAssignment.periodId &&
+                                              a.currentAssignment.trainingCenterId === activeAssignment.trainingCenterId // or compare more fields if needed
+                                          );
+                                          assignmentId = parent?._id;
+                                        } else if (verification.trainingAssignment && verification.trainingAssignment.currentAssignment) {
+                                          assignmentId = verification.trainingAssignment._id;
+                                        }
+
+                                        const pdfAssignment = { ...activeAssignment, _id: assignmentId };
+
+                                        downloadAdmissionLetterPDF({
+                                          user,
+                                          assignment: pdfAssignment,
+                                          period: { name: periodName, status: periodStatus, year: new Date().getFullYear() },
+                                          verificationId: verification._id
+                                        });
+                                      }}>
+                                        Print Admission Letter
+                                      </Button>
+                                  )}
+                                </>
+                              )}
                             </div>
                           )}
                         </div>
@@ -1621,7 +1748,7 @@ export function VerificationStatusManager({
                                                 // Use currentAssignment if assignmentHistory is empty
                                                 const assignment = item.currentAssignment || item;
                                                 // assignment._id may be undefined if only item has _id
-                                                console.log("assignment test:", assignment);
+                                                // console.log("assignment test:", assignment);
                                                 // Get training center name
                                                 let centerName = "—";
                                                 if (typeof item.trainingCenterId === "object" && item.trainingCenterId !== null) {
