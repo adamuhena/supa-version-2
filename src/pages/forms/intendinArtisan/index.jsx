@@ -161,7 +161,6 @@ const ArtisanForm = () => {
     certifiedStatus: false,
     licenseStatus: false,
     agree: false,
-    profileImage: "",
   });
 
   const [show, setShow] = useState(false);

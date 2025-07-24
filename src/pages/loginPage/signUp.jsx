@@ -101,6 +101,7 @@ export default function SignupForm() {
     legalInfo: {
       tradeAreas: [],
     },
+    profileImage: "",
   });
 
   // Add this function to handle checkbox change
@@ -122,6 +123,7 @@ export default function SignupForm() {
   const [lgasOfOrigin, setLgasOfOrigin] = useState([]);
   // Add a new state variable for senatorial districts
   const [senatorialDistricts, setSenatorialDistricts] = useState([]);
+  const [profileImageError, setProfileImageError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -479,6 +481,7 @@ export default function SignupForm() {
       localStorage.setItem("userRole", userData.user.role);
       localStorage.setItem("userId", userData.user._id);
       localStorage.setItem("isFirstTimeUser", userData.user.agree || false);
+      localStorage.setItem("user", JSON.stringify(userData.user));
     }
 
     // Handle tokens
@@ -710,6 +713,7 @@ export default function SignupForm() {
             email: submissionData.email,
             phoneNumber: submissionData.phoneNumber,
             password: submissionData.password,
+            profileImage: submissionData.profileImage,
             confirm_password: submissionData.confirmPassword,
             agree: false,
           };
@@ -1002,6 +1006,44 @@ export default function SignupForm() {
                 {/* Artisan User Form */}
                 <TabsContent className="overflow-y-auto" value="artisan_user">
                   <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="mb-4">
+                     
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileUpload("profileImage", e.target.files[0])}
+                        className="hidden"
+                        id="profile-image-upload"
+                      />
+                      <div className="flex items-center gap-4 mb-4">
+                        <img
+                          src={formData.profileImage || "/default-profile.png"}
+                          alt="Profile Preview"
+                          className="w-24 h-24 rounded-full object-cover border-2 border-emerald-800 shadow"
+                        />
+                         
+                        <UploadButton
+                          fileUrl={formData?.profileImage}
+                          handleFileChange={(url) => {
+                            setFormData((old) => ({ ...old, profileImage: url }));
+                            setProfileImageError("");
+                            if (typeof updateProfilePicture === "function") updateProfilePicture(url);
+                          }}
+                          removeFile={() => {
+                            setFormData((old) => ({ ...old, profileImage: "" }));
+                            setProfileImageError("Profile image is required.");
+                            if (typeof updateProfilePicture === "function") updateProfilePicture("");
+                          }}
+                          className="w-10 h-8 text-sm"
+                        />
+                        <Label htmlFor="profile-image-upload" className="text-xl mb-2">
+                         <span className="text-red-600">*</span>
+                      </Label>
+                      </div>
+                      {profileImageError && (
+                        <div className="text-red-600 text-sm mt-1">{profileImageError}</div>
+                      )}
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <LabelInput
                         name="email"
@@ -1137,6 +1179,7 @@ export default function SignupForm() {
                           onChange={handleChange}
                           className="w-full"
                           required
+                          max={get18YearsAgoDate()}
                         />
                       </div>
                     </div>
@@ -1728,6 +1771,43 @@ export default function SignupForm() {
                 {/* Intending Artisan Form */}
                 <TabsContent value="intending_artisan">
                   <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="mb-2">
+                      
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileUpload("profileImage", e.target.files[0])}
+                        className="hidden"
+                        id="profile-image-upload"
+                      />
+                      <div className="flex items-center gap-4 mb-2">
+                        <img
+                          src={formData.profileImage || "/default-profile.png"}
+                          alt="Profile Preview"
+                          className="w-24 h-24 rounded-full object-cover border-2 border-red-600 shadow"
+                        />
+                        <UploadButton
+                          fileUrl={formData?.profileImage}
+                          handleFileChange={(url) => {
+                            setFormData((old) => ({ ...old, profileImage: url }));
+                            setProfileImageError("");
+                            if (typeof updateProfilePicture === "function") updateProfilePicture(url);
+                          }}
+                          removeFile={() => {
+                            setFormData((old) => ({ ...old, profileImage: "" }));
+                            setProfileImageError("Profile image is required.");
+                            if (typeof updateProfilePicture === "function") updateProfilePicture("");
+                          }}
+                          className="w-10 h-8 text-sm"
+                        />
+                        <Label htmlFor="profile-image-upload" className="block font-bold mb-2">
+                         <span className="text-red-600">*</span>
+                      </Label>
+                      </div>
+                      {profileImageError && (
+                        <div className="text-red-600 text-sm mt-1">{profileImageError}</div>
+                      )}
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <LabelInput
                         name="email"
@@ -1861,6 +1941,7 @@ export default function SignupForm() {
                           onChange={handleChange}
                           className="w-full"
                           required
+                          max={get18YearsAgoDate()}
                         />
                       </div>
                     </div>
@@ -2865,3 +2946,9 @@ const PasswordFields = ({ formData, onChange, required }) => (
     </div>
   </div>
 );
+
+function get18YearsAgoDate() {
+  const today = new Date();
+  today.setFullYear(today.getFullYear() - 10);
+  return today.toISOString().split("T")[0];
+}

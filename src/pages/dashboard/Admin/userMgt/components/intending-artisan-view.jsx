@@ -86,6 +86,7 @@ export function IntendingArtisanView({ currentUser }) {
   const fetchUserVerifications = async () => {
     try {
       const accessToken = localStorage.getItem("accessToken")
+      console.log("currentUser: ", currentUser) 
       const response = await axios.get(`${API_BASE_URL}/users/${currentUser._id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
@@ -273,9 +274,9 @@ export function IntendingArtisanView({ currentUser }) {
               {assignmentStatus ? assignmentStatus.charAt(0).toUpperCase() + assignmentStatus.slice(1) : "Unknown"}
             </Badge>
             {/* Admission Letter Button and Debug */}
-            <div>
+            {/* <div>
               Debug: hasCenter={String(hasCenter)}, admissionEnabled={String(admissionEnabled)}, periodStatus={periodStatus}, assignmentStatus={assignmentStatus}
-            </div>
+            </div> */}
             {hasCenter && admissionEnabled && periodStatus !== "suspended" && assignmentStatus !== "cancelled" && (
               <Button
                 size="sm"
@@ -389,7 +390,7 @@ export function IntendingArtisanView({ currentUser }) {
               </div>
               <div className="flex items-center gap-2">
                 <div className={`w-3 h-3 rounded-full ${hasTrainingAssignment ? "bg-green-500" : "bg-gray-300"}`}></div>
-                <span className="text-xs">Training Assigned</span>
+                <span className="text-xs">Training Center Assigned</span>
               </div>
             </div>
           </div>

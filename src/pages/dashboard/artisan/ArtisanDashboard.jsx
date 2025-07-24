@@ -34,6 +34,7 @@ import {
   default as UserGroupDetails,
 } from "./userGroupDetail";
 import { API_BASE_URL } from "@/config/env";
+import { downloadAdmissionLetterPDF } from "@/components/AdmissionLetterPDF";
 
 const ArtisanDashboard = ({
   artisan = { name: "John Doe", skill: "Carpenter", rating: 4.5 },
@@ -42,6 +43,10 @@ const ArtisanDashboard = ({
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const userRole = localStorage.getItem("userRole");
+  const [assignmentLoading, setAssignmentLoading] = useState(false)
+  const [admissionEnabled, setAdmissionEnabled] = useState(false);
+  const [periodStatus, setPeriodStatus] = useState("");
+  const [periodName, setPeriodName] = useState("");
 
   const getUserRole = (userRole) => {
     if (userRole === "artisan_user") {
@@ -55,6 +60,26 @@ const ArtisanDashboard = ({
   };
 
   const role = getUserRole(userRole);
+
+
+  useEffect(() => {
+    async function fetchAdmissionStatus() {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const res = await axios.get(`${API_BASE_URL}/periods/current`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        setAdmissionEnabled(res.data.admissionLetterEnabled);
+        setPeriodStatus(res.data.status);
+        setPeriodName(res.data.name);
+      } catch (err) {
+        setAdmissionEnabled(false);
+        setPeriodStatus("");
+        setPeriodName("");
+      }
+    }
+    fetchAdmissionStatus();
+  }, []);
 
   // Fetch user data from API
   useEffect(() => {
@@ -237,11 +262,22 @@ const ArtisanDashboard = ({
                     <Award className="h-6 w-6 text-emerald-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 font-medium">Certification</p>
+                    <p className="text-sm text-gray-600 font-medium">Certification / Licensing</p>
                     <p className="text-lg font-bold text-gray-900">
                       {userData.certifiedStatus ? 'Certified' : 'Pending'}
                     </p>
                   </div>
+                  {userData.certifiedStatus !== true && userData.role !== "intending_artisan" && (
+                    <div className="pt-4 border-t border-gray-100">
+                      <Button
+                        className="w-full font-semibold bg-gradient-to-r from-emerald-600 to-blue-600 text-white hover:from-emerald-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                        onClick={() => navigate("/certification/upload")}
+                      >
+                        <Award className="h-4 w-4 mr-2" />
+                        Get Certified
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -253,9 +289,9 @@ const ArtisanDashboard = ({
                     <Shield className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 font-medium">License</p>
+                    <p className="text-sm text-gray-600 font-medium">Verification Status</p>
                     <p className="text-lg font-bold text-gray-900">
-                      {userData.licenseStatus ? 'Licensed' : 'Pending'}
+                      {userData.currentVerificationStatus.charAt(0).toUpperCase() + userData.currentVerificationStatus.slice(1)}
                     </p>
                   </div>
                 </div>
@@ -284,7 +320,16 @@ const ArtisanDashboard = ({
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 font-medium">Active Since</p>
-                    <p className="text-lg font-bold text-gray-900">2024</p>
+                    <p className="text-md font-bold text-gray-900">
+                      {userData.createdAt
+                        ? new Date(userData.createdAt).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                          })
+                        : 'N/A'}
+                    </p>
+                  
                   </div>
                 </div>
               </CardContent>
@@ -326,16 +371,20 @@ const ArtisanDashboard = ({
               </CardContent>
             </Card>
 
-            {/* Certification & Licensing */}
+            {/* Assigned Training Center */}
             <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
               <CardHeader className="pb-4 border-b border-gray-100">
                 <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-emerald-600" />
-                  Credentials
+                  {/* <Shield className="h-5 w-5 text-emerald-600" />
+                  Credentials */}
+                  <Building2 className="h-5 w-5 text-indigo-600" />
+                  {userRole === "intending_artisan" || userRole === "artisan_user"
+                    ? "Assigned Training Center"
+                    : "Training Center"}
                 </CardTitle>
               </CardHeader>
               <CardContent className="py-6 space-y-6">
-                <div className="space-y-4">
+                {/* <div className="space-y-4">
                   <div>
                     <p className="text-sm text-gray-600 mb-2 font-medium">Certification Status</p>
                     {getStatusBadge(userData.certifiedStatus, 'cert')}
@@ -357,7 +406,75 @@ const ArtisanDashboard = ({
                       {userData.certifiedStatus === false ? "Get Certified" : "Get Licensed"}
                     </Button>
                   </div>
+                )} */}
+
+{latestVerification && (
+                  <div className="mb-6 p-4 border rounded-lg bg-blue-50">
+                    {assignment && center ? (
+                      <>
+                        <div className="p-2 mb-2 rounded bg-gray-50 border text-xs text-gray-700">
+                          <div><strong>Name:</strong> {center.trainingCentreName || center.name || "—"}</div>
+                          <div><strong>Email:</strong> {center.email || "—"}</div>
+                          <div><strong>Phone:</strong> {center.phoneNumber || "—"}</div>
+                          <div><strong>State:</strong> {center.state || "—"}</div>
+                          <div><strong>LGA:</strong> {center.lga || "—"}</div>
+                          <div><strong>Address:</strong> {center.address || "—"}</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">Assignment Status:</span>
+                          <Badge className={(() => {
+                            const status = assignment.currentAssignment?.status || assignment.status;
+                            if (status === "completed") return "bg-green-100 text-green-800 border-green-200";
+                            if (status === "active") return "bg-blue-100 text-blue-800 border-blue-200";
+                            if (status === "cancelled") return "bg-red-100 text-red-800 border-red-200";
+                            return "bg-yellow-100 text-yellow-800 border-yellow-200";
+                          })()}>
+                            {(assignment.currentAssignment?.status || assignment.status)
+                              ? (assignment.currentAssignment?.status || assignment.status).charAt(0).toUpperCase() +
+                                (assignment.currentAssignment?.status || assignment.status).slice(1)
+                              : "Unknown"}
+                          </Badge>
+                        </div>
+                        {((assignment.currentAssignment?.status || assignment.status) === "completed") && (
+                          <div className="text-sm text-muted-foreground mt-2">
+                            <span className="font-medium">Completion Date:</span>{" "}
+                            {assignment.currentAssignment?.completionDate || assignment.completionDate
+                              ? new Date(assignment.currentAssignment?.completionDate || assignment.completionDate).toLocaleDateString()
+                              : "—"}
+                            {assignment.currentAssignment?.completionNotes || assignment.completionNotes ? (
+                              <div>
+                                <span className="font-medium">Completion Notes:</span>{" "}
+                                {assignment.currentAssignment?.completionNotes || assignment.completionNotes}
+                              </div>
+                            ) : null}
+                          </div>
+                        )}
+                        {assignment && admissionEnabled && periodStatus !== "suspended" && center && (assignment.currentAssignment?.status || assignment.status) === "active"  && (assignment.currentAssignment?.status || assignment.status) !== "cancelled" && (
+                          <Button
+                            size="sm"
+                            className="mt-4"
+                            onClick={() => {
+                              const pdfAssignment = assignment.currentAssignment || assignment;
+                              const assignmentId = assignment._id;
+                             const period = { name: periodName, status: periodStatus, year: new Date().getFullYear() };
+                              downloadAdmissionLetterPDF({
+                                user: userData,
+                                assignment: { ...pdfAssignment, _id: assignmentId },
+                                period,
+                                verificationId: latestVerification?._id
+                              });
+                            }}
+                          >
+                            Print Admission Letter
+                          </Button>
+                        )}
+                      </>
+                    ) : (
+                      <div className="text-sm text-gray-600">No training assignment yet for your most recent verification.</div>
+                    )}
+                  </div>
                 )}
+                
               </CardContent>
             </Card>
 
@@ -376,7 +493,7 @@ const ArtisanDashboard = ({
           </div>
 
           {/* Training Center Section */}
-          <div className="mt-8">
+          {/* <div className="mt-8">
             <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
               <CardHeader className="pb-4 border-b border-gray-100">
                 <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
@@ -440,13 +557,13 @@ const ArtisanDashboard = ({
                     )}
                   </div>
                 )}
-                {/* <div className="space-y-6">
+                <div className="space-y-6">
                   <UserGroupDetails />
                   <ArtisanTrainingManagement />
-                </div> */}
+                </div>
               </CardContent>
             </Card>
-          </div>
+          </div> */}
         </div>
       </div>
     </ProtectedRoute>

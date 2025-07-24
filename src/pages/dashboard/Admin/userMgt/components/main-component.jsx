@@ -26,10 +26,8 @@ export default function TrainingStatusComponent() {
 
   const renderView = () => {
     switch (userRole) {
-      case "artisan_user":
+      case "artisan_user" || "intending_artisan":
         return <IntendingArtisanView currentUser={userData} />
-      case "intending_artisan":
-        return <ArtisanUserView currentUser={userData} />
       case "training_center":
         return <TrainingCenterView currentUser={userData} />
       default:
