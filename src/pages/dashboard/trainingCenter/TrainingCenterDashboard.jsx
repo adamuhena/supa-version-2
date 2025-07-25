@@ -233,7 +233,7 @@ const TrainingCenterDashboard = ({
 
   return (
     <ProtectedRoute href="/training-center/dashboard">
-      <TrainingDashboardPage title="Training Center Dashboard">
+      {/* <TrainingDashboardPage title="Training Center Dashboard"> */}
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
           {/* Header with gradient background */}
           <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 text-white">
@@ -468,7 +468,7 @@ const TrainingCenterDashboard = ({
             </div>
           </div>
         </div>
-      </TrainingDashboardPage>
+      {/* </TrainingDashboardPage> */}
     </ProtectedRoute>
   );
 };

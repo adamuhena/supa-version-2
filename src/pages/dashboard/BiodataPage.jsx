@@ -403,11 +403,11 @@ const Biodata = () => {
   return (
     <ProtectedRoute>
 
-      <div className="container mx-auto p-6">
-        <header className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">My Profile</h1>
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100 py-8">
+        <header className="flex justify-between items-center mb-8 px-6">
+          <h1 className="text-3xl font-extrabold text-emerald-900">My Profile</h1>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate("/biodata")}>
+            <Button className="bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg px-6 py-2 shadow" onClick={() => navigate("/biodata")}>
               <UserCircle className="mr-2 h-4 w-4" />
               Update Profile
             </Button>
@@ -417,19 +417,19 @@ const Biodata = () => {
           </div>
         </header>
 
-        <Card className="border p-4 rounded-lg shadow-md mb-6">
-          <CardContent className="flex items-center space-x-4">
-            <div className="w-24 h-24 rounded-full overflow-hidden">
+        <Card className="border-2 border-emerald-600 p-6 rounded-2xl shadow-xl mb-8 bg-gradient-to-br from-white via-emerald-50 to-emerald-100">
+          <CardContent className="flex items-center gap-8">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-emerald-600 shadow-lg bg-white">
               <img
-                src={user.profileImage || "/placeholder.svg?height=96&width=96"}
+                src={user.profileImage || "/placeholder.svg?height=128&width=128"}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
             </div>
             <div>
-              <h2 className="text-2xl font-bold">{`${user.firstName} ${user.lastName}`}</h2>
-              <p className="text-gray-500">{user.email}</p>
-              <p className="text-gray-500">{user.role}</p>
+              <h2 className="text-3xl font-extrabold text-emerald-900 mb-1">{`${user.firstName} ${user.lastName}`}</h2>
+              <p className="text-gray-600 text-lg">{user.email}</p>
+              <p className="text-gray-500 text-md capitalize">{user.role.replace(/_/g, ' ')}</p>
             </div>
             <div>
               <Input
@@ -443,20 +443,15 @@ const Biodata = () => {
               <UploadButton
                 fileUrl={user?.profileImage}
                 handleFileChange={(url) => {
-                  setUser((old) => {
-                    return { ...old, profileImage: url };
-                  });
+                  setUser((old) => ({ ...old, profileImage: url }));
                   updateProfilePicture(url);
                 }}
                 removeFile={() => {
-                  const url = "";
-                  setUser((old) => {
-                    return { ...old, profileImage: url };
-                  });
-                  updateProfilePicture(url);
+                  setUser((old) => ({ ...old, profileImage: "" }));
+                  updateProfilePicture("");
                 }}
+                className="w-24 h-8 text-sm"
               />
-
             </div>
           </CardContent>
         </Card>
@@ -480,7 +475,7 @@ const Biodata = () => {
         </div>
 
         <Tabs defaultValue="personal"  value={selectedTab} onValueChange={setSelectedTab}  className="w-full">
-          <TabsList className="hidden md:grid w-full grid-cols-5">
+          <TabsList className="hidden md:grid w-full grid-cols-5 bg-emerald-50 rounded-xl shadow mb-4">
             <TabsTrigger value="personal">Personal</TabsTrigger>
             <TabsTrigger value="education">Education</TabsTrigger>
             <TabsTrigger value="skills">Skills & Experience</TabsTrigger>
@@ -489,11 +484,15 @@ const Biodata = () => {
           </TabsList>
 
           <TabsContent value="personal">
-            <PersonalTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges}  />
+            <div className="bg-white rounded-xl shadow p-6">
+              <PersonalTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges}  />
+            </div>
           </TabsContent>
 
           <TabsContent value="education">
-            <EducationTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
+            <div className="bg-white rounded-xl shadow p-6">
+              <EducationTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
+            </div>
           </TabsContent>
           
           {/* <TabsContent value="skills">
@@ -509,18 +508,22 @@ const Biodata = () => {
          </TabsContent> */}
 
 <TabsContent value="skills">
-  <SkillsTab
-    user={user}
-    handleUpdate={handleUpdate}
-    submitChanges={submitChanges}
-    changes={changes}
-    handleArrayUpdate={handleArrayUpdate}
-    addArrayItem={addArrayItem}
-    removeArrayItem={removeArrayItem}
-  />
+  <div className="bg-white rounded-xl shadow p-6">
+    <SkillsTab
+      user={user}
+      handleUpdate={handleUpdate}
+      submitChanges={submitChanges}
+      changes={changes}
+      handleArrayUpdate={handleArrayUpdate}
+      addArrayItem={addArrayItem}
+      removeArrayItem={removeArrayItem}
+    />
+  </div>
 </TabsContent>
          <TabsContent value="bank">
-          <BankTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
+          <div className="bg-white rounded-xl shadow p-6">
+            <BankTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
+          </div>
          </TabsContent>
 
           <TabsContent value="password">

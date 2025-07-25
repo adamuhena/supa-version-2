@@ -365,7 +365,8 @@ import { DotPattern } from "@/components/ui/dot-pattern"
 import { API_BASE_URL } from "@/config/env"
 import useLogout from "@/pages/loginPage/logout"
 import { jwtDecode } from "jwt-decode"
-
+import { Outlet } from "react-router-dom"
+  
 // Token expiration check function
 const checkTokenExpiration = (token) => {
   if (!token) return true
@@ -623,7 +624,8 @@ export default function TrainingDashboardPage({ href, title, children }) {
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <DotPattern width={20} height={20} cx={1} cy={1} cr={1} className={cn("fill-neutral-200/40 ")} />
 
-          {children}
+          {/* {children} */}
+          <Outlet /> {/* This will render the nested routes */}
         </div>
       </SidebarInset>
     </SidebarProvider>

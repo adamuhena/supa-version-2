@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import useLogout from "@/pages/loginPage/logout"
+import ProtectedRoute from "@/components/ProtectedRoute";
 import axios from "axios"
 import { LogOut, UserCircle } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -209,46 +210,44 @@ const updateProfilePicture = async (url) => {
   const [selectedTab, setSelectedTab] = useState("basic")
 
   return (
-    <TrainingDashboardPage title="Training Center Dashboard">
-      <div className="container mx-auto p-6">
-        <header className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
+    <ProtectedRoute href="/training-center/dashboard">
+    {/* // <TrainingDashboardPage title="Training Center Dashboard"> */}
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 py-8">
+        <header className="flex justify-between items-center mb-8 px-6">
+          <h1 className="text-3xl font-extrabold text-blue-900">Dashboard</h1>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate("/training-center/biodata")}>
+            <Button className="bg-blue-700 hover:bg-blue-800 text-white rounded-lg px-6 py-2 shadow" onClick={() => navigate("/training-center/biodata")}> 
               <UserCircle className="mr-2 h-4 w-4" /> Update Profile
             </Button>
-            <Button variant="destructive" onClick={logout}>
+            <Button variant="destructive" className="rounded-lg px-6 py-2 shadow" onClick={logout}>
               <LogOut className="mr-2 h-4 w-4" /> Logout
             </Button>
           </div>
         </header>
 
-        <Card className="border p-4 rounded-lg shadow-md mb-6">
-          <CardContent className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
-            <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100">
+        <Card className="border-2 border-blue-600 p-6 rounded-2xl shadow-xl mb-8 bg-gradient-to-br from-white via-blue-50 to-blue-100">
+          <CardContent className="flex items-center gap-8">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-600 shadow-lg bg-white">
               <img
-                src={center.profileImage || "/placeholder.svg?height=96&width=96"}
+                src={center.profileImage || "/placeholder.svg?height=128&width=128"}
                 alt="Profile"
                 className="w-full h-full object-cover"
-                key={center.profileImage} // Add key to force re-render
+                key={center.profileImage}
               />
             </div>
             <div>
-              <h2 className="text-2xl font-bold">{center.trainingCentreName || "Training Center"}</h2>
-              <p className="text-gray-500">{center.email || "No email provided"}</p>
-              <p className="text-gray-500">{center.contactPerson || "No contact person"}</p>
+              <h2 className="text-3xl font-extrabold text-blue-900 mb-1">{center.trainingCentreName || "Training Center"}</h2>
+              <p className="text-gray-600 text-lg">{center.email || "No email provided"}</p>
+              <p className="text-gray-500 text-md">{center.contactPerson || "No contact person"}</p>
             </div>
-            <div className="ml-auto">
+            <div>
               <UploadButton
-                fileUrl={center.profileImage || ""} // Ensure fileUrl is never undefined
-                handleFileChange={(url) => {
-                  updateProfilePicture(url)
-                }}
-                removeFile={() => {
-                  updateProfilePicture("")
-                }}
+                fileUrl={center.profileImage || ""}
+                handleFileChange={url => updateProfilePicture(url)}
+                removeFile={() => updateProfilePicture("")}
                 accept="image/*"
                 title="Profile Picture"
+                className="w-24 h-8 text-sm"
               />
             </div>
           </CardContent>
@@ -256,7 +255,7 @@ const updateProfilePicture = async (url) => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Training Center Biodata</CardTitle>
+            <CardTitle className="text-blue-900 font-bold text-2xl">Training Center Biodata</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="block md:hidden mb-4">
@@ -265,7 +264,6 @@ const updateProfilePicture = async (url) => {
                   <SelectValue placeholder="Select Tab" />
                 </SelectTrigger>
                 <SelectContent>
-                  
                   <SelectItem value="basic">Center Details</SelectItem>
                   <SelectItem value="amenities">Amenities</SelectItem>
                   <SelectItem value="assessment">Assessment</SelectItem>
@@ -277,7 +275,7 @@ const updateProfilePicture = async (url) => {
               </Select>
             </div>
             <Tabs defaultValue="basic" value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-              <TabsList className="hidden md:grid w-full grid-cols-7">
+              <TabsList className="hidden md:grid w-full grid-cols-7 bg-blue-50 rounded-xl shadow mb-4">
                 <TabsTrigger value="basic">Center Details</TabsTrigger>
                 <TabsTrigger value="amenities">Amenities</TabsTrigger>
                 <TabsTrigger value="assessment">Assessment</TabsTrigger>
@@ -288,55 +286,70 @@ const updateProfilePicture = async (url) => {
               </TabsList>
 
               <TabsContent value="update">
-              <BasicInfoTab
-                center={center}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleSubmit}
-              />
+                <div className="bg-white rounded-xl shadow p-6">
+                  <BasicInfoTab
+                    center={center}
+                    handleInputChange={handleInputChange}
+                    handleSubmit={handleSubmit}
+                  />
+                </div>
               </TabsContent>
               <TabsContent value="basic">
-              <CenterDetailsTab
-                center={center}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleSubmit}
-              />
+                <div className="bg-white rounded-xl shadow p-6">
+                  <CenterDetailsTab
+                    center={center}
+                    handleInputChange={handleInputChange}
+                    handleSubmit={handleSubmit}
+                  />
+                </div>
               </TabsContent>
               <TabsContent value="bank">
-              <BankAccountTab
-                center={center}
-                handleNestedInputChange={handleNestedInputChange}
-                handleSubmit={handleSubmit}
-              />
+                <div className="bg-white rounded-xl shadow p-6">
+                  <BankAccountTab
+                    center={center}
+                    handleNestedInputChange={handleNestedInputChange}
+                    handleSubmit={handleSubmit}
+                  />
+                </div>
               </TabsContent>
               <TabsContent value="amenities">
-                <AmenitiesTab
-                  center={center}
-                  handleNestedInputChange={handleNestedInputChange}
-                  handleSubmit={handleSubmit}
-                />
+                <div className="bg-white rounded-xl shadow p-6">
+                  <AmenitiesTab
+                    center={center}
+                    handleNestedInputChange={handleNestedInputChange}
+                    handleSubmit={handleSubmit}
+                  />
+                </div>
               </TabsContent>
               <TabsContent value="assessment">
-              <AssessmentTab
-                center={center}
-                handleNestedInputChange={handleNestedInputChange}
-                handleSubmit={handleSubmit}
-              />
+                <div className="bg-white rounded-xl shadow p-6">
+                  <AssessmentTab
+                    center={center}
+                    handleNestedInputChange={handleNestedInputChange}
+                    handleSubmit={handleSubmit}
+                  />
+                </div>
               </TabsContent>
               <TabsContent value="legal">
-              <LegalInfoTab
-                center={center}
-                handleNestedInputChange={handleNestedInputChange}
-                handleSubmit={handleSubmit}
-              />
+                <div className="bg-white rounded-xl shadow p-6">
+                  <LegalInfoTab
+                    center={center}
+                    handleNestedInputChange={handleNestedInputChange}
+                    handleSubmit={handleSubmit}
+                  />
+                </div>
               </TabsContent>
               <TabsContent value="password">
-                <PasswordChange />
+                <div className="bg-white rounded-xl shadow p-6">
+                  <PasswordChange />
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
       </div>
-    </TrainingDashboardPage>
+    {/* </TrainingDashboardPage>     */}
+    </ProtectedRoute>
   )
 }
 
