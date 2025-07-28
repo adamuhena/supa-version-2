@@ -1,6 +1,7 @@
 
 import DocumentForm from "../components/DocumentForm"
 import DocumentLayout from "../components/document-layout"
+import ProtectedRoute from "../../../../../components/ProtectedRoute"
 
 function CreateDocument() {
   // Helper function for class names
@@ -9,11 +10,11 @@ function CreateDocument() {
   }
 
   return (
-    
-          <DocumentLayout>
-            <DocumentForm />
-          </DocumentLayout>
-       
+    <ProtectedRoute> 
+    <DocumentLayout>
+      <DocumentForm />
+    </DocumentLayout>
+    </ProtectedRoute>
   )
 }
 

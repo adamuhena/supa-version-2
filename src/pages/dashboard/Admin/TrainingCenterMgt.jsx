@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { CSVLink } from "react-csv"
 import { Badge } from "@/components/ui/badge";
+import jsPDF from "jspdf"
 import "jspdf-autotable"
 import {
   Pagination,
@@ -79,6 +80,12 @@ const utilityTypes = [
   "Others (specify)",
 ]
 
+const CENTER_CATEGORY = {
+  category1: {label: "Category 1", color: "bg-green-100 text-green-800 "},
+  category2: {label: "Category 2", color: "bg-blue-100 text-blue-800"},
+  category3: {label: "Category 3", color: "bg-red-100 text-red-800"},
+}
+
 const ASSESSMENT_STATUS = {
   pending: { label: "Pending", color: "bg-yellow-100 text-yellow-800" },
   approved: { label: "Approved", color: "bg-green-100 text-green-800" },
@@ -140,6 +147,7 @@ const TrainingCenterManagement = () => {
   const [newAssessment, setNewAssessment] = useState({
     year: new Date().getFullYear(),
     status: "pending",
+    category: "", 
     date: new Date().toISOString().split("T")[0], // Format as YYYY-MM-DD
     notes: "",
     expirationDate: "",
@@ -223,6 +231,7 @@ useEffect(() => {
     lga: "",
     sector: "",
     tradeArea: "",
+    category: "",
     dateFrom: "",
     dateTo: "",
     sort: "-createdAt",
@@ -376,6 +385,8 @@ useEffect(() => {
       address: "Address",
       sectors: "Sectors",
       tradeAreas: "Trade Areas",
+      assessmentStatus: "Assessment Status",
+      trainingCategory: "Training Category",
       registrationDate: "Registration Date", 
     }
 
@@ -410,6 +421,8 @@ useEffect(() => {
           lga: filter?.lga,
           sector: filter?.sector,
           tradeArea: filter?.tradeArea,
+          category: filter?.category,
+          assessmentStatus: filter?.assessmentStatus,
           dateFrom: filter?.dateFrom,
           dateTo: filter?.dateTo,
           sort: filter?.sort,
@@ -441,6 +454,17 @@ useEffect(() => {
 
           console.log('CreatedAt value:', x.createdAt, 'Type:', typeof x.createdAt);
 
+          // Get the latest assessment record by date for category
+          const latestAssessment = x.assessmentRecords && x.assessmentRecords.length > 0
+            ? [...x.assessmentRecords].sort((a, b) => new Date(b.date) - new Date(a.date))[0]
+            : null;
+          const latestCategory = latestAssessment?.category || "default";
+          const categoryObj = CENTER_CATEGORY[latestCategory];
+          const trainingCategory = categoryObj && categoryObj.label ? categoryObj.label : "Not Assigned";
+
+          // Get assessment status
+          const assessmentStatus = ASSESSMENT_STATUS[x.currentAssessmentStatus || 'pending'].label;
+
           return {
             sn: i + 1,
             trainingCentreName: x?.trainingCentreName,
@@ -452,7 +476,8 @@ useEffect(() => {
             address: x?.address,
             sectors: sectors.replace(/,\s*$/, ""),
             tradeAreas: tradeAreas.replace(/,\s*$/, ""),
-            
+            assessmentStatus: assessmentStatus,
+            trainingCategory: trainingCategory,
             registrationDate: x.createdAt ? new Date(x.createdAt).toLocaleDateString() : "---"
             
           }
@@ -475,6 +500,156 @@ useEffect(() => {
     setFilter(defaultData)
     setValue("")
     setcsvData([])
+  }
+
+  const generatePDF = async () => {
+    setLoadingCSV(true)
+    try {
+      const accessToken = localStorage.getItem("accessToken")
+      const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
+        params: {
+          limit: MAX_CSV_ROWS,
+          page: 1,
+          search: filter?.search,
+          state: filter?.state,
+          lga: filter?.lga,
+          sector: filter?.sector,
+          tradeArea: filter?.tradeArea,
+          category: filter?.category,
+          assessmentStatus: filter?.assessmentStatus,
+          dateFrom: filter?.dateFrom,
+          dateTo: filter?.dateTo,
+          sort: filter?.sort,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+
+      const { data } = response.data
+
+      // Format data for PDF
+      const pdfData = (data || []).map((x, i) => {
+        // Use the new function to extract trade areas
+        const tradeAreasData = extractTradeAreas(x)
+
+        let sectors = ""
+        let tradeAreas = ""
+
+        // Format sector and trade area information for PDF
+        tradeAreasData.forEach((sectorInfo) => {
+          sectors += sectorInfo.sectorName + ", "
+
+          sectorInfo.tradeAreas.forEach((ta) => {
+            tradeAreas += ta.name + ", "
+          })
+        })
+
+        // Get the latest assessment record by date for category
+        const latestAssessment = x.assessmentRecords && x.assessmentRecords.length > 0
+          ? [...x.assessmentRecords].sort((a, b) => new Date(b.date) - new Date(a.date))[0]
+          : null;
+        const latestCategory = latestAssessment?.category || "default";
+        const categoryObj = CENTER_CATEGORY[latestCategory];
+        const trainingCategory = categoryObj && categoryObj.label ? categoryObj.label : "Not Assigned";
+
+        // Get assessment status
+        const assessmentStatus = ASSESSMENT_STATUS[x.currentAssessmentStatus || 'pending'].label;
+
+        return [
+          i + 1,
+          x?.trainingCentreName || "---",
+          x?.contactPerson || "---",
+          x?.phoneNumber || "---",
+          x?.email || "---",
+          x?.state || "---",
+          x?.lga || "---",
+          x?.address || "---",
+          sectors.replace(/,\s*$/, ""),
+          tradeAreas.replace(/,\s*$/, ""),
+          assessmentStatus,
+          trainingCategory,
+          x.createdAt ? new Date(x.createdAt).toLocaleDateString() : "---"
+        ]
+      })
+
+      // Create PDF in landscape orientation
+      const doc = new jsPDF('landscape')
+      
+      // Add title
+      doc.setFontSize(16)
+      doc.text("Training Centers Report", 14, 22)
+      doc.setFontSize(10)
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 32)
+      doc.text(`Total Records: ${pdfData.length}`, 14, 42)
+
+      // Define table headers
+      const headers = [
+        "S/N",
+        "Training Center",
+        "Contact Person",
+        "Phone",
+        "Email",
+        "State",
+        "LGA",
+        "Address",
+        "Sectors",
+        "Trade Areas",
+        "Assessment Status",
+        "Training Category",
+        "Registration Date"
+      ]
+
+      // Add table to PDF
+      doc.autoTable({
+        head: [headers],
+        body: pdfData,
+        startY: 50,
+        styles: {
+          fontSize: 7,
+          cellPadding: 1,
+        },
+        headStyles: {
+          fillColor: [41, 128, 185],
+          textColor: 255,
+          fontStyle: 'bold',
+        },
+        columnStyles: {
+          0: { cellWidth: 8 }, // S/N
+          1: { cellWidth: 25 }, // Training Center
+          2: { cellWidth: 20 }, // Contact Person
+          3: { cellWidth: 18 }, // Phone
+          4: { cellWidth: 22 }, // Email
+          5: { cellWidth: 12 }, // State
+          6: { cellWidth: 12 }, // LGA
+          7: { cellWidth: 20 }, // Address
+          8: { cellWidth: 18 }, // Sectors
+          9: { cellWidth: 18 }, // Trade Areas
+          10: { cellWidth: 15 }, // Assessment Status
+          11: { cellWidth: 15 }, // Training Category
+          12: { cellWidth: 15 }, // Registration Date
+        },
+        didDrawPage: function (data) {
+          // Add page number
+          doc.setFontSize(8)
+          doc.text(
+            `Page ${doc.internal.getNumberOfPages()}`,
+            data.settings.margin.left,
+            doc.internal.pageSize.height - 10
+          )
+        }
+      })
+
+      // Save PDF
+      doc.save(`training-centers-report-${new Date().toISOString().split('T')[0]}.pdf`)
+      
+      toast.success("PDF generated successfully")
+    } catch (error) {
+      console.error("Error generating PDF:", error)
+      toast.error("Failed to generate PDF")
+    } finally {
+      setLoadingCSV(false)
+    }
   }
 
   // const fetchReports = async () => {
@@ -529,6 +704,7 @@ useEffect(() => {
         ...(filter.lga && filter.lga !== 'all' && { lga: filter.lga }),
         ...(filter.sector && filter.sector !== 'all' && { sector: filter.sector }),
         ...(filter.tradeArea && filter.tradeArea !== 'all' && { tradeArea: filter.tradeArea }),
+        ...(filter.category && filter.category !== 'all' && { category: filter.category }),
         ...(filter.assessmentStatus && filter.assessmentStatus !== 'all' && { 
           assessmentStatus: filter.assessmentStatus 
         }),
@@ -561,8 +737,8 @@ useEffect(() => {
   
   useEffect(() => {
     fetchReports()
-  }, [filter?.search, filter?.currentPage, filter?.state, filter?.lga, filter?.sector, filter?.tradeArea, filter?.dateFrom, filter?.dateTo,])
-
+  }, [filter?.search, filter?.currentPage, filter?.state, filter?.lga, filter?.sector, filter?.tradeArea, filter?.category, filter?.dateFrom, filter?.dateTo, filter?.sort, filter?.assessmentStatus])
+  
   // const handleViewCenter = (center) => {
   //   setSelectedCenter(center)
   //   setEditMode(false)
@@ -763,15 +939,22 @@ useEffect(() => {
 
 const handleAddAssessment = async () => {
   // Validate required fields
-  if (!newAssessment.year || !newAssessment.status || !newAssessment.date) {
+  if (!newAssessment.year ||  !newAssessment.status || !newAssessment.date) {
     toast.error("Please fill in all required fields");
     return;
   }
 
-  // Additional validation for approved assessments
-  if (newAssessment.status === "approved" && !newAssessment.expirationDate) {
-    toast.error("Expiration date is required for approved assessments");
-    return;
+    // Additional validation for approved assessments
+  // Only require category and expirationDate if status is approved
+  if (newAssessment.status === "approved") {
+    if (!newAssessment.category || !newAssessment.category.trim() || newAssessment.category === "default") {
+      toast.error("Category is required for approved assessments");
+      return;
+    }
+    if (!newAssessment.expirationDate) {
+      toast.error("Expiration date is required for approved assessments");
+      return;
+    }
   }
 
   if (!newAssessment.notes || !newAssessment.notes.trim()) {
@@ -847,6 +1030,7 @@ const handleAddAssessment = async () => {
     setNewAssessment({
       year: new Date().getFullYear(),
       status: "pending",
+      category: "",
       date: new Date().toISOString().split("T")[0],
       notes: "",
       expirationDate: "",
@@ -1023,6 +1207,27 @@ const handleAddAssessment = async () => {
           </div>
 
           <div className="w-[200px]">
+            <p className="text-left text-[14px] mb-1">Category</p>
+            <Select value={filter?.category || "default"} onValueChange={(value) => handleFilterChange("category", value)}>
+              <SelectTrigger className="text-[12px]">
+                <SelectValue placeholder="Select Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="default" disabled>Select...</SelectItem>
+                  {Object.entries(CENTER_CATEGORY).map(([key, item]) => {
+                    return (
+                      <SelectItem className="text-[12px]" value={key} key={key}>
+                        {item.label}
+                      </SelectItem>
+                    )
+                  })}
+                </SelectGroup>
+              </SelectContent>  
+            </Select>
+          </div>
+
+          <div className="w-[200px]">
             <p className="text-left text-[14px] mb-1">From Date</p>
             <Input
               type="date"
@@ -1056,24 +1261,28 @@ const handleAddAssessment = async () => {
 
         <div className="gap-2 flex justify-between w-full mt-4">
           <h2 className="font-medium">Total Records Found: {pagination?.total || 0}</h2>
-          {userRole === "superadmin" && (
-          <div className="gap-2 flex flex-row-reverse justify-start mb-4">
-            {!csvData?.length ? (
-              <button onClick={downloadCSV} className="border-[1px] text-[12px] p-2 font-medium">
-                Generate CSV
+          {userRole === "super_admin" && (
+            <div className="gap-2 flex flex-row-reverse justify-start mb-4">
+              <button onClick={generatePDF} className="border-[1px] text-[12px] p-2 font-medium bg-red-600 text-white hover:bg-red-700">
+                Generate PDF
                 {loadingCSV ? <SewingPinFilledIcon className="animate-spin" /> : null}
               </button>
-            ) : (
-              <CSVLink
-                data={csvData}
-                className="border-[1px] text-[12px] p-2 font-medium"
-                disabled={loadingCSV || !reports?.length}
-              >
-                Download CSV
-                {loadingCSV ? <SewingPinFilledIcon className="animate-spin" /> : null}
-              </CSVLink>
-            )}
-          </div>
+              {!csvData?.length ? (
+                <button onClick={downloadCSV} className="border-[1px] text-[12px] p-2 font-medium">
+                  Generate CSV
+                  {loadingCSV ? <SewingPinFilledIcon className="animate-spin" /> : null}
+                </button>
+              ) : (
+                <CSVLink
+                  data={csvData}
+                  className="border-[1px] text-[12px] p-2 font-medium"
+                  disabled={loadingCSV || !reports?.length}
+                >
+                  Download CSV
+                  {loadingCSV ? <SewingPinFilledIcon className="animate-spin" /> : null}
+                </CSVLink>
+              )}
+            </div>
           )}
         </div>
 
@@ -1087,6 +1296,7 @@ const handleAddAssessment = async () => {
               <TableHead>Address</TableHead>
               <TableHead>Trade Areas</TableHead>
               <TableHead>Assessment Status</TableHead>
+              <TableHead>Training Category</TableHead>  
               <TableHead className="cursor-pointer" onClick={() => handleSort("createdAt")}>
                 Registration Date {filter.sort === "createdAt" ? "↑" : filter.sort === "-createdAt" ? "↓" : ""}
               </TableHead>
@@ -1188,6 +1398,27 @@ const handleAddAssessment = async () => {
                     }`}>
                       {ASSESSMENT_STATUS[center.currentAssessmentStatus || 'pending'].label}
                     </span>
+                  </TableCell>
+
+                  <TableCell>
+                    {(() => {
+                      // Get the latest assessment record by date
+                      const latestAssessment = center.assessmentRecords && center.assessmentRecords.length > 0
+                        ? [...center.assessmentRecords].sort((a, b) => new Date(b.date) - new Date(a.date))[0]
+                        : null;
+                      const latestCategory = latestAssessment?.category || "default";
+                      const categoryObj = CENTER_CATEGORY[latestCategory];
+
+                      return categoryObj && categoryObj.label ? (
+                        <span className={`inline-block px-2 py-1 rounded-full text-xs ${categoryObj.color}`}>
+                          {categoryObj.label}
+                        </span>
+                      ) : (
+                        <span className="inline-block px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800 border-yellow-200">
+                          Not Assigned
+                        </span>
+                      );
+                    })()}
                   </TableCell>
 
                   <TableCell className="text-left text-[12px]">
@@ -3151,20 +3382,15 @@ const handleAddAssessment = async () => {
       <CardTitle>Add New Assessment</CardTitle>
     </CardHeader>
     <CardContent>
-      {/* <form
-        onSubmit={e => {
-          e.preventDefault();
-          handleAddAssessment();
-        }} */}
-
-        <form onSubmit={(e) => {
+      <form
+        onSubmit={(e) => {
           e.preventDefault();
           handleAddAssessment();
         }}
-
         className="space-y-4"
       >
-        <div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2"> 
           <Label>Year</Label>
           <Input
             type="number"
@@ -3174,8 +3400,21 @@ const handleAddAssessment = async () => {
             }
             required
           />
+          </div>
+          <div className="flex items-center gap-2">
+          <Label>Date</Label>
+          <Input
+            type="date"
+            value={newAssessment.date}
+            onChange={e =>
+              setNewAssessment(prev => ({ ...prev, date: e.target.value }))
+            }
+            required
+          />
+          </div>
         </div>
-        <div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4">
           <Label>Status</Label>
           <Select
             value={newAssessment.status}
@@ -3192,29 +3431,9 @@ const handleAddAssessment = async () => {
               <SelectItem value="denied">Denied</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-        <div>
-          <Label>Date</Label>
-          <Input
-            type="date"
-            value={newAssessment.date}
-            onChange={e =>
-              setNewAssessment(prev => ({ ...prev, date: e.target.value }))
-            }
-            required
-          />
-        </div>
-        <div>
-          <Label>Expiration Date</Label>
-          <Input
-            type="date"
-            value={newAssessment.expirationDate}
-            onChange={e =>
-              setNewAssessment(prev => ({ ...prev, expirationDate: e.target.value }))
-            }
-          />
-        </div>
-        <div>
+          </div>
+
+          <div className="flex items-center gap-4">
           <Label>Assessor Name</Label>
           <Input
             value={newAssessment.assessorName}
@@ -3223,6 +3442,68 @@ const handleAddAssessment = async () => {
             }
           />
         </div>
+        </div>
+        {/* Show Category and Expiration Date only if status is approved */}
+        {newAssessment.status === "approved" && (
+          <>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2"> 
+              <Label>Category</Label>
+              <Select
+                value={newAssessment.category || "default"}
+                onValueChange={value =>
+                  setNewAssessment(prev => ({ ...prev, category: value }))
+                }
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="default" disabled>
+                    Select...
+                  </SelectItem>
+                  {Object.entries(CENTER_CATEGORY).map(([key, item]) => (
+                    <SelectItem
+                      className="text-[12px]"
+                      value={key}
+                      key={key}
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label>Expiration Date</Label>
+              <Input
+                type="date"
+                value={newAssessment.expirationDate}
+                onChange={e =>
+                  setNewAssessment(prev => ({ ...prev, expirationDate: e.target.value }))
+                }
+                required
+              />
+            </div>
+            </div>
+          </>
+        )}
+        {/* Show Expiration Date as optional if not approved */}
+        {/* {newAssessment.status === "approved" && (
+          <div>
+            <Label>Expiration Date</Label>
+            <Input
+              type="date"
+              value={newAssessment.expirationDate}
+              onChange={e =>
+                setNewAssessment(prev => ({ ...prev, expirationDate: e.target.value }))
+              }
+            />
+          </div>
+        )} */}
+        
+        
         <div>
           <Label>Notes</Label>
           <Textarea

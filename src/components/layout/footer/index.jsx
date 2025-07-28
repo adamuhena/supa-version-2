@@ -4,7 +4,7 @@ import { cn } from "../../../lib/utils";
 
 function Footer() {
   return (
-    <div className="relative bg-slate-900 py-12 px-4 sm:px-6 md:px-8 lg:px-12">
+    <div className=" bg-slate-900 py-12 px-4 sm:px-6 md:px-8 lg:px-12">
       <DotPattern
         width={10}
         height={10}

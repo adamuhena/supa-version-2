@@ -140,9 +140,9 @@ function App() {
             />
             <Route path="training-center/biodata" element={ <ProtectedRoute allowedRoles={["training_center"]}>
                 <TrainingCenterBiodata />
-              </ProtectedRoute>
-            }
-          />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
 

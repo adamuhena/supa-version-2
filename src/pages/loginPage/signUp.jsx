@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import PageLayout from "../../components/layout/pageLayout";
 import {
   Tabs,
   TabsContent,
@@ -850,13 +851,14 @@ export default function SignupForm() {
   };
 
   return (
-    <section className=" bg-slate-900   min-h-screen">
-      <div className="flex items-start justify-center absolute top-8 left-0 right-0 bottom-10">
-        <div className="flex w-full max-w-4xl sm:items-stretch bg-white shadow-lg rounded-lg overflow-auto">
+    <PageLayout>
+    {/* <section className="bg-slate-900 h-full"> */}
+      <div className="flex items-start bg-slate-900 justify-center pt-24 pb-24">
+        <div className="flex w-full h-full max-w-4xl sm:items-stretch bg-white shadow-lg rounded-lg overflow-auto">
           {/* Left image section */}
           <div className="hidden md:block w-3/5 relative">
             {signupAs === "artisan_user" ? (
-              <div className="flex h-full items-center justify-center bg-green-100 p-6">
+              <div className="flex h-full items-start justify-center bg-green-100 pt-56 p-6">
                 <div className="text-center">
                   <h2 className="mb-2 text-2xl font-bold text-green-800">
                     SignUp Today
@@ -872,7 +874,7 @@ export default function SignupForm() {
                 </div>
               </div>
             ) : signupAs === "intending_artisan" ? (
-              <div className="flex h-full items-center justify-center bg-red-100 p-6">
+              <div className="flex h-full items-start justify-center bg-red-100 pt-56 p-6">
                 <div className="text-center">
                   <h2 className="mb-2 text-2xl font-bold text-red-800">
                     SignUp Today
@@ -888,7 +890,7 @@ export default function SignupForm() {
                 </div>
               </div>
             ) : (
-              <div className="flex h-full items-center justify-center bg-blue-100 p-6">
+              <div className="flex h-full items-start justify-center bg-blue-100 pt-56 p-6">
                 <div className="text-center">
                   <h2 className="mb-2 text-2xl font-bold text-blue-800">
                     SignUp Today
@@ -910,10 +912,8 @@ export default function SignupForm() {
           {/* <Card className="w-full h-{full} max-w-4xl pt-4 overflow-y-auto pr-2 md:pr-0"> */}
           <Card
             className="w-full max-w-4xl 
-                h-auto
-                items-start
-                sm:h-[650px]  
-                md:h-[750px]   
+                h-full
+                items-start 
                 pt-4 pr-2 md:pr-0
                 overflow-y-auto" // Scroll the inside of the card
           >
@@ -2862,7 +2862,8 @@ export default function SignupForm() {
           </Card>
         </div>
       </div>
-    </section>
+    {/* </section> */}
+    </PageLayout>
   );
 }
 

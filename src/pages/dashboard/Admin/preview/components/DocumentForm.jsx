@@ -244,7 +244,6 @@ function DocumentForm() {
     
   return (
     <ProtectedRoute href="/admin/dashboard">
-      <DashboardPage title="Document Dashboard">
         <div className="bg-gradient-to-t from-stone-100 to-current-black min-h-screen">
           <div className="container mx-auto p-6">
             <header className="flex justify-between items-center mb-6">
@@ -477,7 +476,6 @@ function DocumentForm() {
             </form>
           </Card>
         </div>
-      </DashboardPage>
     </ProtectedRoute>
   );
 }

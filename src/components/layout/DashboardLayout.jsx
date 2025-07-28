@@ -26,6 +26,7 @@ import {
   ShoppingBag,
   AppWindowIcon,
   Image,
+  Calendar,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -251,12 +252,20 @@ export default function DashboardLayout({ href, title }) {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/admin/period">
+                        <Calendar />
+                        <span>Training Period Setup</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
 
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/documents">
                         <UploadIcon />
-                        <span>Artisan List Update</span>
+                        <span>Beneficiaries Update</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -290,7 +299,7 @@ export default function DashboardLayout({ href, title }) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
 
-                  <SidebarMenuItem>
+                  {/* <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/admin/training-status">
                         <FolderKanban />
@@ -306,7 +315,7 @@ export default function DashboardLayout({ href, title }) {
                         <span>Document Verification</span>
                       </Link>
                     </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  </SidebarMenuItem> */}
                 </SidebarMenu>
               </SidebarGroup>
 
@@ -366,7 +375,6 @@ export default function DashboardLayout({ href, title }) {
           )}
 
           {isLinkAccessible([
-            "superadmin",
             "artisan_user",
             "intending_artisan",
           ]) ? (
@@ -413,7 +421,7 @@ export default function DashboardLayout({ href, title }) {
                 )}
 
                 {/* Only render this SidebarMenuItem if the user is not an intending_artisan */}
-                {isLinkAccessible(["superadmin", "artisan_user"]) && (
+                {isLinkAccessible(["artisan_user"]) && (
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/certification/upload">
@@ -427,7 +435,7 @@ export default function DashboardLayout({ href, title }) {
             </SidebarGroup>
           ) : null}
 
-          {isLinkAccessible(["superadmin"]) ? (
+          {/* {isLinkAccessible(["superadmin"]) ? (
             <SidebarGroup className="group-data-[collapsible=icon]:hidden">
               <SidebarGroupLabel>Training Center</SidebarGroupLabel>
               <SidebarMenu>
@@ -449,7 +457,7 @@ export default function DashboardLayout({ href, title }) {
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroup>
-          ) : null}
+          ) : null} */}
 
           {isLinkAccessible([
             "superadmin",

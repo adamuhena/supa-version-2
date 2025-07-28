@@ -1155,27 +1155,42 @@ const UserManagement = () => {
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleCreateUser} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="role">Role</Label>
+                      <Select onValueChange={(value) => handleRoleChange(value, setNewUser)} value={newUser.role}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {/* <SelectItem value="superadmin">Super Admin</SelectItem> */}
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="artisan_user">Artisan User</SelectItem>
+                          <SelectItem value="intending_artisan">Intending Artisan</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input
-                        id="firstName"
-                        name="firstName"
-                        value={newUser.firstName}
-                        onChange={(e) => handleInputChange(e, setNewUser)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input
-                        id="lastName"
-                        name="lastName"
-                        value={newUser.lastName}
-                        onChange={(e) => handleInputChange(e, setNewUser)}
-                        required
-                      />
-                    </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input
+                          id="firstName"
+                          name="firstName"
+                          value={newUser.firstName}
+                          onChange={(e) => handleInputChange(e, setNewUser)}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input
+                          id="lastName"
+                          name="lastName"
+                          value={newUser.lastName}
+                          onChange={(e) => handleInputChange(e, setNewUser)}
+                          required
+                        />
+                      </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
@@ -1209,7 +1224,20 @@ const UserManagement = () => {
                       required
                     />
                   </div>
-                  <div className="space-y-2">
+                  {/* Show NIN field only if role is not admin or superadmin */}
+                  {newUser.role !== "admin" && newUser.role !== "superadmin" && (
+                      <div className="space-y-2">
+                        <Label htmlFor="nin">NIN</Label>
+                        <Input
+                          id="nin"
+                          name="nin"
+                          value={newUser.nin}
+                          onChange={(e) => handleInputChange(e, setNewUser)}
+                          required
+                        />
+                      </div>
+                    )}
+                  {/* <div className="space-y-2">
                     <Label htmlFor="nin">NIN</Label>
                     <Input
                       id="nin"
@@ -1218,21 +1246,7 @@ const UserManagement = () => {
                       onChange={(e) => handleInputChange(e, setNewUser)}
                       required
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="role">Role</Label>
-                    <Select onValueChange={(value) => handleRoleChange(value, setNewUser)} value={newUser.role}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {/* <SelectItem value="superadmin">Super Admin</SelectItem> */}
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="artisan_user">Artisan User</SelectItem>
-                        <SelectItem value="intending_artisan">Intending Artisan</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  </div> */}
                   <Button type="submit" className="w-full">
                     Create User
                   </Button>
@@ -1373,6 +1387,20 @@ const UserManagement = () => {
           </DialogHeader>
           {editUser && (
             <form onSubmit={handleUpdateUser} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="editRole">Role</Label>
+                <Select onValueChange={(value) => handleRoleChange(value, setEditUser)} value={editUser.role}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* <SelectItem value="superadmin">Super Admin</SelectItem> */}
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="artisan_user">Artisan User</SelectItem>
+                    <SelectItem value="intending_artisan">Intending Artisan</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="editFirstName">First Name</Label>
@@ -1416,30 +1444,20 @@ const UserManagement = () => {
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="editNin">NIN</Label>
-                <Input
-                  id="editNin"
-                  name="nin"
-                  value={editUser.nin}
-                  onChange={(e) => handleInputChange(e, setEditUser)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="editRole">Role</Label>
-                <Select onValueChange={(value) => handleRoleChange(value, setEditUser)} value={editUser.role}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* <SelectItem value="superadmin">Super Admin</SelectItem> */}
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="artisan_user">Artisan User</SelectItem>
-                    <SelectItem value="intending_artisan">Intending Artisan</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Show NIN field only if role is not admin or superadmin */}
+              {editUser.role !== "admin" && editUser.role !== "superadmin" && (
+                <div className="space-y-2">
+                  <Label htmlFor="editNin">NIN</Label>
+                  <Input
+                    id="editNin"
+                    name="nin"
+                    value={editUser.nin}
+                    onChange={(e) => handleInputChange(e, setEditUser)}
+                    required
+                  />
+                </div>
+              )}
+             
               <div className="space-y-2">
                 <Label htmlFor="editPassword">New Password</Label>
                 <Input

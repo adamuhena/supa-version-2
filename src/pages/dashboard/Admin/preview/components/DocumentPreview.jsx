@@ -94,7 +94,6 @@ function DocumentPreview() {
 
   return (
     <ProtectedRoute href="/admin/dashboard">
-      <DashboardPage title="Document Dashboard">
         <div className="bg-gradient-to-t from-stone-100 to-current-black min-h-screen">
           <div className="container mx-auto p-6">
             <header className="flex justify-between items-center mb-6">
@@ -110,7 +109,6 @@ function DocumentPreview() {
               </div>
             </header>
           </div>
-          <DocumentLayout>
             <div className="bg-gradient-to-t from-stone-100 to-current-black min-h-screen">
               <DotPattern
                 width={10}
@@ -191,9 +189,7 @@ function DocumentPreview() {
                 </div>
               </div>
             </div>
-          </DocumentLayout>
         </div>
-      </DashboardPage>
     </ProtectedRoute>
   )
 }
