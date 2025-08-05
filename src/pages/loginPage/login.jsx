@@ -87,7 +87,7 @@ export default function LoginForm() {
         localStorage.setItem("refreshToken", data.accessToken.refreshToken);
         localStorage.setItem("isFirstTimeUser", JSON.stringify(isFirstTimeUser));
 
-        toast.success(`Welcome back, ${userData.role}!`);
+        toast.success(`Welcome back, ${userData.firstName || userData.trainingCentreName}!`);
 
         // Redirect based on role and first-time user status
         redirectToAppropriatePage(userRole, isFirstTimeUser);

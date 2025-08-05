@@ -389,7 +389,8 @@ export default function DistributionDashboardOptimized() {
 
   return (
     <div className="mx-auto max-w-7xl">
-      <div className="mb-1">
+    
+      {/* <div className="mb-1">
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center space-x-2">
             <Button
@@ -431,7 +432,7 @@ export default function DistributionDashboardOptimized() {
             <DistributionFilters onFilterChange={handleFilterChange} />
           </div>
         </div>
-      </div>
+      </div> */}
 
       <Tabs
         value={activeTab}
@@ -618,6 +619,7 @@ export default function DistributionDashboardOptimized() {
           )}
         </TabsContent> */}
       </Tabs>
-    </div>
+          
+    </div>  
   );
 }

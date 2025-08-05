@@ -51,8 +51,8 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
   return (
     <Tabs value="details">
       <TabsContent value="details">
-        <form 
-          onSubmit={handleSubmit} 
+        <form
+          onSubmit={handleSubmit}
           className="relative w-full max-w-[1200px] mx-auto py-[30px] flex flex-wrap px-5 gap-[30px] bg-white rounded-[16px] shadow-[0px_7px_29px_0px_rgba(100,100,111,0.2)]"
         >
           <h1 className="text-left font-[700] text-[24px] w-full">
@@ -61,10 +61,17 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
 
           {/* State Selection */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="state" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="state"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               State where the Training Centre is located
             </Label>
-            <Select value={center.state} onValueChange={handleStateChange}>
+            <Select
+              value={center.state}
+              onValueChange={handleStateChange}
+              disabled={true}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select state" />
               </SelectTrigger>
@@ -87,12 +94,13 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
             </Label>
             <Select
               value={center.lga || ""}
-              onValueChange={(value) => 
+              onValueChange={(value) =>
                 handleInputChange({
-                  target: { name: "lga", value }
+                  target: { name: "lga", value },
                 })
               }
-              disabled={!lgas.length}
+              // disabled={!lgas.length}
+              disabled={true}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select LGA" />
@@ -111,7 +119,10 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
 
           {/* Area Office */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="areaOffice" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="areaOffice"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               Area Office
             </Label>
             <Input
@@ -125,7 +136,10 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
 
           {/* Training Center Name */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="trainingCentreName" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="trainingCentreName"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               Name of Training Centre
             </Label>
             <Input
@@ -134,19 +148,30 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
               value={center.trainingCentreName}
               onChange={handleInputChange}
               placeholder="Enter Training Centre Name"
+              disabled={true} // Assuming this field is not editable
             />
           </div>
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="regNum" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="regNum"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               Registration Number
             </Label>
-            <Input name="regNum" value={center.regNum} onChange={handleInputChange} placeholder="Registration Number" />
+            <Input
+              name="regNum"
+              value={center.regNum}
+              onChange={handleInputChange}
+              placeholder="Registration Number"
+            />
           </div>
-          
 
           {/* Address */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="address" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="address"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               Address of Training Centre
             </Label>
             <Input
@@ -160,7 +185,10 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
 
           {/* Contact Person */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="contactPerson" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="contactPerson"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               Name of Contact Person
             </Label>
             <Input
@@ -174,7 +202,10 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
 
           {/* Phone Number */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="phoneNumber" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="phoneNumber"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               Phone No./WhatsApp
             </Label>
             <Input
@@ -188,7 +219,10 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
 
           {/* Email Address */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="email" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="email"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               E-Mail Address
             </Label>
             <Input
@@ -198,12 +232,16 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
               value={center.email}
               onChange={handleInputChange}
               placeholder="Enter Email Address"
+              disabled
             />
           </div>
 
           {/* Establishment Date */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="establishmentDate" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="establishmentDate"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               Date of Establishment
             </Label>
             <Input
@@ -215,8 +253,8 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
                 handleInputChange({
                   target: {
                     name: "establishmentDate",
-                    value: e.target.value
-                  }
+                    value: e.target.value,
+                  },
                 });
               }}
             />
@@ -224,7 +262,10 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
 
           {/* Ownership */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="ownership" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="ownership"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               Ownership
             </Label>
             <Select
@@ -245,8 +286,12 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
                   <SelectItem value="localGovt">Local Gov't</SelectItem>
                   <SelectItem value="personal">Personal</SelectItem>
                   <SelectItem value="coOwned">Co-Owned</SelectItem>
-                  <SelectItem value="religiousOrganization">Religious Organization</SelectItem>
-                  <SelectItem value="ngo">Non-Governmental Organization (NGO)</SelectItem>
+                  <SelectItem value="religiousOrganization">
+                    Religious Organization
+                  </SelectItem>
+                  <SelectItem value="ngo">
+                    Non-Governmental Organization (NGO)
+                  </SelectItem>
                   <SelectItem value="other">Others (Specify)</SelectItem>
                 </SelectGroup>
               </SelectContent>
@@ -256,7 +301,10 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
           {/* Other Ownership */}
           {center.ownership === "other" && (
             <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-              <Label htmlFor="otherOwnership" className="w-[300px] text-left leading-[1.3]">
+              <Label
+                htmlFor="otherOwnership"
+                className="w-[300px] text-left leading-[1.3]"
+              >
                 Specify Other Ownership
               </Label>
               <Input
@@ -271,7 +319,10 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
 
           {/* Nature of Training */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="trainingNature" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="trainingNature"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               Nature of Training
             </Label>
             <Select
@@ -287,8 +338,12 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="institutionTraining">Institution Training</SelectItem>
-                  <SelectItem value="workplaceTraining">Workplace/Formal Training</SelectItem>
+                  <SelectItem value="institutionTraining">
+                    Institution Training
+                  </SelectItem>
+                  <SelectItem value="workplaceTraining">
+                    Workplace/Formal Training
+                  </SelectItem>
                   <SelectItem value="informal">Informal</SelectItem>
                 </SelectGroup>
               </SelectContent>
@@ -297,7 +352,10 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
 
           {/* ITF Registration */}
           <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-            <Label htmlFor="itfRegistered" className="w-[300px] text-left leading-[1.3]">
+            <Label
+              htmlFor="itfRegistered"
+              className="w-[300px] text-left leading-[1.3]"
+            >
               Is the Centre registered with ITF?
             </Label>
             <Select
@@ -323,7 +381,10 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
           {/* ITF Registration Number */}
           {center.itfRegistered === "yes" && (
             <div className="flex basis-[30%] flex-col items-start justify-start text-left gap-y-2">
-              <Label htmlFor="itfRegistrationNumber" className="w-[300px] text-left leading-[1.3]">
+              <Label
+                htmlFor="itfRegistrationNumber"
+                className="w-[300px] text-left leading-[1.3]"
+              >
                 ITF Registration Number
               </Label>
               <Input
@@ -336,16 +397,17 @@ const CenterDetailsTab = ({ center, handleInputChange, handleSubmit }) => {
             </div>
           )}
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full bg-green-500 hover:bg-green-600"
+            disabled={true}
           >
             Update Center Details
           </Button>
         </form>
       </TabsContent>
     </Tabs>
-  )
+  );
 }
 
 export default CenterDetailsTab

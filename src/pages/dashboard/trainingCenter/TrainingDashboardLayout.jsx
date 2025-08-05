@@ -509,7 +509,7 @@ export default function TrainingDashboardPage({ href, title, children }) {
                   <SidebarMenuButton asChild>
                     <Link to="/training-center/groups">
                       <Star />
-                      <span>Students Assigned</span>
+                      <span>Assigned Trainee</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

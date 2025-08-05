@@ -35,6 +35,11 @@ const Biodata = () => {
   const logout = useLogout();
   const navigate = useNavigate();
 
+  const userRole = localStorage.getItem("userRole");
+  
+
+  const isNotAdminOrSuperAdmin = !(userRole === "admin" || userRole === "superadmin");
+
   const [user, setUser] = useState({
     firstName: "",
     middleName: "",
@@ -466,9 +471,13 @@ const Biodata = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="personal">Personal</SelectItem>
-              <SelectItem value="education">Education</SelectItem>
-              <SelectItem value="skills">Skills & Experience</SelectItem>
-              <SelectItem value="bank">Bank Account</SelectItem>
+              {isNotAdminOrSuperAdmin && (
+                <>
+                  <SelectItem value="education">Education</SelectItem>
+                  <SelectItem value="skills">Skills & Experience</SelectItem>
+                  <SelectItem value="bank">Bank Account</SelectItem>
+                </>
+              )}
               <SelectItem value="password">Change Password</SelectItem>
             </SelectContent>
           </Select>
@@ -476,10 +485,15 @@ const Biodata = () => {
 
         <Tabs defaultValue="personal"  value={selectedTab} onValueChange={setSelectedTab}  className="w-full">
           <TabsList className="hidden md:grid w-full grid-cols-5 bg-emerald-50 rounded-xl shadow mb-4">
+            
             <TabsTrigger value="personal">Personal</TabsTrigger>
-            <TabsTrigger value="education">Education</TabsTrigger>
-            <TabsTrigger value="skills">Skills & Experience</TabsTrigger>
-            <TabsTrigger value="bank">Bank Account</TabsTrigger>
+            {isNotAdminOrSuperAdmin && (
+              <>
+                <TabsTrigger value="education">Education</TabsTrigger>
+                <TabsTrigger value="skills">Skills & Experience</TabsTrigger>
+                <TabsTrigger value="bank">Bank Account</TabsTrigger>
+              </>
+            )}
             <TabsTrigger value="password">Change Password</TabsTrigger>
           </TabsList>
 
@@ -489,42 +503,35 @@ const Biodata = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="education">
-            <div className="bg-white rounded-xl shadow p-6">
-              <EducationTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
-            </div>
-          </TabsContent>
-          
-          {/* <TabsContent value="skills">
-          <SkillsTab
-            user={user}
-            handleUpdate={handleUpdate}
-            submitChanges={submitChanges}
-            changes={changes}
-            handleArrayUpdate={handleArrayUpdate}
-            addArrayItem={addArrayItem}
-            removeArrayItem={removeArrayItem}
-          />
-         </TabsContent> */}
+          {isNotAdminOrSuperAdmin && (
+            <>
+              <TabsContent value="education">
+                <div className="bg-white rounded-xl shadow p-6">
+                  <EducationTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="skills">
+                <div className="bg-white rounded-xl shadow p-6">
+                  <SkillsTab
+                    user={user}
+                    handleUpdate={handleUpdate}
+                    submitChanges={submitChanges}
+                    changes={changes}
+                    handleArrayUpdate={handleArrayUpdate}
+                    addArrayItem={addArrayItem}
+                    removeArrayItem={removeArrayItem}
+                  />
+                </div>
+              </TabsContent>
 
-<TabsContent value="skills">
-  <div className="bg-white rounded-xl shadow p-6">
-    <SkillsTab
-      user={user}
-      handleUpdate={handleUpdate}
-      submitChanges={submitChanges}
-      changes={changes}
-      handleArrayUpdate={handleArrayUpdate}
-      addArrayItem={addArrayItem}
-      removeArrayItem={removeArrayItem}
-    />
-  </div>
-</TabsContent>
-         <TabsContent value="bank">
-          <div className="bg-white rounded-xl shadow p-6">
-            <BankTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
-          </div>
-         </TabsContent>
+              <TabsContent value="bank">
+                <div className="bg-white rounded-xl shadow p-6">
+                  <BankTab user={user} handleUpdate={handleUpdate} submitChanges={submitChanges} />
+                </div>
+              </TabsContent>
+            </>
+          )}
 
           <TabsContent value="password">
             <Card>

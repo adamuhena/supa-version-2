@@ -353,7 +353,7 @@ const IntendingArtisanDashboard = ({ artisan = { rating: 4.5 } }) => {
       <div className="flex justify-center items-center h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <div className="text-center">
           <Spinner />
-          <p className="mt-4 text-slate-600 font-medium">Loading your dashboard...</p>
+        
         </div>
       </div>
     );

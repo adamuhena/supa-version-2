@@ -158,7 +158,6 @@ export function VerificationStatusManager({
   const [pendingStatus, setPendingStatus] = useState("");
   const [periods, setPeriods] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState("");
-  
 
   // Helper to reset form state
   const resetAssignForm = () => {
@@ -268,9 +267,11 @@ export function VerificationStatusManager({
   const accessToken = localStorage.getItem("accessToken");
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/periods`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    }).then(res => setPeriods(res.data));
+    axios
+      .get(`${API_BASE_URL}/periods`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((res) => setPeriods(res.data));
   }, []);
 
   // When a training center is selected:
@@ -321,6 +322,8 @@ export function VerificationStatusManager({
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
+
+      console.log("Assignment history response:", response.data);
 
       // Ensure we have the current assignment in history
       const history = response.data?.data?.history || [];
@@ -688,7 +691,116 @@ export function VerificationStatusManager({
     }
   };
 
+  // const handleReassignTraining = async (assignmentId) => {
+  //   if (
+  //     !trainingAssignment.trainingCenterId ||
+  //     !trainingAssignment.changeReason
+  //   ) {
+  //     toast.error(
+  //       "Please select a training center and provide a reason for reassignment"
+  //     );
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken");
+
+  //     // Get the sector and trade area names from their IDs
+  //     const sectorObj = allSectors.find(
+  //       (sec) => sec._id === trainingAssignment.sector
+  //     );
+  //     const tradeAreaObj = sectorObj?.tradeAreas?.find(
+  //       (ta) => ta._id === trainingAssignment.tradeArea
+  //     );
+
+  //     const payload = {
+  //       trainingCenterId: trainingAssignment.trainingCenterId,
+  //       trainingType: trainingAssignment.trainingType,
+  //       year: trainingAssignment.year,
+  //       sector: sectorObj?.name || trainingAssignment.sector,
+  //       tradeArea: tradeAreaObj?.name || trainingAssignment.tradeArea,
+  //       notes: trainingAssignment.notes,
+  //       changeReason: trainingAssignment.changeReason,
+  //       assignedBy: currentUser?.id || currentUser?._id,
+  //       periodId: selectedPeriod,
+  //     };
+
+  //     const response = await axios.patch(
+  //       `${API_BASE_URL}/training/training-assignments/${assignmentId}/reassign`,
+  //       payload,
+  //       { headers: { Authorization: `Bearer ${accessToken}` } }
+  //     );
+
+  //     if (response.data?.success) {
+  //       toast.success("Training reassigned successfully");
+  //       const updatedUser = await fetchUpdatedUser(user._id);
+  //       onVerificationUpdate(updatedUser);
+  //       resetAssignForm();
+
+  //       // Refresh the assignment history if viewing history
+  //       if (showHistory) {
+  //         fetchAssignmentHistory(assignmentId);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error reassigning training:", error);
+  //     toast.error(
+  //       "Failed to reassign training: " +
+  //         (error.response?.data?.message || error.message)
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  //   const handleReassignTraining = async (assignmentId) => {
+  //   if (!trainingAssignment.trainingCenterId || !trainingAssignment.changeReason) {
+  //     toast.error("Please select a training center and provide a reason for reassignment");
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   try {
+  //     const accessToken = localStorage.getItem("accessToken");
+  //     const sectorObj = allSectors.find(sec => sec._id === trainingAssignment.sector);
+  //     const tradeAreaObj = sectorObj?.tradeAreas?.find(ta => ta._id === trainingAssignment.tradeArea);
+
+  //     const payload = {
+  //       trainingCenterId: trainingAssignment.trainingCenterId,
+  //       trainingType: trainingAssignment.trainingType,
+  //       year: trainingAssignment.year,
+  //       sector: sectorObj?.name || trainingAssignment.sector,
+  //       tradeArea: tradeAreaObj?.name || trainingAssignment.tradeArea,
+  //       notes: trainingAssignment.notes,
+  //       changeReason: trainingAssignment.changeReason,
+  //       assignedBy: currentUser?.id || currentUser?._id,
+  //       periodId: selectedPeriod
+  //     };
+
+  //     const response = await axios.patch(
+  //       `${API_BASE_URL}/training/training-assignments/${assignmentId}/reassign`,
+  //       payload,
+  //       { headers: { Authorization: `Bearer ${accessToken}` } }
+  //     );
+
+  //     if (response.data?.success) {
+  //       toast.success("Training reassigned successfully");
+  //       const updatedUser = await fetchUpdatedUser(user._id);
+  //       onVerificationUpdate(updatedUser);
+  //       resetAssignForm();
+  //     }
+  //   } catch (error) {
+  //     console.error("Error reassigning training:", error);
+  //     toast.error("Failed to reassign training: " + (error.response?.data?.message || error.message));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  // When handling the reassignment, modify the handleReassignTraining function to ensure assignmentId is properly passed:
   const handleReassignTraining = async (assignmentId) => {
+    console.log("Reassigning assignment with ID:", assignmentId);
+
     if (
       !trainingAssignment.trainingCenterId ||
       !trainingAssignment.changeReason
@@ -702,8 +814,6 @@ export function VerificationStatusManager({
     setLoading(true);
     try {
       const accessToken = localStorage.getItem("accessToken");
-
-      // Get the sector and trade area names from their IDs
       const sectorObj = allSectors.find(
         (sec) => sec._id === trainingAssignment.sector
       );
@@ -712,6 +822,7 @@ export function VerificationStatusManager({
       );
 
       const payload = {
+        periodId: selectedPeriod,
         trainingCenterId: trainingAssignment.trainingCenterId,
         trainingType: trainingAssignment.trainingType,
         year: trainingAssignment.year,
@@ -720,13 +831,20 @@ export function VerificationStatusManager({
         notes: trainingAssignment.notes,
         changeReason: trainingAssignment.changeReason,
         assignedBy: currentUser?.id || currentUser?._id,
-        periodId: selectedPeriod,
       };
 
+      console.log("Sending reassignment payload:", payload);
+
+      // Remove the /api prefix since it's already in API_BASE_URL
       const response = await axios.patch(
-        `${API_BASE_URL}/training/training-assignments/${assignmentId}/reassign`,
+        `${API_BASE_URL}/training/${assignmentId}/reassign`,
         payload,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       if (response.data?.success) {
@@ -734,14 +852,9 @@ export function VerificationStatusManager({
         const updatedUser = await fetchUpdatedUser(user._id);
         onVerificationUpdate(updatedUser);
         resetAssignForm();
-
-        // Refresh the assignment history if viewing history
-        if (showHistory) {
-          fetchAssignmentHistory(assignmentId);
-        }
       }
     } catch (error) {
-      console.error("Error reassigning training:", error);
+      console.error("Full error details:", error);
       toast.error(
         "Failed to reassign training: " +
           (error.response?.data?.message || error.message)
@@ -788,7 +901,7 @@ export function VerificationStatusManager({
         return <ClockIcon className="h-4 w-4 text-yellow-600" />;
     }
   };
-  
+
   const handleUpdateAssignmentStatus = async (
     assignmentId,
     newStatus,
@@ -850,13 +963,13 @@ export function VerificationStatusManager({
 
   const [admissionEnabled, setAdmissionEnabled] = useState(false);
   const [periodStatus, setPeriodStatus] = useState("");
-  const [periodName, setPeriodName] = useState("");   
+  const [periodName, setPeriodName] = useState("");
   useEffect(() => {
     async function fetchAdmissionStatus() {
       try {
         const accessToken = localStorage.getItem("accessToken");
         const res = await axios.get(`${API_BASE_URL}/periods/current`, {
-          headers: { Authorization: `Bearer ${accessToken}` }
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
         setAdmissionEnabled(res.data.admissionLetterEnabled);
         setPeriodStatus(res.data.status); // <-- Add this line
@@ -872,10 +985,10 @@ export function VerificationStatusManager({
 
   const hasTrainingCenter = (() => {
     const activeAssignment = (
-      user?.verifications?.find(v => v._id === currentVerificationId)?.trainingAssignment || []
+      user?.verifications?.find((v) => v._id === currentVerificationId)
+        ?.trainingAssignment || []
     )?.find(
-      (assignment) =>
-        assignment?.currentAssignment?.status === "active"
+      (assignment) => assignment?.currentAssignment?.status === "active"
     )?.currentAssignment;
     return !!activeAssignment?.trainingCenterId;
   })();
@@ -1189,10 +1302,10 @@ export function VerificationStatusManager({
                       Foundation Training
                     </SelectItem>
                     <SelectItem value="initial">Initial Training</SelectItem>
-                    <SelectItem value="further">
-                      Further Training
+                    <SelectItem value="further">Further Training</SelectItem>
+                    <SelectItem value="up_skilling">
+                      Up Skilling Training
                     </SelectItem>
-                    <SelectItem value="up_skilling">Up Skilling Training</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -1271,8 +1384,8 @@ export function VerificationStatusManager({
                   </SelectTrigger>
                   <SelectContent>
                     {periods
-                      .filter(period => period._id && period._id !== "")
-                      .map(period => (
+                      .filter((period) => period._id && period._id !== "")
+                      .map((period) => (
                         <SelectItem key={period._id} value={String(period._id)}>
                           {period.name} ({period.year})
                         </SelectItem>
@@ -1320,20 +1433,66 @@ export function VerificationStatusManager({
               <Button variant="outline" onClick={resetAssignForm}>
                 Cancel
               </Button>
-              <Button
-                // onClick={() => currentAssignment ?
-                //   handleReassignTraining(currentAssignment._id) :
-                //   handleAssignTraining()
-                // }
-
-                onClick={() => handleAssignTraining()}
+              {/* <Button
+                onClick={() => currentAssignment ? 
+                  handleReassignTraining(currentAssignment._id) : 
+                  handleAssignTraining()
+                }
                 disabled={loading}
               >
-                {loading
-                  ? "Processing..."
-                  : currentAssignment
-                  ? "Reassign"
-                  : "Assign"}
+                {loading ? "Processing..." : currentAssignment ? "Reassign" : "Assign"}
+              </Button> */}
+              // First, update the button click handler
+              <Button
+                onClick={() => {
+                  console.log("Current Assignment:", currentAssignment);
+
+                  // For reassignment case
+                  if (currentAssignment) {
+                    // Get the correct assignment ID
+                    let assignmentId;
+                    if (Array.isArray(currentAssignment)) {
+                      // If it's an array, get the last (most recent) assignment
+                      const lastAssignment =
+                        currentAssignment[currentAssignment.length - 1];
+                      assignmentId = lastAssignment._id;
+                    } else if (currentAssignment.currentAssignment) {
+                      // If it has currentAssignment property
+                      assignmentId = currentAssignment._id;
+                    } else {
+                      // Direct assignment object
+                      assignmentId = currentAssignment._id;
+                    }
+
+                    if (!assignmentId) {
+                      console.error(
+                        "Invalid assignment structure:",
+                        currentAssignment
+                      );
+                      toast.error("Could not find assignment ID");
+                      return;
+                    }
+
+                    console.log("Reassigning with ID:", assignmentId);
+                    handleReassignTraining(assignmentId);
+                  } else {
+                    // For new assignment case
+                    console.log("Creating new assignment");
+                    handleAssignTraining();
+                  }
+                }}
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    Processing...
+                  </div>
+                ) : currentAssignment ? (
+                  "Reassign"
+                ) : (
+                  "Assign"
+                )}
               </Button>
             </div>
           </CardContent>
@@ -1552,33 +1711,58 @@ export function VerificationStatusManager({
                                     admissionEnabled &&
                                     periodStatus !== "suspended" &&
                                     activeAssignment.status !== "cancelled" && (
-                                      <Button size="sm" onClick={() => {
-                                        // Find the parent assignment that matches the current activeAssignment
-                                        let assignmentId;
-                                        if (Array.isArray(verification.trainingAssignment)) {
-                                          const parent = verification.trainingAssignment.find(
-                                            a =>
-                                              a.currentAssignment &&
-                                              a.currentAssignment.periodId === activeAssignment.periodId &&
-                                              a.currentAssignment.trainingCenterId === activeAssignment.trainingCenterId // or compare more fields if needed
-                                          );
-                                          assignmentId = parent?._id;
-                                        } else if (verification.trainingAssignment && verification.trainingAssignment.currentAssignment) {
-                                          assignmentId = verification.trainingAssignment._id;
-                                        }
+                                      <Button
+                                        size="sm"
+                                        onClick={() => {
+                                          // Find the parent assignment that matches the current activeAssignment
+                                          let assignmentId;
+                                          if (
+                                            Array.isArray(
+                                              verification.trainingAssignment
+                                            )
+                                          ) {
+                                            const parent =
+                                              verification.trainingAssignment.find(
+                                                (a) =>
+                                                  a.currentAssignment &&
+                                                  a.currentAssignment
+                                                    .periodId ===
+                                                    activeAssignment.periodId &&
+                                                  a.currentAssignment
+                                                    .trainingCenterId ===
+                                                    activeAssignment.trainingCenterId // or compare more fields if needed
+                                              );
+                                            assignmentId = parent?._id;
+                                          } else if (
+                                            verification.trainingAssignment &&
+                                            verification.trainingAssignment
+                                              .currentAssignment
+                                          ) {
+                                            assignmentId =
+                                              verification.trainingAssignment
+                                                ._id;
+                                          }
 
-                                        const pdfAssignment = { ...activeAssignment, _id: assignmentId };
+                                          const pdfAssignment = {
+                                            ...activeAssignment,
+                                            _id: assignmentId,
+                                          };
 
-                                        downloadAdmissionLetterPDF({
-                                          user,
-                                          assignment: pdfAssignment,
-                                          period: { name: periodName, status: periodStatus, year: new Date().getFullYear() },
-                                          verificationId: verification._id
-                                        });
-                                      }}>
+                                          downloadAdmissionLetterPDF({
+                                            user,
+                                            assignment: pdfAssignment,
+                                            period: {
+                                              name: periodName,
+                                              status: periodStatus,
+                                              year: new Date().getFullYear(),
+                                            },
+                                            verificationId: verification._id,
+                                          });
+                                        }}
+                                      >
                                         Print Admission Letter
                                       </Button>
-                                  )}
+                                    )}
                                 </>
                               )}
                             </div>
@@ -1732,133 +1916,155 @@ export function VerificationStatusManager({
                                                   Assigned At
                                                 </TableHead>
                                                 <TableHead>Notes</TableHead>
-                                                <TableHead>Change Reason</TableHead>
-                                                <TableHead>Completion Date</TableHead>
-                                                <TableHead>Completion Notes</TableHead>
+                                                <TableHead>
+                                                  Change Reason
+                                                </TableHead>
+                                                <TableHead>
+                                                  Completion Date
+                                                </TableHead>
+                                                <TableHead>
+                                                  Completion Notes
+                                                </TableHead>
                                               </TableRow>
                                             </TableHeader>
                                             <TableBody>
                                               {/* If assignmentHistory is an array of objects as described */}
-                                              {(Array.isArray(
+                                              {Array.isArray(
                                                 historyVerification
-                                              )
-                                                ? historyVerification
-                                                : []
-                                              ).map((item, idx) => {
-                                                // Use currentAssignment if assignmentHistory is empty
-                                                const assignment = item.currentAssignment || item;
-                                                // assignment._id may be undefined if only item has _id
-                                                // console.log("assignment test:", assignment);
-                                                // Get training center name
-                                                let centerName = "—";
-                                                if (typeof item.trainingCenterId === "object" && item.trainingCenterId !== null) {
-                                                  centerName = item.trainingCenterId.trainingCentreName || item.trainingCenterId.name || "—";
-                                                } else if (typeof item.trainingCenterId === "string") {
-                                                  const found = trainingCenters.find(tc => tc._id === item.trainingCenterId);
-                                                  centerName = found?.trainingCentreName || "—";
-                                                }
+                                              ) &&
+                                                historyVerification.map(
+                                                  (item) => {
+                                                    // Create an array that combines current assignment and history
+                                                    const allAssignments = [];
 
-                                                // Get assigned by name
-                                                let assignedByName = "Unknown";
-                                                if (assignment.assignedBy) {
-                                                  if (typeof assignment.assignedBy === "object" && assignment.assignedBy !== null) {
-                                                    assignedByName =
-                                                      (assignment.assignedBy.firstName || "") +
-                                                      (assignment.assignedBy.lastName ? " " + assignment.assignedBy.lastName : "") ||
-                                                      assignment.assignedBy.email ||
-                                                      "Unknown";
-                                                  } else {
-                                                    assignedByName = verifierNames[assignment.assignedBy] || assignment.assignedBy || "Unknown";
-                                                  }
-                                                }
-                                                return (
-                                                  <TableRow
-                                                    key={item._id || idx}
-                                                  >
-                                                    <TableCell>
-                                                      {centerName}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                      {assignment?.trainingType}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                      {assignment?.sector}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                      {assignment?.tradeArea}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                      {assignment?.year}
-                                                    </TableCell>
-                                                    
-                                                    <TableCell>
-                                                      <div className="flex items-center gap-2">
-                                                        <Badge
-                                                          variant="outline"
-                                                          className={
-                                                            assignment?.status === "active"
-                                                              ? "bg-blue-100 text-blue-800 border-blue-200"
-                                                              : assignment?.status === "completed"
-                                                              ? "bg-green-100 text-green-800 border-green-200"
-                                                              : "bg-red-100 text-red-800 border-red-200"
-                                                          }
-                                                        >
-                                                          {assignment?.status}
-                                                        </Badge>
-                                                        <Select
-                                                          value={assignment.status}
-                                                          onValueChange={(value) => {
-                                                            const id = assignment._id || item._id;
-                                                            if (value === "completed") {
-                                                              setPendingAssignmentId(item._id);
-                                                              setPendingStatus(value);
-                                                              setShowCompletionDialog(true);
-                                                            } else {
-                                                              handleUpdateAssignmentStatus(id, value);
+                                                    // Add current assignment if it exists
+                                                    if (
+                                                      item.currentAssignment
+                                                    ) {
+                                                      allAssignments.push({
+                                                        ...item.currentAssignment,
+                                                        _id: item._id,
+                                                        isCurrentAssignment: true,
+                                                      });
+                                                    }
+
+                                                    // Add assignment history if it exists
+                                                    if (
+                                                      Array.isArray(
+                                                        item.assignmentHistory
+                                                      )
+                                                    ) {
+                                                      allAssignments.push(
+                                                        ...item.assignmentHistory
+                                                      );
+                                                    }
+
+                                                    // Sort all assignments by date (most recent first)
+                                                    return allAssignments
+                                                      .sort((a, b) => {
+                                                        const dateA = new Date(
+                                                          a.changedAt ||
+                                                            a.assignedAt
+                                                        );
+                                                        const dateB = new Date(
+                                                          b.changedAt ||
+                                                            b.assignedAt
+                                                        );
+                                                        return dateB - dateA;
+                                                      })
+                                                      .map(
+                                                        (assignment, idx) => (
+                                                          <TableRow
+                                                            key={`${
+                                                              assignment._id ||
+                                                              idx
+                                                            }`}
+                                                            className={
+                                                              assignment.isCurrentAssignment
+                                                                ? "bg-blue-50"
+                                                                : ""
                                                             }
-                                                          }}
-                                                          disabled={assignment.status === "cancelled" || assignment.status === "completed"}
-                                                        >
-                                                          <SelectTrigger className="w-32">
-                                                            <SelectValue />
-                                                          </SelectTrigger>
-                                                          <SelectContent>
-                                                            <SelectItem value="active">Active</SelectItem>
-                                                            <SelectItem value="completed">Completed</SelectItem>
-                                                            <SelectItem value="cancelled">Cancelled</SelectItem>
-                                                          </SelectContent>
-                                                        </Select>
-                                                      </div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                      {assignedByName}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                      {assignment?.assignedAt
-                                                        ? new Date(
-                                                            assignment?.assignedAt
-                                                          ).toLocaleDateString()
-                                                        : ""}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                      {assignment?.notes || "—"}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                      {assignment?.changeReason || "—"}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                      {assignment?.status === "completed" && assignment?.completionDate 
-                                                        ? new Date(assignment.completionDate).toLocaleDateString() 
-                                                        : "—"}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                      {assignment?.status === "completed" 
-                                                        ? (assignment?.completionNotes || "—") 
-                                                        : "—"}
-                                                    </TableCell>
-                                                  </TableRow>
-                                                );
-                                              })}
+                                                          >
+                                                            <TableCell>
+                                                              {assignment
+                                                                .trainingCenterId
+                                                                ?.trainingCentreName ||
+                                                                "—"}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              {assignment.trainingType ||
+                                                                "—"}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              {assignment.sector ||
+                                                                "—"}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              {assignment.tradeArea ||
+                                                                "—"}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              {assignment.year ||
+                                                                "—"}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              <Badge
+                                                                variant="outline"
+                                                                className={
+                                                                  assignment.status ===
+                                                                  "active"
+                                                                    ? "bg-blue-100 text-blue-800 border-blue-200"
+                                                                    : assignment.status ===
+                                                                      "completed"
+                                                                    ? "bg-green-100 text-green-800 border-green-200"
+                                                                    : assignment.status ===
+                                                                      "reassigned"
+                                                                    ? "bg-yellow-100 text-yellow-800 border-yellow-200"
+                                                                    : "bg-red-100 text-red-800 border-red-200"
+                                                                }
+                                                              >
+                                                                {
+                                                                  assignment.status
+                                                                }
+                                                              </Badge>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              {assignment
+                                                                .assignedBy
+                                                                ?.firstName
+                                                                ? `${assignment.assignedBy.firstName} ${assignment.assignedBy.lastName}`
+                                                                : "—"}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              {new Date(
+                                                                assignment.changedAt ||
+                                                                  assignment.assignedAt
+                                                              ).toLocaleDateString()}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              {assignment.notes ||
+                                                                "—"}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              {assignment.changeReason ||
+                                                                "—"}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              {assignment.completionDate
+                                                                ? new Date(
+                                                                    assignment.completionDate
+                                                                  ).toLocaleDateString()
+                                                                : "—"}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                              {assignment.completionNotes ||
+                                                                "—"}
+                                                            </TableCell>
+                                                          </TableRow>
+                                                        )
+                                                      );
+                                                  }
+                                                )}
                                             </TableBody>
                                           </Table>
                                         </div>
@@ -2047,78 +2253,82 @@ export function VerificationStatusManager({
         </Dialog>
       )} */}
       {showCompletionDialog && (
-  <Dialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Complete Assignment</DialogTitle>
-        <DialogDescription>
-          Please provide completion notes and date.
-        </DialogDescription>
-      </DialogHeader>
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="completion-date">Completion Date</Label>
-          <Input
-            id="completion-date"
-            type="date"
-            value={completionDate}
-            onChange={(e) => setCompletionDate(e.target.value)}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="completion-notes">Completion Notes</Label>
-          <Textarea
-            id="completion-notes"
-            value={completionNotes}
-            onChange={(e) => setCompletionNotes(e.target.value)}
-            placeholder="Enter completion notes"
-          />
-        </div>
-      </div>
-      <div className="flex justify-end gap-2 mt-4">
-        <Button
-          variant="outline"
-          onClick={() => {
-            setShowCompletionDialog(false);
-            setCompletionNotes("");
-            setCompletionDate("");
-            setPendingAssignmentId(null);
-            setPendingStatus("");
-          }}
+        <Dialog
+          open={showCompletionDialog}
+          onOpenChange={setShowCompletionDialog}
         >
-          Cancel
-        </Button>
-        <Button
-          onClick={async () => {
-            // Validate that both fields are filled
-            if (!completionDate) {  // Removed .trim() for date validation
-              toast.error("Please select a completion date");
-              return;
-            }
-            if (!completionNotes.trim()) {
-              toast.error("Please provide completion notes");
-              return;
-            }
-            
-            await handleUpdateAssignmentStatus(
-              pendingAssignmentId,
-              pendingStatus,
-              completionNotes,
-              completionDate
-            );
-            setShowCompletionDialog(false);
-            setCompletionNotes("");
-            setCompletionDate("");
-            setPendingAssignmentId(null);
-            setPendingStatus("");
-          }}
-        >
-          Complete Assignment
-        </Button>
-      </div>
-    </DialogContent>
-  </Dialog>
-)}
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Complete Assignment</DialogTitle>
+              <DialogDescription>
+                Please provide completion notes and date.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="completion-date">Completion Date</Label>
+                <Input
+                  id="completion-date"
+                  type="date"
+                  value={completionDate}
+                  onChange={(e) => setCompletionDate(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="completion-notes">Completion Notes</Label>
+                <Textarea
+                  id="completion-notes"
+                  value={completionNotes}
+                  onChange={(e) => setCompletionNotes(e.target.value)}
+                  placeholder="Enter completion notes"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCompletionDialog(false);
+                  setCompletionNotes("");
+                  setCompletionDate("");
+                  setPendingAssignmentId(null);
+                  setPendingStatus("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={async () => {
+                  // Validate that both fields are filled
+                  if (!completionDate) {
+                    // Removed .trim() for date validation
+                    toast.error("Please select a completion date");
+                    return;
+                  }
+                  if (!completionNotes.trim()) {
+                    toast.error("Please provide completion notes");
+                    return;
+                  }
+
+                  await handleUpdateAssignmentStatus(
+                    pendingAssignmentId,
+                    pendingStatus,
+                    completionNotes,
+                    completionDate
+                  );
+                  setShowCompletionDialog(false);
+                  setCompletionNotes("");
+                  setCompletionDate("");
+                  setPendingAssignmentId(null);
+                  setPendingStatus("");
+                }}
+              >
+                Complete Assignment
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
