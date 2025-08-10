@@ -1311,8 +1311,34 @@ const handleInputChange = (field, value, index = null) => {
             {users.map((user, index) => (
               <TableRow key={user._id || index}>
                 <TableCell className="text-left text-[12px]">{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
-                <TableCell className="text-left max-w-[200px] text-[12px]">
+                {/* <TableCell className="text-left max-w-[200px] text-[12px]">
                   {`${user.firstName || ""} ${user.lastName || ""}`}
+                </TableCell> */}
+                <TableCell className="text-left min-w-[200px] max-w-[200px] text-[12px]">
+                  <div className="flex items-center gap-3">
+                    {/* Circular Profile Image */}
+                    <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                      {user.profileImage ? (
+                        <img 
+                          src={user.profileImage} 
+                          alt={`${user.firstName || ''} ${user.lastName || ''}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                          <span className="text-xs font-medium text-gray-600">
+                            {user.firstName?.[0]}{user.lastName?.[0]}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Stacked Names */}
+                    <div className="flex flex-col">
+                      <div className="font-medium">{user.firstName || ""}</div>
+                      <div className="text-gray-500">{user.lastName || ""}</div>
+                    </div>
+                  </div>
                 </TableCell>
                 <TableCell className="text-left text-[12px]">{user?.gender}</TableCell>
                 <TableCell className="text-left text-[12px]">

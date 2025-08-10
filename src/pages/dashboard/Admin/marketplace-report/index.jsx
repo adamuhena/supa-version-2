@@ -115,7 +115,7 @@ const MarketplaceReport = () => {
   const [requestPagination, setRequestPagination] = useState({
     currentPage: 1,
     totalPages: 0,
-    totalUsers: 0,
+    total: 0,
     pageSize: 25,
   });
 
@@ -593,8 +593,17 @@ const MarketplaceReport = () => {
       );
 
       if (response.data?.success) {
+        console.log('API Response:', response.data);
+        console.log('Pagination Data:', response.data.data.pagination);
         setRequests(response.data.data.requests || []);
-        setRequestPagination(response.data.data.pagination);
+        // setRequestPagination(response.data.data.pagination);
+        setRequestPagination({
+          ...requestPagination,
+          currentPage: response.data.data.pagination.currentPage,
+          totalPages: response.data.data.pagination.totalPages,
+          totalUsers: response.data.data.pagination.total || response.data.data.pagination.totalUsers, // Check which field name your API uses
+          pageSize: itemsPerPage
+        });
       }
     } catch (error) {
       console.error("Error fetching requests:", error);
@@ -1629,7 +1638,7 @@ const MarketplaceReport = () => {
                     <TableHead>LGA</TableHead>
                     <TableHead>Address</TableHead>
                     <TableHead>Date Registered</TableHead>
-                    <TableHead>Amount</TableHead>
+                    {/* <TableHead>Amount</TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1642,12 +1651,15 @@ const MarketplaceReport = () => {
                   ) : clients.length > 0 ? (
                     clients.map((client, index) => (
                       <TableRow key={client._id}>
-                        <TableCell>
+                        {/* <TableCell>
                           {index +
                             1 +
                             (clientFilter.page - 1) * clientFilter.limit}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>
+                          {index + 1 + ((clientFilter?.currentPage || 1) - 1) * (clientFilter?.limit || 25)}
+                        </TableCell>
+                        <TableCell className="text-left max-w-[200px] text-[12px]">
                           {client.firstName} {client.lastName}
                         </TableCell>
                         <TableCell>{client.email}</TableCell>
@@ -1658,7 +1670,7 @@ const MarketplaceReport = () => {
                         <TableCell>
                           {new Date(client.createdAt).toLocaleDateString()}
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           {(() => {
                             if ([
                               'completed',
@@ -1674,7 +1686,7 @@ const MarketplaceReport = () => {
                               return 'N/A';
                             }
                           })()}
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                     ))
                   ) : (

@@ -55,6 +55,7 @@ import TrainingStatusComponent from "./pages/dashboard/Admin/userMgt/components/
 import PeriodView from "./pages/dashboard/Admin/periodView";
 import VerifyAdmission from "./pages/verify-admission";
 import TrainingDashboardPage from "./pages/dashboard/trainingCenter/TrainingDashboardLayout";
+import AssignmentReportsView from "./pages/dashboard/Admin/AssignmentReportsView";
 
 
 function App() {
@@ -168,6 +169,7 @@ function App() {
             <Route path="training-center/status" element={<ProtectedRoute allowedRoles={["superadmin"]}><TrainingManagement /></ProtectedRoute>} />
             <Route path="biodata" element={<ProtectedRoute allowedRoles={["admin", "superadmin", "artisan_user", "intending_artisan"]}><Biodata /></ProtectedRoute>} />
             <Route path="training/status" element={<ProtectedRoute allowedRoles={["admin", "superadmin", "artisan_user", "intending_artisan"]}><TrainingStatusComponent /></ProtectedRoute>} />
+            <Route path="training-assignment/report" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AssignmentReportsView /></ProtectedRoute>} />
 
             {/* Training Center Routes */}
             

@@ -27,6 +27,7 @@ import {
   AppWindowIcon,
   Image,
   Calendar,
+  Building2Icon,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -339,6 +340,14 @@ export default function DashboardLayout({ href, title }) {
                       <Link to="/admin/trainingcenter/reports">
                         <Settings2 />
                         <span>Training Centre Reports</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/training-assignment/report">
+                        <Building2Icon />
+                        <span>Training Reports</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -1384,7 +1385,7 @@ export function VerificationStatusManager({
                   </SelectTrigger>
                   <SelectContent>
                     {periods
-                      .filter((period) => period._id && period._id !== "")
+                      .filter((period) => period._id && period._id !== "" && period.status === "approved")
                       .map((period) => (
                         <SelectItem key={period._id} value={String(period._id)}>
                           {period.name} ({period.year})
@@ -1442,7 +1443,6 @@ export function VerificationStatusManager({
               >
                 {loading ? "Processing..." : currentAssignment ? "Reassign" : "Assign"}
               </Button> */}
-              // First, update the button click handler
               <Button
                 onClick={() => {
                   console.log("Current Assignment:", currentAssignment);
@@ -1881,204 +1881,145 @@ export function VerificationStatusManager({
 
                                 {shouldReassignTraining ? (
                                   <>
-                                    <Dialog
-                                      open={showVerificationHistory}
-                                      onOpenChange={setShowVerificationHistory}
-                                    >
-                                      <DialogContent className="max-w-3xl">
-                                        <DialogHeader>
-                                          <DialogTitle>
-                                            Verification History
-                                          </DialogTitle>
-                                          <DialogDescription>
-                                            All verification records for{" "}
-                                            {user.firstName} {user.lastName}
-                                          </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="overflow-x-auto">
-                                          <Table>
-                                            <TableHeader>
-                                              <TableRow>
-                                                <TableHead>
-                                                  Training Center
-                                                </TableHead>
-                                                <TableHead>Type</TableHead>
-                                                <TableHead>Sector</TableHead>
-                                                <TableHead>
-                                                  Trade Area
-                                                </TableHead>
-                                                <TableHead>Year</TableHead>
-                                                <TableHead>Status</TableHead>
-                                                <TableHead>
-                                                  Assigned By
-                                                </TableHead>
-                                                <TableHead>
-                                                  Assigned At
-                                                </TableHead>
-                                                <TableHead>Notes</TableHead>
-                                                <TableHead>
-                                                  Change Reason
-                                                </TableHead>
-                                                <TableHead>
-                                                  Completion Date
-                                                </TableHead>
-                                                <TableHead>
-                                                  Completion Notes
-                                                </TableHead>
-                                              </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                              {/* If assignmentHistory is an array of objects as described */}
-                                              {Array.isArray(
-                                                historyVerification
-                                              ) &&
-                                                historyVerification.map(
-                                                  (item) => {
-                                                    // Create an array that combines current assignment and history
-                                                    const allAssignments = [];
+                                    <Dialog open={showVerificationHistory} onOpenChange={setShowVerificationHistory}>
+  <DialogContent className="max-w-3xl">
+    <DialogHeader>
+      <DialogTitle>Verification History</DialogTitle>
+      <DialogDescription>
+        All verification records for {user.firstName} {user.lastName}
+      </DialogDescription>
+    </DialogHeader>
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Training Center</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Sector</TableHead>
+            <TableHead>Trade Area</TableHead>
+            <TableHead>Year</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Assigned By</TableHead>
+            <TableHead>Assigned At</TableHead>
+            <TableHead>Notes</TableHead>
+            <TableHead>Change Reason</TableHead>
+            <TableHead>Completion Date</TableHead>
+            <TableHead>Completion Notes</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Array.isArray(historyVerification) && historyVerification.map((item) => {
+            const allAssignments = [];
 
-                                                    // Add current assignment if it exists
-                                                    if (
-                                                      item.currentAssignment
-                                                    ) {
-                                                      allAssignments.push({
-                                                        ...item.currentAssignment,
-                                                        _id: item._id,
-                                                        isCurrentAssignment: true,
-                                                      });
-                                                    }
+            // Add current assignment if it exists
+            if (item.currentAssignment) {
+              allAssignments.push({
+                ...item.currentAssignment,
+                _id: item._id,
+                isCurrentAssignment: true,
+              });
+            }
 
-                                                    // Add assignment history if it exists
-                                                    if (
-                                                      Array.isArray(
-                                                        item.assignmentHistory
-                                                      )
-                                                    ) {
-                                                      allAssignments.push(
-                                                        ...item.assignmentHistory
-                                                      );
-                                                    }
+            // Add assignment history if it exists
+            if (Array.isArray(item.assignmentHistory)) {
+              allAssignments.push(...item.assignmentHistory);
+            }
 
-                                                    // Sort all assignments by date (most recent first)
-                                                    return allAssignments
-                                                      .sort((a, b) => {
-                                                        const dateA = new Date(
-                                                          a.changedAt ||
-                                                            a.assignedAt
-                                                        );
-                                                        const dateB = new Date(
-                                                          b.changedAt ||
-                                                            b.assignedAt
-                                                        );
-                                                        return dateB - dateA;
-                                                      })
-                                                      .map(
-                                                        (assignment, idx) => (
-                                                          <TableRow
-                                                            key={`${
-                                                              assignment._id ||
-                                                              idx
-                                                            }`}
-                                                            className={
-                                                              assignment.isCurrentAssignment
-                                                                ? "bg-blue-50"
-                                                                : ""
-                                                            }
-                                                          >
-                                                            <TableCell>
-                                                              {assignment
-                                                                .trainingCenterId
-                                                                ?.trainingCentreName ||
-                                                                "—"}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              {assignment.trainingType ||
-                                                                "—"}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              {assignment.sector ||
-                                                                "—"}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              {assignment.tradeArea ||
-                                                                "—"}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              {assignment.year ||
-                                                                "—"}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              <Badge
-                                                                variant="outline"
-                                                                className={
-                                                                  assignment.status ===
-                                                                  "active"
-                                                                    ? "bg-blue-100 text-blue-800 border-blue-200"
-                                                                    : assignment.status ===
-                                                                      "completed"
-                                                                    ? "bg-green-100 text-green-800 border-green-200"
-                                                                    : assignment.status ===
-                                                                      "reassigned"
-                                                                    ? "bg-yellow-100 text-yellow-800 border-yellow-200"
-                                                                    : "bg-red-100 text-red-800 border-red-200"
-                                                                }
-                                                              >
-                                                                {
-                                                                  assignment.status
-                                                                }
-                                                              </Badge>
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              {assignment
-                                                                .assignedBy
-                                                                ?.firstName
-                                                                ? `${assignment.assignedBy.firstName} ${assignment.assignedBy.lastName}`
-                                                                : "—"}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              {new Date(
-                                                                assignment.changedAt ||
-                                                                  assignment.assignedAt
-                                                              ).toLocaleDateString()}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              {assignment.notes ||
-                                                                "—"}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              {assignment.changeReason ||
-                                                                "—"}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              {assignment.completionDate
-                                                                ? new Date(
-                                                                    assignment.completionDate
-                                                                  ).toLocaleDateString()
-                                                                : "—"}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                              {assignment.completionNotes ||
-                                                                "—"}
-                                                            </TableCell>
-                                                          </TableRow>
-                                                        )
-                                                      );
-                                                  }
-                                                )}
-                                            </TableBody>
-                                          </Table>
-                                        </div>
-                                        <div className="flex justify-end mt-4">
-                                          <Button
-                                            onClick={() =>
-                                              setShowVerificationHistory(false)
-                                            }
-                                          >
-                                            Close
-                                          </Button>
-                                        </div>
-                                      </DialogContent>
-                                    </Dialog>
+            return allAssignments
+              .sort((a, b) => {
+                const dateA = new Date(a.changedAt || a.assignedAt);
+                const dateB = new Date(b.changedAt || b.assignedAt);
+                return dateB - dateA;
+              })
+              .map((assignment, idx) => {
+                const trainingCenterName = assignment.trainingCenterId?.trainingCentreName || 
+                  (typeof assignment.trainingCenterId === 'string' ? assignment.trainingCenterId : '—');
+                
+                const assignedByName = assignment.assignedBy?.firstName ? 
+                  `${assignment.assignedBy.firstName} ${assignment.assignedBy.lastName}` : 
+                  (typeof assignment.assignedBy === 'string' ? assignment.assignedBy : '—');
+
+                return (
+                  <TableRow 
+                    key={`${assignment._id}-${idx}`}
+                    className={assignment.isCurrentAssignment ? "bg-blue-50 dark:bg-blue-900/30" : ""}
+                  >
+                    <TableCell>{trainingCenterName}</TableCell>
+                    <TableCell className="capitalize">{assignment.trainingType || "—"}</TableCell>
+                    <TableCell>{assignment.sector || "—"}</TableCell>
+                    <TableCell>{assignment.tradeArea || "—"}</TableCell>
+                    <TableCell>{assignment.year || "—"}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="outline"
+                          className={cn({
+                            "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-200": assignment.status === "active",
+                            "bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200": assignment.status === "completed",
+                            "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-200": assignment.status === "reassigned",
+                            "bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-200": assignment.status === "cancelled",
+                            "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-200": !assignment.status
+                          })}
+                        >
+                          {assignment.status || "—"}
+                        </Badge>
+                        {assignment.isCurrentAssignment && (
+                          <Select
+                            value={assignment.status}
+                            onValueChange={(value) => {
+                              const id = assignment._id;
+                              if (value === "completed") {
+                                setPendingAssignmentId(id);
+                                setPendingStatus(value);
+                                setShowCompletionDialog(true);
+                              } else {
+                                handleUpdateAssignmentStatus(id, value);
+                              }
+                            }}
+                            disabled={assignment.status === "cancelled" || assignment.status === "completed"}
+                          >
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="cancelled">Cancelled</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{assignedByName}</TableCell>
+                    <TableCell>
+                      {assignment.changedAt || assignment.assignedAt 
+                        ? new Date(assignment.changedAt || assignment.assignedAt).toLocaleDateString() 
+                        : "—"}
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate">{assignment.notes || "—"}</TableCell>
+                    <TableCell>{assignment.changeReason || "—"}</TableCell>
+                    <TableCell>
+                      {assignment.completionDate 
+                        ? new Date(assignment.completionDate).toLocaleDateString() 
+                        : "—"}
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate">
+                      {assignment.completionNotes || "—"}
+                    </TableCell>
+                  </TableRow>
+                );
+              });
+          })}
+        </TableBody>
+      </Table>
+    </div>
+    <div className="flex justify-end mt-4">
+      <Button onClick={() => setShowVerificationHistory(false)}>
+        Close
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
 
                                     <Button
                                       onClick={() =>
