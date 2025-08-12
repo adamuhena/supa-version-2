@@ -20,10 +20,10 @@ import {
 } from "@/components/ui/select";
 import { API_BASE_URL } from "@/config/env";
 import { CSVLink } from "react-csv";
-import { Download, Edit, Eye, FileText, Trash2 } from "lucide-react";
+import { Download, Edit, LogOut, Mail, PhoneCall, UserCircle, Eye, Save, Trash2, Plus, X } from "lucide-react";
 import { states } from "@/data/nigeria";
 import TrainingCenterForm from "./TrainingCenterForm";
-import { Plus } from "lucide-react";
+// import { Plus, X, } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -33,8 +33,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import useLogout from "@/pages/loginPage/logout";
+import { useNavigate } from "react-router-dom";
 
 export default function TrainingCenterMgt() {
+  const logout = useLogout();
+  const navigate = useNavigate();
   const [trainingCenters, setTrainingCenters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState({
@@ -218,7 +223,20 @@ export default function TrainingCenterMgt() {
   };
 
   return (
+    <ProtectedRoute>
     <div className="container mx-auto py-6">
+      <header className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">Training Center</h1>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => navigate("/biodata")}>
+                    <UserCircle className="mr-2 h-4 w-4" /> Update Profile
+                  </Button>
+      
+                  <Button variant="destructive" onClick={logout}>
+                    <LogOut className="mr-2 h-4 w-4" /> Logout
+                  </Button>
+                </div>
+              </header>
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <h2 className="text-lg font-medium mb-4">Filters</h2>
         <div className="flex gap-4 flex-wrap">
@@ -278,7 +296,7 @@ export default function TrainingCenterMgt() {
       </div>
 
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Training Centers</h1>
+        {/* <h1 className="text-2xl font-bold">Training Centers</h1> */}
         <Button 
           onClick={() => setIsFormOpen(true)}
           className="flex items-center gap-2"
@@ -455,5 +473,6 @@ export default function TrainingCenterMgt() {
         onPasswordChange={handlePasswordChange}
       />
     </div>
+    </ProtectedRoute>
   );
 }

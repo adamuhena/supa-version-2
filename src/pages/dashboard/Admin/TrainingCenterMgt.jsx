@@ -74,6 +74,7 @@ import {
   Calendar,
   User,
 } from "lucide-react";
+import { transformTrainingCenterData } from "@/utils/transformTrainingCenterData";
 
 import {
   AlertDialog,
@@ -460,8 +461,20 @@ const TrainingCenterManagement = () => {
     return [headers, ...rows];
   }
 
+function getTradeAreaNameById(id) {
+  for (const sector of sectors) {
+    if (sector.tradeAreas && Array.isArray(sector.tradeAreas)) {
+      const ta = sector.tradeAreas.find((t) => t._id === id);
+      if (ta) return ta.name;
+    }
+  }
+  return id; // fallback to ID if not found
+}
+
   const downloadCSV = async () => {
+    console.log("Generating CSV with filter:");
     setLoadingCSV(true);
+
     try {
       const accessToken = localStorage.getItem("accessToken");
       const response = await axios.get(
@@ -489,72 +502,142 @@ const TrainingCenterManagement = () => {
 
       const { data } = response.data;
 
-      console.log("Sample record:", data[0]);
-      const formatted = formatTCToCSV(
-        (data || []).map((x, i) => {
-          // Use the new function to extract trade areas
-          const tradeAreasData = extractTradeAreas(x);
+      console.log("CSV Data : ", data);
 
-          let sectors = "";
-          let tradeAreas = "";
+      // CSV headers
+      const headers = [
+        "S/N",
+        "Training Center",
+        "Contact Person Name",
+        "Contact Person Phone",
+        "Contact Person Email",
+        "State",
+        "LGA",
+        "Address",
+        "Sectors",
+        "Trade Areas",
+        "Assessment Status",
+        "Training Category",
+        "Registration Date",
+        "Assessment Year",
+        "Assessment Status (Detail)",
+        "Assessment Category",
+        "Assessment Date",
+        "Assessment Expiration",
+        "Assessment Assessor",
+        "Assessment Notes",
+      ];
 
-          // Format sector and trade area information for CSV
-          tradeAreasData.forEach((sectorInfo) => {
-            sectors += sectorInfo.sectorName + ", ";
+      // Flatten each center's assessment records
+      const csvRows = [];
+      data.forEach((center, i) => {
+        // ...inside data.forEach...
+        console.log(
+          "Assessment Records for center:",
+          center.trainingCentreName,
+          center.assessmentRecords
+        );
 
-            sectorInfo.tradeAreas.forEach((ta) => {
-              tradeAreas += ta.name + ", ";
-            });
+        const tradeAreaNames = Array.isArray(center.legalInfo?.tradeAreas)
+            ? center.legalInfo.tradeAreas
+                .map((taObj) =>
+                  Array.isArray(taObj.tradeArea)
+                    ? taObj.tradeArea.map((id) => getTradeAreaNameById(id)).join(", ")
+                    : ""
+                )
+                .join(", ")
+            : "";
+
+        const tradeAreasData = extractTradeAreas(center);
+        let sectors = "";
+        let tradeAreas = "";
+        tradeAreasData.forEach((sectorInfo) => {
+          sectors += sectorInfo.sectorName + ", ";
+          sectorInfo.tradeAreas.forEach((ta) => {
+            tradeAreas += ta.name + ", ";
           });
+        });
 
-          console.log(
-            "CreatedAt value:",
-            x.createdAt,
-            "Type:",
-            typeof x.createdAt
-          );
+        // Get latest assessment for category
+        const latestAssessment =
+          center.assessmentRecords && center.assessmentRecords.length > 0
+            ? [...center.assessmentRecords].sort(
+                (a, b) => new Date(b.date) - new Date(a.date)
+              )[0]
+            : null;
+        const latestCategory = latestAssessment?.category || "default";
+        const categoryObj = CENTER_CATEGORY[latestCategory];
+        const trainingCategory =
+          categoryObj && categoryObj.label ? categoryObj.label : "Not Assigned";
+        const assessmentStatus =
+          ASSESSMENT_STATUS[center.currentAssessmentStatus || "pending"].label;
 
-          // Get the latest assessment record by date for category
-          const latestAssessment =
-            x.assessmentRecords && x.assessmentRecords.length > 0
-              ? [...x.assessmentRecords].sort(
-                  (a, b) => new Date(b.date) - new Date(a.date)
-                )[0]
-              : null;
-          const latestCategory = latestAssessment?.category || "default";
-          const categoryObj = CENTER_CATEGORY[latestCategory];
-          const trainingCategory =
-            categoryObj && categoryObj.label
-              ? categoryObj.label
-              : "Not Assigned";
+        // If no assessment records, still add a row
+        if (
+          !center.assessmentRecords ||
+          center.assessmentRecords.length === 0
+        ) {
+          csvRows.push([
+            i + 1,
+            center?.trainingCentreName || "",
+            center?.contactPerson || "",
+            center?.phoneNumber || "",
+            center?.email || "",
+            center?.state || "",
+            center?.lga || "",
+            center?.address || "",
+            sectors.replace(/,\s*$/, ""),
+            // tradeAreas.replace(/,\s*$/, ""),
+            tradeAreaNames.replace(/,\s*$/, ""),
+            assessmentStatus,
+            trainingCategory,
+            center.createdAt
+              ? new Date(center.createdAt).toLocaleDateString()
+              : "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+          ]);
+        } else {
+          center.assessmentRecords.forEach((rec) => {
+            csvRows.push([
+              i + 1,
+              center?.trainingCentreName || "",
+              center?.contactPerson || "",
+              center?.phoneNumber || "",
+              center?.email || "",
+              center?.state || "",
+              center?.lga || "",
+              center?.address || "",
+              sectors.replace(/,\s*$/, ""),
+              // tradeAreas.replace(/,\s*$/, ""),
+              tradeAreaNames.replace(/,\s*$/, ""),
+              assessmentStatus,
+              trainingCategory,
+              center.createdAt
+                ? new Date(center.createdAt).toLocaleDateString()
+                : "",
+              rec.year || "",
+              rec.status || "",
+              rec.category || "",
+              rec.date ? new Date(rec.date).toLocaleDateString() : "",
+              rec.expirationDate
+                ? new Date(rec.expirationDate).toLocaleDateString()
+                : "",
+              rec.assessorName || "",
+              rec.notes || "",
+            ]);
+          });
+        }
+      });
 
-          // Get assessment status
-          const assessmentStatus =
-            ASSESSMENT_STATUS[x.currentAssessmentStatus || "pending"].label;
-
-          return {
-            sn: i + 1,
-            trainingCentreName: x?.trainingCentreName,
-            contactPersonName: x?.contactPerson,
-            contactPersonPhone: x?.phoneNumber,
-            contactPersonEmail: x?.email,
-            state: x?.state,
-            lga: x?.lga,
-            address: x?.address,
-            sectors: sectors.replace(/,\s*$/, ""),
-            tradeAreas: tradeAreas.replace(/,\s*$/, ""),
-            assessmentStatus: assessmentStatus,
-            trainingCategory: trainingCategory,
-            registrationDate: x.createdAt
-              ? new Date(x.createdAt).toLocaleDateString()
-              : "---",
-          };
-        })
-      );
-      setcsvData(formatted);
-
+      setcsvData([headers, ...csvRows]);
       toast.success(
-        "CSV data has been generated with the filter options applied. Kindly click the 'Download CSV' button to download!"
+        "CSV data has been generated with assessment records included. Kindly click the 'Download CSV' button to download!"
       );
     } catch (error) {
       console.error("Error fetching reports:", error);
@@ -570,205 +653,305 @@ const TrainingCenterManagement = () => {
     setcsvData([]);
   };
 
-  const generatePDF = async () => {
-    setLoadingCSV(true);
-    try {
-      const accessToken = localStorage.getItem("accessToken");
-      const response = await axios.get(
-        `${API_BASE_URL}/trainingcenter/report`,
-        {
-          params: {
-            limit: MAX_CSV_ROWS,
-            page: 1,
-            search: filter?.search,
-            state: filter?.state,
-            lga: filter?.lga,
-            sector: filter?.sector,
-            tradeArea: filter?.tradeArea,
-            category: filter?.category,
-            assessmentStatus: filter?.assessmentStatus,
-            dateFrom: filter?.dateFrom,
-            dateTo: filter?.dateTo,
-            sort: filter?.sort,
-          },
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      const { data } = response.data;
-
-      // Format data for PDF
-      const pdfData = (data || []).map((x, i) => {
-        // Use the new function to extract trade areas
-        const tradeAreasData = extractTradeAreas(x);
-
-        let sectors = "";
-        let tradeAreas = "";
-
-        // Format sector and trade area information for PDF
-        tradeAreasData.forEach((sectorInfo) => {
-          sectors += sectorInfo.sectorName + ", ";
-
-          sectorInfo.tradeAreas.forEach((ta) => {
-            tradeAreas += ta.name + ", ";
-          });
-        });
-
-        // Get the latest assessment record by date for category
-        const latestAssessment =
-          x.assessmentRecords && x.assessmentRecords.length > 0
-            ? [...x.assessmentRecords].sort(
-                (a, b) => new Date(b.date) - new Date(a.date)
-              )[0]
-            : null;
-        const latestCategory = latestAssessment?.category || "default";
-        const categoryObj = CENTER_CATEGORY[latestCategory];
-        const trainingCategory =
-          categoryObj && categoryObj.label ? categoryObj.label : "Not Assigned";
-
-        // Get assessment status
-        const assessmentStatus =
-          ASSESSMENT_STATUS[x.currentAssessmentStatus || "pending"].label;
-
-        return [
-          i + 1,
-          x?.trainingCentreName || "---",
-          x?.contactPerson || "---",
-          x?.phoneNumber || "---",
-          x?.email || "---",
-          x?.state || "---",
-          x?.lga || "---",
-          x?.address || "---",
-          sectors.replace(/,\s*$/, ""),
-          tradeAreas.replace(/,\s*$/, ""),
-          assessmentStatus,
-          trainingCategory,
-          x.createdAt ? new Date(x.createdAt).toLocaleDateString() : "---",
-        ];
-      });
-
-      // Create PDF in landscape orientation
-      const doc = new jsPDF("landscape");
-
-      // Add title
-      doc.setFontSize(16);
-      doc.text("Training Centers Report", 14, 22);
-      doc.setFontSize(10);
-      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 32);
-      doc.text(`Total Records: ${pdfData.length}`, 14, 42);
-
-      // Define table headers
-      const headers = [
-        "S/N",
-        "Training Center",
-        "Contact Person",
-        "Phone",
-        "Email",
-        "State",
-        "LGA",
-        "Address",
-        "Sectors",
-        "Trade Areas",
-        "Assessment Status",
-        "Training Category",
-        "Registration Date",
-      ];
-
-      // Add table to PDF
-      doc.autoTable({
-        head: [headers],
-        body: pdfData,
-        startY: 50,
-        styles: {
-          fontSize: 7,
-          cellPadding: 1,
-        },
-        headStyles: {
-          fillColor: [41, 128, 185],
-          textColor: 255,
-          fontStyle: "bold",
-        },
-        columnStyles: {
-          0: { cellWidth: 8 }, // S/N
-          1: { cellWidth: 25 }, // Training Center
-          2: { cellWidth: 20 }, // Contact Person
-          3: { cellWidth: 18 }, // Phone
-          4: { cellWidth: 22 }, // Email
-          5: { cellWidth: 12 }, // State
-          6: { cellWidth: 12 }, // LGA
-          7: { cellWidth: 20 }, // Address
-          8: { cellWidth: 18 }, // Sectors
-          9: { cellWidth: 18 }, // Trade Areas
-          10: { cellWidth: 15 }, // Assessment Status
-          11: { cellWidth: 15 }, // Training Category
-          12: { cellWidth: 15 }, // Registration Date
-        },
-        didDrawPage: function (data) {
-          // Add page number
-          doc.setFontSize(8);
-          doc.text(
-            `Page ${doc.internal.getNumberOfPages()}`,
-            data.settings.margin.left,
-            doc.internal.pageSize.height - 10
-          );
-        },
-      });
-
-      // Save PDF
-      doc.save(
-        `training-centers-report-${new Date().toISOString().split("T")[0]}.pdf`
-      );
-
-      toast.success("PDF generated successfully");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate PDF");
-    } finally {
-      setLoadingCSV(false);
-    }
-  };
-
-  // const fetchReports = async () => {
-  //   setLoading(true)
+  // const generatePDF = async () => {
   //   try {
-  //     const accessToken = localStorage.getItem("accessToken")
-  //     const response = await axios.get(`${API_BASE_URL}/trainingcenter/report`, {
-  //       params: {
-  //         limit: itemsPerPage,
-  //         page: filter?.currentPage,
-  //         search: filter?.search,
-  //         state: filter?.state,
-  //         lga: filter?.lga,
-  //         sector: filter?.sector,
-  //         tradeArea: filter?.tradeArea,
-  //         assessmentStatus: filter?.assessmentStatus, // Add this
-  //         sort: filter?.sort,
-  //       },
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     })
-
-  //     const { data, pagination } = response.data
-  //     setReports(data)
-
-  //     setpagination((x) => {
-  //       return {
-  //         ...x,
-  //         total: pagination.total,
-  //         totalPages: pagination.totalPages,
+  //     const accessToken = localStorage.getItem("accessToken");
+  //     const response = await axios.get(
+  //       `${API_BASE_URL}/trainingcenter/report`,
+  //       {
+  //         params: {
+  //           limit: MAX_CSV_ROWS,
+  //           page: 1,
+  //           search: filter?.search,
+  //           state: filter?.state,
+  //           lga: filter?.lga,
+  //           sector: filter?.sector,
+  //           tradeArea: filter?.tradeArea,
+  //           category: filter?.category,
+  //           assessmentStatus: filter?.assessmentStatus,
+  //           dateFrom: filter?.dateFrom,
+  //           dateTo: filter?.dateTo,
+  //           sort: filter?.sort,
+  //         },
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
   //       }
-  //     })
+  //     );
+
+  //     const { data } = response.data;
+
+  //     // Transform data (same as CSV)
+  //     // const formatted = transformTrainingCenterData(data);
+  //     const formatted = transformTrainingCenterData(data, getTradeAreaNameById, sectors);
+  //     // Convert to array for jsPDF
+  //     const pdfData = formatted.map((item) => Object.values(item));
+
+  //     const doc = new jsPDF("landscape");
+  //     doc.setFontSize(16);
+  //     doc.text("Training Centers Report", 14, 22);
+  //     doc.setFontSize(10);
+  //     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 32);
+  //     doc.text(`Total Records: ${pdfData.length}`, 14, 42);
+
+  //     const headers = [
+  //       "S/N",
+  //       "Training Center",
+  //       "Contact Person Name",
+  //       "Contact Person Phone",
+  //       "Contact Person Email",
+  //       "State",
+  //       "LGA",
+  //       "Address",
+  //       "Sectors",
+  //       "Trade Areas",
+  //       "Assessment Status",
+  //       "Training Category",
+  //       "Registration Date",
+  //     ];
+
+  //     doc.autoTable({
+  //       head: [headers],
+  //       body: pdfData,
+  //       startY: 50,
+  //       styles: {
+  //         fontSize: 7,
+  //         cellPadding: 1,
+  //       },
+  //       headStyles: {
+  //         fillColor: [41, 128, 185],
+  //         textColor: 255,
+  //         fontStyle: "bold",
+  //       },
+  //       didDrawPage: function (data) {
+  //         doc.setFontSize(8);
+  //         doc.text(
+  //           `Page ${doc.internal.getNumberOfPages()}`,
+  //           data.settings.margin.left,
+  //           doc.internal.pageSize.height - 10
+  //         );
+  //       },
+  //     });
+
+  //     doc.save(
+  //       `training-centers-report-${new Date().toISOString().split("T")[0]}.pdf`
+  //     );
+  //     toast.success("PDF generated successfully");
   //   } catch (error) {
-  //     console.error("Error fetching reports:", error)
-  //     toast.error("Failed to fetch training centers")
+  //     console.error("Error generating PDF:", error);
+  //     toast.error("Failed to generate PDF");
   //   } finally {
-  //     setLoading(false)
-  //     setcsvData([])
+  //     setLoadingCSV(false);
   //   }
-  // }
+  // };
+
+
+  const generatePDF = async () => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await axios.get(
+      `${API_BASE_URL}/trainingcenter/report`,
+      {
+        params: {
+          limit: MAX_CSV_ROWS,
+          page: 1,
+          search: filter?.search,
+          state: filter?.state,
+          lga: filter?.lga,
+          sector: filter?.sector,
+          tradeArea: filter?.tradeArea,
+          category: filter?.category,
+          assessmentStatus: filter?.assessmentStatus,
+          dateFrom: filter?.dateFrom,
+          dateTo: filter?.dateTo,
+          sort: filter?.sort,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const { data } = response.data;
+
+    // Helper to get trade area name by ID
+    function getTradeAreaNameById(id) {
+      for (const sector of sectors) {
+        if (sector.tradeAreas && Array.isArray(sector.tradeAreas)) {
+          const ta = sector.tradeAreas.find((t) => t._id === id);
+          if (ta) return ta.name;
+        }
+      }
+      return id;
+    }
+
+    // Build PDF rows
+const pdfRows = [];
+data.forEach((center, i) => {
+  const tradeAreaNames = Array.isArray(center.legalInfo?.tradeAreas)
+    ? center.legalInfo.tradeAreas
+        .map((taObj) =>
+          Array.isArray(taObj.tradeArea)
+            ? taObj.tradeArea.map((id) => getTradeAreaNameById(id)).join(", ")
+            : ""
+        )
+        .join(", ")
+    : "";
+
+  let sectorsStr = "";
+  if (Array.isArray(center.legalInfo?.tradeAreas)) {
+    center.legalInfo.tradeAreas.forEach((taObj) => {
+      if (Array.isArray(taObj.sector)) {
+        taObj.sector.forEach((sector) => {
+          if (sector.name) sectorsStr += sector.name + ", ";
+        });
+      }
+    });
+  }
+
+  const assessmentStatus =
+    ASSESSMENT_STATUS[center.currentAssessmentStatus || "pending"].label;
+
+  const latestAssessment =
+    center.assessmentRecords && center.assessmentRecords.length > 0
+      ? [...center.assessmentRecords].sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        )[0]
+      : null;
+  const latestCategory = latestAssessment?.category || "default";
+  const categoryObj = CENTER_CATEGORY[latestCategory];
+  const trainingCategory =
+    categoryObj && categoryObj.label ? categoryObj.label : "Not Assigned";
+
+  // If no assessment records, still add a row
+  if (!center.assessmentRecords || center.assessmentRecords.length === 0) {
+    pdfRows.push([
+      i + 1,
+      center?.trainingCentreName || "",
+      center?.contactPerson || "",
+      center?.phoneNumber || "",
+      center?.email || "",
+      center?.state || "",
+      center?.lga || "",
+      center?.address || "",
+      sectorsStr.replace(/,\s*$/, ""),
+      tradeAreaNames.replace(/,\s*$/, ""),
+      assessmentStatus,
+      trainingCategory,
+      center.createdAt
+        ? new Date(center.createdAt).toLocaleDateString()
+        : "",
+      "", "", "", "", "", "", ""
+    ]);
+  } else {
+    center.assessmentRecords.forEach((rec) => {
+      // Combine all assessment records for this center into one row
+      const assessmentYears = center.assessmentRecords.map(rec => rec.year).join(", ");
+      const assessmentStatuses = center.assessmentRecords.map(rec => rec.status).join(", ");
+      // const assessmentCategories = center.assessmentRecords.map(rec => rec.category).join(", ");
+      // const assessmentDates = center.assessmentRecords.map(rec => rec.date ? new Date(rec.date).toLocaleDateString() : "").join(", ");
+      // const assessmentExpirations = center.assessmentRecords.map(rec => rec.expirationDate ? new Date(rec.expirationDate).toLocaleDateString() : "").join(", ");
+      // const assessmentAssessors = center.assessmentRecords.map(rec => rec.assessorName || "").join(", ");
+      // const assessmentNotes = center.assessmentRecords.map(rec => rec.notes || "").join(" | ");
+
+      pdfRows.push([
+        i + 1,
+        center?.trainingCentreName || "",
+        center?.contactPerson || "",
+        center?.phoneNumber || "",
+        center?.email || "",
+        center?.state || "",
+        center?.lga || "",
+        center?.address || "",
+        sectorsStr.replace(/,\s*$/, ""),
+        tradeAreaNames.replace(/,\s*$/, ""),
+        assessmentStatus,
+        trainingCategory,
+        center.createdAt
+          ? new Date(center.createdAt).toLocaleDateString()
+          : "",
+        // assessmentYears,
+        // assessmentStatuses,
+        // assessmentCategories,
+        // assessmentDates,
+        // assessmentExpirations,
+        // assessmentAssessors,
+        // assessmentNotes,
+      ]);
+    });
+  }
+});
+
+    const doc = new jsPDF("landscape");
+    doc.setFontSize(16);
+    doc.text(
+      `Training Centers Report for ${filter?.state || "All States"} || ${
+        filter?.lga || "All LGAs"
+      }`,
+      14,
+      22
+    );
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 32);
+    doc.text(`Total Records: ${pdfRows.length}`, 14, 42);
+
+    const headers = [
+      "S/N",
+      "Training Center",
+      "Contact Person Name",
+      "Contact Person Phone",
+      "Contact Person Email",
+      "State",
+      "LGA",
+      "Address",
+      "Sectors",
+      "Trade Areas",
+      "Assessment Status",
+      "Training Category",
+      "Registration Date",
+      // "Assessment Year",
+      // "Assessment Status (Detail)",
+      // "Assessment Category",
+      // "Assessment Date",
+      // "Assessment Expiration",
+      // "Assessment Assessor",
+      // "Assessment Notes",
+    ];
+
+    doc.autoTable({
+      head: [headers],
+      body: pdfRows,
+      startY: 50,
+      styles: {
+        fontSize: 6,
+        cellPadding: 1,
+      },
+      headStyles: {
+        fillColor: [41, 128, 185],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      didDrawPage: function (data) {
+        doc.setFontSize(8);
+        doc.text(
+          `Page ${doc.internal.getNumberOfPages()}`,
+          data.settings.margin.left,
+          doc.internal.pageSize.height - 10
+        );
+      },
+    });
+
+    doc.save(
+      `training-centers-report-${new Date().toISOString().split("T")[0]}.pdf`
+    );
+    toast.success("PDF generated successfully");
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    toast.error("Failed to generate PDF");
+  } finally {
+    setLoadingCSV(false);
+  }
+};
 
   const fetchReports = async () => {
     setLoading(true);
@@ -884,50 +1067,6 @@ const TrainingCenterManagement = () => {
     });
   };
 
-  // const handleSaveChanges = async () => {
-  //   try {
-  //     setLoading(true)
-  //     const accessToken = localStorage.getItem("accessToken")
-
-  //     // If there's a new assessment record without an ID, it's a new assessment
-  //     const newAssessment = editedCenter.assessmentRecords?.find(record => !record._id)
-
-  //     const payload = {
-  //       ...editedCenter,
-  //       ...(newAssessment && { newAssessment }),
-  //     }
-
-  //     const response = await axios.patch(
-  //       `${API_BASE_URL}/training-centers/${editedCenter._id}`,
-  //       payload,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       }
-  //     )
-
-  //     // Update local state with the response data
-  //     const updatedCenter = response.data.data
-  //     setSelectedCenter(updatedCenter)
-
-  //     // Refresh the table data
-  //     await fetchReports()
-
-  //     toast.success("Training center updated successfully")
-  //     setEditMode(false)
-
-  //     // Don't clear selected center so the view shows updated data
-  //     setEditedCenter(null)
-  //   } catch (error) {
-  //     console.error("Error updating training center:", error)
-  //     toast.error("Failed to update training center")
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
-
-  // Update handleViewCenter to fetch fresh data
   const handleSaveChanges = async () => {
     try {
       setLoading(true);
@@ -1019,22 +1158,6 @@ const TrainingCenterManagement = () => {
       toast.error("Failed to update profile picture");
     }
   };
-
-  //   const handleAddAssessment = () => {
-  //   const newAssessment = {
-  //     year: new Date().getFullYear(),
-  //     status: "pending",
-  //     date: new Date().toISOString(),
-  //     notes: "",
-  //     assessorName: `${currentUser?.firstName || ""} ${currentUser?.lastName || ""}`.trim() || currentUser?.email,
-  //     expirationDate: ""
-  //   }
-
-  //   setEditedCenter(prev => ({
-  //     ...prev,
-  //     assessmentRecords: [...(prev.assessmentRecords || []), newAssessment]
-  //   }))
-  // }
 
   const handleAddAssessment = async () => {
     // Validate required fields
@@ -1436,7 +1559,7 @@ const TrainingCenterManagement = () => {
           <h2 className="font-medium">
             Total Records Found: {pagination?.total || 0}
           </h2>
-          {userRole === "super_admin" && (
+          {userRole === "superadmin" && (
             <div className="gap-2 flex flex-row-reverse justify-start mb-4">
               <button
                 onClick={generatePDF}
@@ -4219,6 +4342,7 @@ const TrainingCenterManagement = () => {
                                     </div>
                                   </form>
                                 </TabsContent>
+
                                 <TabsContent value="assessmentRecords">
                                   <div className="space-y-6">
                                     {/* Current Status Overview */}

@@ -62,7 +62,8 @@ export function NewContact() {
       icon: <Hammer className="w-6 h-6" />,
       title: "SUPA HOTLINE 4",
       email: "supasec@itf.gov.ng",
-      phone: "0703 615 0770",
+      // phone: "0703 615 0770, 09058616620",
+      phone: "0905 861 6620",
       bgColor: "bg-yellow-100",
     },
     {
