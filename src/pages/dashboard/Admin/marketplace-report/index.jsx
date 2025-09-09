@@ -670,6 +670,8 @@ const MarketplaceReport = () => {
         return "bg-green-100 text-green-800";
       case "completed":
         return "bg-green-100 text-green-800";
+      case "client-canceled":
+        return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -1935,12 +1937,13 @@ const MarketplaceReport = () => {
                           'completed',
                           'accepted',
                           'artisan-completed',
-                          'artisan-rejected',
                           'client-rejected',
                         ].includes(request.status)) {
                           return request.agreedSum ? `₦${Number(request.agreedSum).toLocaleString()}` : 'N/A';
                         } else if (request.status === 'amount-proposed') {
                           return request.proposedSum ? `₦${Number(request.proposedSum).toLocaleString()} (Proposed)` : 'N/A';
+                        } else if (request.status === 'artisan-rejected') {
+                          return request.proposedSum ? `₦${Number(request.proposedSum).toLocaleString()} (Rejected)` : 'N/A';
                         } else {
                           return 'N/A';
                         }

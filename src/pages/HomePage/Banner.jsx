@@ -85,7 +85,8 @@ export default function Banner() {
                     bg-white text-yellow-600 border border-yellow-600 
                     hover:bg-yellow-50 transition-colors duration-300"
                     onClick={() =>
-                      (window.location = "/marketplace")
+                      // (window.location = "/marketplace")
+                       window.location.href = "http://localhost:5173"
                     }>
                     View Marketplace
                   </button>
