@@ -41,21 +41,21 @@ export function NewContact() {
       icon: <Palette className="w-6 h-6" />,
       title: "SUPA HOTLINE 1",
       email: "supasec@itf.gov.ng",
-      phone: "0803 324 3748",
+      phone: "0809 777 2103",
       bgColor: "bg-blue-100",
     },
     {
       icon: <Scissors className="w-6 h-6" />,
       title: "SUPA HOTLINE 2",
       email: "supasec@itf.gov.ng",
-      phone: "0806 050 0426",
+      phone: "0809 777 2104",
       bgColor: "bg-pink-100",
     },
     {
       icon: <ShoppingBag className="w-6 h-6" />,
       title: "SUPA HOTLINE 3",
       email: "supasec@itf.gov.ng",
-      phone: "0802 840 3049",
+      phone: "0809 777 2105",
       bgColor: "bg-green-100",
     },
     {
@@ -70,23 +70,23 @@ export function NewContact() {
       icon: <Award className="w-6 h-6" />,
       title: "SUPA HOTLINE 5",
       email: "supasec@itf.gov.ng",
-      phone: "0706 085 0476",
+      phone: "0809 777 2108",
       bgColor: "bg-orange-100",
     },
     {
       icon: <Users className="w-6 h-6" />,
       title: "SUPA HOTLINE 6",
       email: "supasec@itf.gov.ng",
-      phone: "0803 318 1752",
+      phone: "0809 777 2109",
       bgColor: "bg-green-100",
     },
-    {
-      icon: <Headset className="w-6 h-6" />,
-      title: "SUPA HOTLINE 7",
-      email: "",
-      phone: "0803 653 7260",
-      bgColor: "bg-blue-100",
-    },
+    // {
+    //   icon: <Headset className="w-6 h-6" />,
+    //   title: "SUPA HOTLINE 7",
+    //   email: "",
+    //   phone: "0803 653 7260",
+    //   bgColor: "bg-blue-100",
+    // },
   ];
 
   const handleChange = (e) => {

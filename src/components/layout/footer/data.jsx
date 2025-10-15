@@ -8,7 +8,7 @@ export const footerLinks = [
     { title: "Home", path: "/" },
     { title: "About Us", path: "/about" },
     { title: "MarketPlace", path: "/marketplace" },
-    { title: "Artisan Registry", path: "/preview" },
+    { title: "Beneficiaries / Registered Artisans", path: "/beneficiaries" },
     { title: "Contact ", path: "/contact" },
     { title: "ITF ", path: "https://itf.gov.ng/" },
   ],
